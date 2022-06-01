@@ -13,8 +13,8 @@ source ~/bin/asm
 export PATH="/usr/local/go/bin:$PATH"
 source /usr/local/go/bin
 
-export PATH="$HOME/.dotfiles/bin:$PATH"
-source ~/.dotfiles/bin
+export PATH="$HOME/.dotfiles/.bin:$PATH"
+source ~/.dotfiles/.bin
 
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
