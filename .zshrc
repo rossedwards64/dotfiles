@@ -7,11 +7,11 @@ source ~/.emacs.d/bin
 export PATH="$HOME/bin:$PATH"
 source ~/bin
 
-export PATH="$HOME/bin/asm:$PATH"
-source ~/bin/asm
+#export PATH="$HOME/bin/asm:$PATH"
+#source ~/bin/asm
 
-export PATH="/usr/local/go/bin:$PATH"
-source /usr/local/go/bin
+#export PATH="/usr/local/go/bin:$PATH"
+#source /usr/local/go/bin
 
 export PATH="$HOME/.dotfiles/.bin:$PATH"
 source ~/.dotfiles/.bin
