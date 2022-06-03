@@ -18,7 +18,10 @@
 ;; theme
 (if (equal (system-name) "ross-desktop")
     (setq doom-theme 'modus-vivendi)
-    (setq doom-theme 'modus-operandi))
+    (if (equal (system-name) "ross-thinkpad")
+        (setq doom-theme 'manoj-dark)
+      (if (equal (system-name) "ross-laptop")
+          (setq doom-theme 'modus-operandi))))
 
 (setq doom-themes-treemacs-theme "doom-colors")
 

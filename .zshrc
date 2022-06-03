@@ -1,5 +1,7 @@
 # If you come from bash you might have to change your $PATH.
 export PATH=$HOME/bin:/usr/local/bin:$PATH
+export PATH=$HOME/.local/bin:$PATH
+source ~/.local/bin
 
 export PATH="$HOME/.emacs.d/bin:$PATH"
 source ~/.emacs.d/bin
