@@ -19,7 +19,7 @@
 (if (equal (system-name) "ross-desktop")
     (setq doom-theme 'modus-vivendi)
     (if (equal (system-name) "ross-thinkpad")
-        (setq doom-theme 'manoj-dark)
+        (setq doom-theme 'doom-flatwhite)
       (if (equal (system-name) "ross-laptop")
           (setq doom-theme 'modus-operandi))))
 
@@ -32,8 +32,8 @@
 
 ;; fonts
 (setq doom-font (font-spec :family "Iosevka" :size 14 :weight 'regular)
-      doom-variable-pitch-font (font-spec :family "Source Code Pro" :size 14 :weight 'regular)
-      doom-big-font (font-spec :family "Iosevka" :size 24 :weight 'regular))
+      doom-variable-pitch-font (font-spec :family "Iosevka" :size 14 :weight 'regular)
+      doom-big-font (font-spec :family "Iosevka" :size 24 :weight 'medium))
 (after! doom-themes
   (setq doom-themes-enable-bold t
         doom-themes-enable-italic t))

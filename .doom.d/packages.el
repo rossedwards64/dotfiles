@@ -4,4 +4,3 @@
 (package! elcord)
 (package! tree-sitter)
 (package! dired-single)
-(package! command-log-mode)

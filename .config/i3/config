@@ -29,8 +29,11 @@ exec --no-startup-id dex --autostart --environment i3
 # xss-lock grabs a logind suspend inhibit lock and will use i3lock to lock the
 # screen before suspend. Use loginctl lock-session to lock your screen.
 exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock --nofork
-
-exec --no-startup-id i3lock -i ~/Pictures/wallpapers/gurrenlagann.png -c 000000 -
+exec --no-startup-id i3lock --blur=8 --force-clock --indicator --time-pos="683:100" \
+    --ind-pos="683:384" --ring-width=10 --time-font=Iosevka:Bold --date-font=Iosevka:Bold \
+    --layout-font=Iosevka:Bold --verif-font=Iosevka:Bold --wrong-font=Iosevka:Bold \
+    --greeter-font=Iosevka:Bold --verif-text="Verifying password..." --greeter-text="Please enter your password to unlock." \
+    --noinput-text="No text has been entered!" --wrong-text="Incorrect password! Try again." \
 
 exec_always --no-startup-id $HOME/.config/polybar/launch.sh
 
@@ -40,10 +43,10 @@ exec --no-startup-id nm-applet
 
 # Use pactl to adjust volume in PulseAudio.
 set $refresh_i3status killall -SIGUSR1 i3status
-bindsym XF86AudioRaiseVolume exec --no-startup-id amixer -D pipewire sset Master 5%+ && $refresh_i3status
-bindsym XF86AudioLowerVolume exec --no-startup-id amixer -D pipewire sset Master 5%- && $refresh_i3status
-bindsym XF86AudioMute exec --no-startup-id amixer -D pipewire sset Master toggle && $refresh_i3status
-bindsym XF86AudioMicMute exec --no-startup-id amixer -D pipewire sset Capture toggle && $refresh_i3status
+bindsym XF86AudioRaiseVolume exec --no-startup-id amixer -M set Master 5%+ && $refresh_i3status
+bindsym XF86AudioLowerVolume exec --no-startup-id amixer -M set Master 5%- && $refresh_i3status
+bindsym XF86AudioMute exec --no-startup-id amixer -M set Master toggle && $refresh_i3status
+bindsym XF86AudioMicMute exec --no-startup-id amixer -M set Capture toggle && $refresh_i3status
 
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
@@ -56,8 +59,9 @@ bindsym $mod+Shift+g exec emacsclient -c -a=""
 bindsym $mod+Shift+q kill
 
 # start dmenu (a program launcher)
-bindsym $mod+d exec --no-startup-id "rofi -combi-modi window,drun,ssh -show combi"
-bindsym $mod+Escape exec --no-startup-id "rofi -show power-menu -modi power-menu:~/.local/bin/rofi-power-menu -width 20 -lines 6"
+bindsym $mod+d exec --no-startup-id "rofi -modi drun,run,window -show drun"
+#bindsym $mod+d exec --no-startup-id "rofi -combi-modi window,drun,ssh -show combi"
+bindsym $mod+Escape exec --no-startup-id "rofi -show power-menu -modi power-menu:~/.local/bin/rofi-power-menu"
 bindsym $mod+c exec --no-startup-id "bash ~/.local/bin/rofi-wifi-menu"
 
 # A more modern dmenu replacement is rofi:
@@ -118,40 +122,49 @@ bindsym $mod+a focus parent
 
 # Define names for default workspaces for which we configure key bindings later on.
 # We use variables to avoid repeating the names in multiple places.
-set $ws1 "1"
-set $ws2 "2"
-set $ws3 "3"
-set $ws4 "4"
-set $ws5 "5"
-set $ws6 "6"
+set $ide "IDE"
+set $term "Terminal"
+set $web "Web"
+set $discord "Discord"
+set $music "Spotify"
+set $steam "Steam"
 set $ws7 "7"
 set $ws8 "8"
 set $ws9 "9"
 set $ws10 "10"
 
 # switch to workspace
-bindsym $mod+1 workspace number $ws1
-bindsym $mod+2 workspace number $ws2
-bindsym $mod+3 workspace number $ws3
-bindsym $mod+4 workspace number $ws4
-bindsym $mod+5 workspace number $ws5
-bindsym $mod+6 workspace number $ws6
+bindsym $mod+1 workspace $ide
+bindsym $mod+2 workspace $term
+bindsym $mod+3 workspace $web
+bindsym $mod+4 workspace $discord
+bindsym $mod+5 workspace $music
+bindsym $mod+6 workspace $steam
 bindsym $mod+7 workspace number $ws7
 bindsym $mod+8 workspace number $ws8
 bindsym $mod+9 workspace number $ws9
 bindsym $mod+0 workspace number $ws10
 
 # move focused container to workspace
-bindsym $mod+Shift+1 move container to workspace number $ws1
-bindsym $mod+Shift+2 move container to workspace number $ws2
-bindsym $mod+Shift+3 move container to workspace number $ws3
-bindsym $mod+Shift+4 move container to workspace number $ws4
-bindsym $mod+Shift+5 move container to workspace number $ws5
-bindsym $mod+Shift+6 move container to workspace number $ws6
+bindsym $mod+Shift+1 move container to workspace $ide
+bindsym $mod+Shift+2 move container to workspace $term
+bindsym $mod+Shift+3 move container to workspace $web
+bindsym $mod+Shift+4 move container to workspace $discord
+bindsym $mod+Shift+5 move container to workspace $music
+bindsym $mod+Shift+6 move container to workspace $steam
 bindsym $mod+Shift+7 move container to workspace number $ws7
 bindsym $mod+Shift+8 move container to workspace number $ws8
 bindsym $mod+Shift+9 move container to workspace number $ws9
 bindsym $mod+Shift+0 move container to workspace number $ws10
+
+workspace_auto_back_and_forth yes
+
+assign [class="emacs" instance="Emacs"] $ide
+assign [class="Alacritty" instance="Alacritty"] $term
+assign [class="firefox" instance="Navigator"] $web
+assign [class="discord" instance="discord"] $discord
+assign [class="spotify"] $music
+assign [class="Steam" instance="Steam"] $steam
 
 # reload the configuration file
 bindsym $mod+Shift+c reload
@@ -194,6 +207,8 @@ bindsym $mod+r mode "resize"
 #}
 
 for_window [class=".*"] border pixel 1
+for_window [window_role="pop-up"] floating enable
+for_window [window_role="task_dialog"] floating enable
 
 gaps inner 5
 

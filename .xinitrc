@@ -32,6 +32,13 @@ if [ -d /etc/X11/xinit/xinitrc.d ] ; then
  unset f
 fi
 
-nitrogen --restore &
-picom --experimental-backends &
-exec i3
+NAME=$(uname -n)
+case $NAME in
+    ross-desktop) exec startkde ;;
+    ross-laptop) exec startkde ;;
+    ross-thinkpad)
+        nitrogen --restore &
+        picom --experimental-backends &
+        setxkbmap gb
+        exec i3 ;;
+esac
