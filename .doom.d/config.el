@@ -6,7 +6,7 @@
 
 ;; window setup
 (add-to-list 'default-frame-alist '(inhibit-double-buffering . t))
-(add-to-list 'initial-frame-alist '(fullscreen . fullboth))
+(add-to-list 'initial-frame-alist '(fullscreen . maximized))
 (setq evil-split-window-below t
       evil-vsplit-window-right t
       display-line-numbers-type 'relative
@@ -15,15 +15,22 @@
 (eval-when-compile
   (require 'cl))
 
-;; theme
+;; host-specific configuration
 (if (equal (system-name) "ross-desktop")
-    (setq doom-theme 'modus-vivendi)
+    (setq doom-modeline--battery-status nil
+          doom-theme 'doom-ephemeral)
+    (set-frame-parameter (selected-frame) 'alpha 95)
+    (add-to-list 'default-frame-alist '(alpha . 95))
     (if (equal (system-name) "ross-thinkpad")
-        (setq doom-theme 'doom-flatwhite)
+        (display-battery-mode 1)
+        (setq doom-modeline--battery-status t
+              doom-theme 'modus-vivendi)
+        (set-frame-parameter (selected-frame) 'alpha 95)
+        (add-to-list 'default-frame-alist '(alpha . 95))
       (if (equal (system-name) "ross-laptop")
-          (setq doom-theme 'modus-operandi))))
-
-(setq doom-themes-treemacs-theme "doom-colors")
+          (display-battery-mode 1)
+          (setq doom-modeline--battery-status t
+                doom-theme 'modus-operandi))))
 
 (with-eval-after-load 'doom-themes
   (doom-themes-treemacs-config)
@@ -31,8 +38,8 @@
   (doom-themes-org-config))
 
 ;; fonts
-(setq doom-font (font-spec :family "Iosevka" :size 14 :weight 'regular)
-      doom-variable-pitch-font (font-spec :family "Iosevka" :size 14 :weight 'regular)
+(setq doom-font (font-spec :family "Iosevka" :size 14 :weight 'medium)
+      doom-variable-pitch-font (font-spec :family "Iosevka Nerd Font" :size 14 :weight 'medium)
       doom-big-font (font-spec :family "Iosevka" :size 24 :weight 'medium))
 (after! doom-themes
   (setq doom-themes-enable-bold t
@@ -64,6 +71,7 @@
 (elcord-mode 1)
 (after! elcord
   elcord-use-major-mode-as-main-icon t)
+(global-wakatime-mode t)
 
 ;; makefile
 (cl-defun get-closest-pathname (&optional (file "Makefile"))
@@ -109,7 +117,7 @@
 
 ;; modeline
 (custom-set-faces!
-  '(model-line :family "Iosevka" :height 0.9)
+  '(mode-line :family "Iosevka" :height 1.0)
   '(mode-line-inactive :family "Iosevka" :height 0.9))
 
 (setq doom-modeline-enable-word-count t
@@ -121,8 +129,8 @@
       doom-modeline-major-mode-icon t
       doom-modeline-buffer-encoding t
       doom-modeline-indent-info t
-      doom-modeline-github t
       doom-modeline-display-default-persp-name t
+      doom-modeline-unicode-fallback t
       all-the-icons-scale-factor 1.1)
 
 (add-hook! 'doom-modeline-mode-hook
@@ -150,12 +158,15 @@
          (end (- (length string-with-parenthesis) 2)))
     (substring string-with-parenthesis 2 end)))
 
+;; i thought it would be cool to have text in the headerline,
+;; but it's preventing the filepath being displayed. still keeping
+;; this around for if i ever want it.
 (setq header-line-format
      '(:eval (align-header-line
               ;; left
               (list "")
               ;; right
-              (list "Writing %m code in %b%*. | Worming out in %F."))))
+              (list \"Writing %m code in %b%*. | Worming out in %F.\"))))
 
 (add-to-list 'exec-path "~/bin")
 (setq-default window-combination-resize t

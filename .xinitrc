@@ -34,11 +34,21 @@ fi
 
 NAME=$(uname -n)
 case $NAME in
-    ross-desktop) exec startkde ;;
-    ross-laptop) exec startkde ;;
+    ross-desktop)
+        exec startkde ;;
+    ross-laptop)
+        setxkbmap gb
+        exec startkde ;;
     ross-thinkpad)
         nitrogen --restore &
-        picom --experimental-backends &
+        picom --experimental-backends -b
+        xss-lock --transfer-sleep-lock -- i3lock --nofork --blur=8 --force-clock --bar-indicator --bar-orientation=horizontal \
+                                                 --time-pos="683:100" --bar-direction=1 --bar-pos="424" --ind-pos="683:384" --ring-width=10 \
+                                                 --time-font=Iosevka:Bold --date-font=Iosevka:Bold --layout-font=Iosevka:Bold --verif-font=Iosevka:Bold \
+                                                 --wrong-font=Iosevka:Bold --greeter-font=Iosevka:Bold --verif-text="Verifying password..." \
+                                                 --greeter-text="Please enter your password to unlock." \
+                                                 --noinput-text="No text has been entered!" --wrong-text="Incorrect password! Try again." --layout-color=ffffffff --time-color=ffffffff \
+                                                 --date-color=ffffffff --greeter-color=ffffffff --verif-color=ffffffff --wrong-color=ffffffff --modif-color=ffffffff &
         setxkbmap gb
         exec i3 ;;
 esac

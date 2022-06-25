@@ -4,3 +4,4 @@
 (package! elcord)
 (package! tree-sitter)
 (package! dired-single)
+(package! wakatime-mode)
