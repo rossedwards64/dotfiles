@@ -133,6 +133,8 @@ alias cp="cp -i"
 alias rm="rm -i"
 alias ..="cd .."
 alias cleanup="sudo pacman -Rns $(pacman -Qtdq)"
+alias gpumanual="sudo sh -c 'echo "1" > /sys/class/drm/card0/device/hwmon/hwmon4/pwm1_enable'"
+alias gpuauto="sudo sh -c 'echo "2" > /sys/class/drm/card0/device/hwmon/hwmon4/pwm1_enable'"
 
 prompt_context() {
     emojis=("⚡" "🔥" "💀" "👑" "😎" "🐸" "🐵" "🌈" "🍻" "🚀" "💡" "🎉" "🔑" "💣" "🚦" "🌙")

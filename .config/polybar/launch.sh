@@ -19,10 +19,10 @@ launch_bar() {
 	else
 		if type "xrandr" > /dev/null; then
 			for m in $(xrandr --query | grep " connected" | cut -d" " -f1); do
-				if [ $m == 'DisplayPort-0' ]
+				if [ $m == 'DP-1' ]
 				then
 					MONITOR=$m polybar --reload second -c "$dir"/"$style"/config.ini &
-				elif [ $m == 'HDMI-A-0' ]
+				elif [ $m == 'HDMI-1' ]
 				then
 					MONITOR=$m polybar --reload main -c "$dir"/"$style"/config.ini &
 				fi
@@ -84,7 +84,7 @@ elif [[ "$1" == "--panels" ]]; then
 else
 	cat <<- EOF
 	Usage : launch.sh --theme
-		
+
 	Available Themes :
 	--blocks    --colorblocks    --cuts      --docky
 	--forest    --grayblocks     --hack      --material

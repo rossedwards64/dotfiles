@@ -37,9 +37,10 @@ case $NAME in
     ross-laptop)
         exec startkde ;;
     ross-desktop)
-        xrandr --output DisplayPort-0 --right-of HDMI-A-0
-        xrandr --output DisplayPort-0 --mode 1920x1080 --rate 144
-        xrandr --output DisplayPort-0 --primary
+        xrandr --output HDMI-1 --rotate left
+        xrandr --output DP-1 --right-of HDMI-1
+        xrandr --output DP-1 --mode 1920x1080 --rate 144
+        xrandr --output DP-1 --primary
         nitrogen --restore &
         picom --experimental-backends -b
         xss-lock --transfer-sleep-lock -- i3lock --nofork --blur=8 --force-clock --bar-indicator --bar-orientation=horizontal \

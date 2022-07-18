@@ -130,10 +130,10 @@ set $web "Web"
 set $discord "Discord"
 set $music "Spotify"
 set $steam "Steam"
+set $audio "Audio"
 set $ws7 "7"
 set $ws8 "8"
 set $ws9 "9"
-set $ws10 "10"
 
 # switch to workspace
 bindsym $mod+1 workspace $ide
@@ -142,10 +142,10 @@ bindsym $mod+3 workspace $web
 bindsym $mod+4 workspace $discord
 bindsym $mod+5 workspace $music
 bindsym $mod+6 workspace $steam
+bindsym $mod+0 workspace $audio
 bindsym $mod+7 workspace number $ws7
 bindsym $mod+8 workspace number $ws8
 bindsym $mod+9 workspace number $ws9
-bindsym $mod+0 workspace number $ws10
 
 # move focused container to workspace
 bindsym $mod+Shift+1 move container to workspace $ide
@@ -154,16 +154,17 @@ bindsym $mod+Shift+3 move container to workspace $web
 bindsym $mod+Shift+4 move container to workspace $discord
 bindsym $mod+Shift+5 move container to workspace $music
 bindsym $mod+Shift+6 move container to workspace $steam
+bindsym $mod+Shift+0 move container to workspace $audio
 bindsym $mod+Shift+7 move container to workspace number $ws7
 bindsym $mod+Shift+8 move container to workspace number $ws8
 bindsym $mod+Shift+9 move container to workspace number $ws9
-bindsym $mod+Shift+0 move container to workspace number $ws10
 
-bindsym $mod+Shift+p move container to output primary
-bindsym $mod+Shift+o move container to output HDMI-A-0
+bindsym $mod+Shift+p move workspace to output primary
+bindsym $mod+Shift+o move workspace to output HDMI-1
 
 workspace_auto_back_and_forth yes
 
+assign [class="Pavucontrol" instance="pavucontrol"] $audio
 assign [class="emacs" instance="Emacs"] $ide
 assign [class="Alacritty" instance="Alacritty"] $term
 assign [class="firefox" instance="Navigator"] $web
