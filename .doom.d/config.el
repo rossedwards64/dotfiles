@@ -7,6 +7,8 @@
 ;; window setup
 (add-to-list 'default-frame-alist '(inhibit-double-buffering . t))
 (add-to-list 'initial-frame-alist '(fullscreen . maximized))
+(set-frame-parameter (selected-frame) 'alpha 95)
+(add-to-list 'default-frame-alist '(alpha . 95))
 (setq evil-split-window-below t
       evil-vsplit-window-right t
       display-line-numbers-type 'relative
@@ -19,14 +21,10 @@
 (if (equal (system-name) "ross-desktop")
     (setq doom-modeline--battery-status nil
           doom-theme 'doom-ephemeral)
-    (set-frame-parameter (selected-frame) 'alpha 95)
-    (add-to-list 'default-frame-alist '(alpha . 95))
     (if (equal (system-name) "ross-thinkpad")
         (display-battery-mode 1)
         (setq doom-modeline--battery-status t
               doom-theme 'modus-vivendi)
-        (set-frame-parameter (selected-frame) 'alpha 95)
-        (add-to-list 'default-frame-alist '(alpha . 95))
       (if (equal (system-name) "ross-laptop")
           (display-battery-mode 1)
           (setq doom-modeline--battery-status t
@@ -38,9 +36,9 @@
   (doom-themes-org-config))
 
 ;; fonts
-(setq doom-font (font-spec :family "Iosevka" :size 14 :weight 'medium)
+(setq doom-font (font-spec :family "Iosevka Nerd Font" :size 14 :weight 'medium)
       doom-variable-pitch-font (font-spec :family "Iosevka Nerd Font" :size 14 :weight 'medium)
-      doom-big-font (font-spec :family "Iosevka" :size 24 :weight 'medium))
+      doom-big-font (font-spec :family "Iosevka Nerd Font" :size 24 :weight 'medium))
 (after! doom-themes
   (setq doom-themes-enable-bold t
         doom-themes-enable-italic t))
@@ -72,6 +70,7 @@
 (after! elcord
   elcord-use-major-mode-as-main-icon t)
 (global-wakatime-mode t)
+(variable-pitch-mode 1)
 
 ;; makefile
 (cl-defun get-closest-pathname (&optional (file "Makefile"))

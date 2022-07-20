@@ -43,6 +43,9 @@ exec_always --no-startup-id $HOME/.config/polybar/launch.sh --forest
 # and nm-applet is a desktop environment-independent system tray GUI for it.
 exec --no-startup-id nm-applet
 
+exec alacritty
+exec emacsclient -c -a=""
+
 # Use pactl to adjust volume in PulseAudio.
 set $refresh_i3status killall -SIGUSR1 i3status
 bindsym XF86AudioRaiseVolume exec --no-startup-id amixer -M set Master 5%+ && $refresh_i3status
@@ -64,7 +67,7 @@ bindsym $mod+Shift+q kill
 bindsym $mod+d exec --no-startup-id $HOME/.config/polybar/forest/scripts/launcher.sh
 #bindsym $mod+d exec --no-startup-id "rofi -combi-modi window,drun,ssh -show combi"
 bindsym $mod+Escape exec --no-startup-id $HOME/.config/polybar/forest/scripts/powermenu.sh
-bindsym $mod+c exec --no-startup-id "bash ~/.local/bin/rofi-wifi-menu"
+bindsym $mod+c exec --no-startup-id $HOME/.config/polybar/forest/scripts/rofi-wifi-menu
 
 # A more modern dmenu replacement is rofi:
 # bindcode $mod+40 exec "rofi -modi drun,run -show drun"
