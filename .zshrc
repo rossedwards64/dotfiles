@@ -12,13 +12,6 @@ source ~/.dotfiles/.bin
 
 HOSTNAME=
 
-#export PATH="$HOME/bin/asm:$PATH"
-#source ~/bin/asm
-
-#export PATH="/usr/local/go/bin:$PATH"
-#source /usr/local/go/bin
-
-
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
 
@@ -78,7 +71,7 @@ COMPLETION_WAITING_DOTS="true"
 # "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
 # or set a custom format using the strftime function format specifications,
 # see 'man strftime' for details.
-#HIST_STAMPS="dd/mm/yyyy"
+HIST_STAMPS="dd/mm/yyyy"
 
 # Would you like to use another custom folder than $ZSH/custom?
 # ZSH_CUSTOM=/path/to/new-custom-folder
@@ -131,6 +124,11 @@ alias vim="nvim"
 alias mv="mv -i"
 alias cp="cp -i"
 alias rm="rm -i"
+alias ls="exa"
+alias la="exa -ah"
+alias l="exa -lah"
+alias cd="z"
+alias cat="bat"
 alias ..="cd .."
 alias cleanup="sudo pacman -Rns $(pacman -Qtdq)"
 
@@ -149,4 +147,5 @@ export PNPM_HOME="/home/ross/.local/share/pnpm"
 export PATH="$PNPM_HOME:$PATH"
 # pnpm end
 
+eval "$(zoxide init zsh)"
 eval "$(starship init zsh)"

@@ -1,7 +1,7 @@
 # Get editor completions based on the config schema
 "$schema" = 'https://starship.rs/config-schema.json'
 
-format = "$directory$all $character"
+format = "$battery$directory$all $character"
 
 # Wait 10 milliseconds for starship to check files under the current directory.
 scan_timeout = 10
@@ -15,12 +15,23 @@ disabled = true
 # Replace the "❯" symbol in the prompt with "➜"
 [character] # The name of the module we are configuring is "character"
 success_symbol = "[➜](bold green) " # The "success_symbol" segment is being set to "➜" with the color "bold green"
+error_symbol = "[➜](bold red) "
+
+[battery]
+full_symbol = "🔋"
+charging_symbol = "🔌"
+discharging_symbol = "⚡"
+
+[[battery.display]]
+threshold = 30
+style = "bold red"
 
 [cmake]
 format = '\[[$symbol($version)]($style)\]'
 
 [cmd_duration]
 format = '\[[⏱ $duration]($style)\]'
+min_time = 5
 
 [cobol]
 format = '\[[$symbol($version)]($style)\]'
@@ -121,6 +132,7 @@ symbol = " "
 
 [c]
 symbol = " "
+detect_extensions = ["c", "h", "cpp", "hpp"]
 format = '\[[$symbol($version(-$name))]($style)\]'
 
 [conda]
@@ -133,6 +145,8 @@ format = '\[[$symbol($version)]($style)\]'
 
 [directory]
 read_only = " "
+truncation_length = 5
+truncation_symbol = ".../"
 
 [docker_context]
 symbol = " "
