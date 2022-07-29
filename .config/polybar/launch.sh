@@ -18,11 +18,11 @@ launch_bar() {
 		bash "$dir"/pwidgets/launch.sh --main
 	else
 		if type "xrandr" > /dev/null; then
-			for m in $(xrandr --query | grep " connected" | cut -d" " -f1); do
-				if [ $m == 'DP-1' ]
+			for m in $(xrandr --query | grep " connected" | cut -d " " -f1); do
+				if [ $m == 'DP-1' ] || [ $m == 'DisplayPort-0' ]
 				then
 					MONITOR=$m polybar --reload second -c "$dir"/"$style"/config.ini &
-				elif [ $m == 'HDMI-1' ]
+				elif [ $m == 'HDMI-1' ] || [ $m == 'HDMI-A-0' ]
 				then
 					MONITOR=$m polybar --reload main -c "$dir"/"$style"/config.ini &
 				fi

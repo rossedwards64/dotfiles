@@ -10,14 +10,7 @@ source ~/.emacs.d/bin
 source ~/bin
 source ~/.dotfiles/.bin
 
-HOSTNAME=
-
-#export PATH="$HOME/bin/asm:$PATH"
-#source ~/bin/asm
-
-#export PATH="/usr/local/go/bin:$PATH"
-#source /usr/local/go/bin
-
+HOSTNAME=ross-desktop
 
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
@@ -26,7 +19,7 @@ export ZSH="$HOME/.oh-my-zsh"
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-ZSH_THEME="sorin"
+#ZSH_THEME="agnoster"
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -131,10 +124,16 @@ alias vim="nvim"
 alias mv="mv -i"
 alias cp="cp -i"
 alias rm="rm -i"
-alias ..="cd .."
+alias ls="exa"
+alias la="exa -ah"
+alias l="exa -lha"
+alias cat="bat"
+alias cd="z"
+alias ..="z .."
+alias du="dust -Hr"
 alias cleanup="sudo pacman -Rns $(pacman -Qtdq)"
-alias gpumanual="sudo sh -c 'echo "1" > /sys/class/drm/card0/device/hwmon/hwmon4/pwm1_enable'"
-alias gpuauto="sudo sh -c 'echo "2" > /sys/class/drm/card0/device/hwmon/hwmon4/pwm1_enable'"
+alias gpumanual="echo 1 | sudo tee -a /sys/class/drm/card0/device/hwmon/[[:print:]]*/pwm1_enable"
+alias gpuauto="echo 2 | sudo tee -a /sys/class/drm/card0/device/hwmon/[[:print:]]*/pwm1_enable"
 
 prompt_context() {
     emojis=("⚡" "🔥" "💀" "👑" "😎" "🐸" "🐵" "🌈" "🍻" "🚀" "💡" "🎉" "🔑" "💣" "🚦" "🌙")
@@ -150,3 +149,6 @@ neofetch
 export PNPM_HOME="/home/ross/.local/share/pnpm"
 export PATH="$PNPM_HOME:$PATH"
 # pnpm end
+
+eval "$(zoxide init zsh)"
+eval "$(starship init zsh)"
