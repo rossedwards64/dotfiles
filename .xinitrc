@@ -39,7 +39,7 @@ case $NAME in
         monitor_2=$(xrandr -q | cut -d ' ' -f 1 | tail -n +20 | head -n1)
         xrandr --output $monitor_1 --primary --mode 1920x1080 --pos 1080x840 --rotate normal --output $monitor_2 --mode 1920x1080 --pos 0x0 --rotate left
 
-        prev_monitor=$(cat /home/ross/.config/i3/config | grep "HDMI" | cut -d ' ' -f 5 | head -n1)
+        prev_monitor=$(cat /home/ross/.config/i3/config | grep "HDMI" | cut -d ' ' -f 7 | head -n1)
         if [[ $prev_monitor != $monitor_2 ]]; then
             sed -i "s/$prev_monitor/$monitor_2/g" "/home/ross/.config/i3/config"
         fi
