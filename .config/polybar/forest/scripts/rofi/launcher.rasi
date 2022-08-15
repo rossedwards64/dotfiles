@@ -15,8 +15,8 @@ configuration {
     drun-display-format:            "{name}";
     disable-history:                false;
     fullscreen:                     false;
-	hide-scrollbar: 				true;
-	sidebar-mode: 					false;
+	hide-scrollbar: 				false;
+	sidebar-mode: 					true;
 }
 
 @import "colors.rasi"

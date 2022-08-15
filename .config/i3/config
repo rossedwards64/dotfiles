@@ -60,6 +60,10 @@ bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @DEFAULT
 bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle && $refresh_i3status
 bindsym XF86AudioMicMute exec --no-startup-id amixer -M set Capture toggle && $refresh_i3status
 
+bindsym XF86AudioPlay exec playerctl play-pause
+bindsym XF86AudioNext exec playerctl next
+bindsym XF86AudioPrev exec playerctl previous
+
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
 
@@ -89,7 +93,7 @@ bindsym $mod+l focus up
 bindsym $mod+semicolon focus right
 
 bindsym $mod+p focus output primary
-bindsym $mod+o focus output 
+bindsym $mod+o focus output HDMI-A-0
 
 # alternatively, you can use the cursor keys:
 bindsym $mod+Left focus left

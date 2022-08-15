@@ -38,9 +38,9 @@
   (doom-themes-org-config))
 
 ;; fonts
-(setq doom-font (font-spec :family "Iosevka Nerd Font" :size 14 :weight 'medium)
-      doom-variable-pitch-font (font-spec :family "Iosevka Nerd Font" :size 14 :weight 'medium)
-      doom-big-font (font-spec :family "Iosevka Nerd Font" :size 24 :weight 'medium))
+(setq doom-font (font-spec :family "Iosevka" :size 14 :weight 'medium)
+      doom-variable-pitch-font (font-spec :family "Iosevka" :size 14 :weight 'medium)
+      doom-big-font (font-spec :family "Iosevka" :size 24 :weight 'medium))
 (after! doom-themes
   (setq doom-themes-enable-bold t
         doom-themes-enable-italic t))
