@@ -8,7 +8,9 @@
  '(elfeed-feeds '("https://www.reddit.com" "www.reddit.com"))
  '(global-wakatime-mode t)
  '(wakatime-api-key "eaa94a1d-43c3-4a0c-bbfb-31167ebe1d9d")
- '(wakatime-cli-path "wakatime-cli"))
+ '(wakatime-cli-path "wakatime-cli")
+ '(warning-suppress-log-types '((emacs) (emacs) (emacs) (emacs) (emacs) (emacs)))
+ '(warning-suppress-types '((emacs) (emacs) (emacs) (emacs) (emacs))))
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.

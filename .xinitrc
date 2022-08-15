@@ -34,12 +34,18 @@ fi
 
 NAME=$(uname -n)
 case $NAME in
-    ross-desktop)
-        exec startkde ;;
-    ross-laptop)
-        setxkbmap gb
-        exec startkde ;;
     ross-thinkpad)
+
+        for i in /sys/class/hwmon/hwmon*/temp*_input; do
+            dir="$(<$(dirname $i)/name)"
+            hwmon="$(readlink -f $i | grep -oP "hwmon[0-9]")"
+            conf="/home/ross/.config/polybar/forest/modules.ini"
+
+            if [[ "$dir" == "thinkpad" ]]; then
+                sed -i "919s/hwmon[0-9]/$hwmon/g" $conf
+            fi
+        done
+
         nitrogen --restore &
         picom --experimental-backends -b
         xss-lock --transfer-sleep-lock -- i3lock --nofork --blur=8 --force-clock --bar-indicator --bar-orientation=horizontal \

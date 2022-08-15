@@ -1,4 +1,4 @@
-;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
+;;; $DOOMDIR/config.org -*- lexical-binding: t; -*-
 
 ;; login
 (setq user-full-name "Ross Edwards"
@@ -18,17 +18,9 @@
   (require 'cl))
 
 ;; host-specific configuration
-(if (equal (system-name) "ross-desktop")
-    (setq doom-modeline--battery-status nil
-          doom-theme 'doom-ephemeral)
-    (if (equal (system-name) "ross-thinkpad")
-        (display-battery-mode 1)
-        (setq doom-modeline--battery-status t
-              doom-theme 'modus-vivendi)
-      (if (equal (system-name) "ross-laptop")
-          (display-battery-mode 1)
-          (setq doom-modeline--battery-status t
-                doom-theme 'modus-operandi))))
+(display-battery-mode 1)
+(setq doom-modeline--battery-status t
+      doom-theme 'modus-vivendi)
 
 (with-eval-after-load 'doom-themes
   (doom-themes-treemacs-config)
@@ -36,9 +28,9 @@
   (doom-themes-org-config))
 
 ;; fonts
-(setq doom-font (font-spec :family "Iosevka Nerd Font" :size 14 :weight 'medium)
-      doom-variable-pitch-font (font-spec :family "Iosevka Nerd Font" :size 14 :weight 'medium)
-      doom-big-font (font-spec :family "Iosevka Nerd Font" :size 24 :weight 'medium))
+(setq doom-font (font-spec :family "Iosevka" :size 14 :weight 'medium)
+      doom-variable-pitch-font (font-spec :family "Iosevka" :size 14 :weight 'medium)
+      doom-big-font (font-spec :family "Iosevka" :size 24 :weight 'medium))
 (after! doom-themes
   (setq doom-themes-enable-bold t
         doom-themes-enable-italic t))

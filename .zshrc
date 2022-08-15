@@ -4,6 +4,7 @@ export PATH=$HOME/.local/bin:$PATH
 export PATH="$HOME/.emacs.d/bin:$PATH"
 export PATH="$HOME/bin:$PATH"
 export PATH="$HOME/.dotfiles/.bin:$PATH"
+export DOOMDIR="$HOME/.doom.d"
 
 source ~/.local/bin
 source ~/.emacs.d/bin
@@ -120,6 +121,7 @@ export HISTCONTROL=ignoreboth
 
 alias zshconfig="emacsclient --create-frame --alternate-editor='' ~/.zshrc"
 alias ohmyzsh="emacsclient --create-frame --alternate-editor='' ~/.oh-my-zsh"
+
 alias vim="nvim"
 alias mv="mv -i"
 alias cp="cp -i"

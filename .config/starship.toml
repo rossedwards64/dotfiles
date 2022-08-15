@@ -18,9 +18,9 @@ success_symbol = "[➜](bold green) " # The "success_symbol" segment is being se
 error_symbol = "[➜](bold red) "
 
 [battery]
-full_symbol = "🔋"
-charging_symbol = "🔌"
-discharging_symbol = "⚡"
+full_symbol = "🔋 "
+charging_symbol = "🔌 "
+discharging_symbol = "⚡ "
 
 [[battery.display]]
 threshold = 30
@@ -113,6 +113,7 @@ format = '\[[$time]($style)\]'
 
 [username]
 format = '\[[$user]($style)\]'
+show_always = true
 
 [vagrant]
 format = '\[[$symbol($version)]($style)\]'
