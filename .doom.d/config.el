@@ -1,4 +1,4 @@
-;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
+;;; $DOOMDIR/config.org -*- lexical-binding: t; -*-
 
 ;; login
 (setq user-full-name "Ross Edwards"
@@ -16,21 +16,8 @@
   (require 'cl))
 
 ;; host-specific configuration
-(if (equal (system-name) "ross-desktop")
-    (setq doom-modeline--battery-status nil
-          doom-theme 'doom-ephemeral)
-    (set-frame-parameter (selected-frame) 'alpha 95)
-    (add-to-list 'default-frame-alist '(alpha . 95))
-    (if (equal (system-name) "ross-thinkpad")
-        (display-battery-mode 1)
-        (setq doom-modeline--battery-status t
-              doom-theme 'modus-vivendi)
-        (set-frame-parameter (selected-frame) 'alpha 95)
-        (add-to-list 'default-frame-alist '(alpha . 95))
-      (if (equal (system-name) "ross-laptop")
-          (display-battery-mode 1)
-          (setq doom-modeline--battery-status t
-                doom-theme 'modus-operandi))))
+(setq doom-modeline--battery-status nil
+      doom-theme 'everblush)
 
 (with-eval-after-load 'doom-themes
   (doom-themes-treemacs-config)
@@ -90,6 +77,8 @@
 (add-hook! '(c-mode-hook c++-mode-hook)
            #'(lambda ()
                (set (make-local-variable 'compile-command) (format "make -C %s -k" (substring (get-closest-pathname) 0 -8)))))
+
+(add-to-list 'auto-mode-alist '("config.org" . emacs-lisp-mode))
 
 ;; lsp
 (setq lsp-ui-doc-enable t
