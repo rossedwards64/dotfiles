@@ -132,6 +132,7 @@ alias l="exa -lah"
 alias cd="z"
 alias cat="bat"
 alias ..="cd .."
+alias clear="clear && stty sane"
 alias cleanup="sudo pacman -Rns $(pacman -Qtdq)"
 
 prompt_context() {

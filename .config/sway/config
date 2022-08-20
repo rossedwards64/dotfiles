@@ -1,0 +1,185 @@
+set $mod Mod4
+set $left h
+set $down j
+set $up k
+set $right l
+set $term alacritty
+set $menu --no-startup-id $HOME/.config/polybar/forest/scripts/launcher.sh
+
+font pango:Iosevka 10
+
+output * bg /home/ross/Pictures/wallpapers/lordgenome.png fill
+
+### Idle configuration
+exec swayidle -w \
+         timeout 300 'swaylock -f -c 000000' \
+         timeout 600 'swaymsg "output * dpms off"' resume 'swaymsg "output * dpms on"' \
+         before-sleep 'swaylock -f -c 000000'
+#
+# This will lock your screen after 300 seconds of inactivity, then turn off
+# your displays after another 300 seconds, and turn your screens back on when
+# resumed. It will also lock your screen before your computer goes to sleep.
+
+### Input configuration
+input "1:1:AT_Translated_Set_2_keyboard" {
+      xkb_layout gb
+}
+#
+# Example configuration:
+#
+#   input "2:14:SynPS/2_Synaptics_TouchPad" {
+#       dwt enabled
+#       tap enabled
+#       natural_scroll enabled
+#       middle_emulation enabled
+#   }
+#
+# You can get the names of your inputs by running: swaymsg -t get_inputs
+# Read `man 5 sway-input` for more information about this section.
+
+### Key bindings
+    bindsym $mod+Return exec $term
+    bindsym $mod+Shift+q kill
+    bindsym $mod+d exec $menu
+    floating_modifier $mod normal
+    bindsym $mod+Shift+c reload
+    bindsym $mod+Shift+e exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -B 'Yes, exit sway' 'swaymsg exit'
+    bindsym XF86AudioRaiseVolume exec --no-startup-id amixer -M set Master 5%+ && $refresh_i3status
+    bindsym XF86AudioLowerVolume exec --no-startup-id amixer -M set Master 5%- && $refresh_i3status
+    bindsym XF86AudioMute exec --no-startup-id amixer -M set Master toggle && $refresh_i3status
+    bindsym XF86AudioMicMute exec --no-startup-id amixer -M set Capture toggle && $refresh_i3status
+    bindsym XF86AudioPlay exec playerctl play-pause
+    bindsym XF86AudioNext exec playerctl next
+    bindsym XF86AudioPrev exec playerctl previous
+    bindsym XF86MonBrightnessUp exec --no-startup-id xbacklight -inc 10
+    bindsym XF86MonBrightnessDown exec --no-startup-id xbacklight -dec 10
+
+# Moving around:
+#
+    bindsym $mod+$left focus left
+    bindsym $mod+$down focus down
+    bindsym $mod+$up focus up
+    bindsym $mod+$right focus right
+    bindsym $mod+Left focus left
+    bindsym $mod+Down focus down
+    bindsym $mod+Up focus up
+    bindsym $mod+Right focus right
+
+    bindsym $mod+Shift+$left move left
+    bindsym $mod+Shift+$down move down
+    bindsym $mod+Shift+$up move up
+    bindsym $mod+Shift+$right move right
+    bindsym $mod+Shift+Left move left
+    bindsym $mod+Shift+Down move down
+    bindsym $mod+Shift+Up move up
+    bindsym $mod+Shift+Right move right
+#
+# Workspaces:
+#
+set $ide "IDE"
+set $term "Terminal"
+set $web "Web"
+set $discord "Discord"
+set $music "Spotify"
+set $steam "Steam"
+set $ws7 "7"
+set $ws8 "8"
+set $ws9 "9"
+set $ws10 "10"
+
+# switch to workspace
+bindsym $mod+1 workspace $ide
+bindsym $mod+2 workspace $term
+bindsym $mod+3 workspace $web
+bindsym $mod+4 workspace $discord
+bindsym $mod+5 workspace $music
+bindsym $mod+6 workspace $steam
+bindsym $mod+7 workspace number $ws7
+bindsym $mod+8 workspace number $ws8
+bindsym $mod+9 workspace number $ws9
+bindsym $mod+0 workspace number $ws10
+
+# move focused container to workspace
+bindsym $mod+Shift+1 move container to workspace $ide
+bindsym $mod+Shift+2 move container to workspace $term
+bindsym $mod+Shift+3 move container to workspace $web
+bindsym $mod+Shift+4 move container to workspace $discord
+bindsym $mod+Shift+5 move container to workspace $music
+bindsym $mod+Shift+6 move container to workspace $steam
+bindsym $mod+Shift+7 move container to workspace number $ws7
+bindsym $mod+Shift+8 move container to workspace number $ws8
+bindsym $mod+Shift+9 move container to workspace number $ws9
+bindsym $mod+Shift+0 move container to workspace number $ws10
+
+workspace_auto_back_and_forth yes
+
+assign [class="emacs" instance="Emacs"] $ide
+assign [class="Alacritty" instance="Alacritty"] $term
+assign [class="firefox" instance="Navigator"] $web
+assign [class="discord" instance="discord"] $discord
+assign [class="spotify" instance="Spotify"] $music
+assign [class="Steam" instance="Steam"] $steam
+
+# Layout stuff:
+    bindsym $mod+b splith
+    bindsym $mod+v splitv
+    bindsym $mod+s layout stacking
+    bindsym $mod+w layout tabbed
+    bindsym $mod+e layout toggle split
+    bindsym $mod+f fullscreen
+    bindsym $mod+Shift+space floating toggle
+    bindsym $mod+space focus mode_toggle
+    bindsym $mod+a focus parent
+#
+# Scratchpad:
+#
+    # Sway has a "scratchpad", which is a bag of holding for windows.
+    # You can send windows there and get them back later.
+
+    # Move the currently focused window to the scratchpad
+    bindsym $mod+Shift+minus move scratchpad
+
+    # Show the next scratchpad window or hide the focused scratchpad window.
+    # If there are multiple scratchpad windows, this command cycles through them.
+    bindsym $mod+minus scratchpad show
+#
+# Resizing containers:
+#
+mode "resize" {
+    bindsym $left resize shrink width 10px
+    bindsym $down resize grow height 10px
+    bindsym $up resize shrink height 10px
+    bindsym $right resize grow width 10px
+
+    bindsym Left resize shrink width 10px
+    bindsym Down resize grow height 10px
+    bindsym Up resize shrink height 10px
+    bindsym Right resize grow width 10px
+
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+bindsym $mod+r mode "resize"
+
+#
+# Status Bar:
+#
+bar {
+    swaybar_command waybar
+}
+
+bindsym Print exec selection=$(hacksaw -f "-i %i -g %g") && shotgun $selection - | xclip -t 'image/png' -selection clipboard && notify-send "Screenshot taken"
+
+for_window [class=".*"] border pixel 1
+for_window [window_role="pop-up"] floating enable
+for_window [window_role="task_dialog"] floating enable
+
+gaps inner 5
+gaps outer 5
+
+smart_gaps on
+smart_gaps inverse_outer
+smart_borders on
+smart_borders no_gaps
+
+include /etc/sway/config.d/*

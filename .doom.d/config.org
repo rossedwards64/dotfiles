@@ -29,9 +29,9 @@
   (doom-themes-org-config))
 
 ;; fonts
-(setq doom-font (font-spec :family "Iosevka" :size 14 :weight 'medium)
-      doom-variable-pitch-font (font-spec :family "Iosevka" :size 14 :weight 'medium)
-      doom-big-font (font-spec :family "Iosevka" :size 24 :weight 'medium))
+(setq doom-font (font-spec :family "Iosevka" :size 14 :weight 'semibold)
+      doom-variable-pitch-font (font-spec :family "Iosevka" :size 14 :weight 'semibold)
+      doom-big-font (font-spec :family "Iosevka" :size 24 :weight 'semibold))
 (after! doom-themes
   (setq doom-themes-enable-bold t
         doom-themes-enable-italic t))
@@ -82,6 +82,8 @@
 (add-hook! '(c-mode-hook c++-mode-hook)
            #'(lambda ()
                (set (make-local-variable 'compile-command) (format "make -C %s -k" (substring (get-closest-pathname) 0 -8)))))
+
+(add-to-list 'auto-mode-alist '("config.org" . emacs-lisp-mode))
 
 ;; lsp
 (setq lsp-ui-doc-enable t
