@@ -4,51 +4,39 @@
         "layer": "top",
         "position": "top",
         "height": 30,
-        "modules-left": ["battery#bat1", "battery#bat2", "disk", "memory", "cpu", "temperature", "pulseaudio", "backlight", "idle_inhibitor"],
+        "modules-left": ["battery#bat1", "disk", "memory", "cpu", "temperature"],
         "modules-center": ["sway/window"],
         "modules-right": ["network#vpn", "network#wifi", "network#ethernet", "network#disconnected", "custom/mail", "custom/weather", "clock", "custom/poweroff"],
         "sway/window": {
             "format": "{} ",
             "on-click": "swaymsg kill"
         },
-        "idle_inhibitor": {
-            "format": "{icon}",
-            "format-icons": {
-                "activated": "",
-                "deactivated": ""
-            }
-        },
         "clock": {
             "interval": 1,
-            "format": "<b>{:%H:%M:%S}</b>",
-            "format-alt": "{:%Y-%m-%d}",
+            "format": "<b>{:%a %d-%m-%y %H:%M:%S}</b>",
+            "format-alt": "{:%A, %d of %B, %Y %H:%S:%S}",
             "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"
         },
         "cpu": {
             "format": " {usage}%",
-            "tooltip": false
+            "tooltip": false,
+            "interval": 1
         },
         "disk": {
-            "format": " {}%",
-            "tooltip-format": "{used} / {total} used"
+            "format": " {free}",
+            "tooltip-format": "{used} / {total} used",
+            "interval": 300
         },
         "memory": {
-            "format": " {}%",
-            "tooltip-format": "{used:0.1f}G / {total:0.1f}G used"
+            "format": " {used:0.1f}G",
+            "tooltip-format": "{used:0.1f}G / {total:0.1f}G used",
+            "interval": 1
         },
         "temperature": {
             "critical-threshold": 80,
             "format": "{icon} {temperatureC}°C",
-            "format-icons": ["", "", "", "", ""]
-        },
-        "backlight": {
-            "device": "intel_backlight",
-            "interval": 1,
-            "on-scroll-down": "brightlight -pd 1",
-            "on-scroll-up": "brightlight -pi 1",
-            "format": "{icon} {percent}%",
-            "format-icons": ["", ""],
-            "on-click": "wdisplays"
+            "format-icons": ["", "", "", "", ""],
+            "interval": 1
         },
         "battery#bat1": {
             "bat": "BAT0",
@@ -64,21 +52,6 @@
             "format-charging": " {capacity}%",
             "format-plugged": " {capacity}%",
             "format-empty": "",
-            "format-full": "",
-            "format-icons": ["", "", "", "", ""]
-        },
-        "battery#bat2": {
-            "bat": "BAT1",
-            "adapter": "AC",
-            "interval": 10,
-            "states": {
-                "full": 100,
-                "good": 99,
-                "critical": 15
-            },
-            "format": "{icon} {capacity}%",
-            "format-charging": " {capacity}%",
-            "format-plugged": " {capacity}%",
             "format-full": "",
             "format-icons": ["", "", "", "", ""]
         },
@@ -100,7 +73,7 @@
             "on-click": "nm-connection-editor"
         },
         "network#wifi": {
-            "interface": "wlp*",
+            "interface": "wlan0",
             "format-ethernet": "",
             "format-wifi": " {essid} ({signalStrength}%)",
             "format-linked": "",
@@ -134,18 +107,18 @@
         },
         "custom/weather": {
             "return-type": "json",
-            "exec": "sh $HOME/.config/waybar/scripts/weather.sh",
+            "exec": "sh $HOME/.config/waybar/modules/weather.sh",
             "interval": 300,
-            "on-click": "firefox https://wttr.in"
+            "on-click": "firefox https://wttr.in && swaymsg '[app_id=firefox] focus'"
         },
         "custom/poweroff": {
             "tooltip": false,
             "format": "",
-            "on-click": "bash $HOME/.config/waybar/scripts/poweroff.sh"
+            "on-click": "bash $HOME/.config/waybar/modules/poweroff.sh"
         },
         "custom/mail": {
             "tooltip": false,
-            "exec": "sh $HOME/.config/waybar/scripts/mail.sh",
+            "exec": "sh $HOME/.config/waybar/modules/mail.sh",
             "interval": 120,
             "on-click": "thunderbird && swaymsg '[app_id=thunderbird] focus'"
         }
@@ -155,7 +128,7 @@
         "layer": "top",
         "position": "bottom",
         "height": 30,
-        "modules-left": ["tray"],
+        "modules-left": ["tray", "backlight", "pulseaudio", "idle-inhibitor", "gamemode"],
         "modules-center": ["wlr/taskbar"],
         "modules-right": ["sway/workspaces", "sway/mode"],
         "tray": {
@@ -171,6 +144,50 @@
         },
         "sway/mode": {
             "format": "<span style=\"italic\">{}</span>"
+        },
+        "idle_inhibitor": {
+            "format": "{icon}",
+            "format-icons": {
+                "activated": "",
+                "deactivated": ""
+            }
+        },
+        "pulseaudio": {
+            "format": "{volume}% {icon}",
+            "format-bluetooth": "{volume}% {icon}",
+            "format-muted": "",
+            "format-icons": {
+                "headphone": "",
+                "hands-free": "",
+                "headset": "",
+                "phone": "",
+                "portable": "",
+                "car": "",
+                "default": ["", ""]
+            },
+            "scroll-step": 1,
+            "on-click": "pavucontrol"
+        },
+         "backlight": {
+            "device": "intel_backlight",
+            "interval": 1,
+            "on-scroll-down": "brightlight -pd 1",
+            "on-scroll-up": "brightlight -pi 1",
+            "format": "{icon} {percent}%",
+            "format-icons": ["", ""],
+            "on-click": "wdisplays"
+        },
+        "gamemode": {
+            "format": "{glyph}",
+            "format-alt": "{glyph} {count}",
+            "glyph": "",
+            "hide-not-running": true,
+            "use-icon": true,
+            "icon-name": "input-gaming-symbolic",
+            "icon-spacing": 4,
+            "icon-size": 20,
+            "tooltip": true,
+            "tooltip-format": "Games running: {count}"
         }
     }
 ]

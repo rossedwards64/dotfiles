@@ -39,6 +39,7 @@ input "1:1:AT_Translated_Set_2_keyboard" {
 
 ### Key bindings
     bindsym $mod+Return exec $term
+    bindsym $mod+Shift+g exec emacsclient -c -a=""
     bindsym $mod+Shift+q kill
     bindsym $mod+d exec $menu
     floating_modifier $mod normal
