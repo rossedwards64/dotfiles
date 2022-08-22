@@ -4,36 +4,41 @@
         "layer": "top",
         "position": "top",
         "height": 30,
-        "modules-left": ["battery#bat1", "disk", "memory", "cpu", "temperature"],
-        "modules-center": ["sway/window"],
-        "modules-right": ["network#vpn", "network#wifi", "network#ethernet", "network#disconnected", "custom/mail", "custom/weather", "clock", "custom/poweroff"],
+        "modules-left": ["custom/launcher", "custom/sep", "battery#bat1", "disk", "memory", "cpu", "temperature", "custom/sep"],
+        "modules-center": ["clock"],
+        "modules-right": ["custom/sep", "custom/pacman", "network#vpn", "network#wifi", "network#ethernet", "network#disconnected", "custom/sep", "custom/mail", "custom/weather", "custom/sep", "custom/poweroff"],
         "sway/window": {
             "format": "{} ",
             "on-click": "swaymsg kill"
         },
+        "custom/launcher": {
+            "format": " ",
+            "on-click": "$HOME/.config/polybar/forest/scripts/launcher.sh &"
+        },
         "clock": {
             "interval": 1,
             "format": "<b>{:%a %d-%m-%y %H:%M:%S}</b>",
-            "format-alt": "{:%A, %d of %B, %Y %H:%S:%S}",
+            "format-alt": "<b>{:%A, %d of %B, %Y %H:%S:%S}</b>",
             "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"
         },
         "cpu": {
-            "format": " {usage}%",
+            "format": " {usage}% {avg_frequency}GHz",
             "tooltip": false,
             "interval": 1
         },
         "disk": {
-            "format": " {free}",
+            "format": " {used}",
             "tooltip-format": "{used} / {total} used",
+            "path": "/",
             "interval": 300
         },
         "memory": {
-            "format": " {used:0.1f}G",
+            "format": " {used:0.1f}G",
             "tooltip-format": "{used:0.1f}G / {total:0.1f}G used",
             "interval": 1
         },
         "temperature": {
-            "critical-threshold": 80,
+            "critical-threshold": 70,
             "format": "{icon} {temperatureC}°C",
             "format-icons": ["", "", "", "", ""],
             "interval": 1
@@ -113,7 +118,7 @@
         },
         "custom/poweroff": {
             "tooltip": false,
-            "format": "",
+            "format": " ",
             "on-click": "bash $HOME/.config/waybar/modules/poweroff.sh"
         },
         "custom/mail": {
@@ -121,14 +126,27 @@
             "exec": "sh $HOME/.config/waybar/modules/mail.sh",
             "interval": 120,
             "on-click": "thunderbird && swaymsg '[app_id=thunderbird] focus'"
-        }
+        },
+        "custom/sep": {
+            "format": "|",
+            "interval": "once",
+            "tooltip": false
+        },
+       "custom/pacman": {
+	       "format": "  {}",
+	       "interval": 3600,
+	       "exec": "checkupdates | wc -l",
+	       "exec-if": "exit 0",
+	       "on-click": "alacritty -e 'sudo pacman -Syu'; pkill -SIGRTMIN+8 waybar",
+	       "signal": 8
+       }
     },
     {
         "name": "bottombar",
         "layer": "top",
         "position": "bottom",
         "height": 30,
-        "modules-left": ["tray", "backlight", "pulseaudio", "idle-inhibitor", "gamemode"],
+        "modules-left": ["tray", "custom/sep", "backlight", "pulseaudio", "idle-inhibitor", "custom/sep", "gamemode"],
         "modules-center": ["wlr/taskbar"],
         "modules-right": ["sway/workspaces", "sway/mode"],
         "tray": {
@@ -166,7 +184,7 @@
                 "default": ["", ""]
             },
             "scroll-step": 1,
-            "on-click": "pavucontrol"
+            "on-click": "alsamixer"
         },
          "backlight": {
             "device": "intel_backlight",
@@ -181,13 +199,18 @@
             "format": "{glyph}",
             "format-alt": "{glyph} {count}",
             "glyph": "",
-            "hide-not-running": true,
+            "hide-not-running": false,
             "use-icon": true,
             "icon-name": "input-gaming-symbolic",
             "icon-spacing": 4,
-            "icon-size": 20,
+            "icon-size": 16,
             "tooltip": true,
             "tooltip-format": "Games running: {count}"
+        },
+        "custom/sep": {
+            "format": "|",
+            "interval": "once",
+            "tooltip": false
         }
     }
 ]

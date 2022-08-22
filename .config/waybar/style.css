@@ -105,3 +105,13 @@ window#waybar.empty {
     background-color: #64727D;
     box-shadow: inset 0 3px #ffffff;
 }
+
+#custom-sep {
+    color: #555A5C;
+    margin: 0 5px;
+}
+
+#custom-launcher {
+    color: #1794D2;
+    font-size: 18px;
+}
