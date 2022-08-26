@@ -109,6 +109,11 @@ export EDITOR="emacsclient -t"
 export VISUAL="emacsclient -c -a emacs"
 export TERM="alacritty"
 export HISTCONTROL=ignoreboth
+export _JAVA_AWT_WM_NONREPARENTING=1
+export XCURSOR_SIZE=24
+export SDL_VIDEODRIVER=wayland
+export MOZ_ENABLE_WAYLAND=1
+export GTK_THEME=Catpuccin-blue:dark
 
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
