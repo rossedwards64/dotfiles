@@ -4,7 +4,7 @@
         "layer": "top",
         "position": "top",
         "height": 30,
-        "modules-left": ["custom/launcher", "custom/sep", "battery#bat1", "disk", "memory", "cpu", "temperature", "custom/sep"],
+        "modules-left": ["custom/launcher", "custom/sep", "battery#bat1", "disk", "memory", "cpu", "temperature", "custom/fan_speed", "custom/sep"],
         "modules-center": ["clock"],
         "modules-right": ["custom/sep", "custom/pacman", "network#vpn", "network#wifi", "network#ethernet", "network#disconnected", "custom/sep", "custom/mail", "custom/weather", "custom/sep", "custom/poweroff"],
         "sway/window": {
@@ -139,6 +139,11 @@
 	       "exec-if": "exit 0",
 	       "on-click": "alacritty -e 'sudo pacman -Syu'; pkill -SIGRTMIN+8 waybar",
 	       "signal": 8
+       },
+       "custom/fan_speed": {
+           "format": " {}",
+           "interval": 1,
+           "exec": "cat /proc/acpi/ibm/fan | grep speed | cut -f 3"
        }
     },
     {

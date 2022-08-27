@@ -40,7 +40,7 @@
   '(font-lock-keyword-face :slant italic))
 
 ;; dashboard
-(setq fancy-splash-image (concat doom-private-dir "logos/nerv.png"))
+(setq fancy-splash-image (concat doom-user-dir "logos/nerv.png"))
 
 (custom-set-faces!
   '(doom-dashboard-banner :foreground "#8a0000" :weight bold)

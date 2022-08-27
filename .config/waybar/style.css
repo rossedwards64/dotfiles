@@ -69,7 +69,8 @@ window#waybar.empty {
 #pulseaudio,
 #taskbar,
 #temperature,
-#tray {
+#tray,
+#custom-fan_speed {
     padding: 0 6px;
     margin: 0 0px;
     color: #ffffff;
@@ -114,4 +115,6 @@ window#waybar.empty {
 #custom-launcher {
     color: #1794D2;
     font-size: 18px;
+    padding: 0 6px;
+    margin: 0 0px;
 }

@@ -10,6 +10,11 @@ font pango:Iosevka 10
 
 output * bg /home/ross/Pictures/wallpapers/lordgenome.png fill
 
+exec alacritty
+exec emacsclient -c -a=""
+exec discord
+exec steam
+
 ### Idle configuration
 exec swayidle -w \
          timeout 300 'swaylock -f -c 000000' \
@@ -172,7 +177,8 @@ bar {
 
 bindsym Print exec selection=$(hacksaw -f "-i %i -g %g") && shotgun $selection - | xclip -t 'image/png' -selection clipboard && notify-send "Screenshot taken"
 
-for_window [class=".*"] border pixel 1
+for_window [app_id=".*"] border pixel 1
+for_window [app_id=".*"] inhibit_idle fullscreen
 for_window [window_role="pop-up"] floating enable
 for_window [window_role="task_dialog"] floating enable
 
