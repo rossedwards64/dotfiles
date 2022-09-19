@@ -11,8 +11,6 @@ source ~/.emacs.d/bin
 source ~/bin
 source ~/.dotfiles/.bin
 
-HOSTNAME=
-
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
 
@@ -37,7 +35,7 @@ export ZSH="$HOME/.oh-my-zsh"
 
 # Uncomment one of the following lines to change the auto-update behavior
 # zstyle ':omz:update' mode disabled  # disable automatic updates
-# zstyle ':omz:update' mode auto      # update automatically without asking
+zstyle ':omz:update' mode auto      # update automatically without asking
 # zstyle ':omz:update' mode reminder  # just remind me to update when it's time
 
 # Uncomment the following line to change how often to auto-update (in days).
@@ -111,6 +109,7 @@ export VISUAL="emacsclient -c -a emacs"
 export TERM="alacritty"
 export HISTCONTROL=ignoreboth
 
+
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
 
@@ -135,6 +134,12 @@ alias ..="cd .."
 alias clear="clear && stty sane"
 alias cleanup="sudo pacman -Rns $(pacman -Qtdq)"
 
+zstyle ':completion:*' completer _expand _complete _ignored _approximate
+zstyle :compinstall filename '/home/ross/.zshrc'
+
+autoload -Uz compinit
+compinit
+
 prompt_context() {
     emojis=("⚡" "🔥" "💀" "👑" "😎" "🐸" "🐵" "🌈" "🍻" "🚀" "💡" "🎉" "🔑" "💣" "🚦" "🌙")
     RAND_EMOJI_N=$(( $RANDOM % ${#emojis[@]} + 1 ))
@@ -152,3 +157,5 @@ export PATH="$PNPM_HOME:$PATH"
 
 eval "$(zoxide init zsh)"
 eval "$(starship init zsh)"
+
+

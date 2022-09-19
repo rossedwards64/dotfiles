@@ -1,8 +1,9 @@
 * {
     border: none;
     border-radius: 0;
-    font-family: "Iosevka", "Iosevka Nerd Font";
+    font-family: "Iosevka Nerd Font";
     font-size: 13px;
+    font-weight: normal;
     min-height: 0;
 }
 
@@ -70,7 +71,8 @@ window#waybar.empty {
 #taskbar,
 #temperature,
 #tray,
-#custom-fan_speed {
+#custom-fan_speed,
+#custom-pacman {
     padding: 0 6px;
     margin: 0 0px;
     color: #ffffff;
@@ -83,7 +85,7 @@ window#waybar.empty {
     }
 }
 
-#battery.bat2.critical:not(.charging) {
+#battery.bat1.critical:not(.charging) {
     background-color: #f53c3c;
     color: #ffffff;
     animation-name: blink;
@@ -115,6 +117,12 @@ window#waybar.empty {
 #custom-launcher {
     color: #1794D2;
     font-size: 18px;
-    padding: 0 6px;
+    padding: 0 0px 2px 6px;
+    margin: 0 0px;
+}
+
+#gamemode {
+    font-size: 18px;
+    padding: 0 0px 2px 6px;
     margin: 0 0px;
 }

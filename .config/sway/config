@@ -5,6 +5,7 @@ set $up k
 set $right l
 set $term alacritty
 set $menu --no-startup-id $HOME/.config/polybar/forest/scripts/launcher.sh
+set $opacity 0.9
 
 font pango:Iosevka 10
 
@@ -17,9 +18,9 @@ exec steam
 
 ### Idle configuration
 exec swayidle -w \
-         timeout 300 'swaylock -f -c 000000' \
+         timeout 300 'swaylock -f -S --effect-blur 10x5' \
          timeout 600 'swaymsg "output * dpms off"' resume 'swaymsg "output * dpms on"' \
-         before-sleep 'swaylock -f -c 000000'
+         before-sleep 'swaylock -f -S --effect-blur 10x5'
 #
 # This will lock your screen after 300 seconds of inactivity, then turn off
 # your displays after another 300 seconds, and turn your screens back on when
@@ -121,7 +122,7 @@ bindsym $mod+Shift+0 move container to workspace number $ws10
 workspace_auto_back_and_forth yes
 
 assign [class="emacs" instance="Emacs"] $ide
-assign [class="Alacritty" instance="Alacritty"] $term
+assign [app_id="Alacritty"] $term
 assign [class="firefox" instance="Navigator"] $web
 assign [class="discord" instance="discord"] $discord
 assign [class="spotify" instance="Spotify"] $music
@@ -175,7 +176,7 @@ bar {
     swaybar_command waybar
 }
 
-bindsym Print exec selection=$(hacksaw -f "-i %i -g %g") && shotgun $selection - | xclip -t 'image/png' -selection clipboard && notify-send "Screenshot taken"
+bindsym Print exec grim -g "$(slurp)" - | wl-copy && notify-send "Screenshot taken"
 
 for_window [app_id=".*"] border pixel 1
 for_window [app_id=".*"] inhibit_idle fullscreen

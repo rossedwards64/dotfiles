@@ -4,15 +4,38 @@
         "layer": "top",
         "position": "top",
         "height": 30,
-        "modules-left": ["custom/launcher", "custom/sep", "battery#bat1", "disk", "memory", "cpu", "temperature", "custom/fan_speed", "custom/sep"],
-        "modules-center": ["clock"],
-        "modules-right": ["custom/sep", "custom/pacman", "network#vpn", "network#wifi", "network#ethernet", "network#disconnected", "custom/sep", "custom/mail", "custom/weather", "custom/sep", "custom/poweroff"],
+        "modules-left": [
+            "custom/launcher",
+            "custom/sep",
+            "disk",
+            "memory",
+            "cpu",
+            "temperature",
+            "custom/fan_speed",
+            "custom/sep"
+        ],
+        "modules-center": [
+            "clock"
+        ],
+        "modules-right": [
+            "custom/sep",
+            "custom/pacman",
+            "network#vpn",
+            "network#wifi",
+            "network#ethernet",
+            "network#disconnected",
+            "custom/sep",
+            "custom/mail",
+            "custom/weather",
+            "custom/sep",
+            "custom/poweroff"
+        ],
         "sway/window": {
             "format": "{} ",
             "on-click": "swaymsg kill"
         },
         "custom/launcher": {
-            "format": " ",
+            "format": "",
             "on-click": "$HOME/.config/polybar/forest/scripts/launcher.sh &"
         },
         "clock": {
@@ -40,25 +63,14 @@
         "temperature": {
             "critical-threshold": 70,
             "format": "{icon} {temperatureC}°C",
-            "format-icons": ["", "", "", "", ""],
+            "format-icons": [
+                "",
+                "",
+                "",
+                "",
+                ""
+            ],
             "interval": 1
-        },
-        "battery#bat1": {
-            "bat": "BAT0",
-            "adapter": "AC",
-            "interval": 10,
-            "full-at": 99,
-            "states": {
-                "full": 100,
-                "good": 99,
-                "empty": 5
-            },
-            "format": "{icon} {capacity}%",
-            "format-charging": " {capacity}%",
-            "format-plugged": " {capacity}%",
-            "format-empty": "",
-            "format-full": "",
-            "format-icons": ["", "", "", "", ""]
         },
         "network#disconnected": {
             "tooltip-format": "No connection!",
@@ -93,23 +105,6 @@
             "tooltip-format": "{ifname}: {ipaddr}/{cidr}",
             "on-click": "nm-connection-editor"
         },
-        "pulseaudio": {
-            "scroll-step": 1,
-            "format": "{icon} {volume}%{format_source}",
-            "format-bluetooth": "{icon} {volume}%{format_source}",
-            "format-bluetooth-muted": " {icon}{format_source}",
-            "format-muted": " {format_source}",
-            "format-source": "  {volume}%",
-            "format-source-muted": " ",
-            "format-icons": {
-                "headphone": "",
-                "phone": "",
-                "portable": "",
-                "car": "",
-                "default": ["", "", ""]
-            },
-            "on-click": "pavucontrol"
-        },
         "custom/weather": {
             "return-type": "json",
             "exec": "sh $HOME/.config/waybar/modules/weather.sh",
@@ -132,28 +127,42 @@
             "interval": "once",
             "tooltip": false
         },
-       "custom/pacman": {
-	       "format": "  {}",
-	       "interval": 3600,
-	       "exec": "checkupdates | wc -l",
-	       "exec-if": "exit 0",
-	       "on-click": "alacritty -e 'sudo pacman -Syu'; pkill -SIGRTMIN+8 waybar",
-	       "signal": 8
-       },
-       "custom/fan_speed": {
-           "format": " {}",
-           "interval": 1,
-           "exec": "cat /proc/acpi/ibm/fan | grep speed | cut -f 3"
-       }
+        "custom/pacman": {
+            "format": " {}",
+            "interval": 1,
+            "exec": "checkupdates | wc -l",
+            "exec-if": "exit 0",
+            "on-click": "alacritty -e 'sudo pacman -Syu'; pkill -SIGRTMIN+8 waybar",
+            "signal": 8
+        },
+        "custom/fan_speed": {
+            "format": " {}",
+            "interval": 1,
+            "exec": "cat /proc/acpi/ibm/fan | grep speed | cut -f 3"
+        }
     },
     {
         "name": "bottombar",
         "layer": "top",
         "position": "bottom",
         "height": 30,
-        "modules-left": ["tray", "custom/sep", "backlight", "pulseaudio", "idle-inhibitor", "custom/sep", "gamemode"],
-        "modules-center": ["wlr/taskbar"],
-        "modules-right": ["sway/workspaces", "sway/mode"],
+        "modules-left": [
+            "tray",
+            "gamemode",
+            "custom/sep",
+            "battery#bat1",
+            "backlight",
+            "pulseaudio",
+            "idle_inhibitor",
+            "custom/sep"
+        ],
+        "modules-center": [
+            "wlr/taskbar"
+        ],
+        "modules-right": [
+            "sway/workspaces",
+            "sway/mode"
+        ],
         "tray": {
             "icon-size": 13,
             "spacing": 10
@@ -186,18 +195,24 @@
                 "phone": "",
                 "portable": "",
                 "car": "",
-                "default": ["", ""]
+                "default": [
+                    "",
+                    ""
+                ]
             },
             "scroll-step": 1,
             "on-click": "alsamixer"
         },
-         "backlight": {
+        "backlight": {
             "device": "intel_backlight",
             "interval": 1,
             "on-scroll-down": "brightlight -pd 1",
             "on-scroll-up": "brightlight -pi 1",
             "format": "{icon} {percent}%",
-            "format-icons": ["", ""],
+            "format-icons": [
+                "",
+                ""
+            ],
             "on-click": "wdisplays"
         },
         "gamemode": {
@@ -216,6 +231,30 @@
             "format": "|",
             "interval": "once",
             "tooltip": false
-        }
+        },
+        "battery#bat1": {
+            "bat": "BAT0",
+            "adapter": "AC",
+            "interval": 10,
+            "full-at": 99,
+            "states": {
+                "full": 100,
+                "good": 99,
+                "empty": 5
+            },
+            "format-time": "{H}:{M}",
+            "format": "{icon} {capacity}% [{time}]",
+            "format-charging": " {capacity}% [{time}]",
+            "format-plugged": " {capacity}% [{time}]",
+            "format-empty": "Empty",
+            "format-full": "Full [{time}]",
+            "format-icons": [
+                "",
+                "",
+                "",
+                "",
+                ""
+            ]
+        },
     }
 ]
