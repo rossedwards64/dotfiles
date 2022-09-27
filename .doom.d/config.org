@@ -54,16 +54,15 @@
            (insert "\n" (+doom-dashboard--center +doom-dashboard--width "They should make Worm Emacs.")))
 
 ;; enable modes
-(display-time-mode 1)
-(solaire-global-mode 1)
-(global-auto-revert-mode 1)
-(which-function-mode 1)
-(cursor-sensor-mode 1)
-(elcord-mode 1)
+(display-time-mode t)
+(solaire-global-mode t)
+(global-auto-revert-mode t)
+(which-function-mode t)
+(cursor-sensor-mode t)
+(elcord-mode t)
 (after! elcord
   elcord-use-major-mode-as-main-icon t)
 (global-wakatime-mode t)
-;;(variable-pitch-mode 1)
 
 ;; makefile
 (cl-defun get-closest-pathname (&optional (file "Makefile"))

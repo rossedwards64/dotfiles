@@ -35,7 +35,7 @@
             "on-click": "swaymsg kill"
         },
         "custom/launcher": {
-            "format": "",
+            "format": " ",
             "on-click": "$HOME/.config/polybar/forest/scripts/launcher.sh &"
         },
         "clock": {
@@ -92,7 +92,7 @@
         "network#wifi": {
             "interface": "wlan0",
             "format-ethernet": "",
-            "format-wifi": " {essid} ({signalStrength}%)",
+            "format-wifi": "  {essid} ({signalStrength}%)",
             "format-linked": "",
             "format-disconnected": "",
             "tooltip-format": "{ifname}: {ipaddr}/{cidr}",
@@ -128,7 +128,7 @@
             "tooltip": false
         },
         "custom/pacman": {
-            "format": " {}",
+            "format": "  {}",
             "interval": 1,
             "exec": "checkupdates | wc -l",
             "exec-if": "exit 0",
@@ -161,7 +161,8 @@
         ],
         "modules-right": [
             "sway/workspaces",
-            "sway/mode"
+            "sway/mode",
+            "hyprland/window"
         ],
         "tray": {
             "icon-size": 13,
@@ -243,7 +244,7 @@
                 "empty": 5
             },
             "format-time": "{H}:{M}",
-            "format": "{icon} {capacity}% [{time}]",
+            "format": "{icon}  {capacity}% [{time}]",
             "format-charging": " {capacity}% [{time}]",
             "format-plugged": " {capacity}% [{time}]",
             "format-empty": "Empty",
@@ -256,5 +257,8 @@
                 ""
             ]
         },
+        "hyprland/window": {
+            "format": "{}"
+        }
     }
 ]

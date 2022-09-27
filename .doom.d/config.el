@@ -29,7 +29,7 @@
 
 ;; fonts
 (setq doom-font (font-spec :family "Iosevka" :size 14 :weight 'semibold)
-      doom-variable-pitch-font (font-spec :family "Iosevka" :size 14 :weight 'semibold)
+      doom-variable-pitch-font (font-spec :family "Iosevka" :size 16 :weight 'semibold)
       doom-big-font (font-spec :family "Iosevka" :size 24 :weight 'semibold))
 (after! doom-themes
   (setq doom-themes-enable-bold t
@@ -53,16 +53,15 @@
            (insert "\n" (+doom-dashboard--center +doom-dashboard--width "They should make Worm Emacs.")))
 
 ;; enable modes
-(display-time-mode 1)
-(solaire-global-mode 1)
-(global-auto-revert-mode 1)
-(which-function-mode 1)
-(cursor-sensor-mode 1)
-(elcord-mode 1)
+(display-time-mode t)
+(solaire-global-mode t)
+(global-auto-revert-mode t)
+(which-function-mode t)
+(cursor-sensor-mode t)
+(elcord-mode t)
 (after! elcord
   elcord-use-major-mode-as-main-icon t)
 (global-wakatime-mode t)
-(variable-pitch-mode 1)
 
 ;; makefile
 (cl-defun get-closest-pathname (&optional (file "Makefile"))
@@ -100,6 +99,10 @@
       :desc "Switch from header file to source file, or vice versa."
       "z" #'lsp-clangd-find-other-file)
 
+(map! :leader
+      :desc "Search for a word in the project."
+      "l" #'consult-ripgrep)
+
 ;; org
 (setq org-directory "~/Documents/org/"
       org-agenda-files "~/Documents/org/agenda.org"
@@ -111,7 +114,7 @@
 ;; modeline
 (custom-set-faces!
   '(mode-line :family "Iosevka" :height 1.0)
-  '(mode-line-inactive :family "Iosevka" :height 0.9))
+  '(mode-line-inactive :family "Iosevka" :height 1.0))
 
 (setq doom-modeline-enable-word-count t
       doom-modeline-persp-name t
@@ -126,18 +129,23 @@
       doom-modeline-unicode-fallback t
       all-the-icons-scale-factor 1.1)
 
-(add-hook! 'doom-modeline-mode-hook
-           (let ((char-table char-width-table))
-             (while (setq char-table (char-table-parent char-table)))
-             (dolist (pair doom-modeline-rhs-icons-alist)
-               (let ((width 3)
-                     (chars (cdr pair))
-                     (table (make-char-table nil)))
-                 (dolist (char chars)
-                   (set-char-table-range table char width))
-                 (optimize-char-table table)
-                 (set-char-table-parent table char-table)
-                 (setq char-width-table table)))))
+(after! doom-modeline
+  (doom-modeline-def-modeline 'main
+    '(bar matches buffer-info remote-host buffer-position parrot selection-info)
+    '(misc-info minor-modes checker input-method buffer-encoding major-mode process vcs " ")))
+
+;; (add-hook! 'doom-modeline-mode-hook
+;;            (let ((char-table char-width-table))
+;;              (while (setq char-table (char-table-parent char-table)))
+;;              (dolist (pair doom-modeline-rhs-icons-alist)
+;;                (let ((width 3)
+;;                      (chars (cdr pair))
+;;                      (table (make-char-table nil)))
+;;                  (dolist (char chars)
+;;                    (set-char-table-range table char width))
+;;                  (optimize-char-table table)
+;;                  (set-char-table-parent table char-table)
+;;                  (setq char-width-table table)))))
 
 ;; headerline
 (defun align-header-line (left right)
@@ -154,12 +162,12 @@
 ;; i thought it would be cool to have text in the headerline,
 ;; but it's preventing the filepath being displayed. still keeping
 ;; this around for if i ever want it.
-(setq header-line-format
-     '(:eval (align-header-line
-              ;; left
-              (list "")
-              ;; right
-              (list \"Writing %m code in %b%*. | Worming out in %F.\"))))
+;; (setq header-line-format
+;;      '(:eval (align-header-line
+;;               ;; left
+;;               (list "")
+;;               ;; right
+;;               (list \"Writing %m code in %b%*. | Worming out in %F.\"))))
 
 (add-to-list 'exec-path "~/bin")
 (setq-default window-combination-resize t
