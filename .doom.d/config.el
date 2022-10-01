@@ -1,5 +1,8 @@
 ;;; $DOOMDIR/config.org -*- lexical-binding: t; -*-
 
+;; go into elisp mode for syntax highlighting
+(add-to-list 'auto-mode-alist '("config.org" . emacs-lisp-mode))
+
 ;; login
 (setq user-full-name "Ross Edwards"
       user-mail-address "redwards64@hotmail.com")
@@ -18,9 +21,7 @@
   (require 'cl))
 
 ;; host-specific configuration
-(display-battery-mode 1)
-(setq doom-modeline--battery-status t
-      doom-theme 'modus-vivendi)
+(setq doom-theme 'modus-vivendi)
 
 (with-eval-after-load 'doom-themes
   (doom-themes-treemacs-config)
@@ -28,7 +29,7 @@
   (doom-themes-org-config))
 
 ;; fonts
-(setq doom-font (font-spec :family "Iosevka" :size 14 :weight 'semibold)
+(setq doom-font (font-spec :family "Iosevka Nerd Font" :size 14 :weight 'semibold)
       doom-variable-pitch-font (font-spec :family "Iosevka" :size 16 :weight 'semibold)
       doom-big-font (font-spec :family "Iosevka" :size 24 :weight 'semibold))
 (after! doom-themes
@@ -81,8 +82,6 @@
            #'(lambda ()
                (set (make-local-variable 'compile-command) (format "make -C %s -k" (substring (get-closest-pathname) 0 -8)))))
 
-(add-to-list 'auto-mode-alist '("config.org" . emacs-lisp-mode))
-
 ;; lsp
 (setq lsp-ui-doc-enable t
       lsp-ui-doc-show-with-cursor t
@@ -131,7 +130,7 @@
 
 (after! doom-modeline
   (doom-modeline-def-modeline 'main
-    '(bar matches buffer-info remote-host buffer-position parrot selection-info)
+    '(bar " " matches buffer-info remote-host buffer-position parrot selection-info)
     '(misc-info minor-modes checker input-method buffer-encoding major-mode process vcs " ")))
 
 ;; (add-hook! 'doom-modeline-mode-hook
