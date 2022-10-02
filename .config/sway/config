@@ -4,43 +4,26 @@ set $down j
 set $up k
 set $right l
 set $term alacritty
-set $menu --no-startup-id $HOME/.config/polybar/forest/scripts/launcher.sh
+set $menu $HOME/.config/polybar/forest/scripts/launcher.sh
 
 font pango:Iosevka 10
 
-output HDMI-A-1 resolution 1920x1080@60Hz transform 270 pos 0 0 bg /home/ross/Pictures/wallpapers/Evangelion/landscape.jpg fill
-output DP-1 resolution 1920x1080@144Hz transform 0 pos 1080 840 bg /home/ross/Pictures/wallpapers/Gurren\ Lagann/simon.jpg fill
+### Monitor settings
+output HDMI-A-1 resolution 1920x1080@75Hz transform 270 pos 0 0 bg /home/ross/Pictures/wallpapers/Evangelion/landscape.jpg fill
+output DP-1 resolution 1920x1080@144Hz transform 0 pos 1080 670 bg /home/ross/Pictures/wallpapers/Gurren\ Lagann/simon.jpg fill
 
 ### Idle configuration
 exec swayidle -w \
-         timeout 300 'swaylock -f -c 000000' \
+         timeout 300 'swaylock -f -S --effect-blur 10x5' \
          timeout 600 'swaymsg "output * dpms off"' resume 'swaymsg "output * dpms on"' \
-         before-sleep 'swaylock -f -c 000000'
-#
-# This will lock your screen after 300 seconds of inactivity, then turn off
-# your displays after another 300 seconds, and turn your screens back on when
-# resumed. It will also lock your screen before your computer goes to sleep.
+         before-sleep 'swaylock -f -S --effect-blur 10x5'
 
-### Input configuration
-#
-# Example configuration:
-#
-#   input "2:14:SynPS/2_Synaptics_TouchPad" {
-#       dwt enabled
-#       tap enabled
-#       natural_scroll enabled
-#       middle_emulation enabled
-#   }
-#
-# You can get the names of your inputs by running: swaymsg -t get_inputs
-# Read `man 5 sway-input` for more information about this section.
-
+### Startup apps
 exec alacritty
 exec emacsclient -c -a=""
 exec discord
 exec steam
 exec firefox
-exec --no-startup-id xrandr --output WAYLAND0 --primary
 
 ### Key bindings
     bindsym $mod+Return exec $term
@@ -50,15 +33,15 @@ exec --no-startup-id xrandr --output WAYLAND0 --primary
     floating_modifier $mod normal
     bindsym $mod+Shift+c reload
     bindsym $mod+Shift+e exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -B 'Yes, exit sway' 'swaymsg exit'
-    bindsym XF86AudioRaiseVolume exec --no-startup-id amixer -M set Master 5%+ && $refresh_i3status
-    bindsym XF86AudioLowerVolume exec --no-startup-id amixer -M set Master 5%- && $refresh_i3status
-    bindsym XF86AudioMute exec --no-startup-id amixer -M set Master toggle && $refresh_i3status
-    bindsym XF86AudioMicMute exec --no-startup-id amixer -M set Capture toggle && $refresh_i3status
+    bindsym XF86AudioRaiseVolume exec amixer -M set Master 5%+ && $refresh_i3status
+    bindsym XF86AudioLowerVolume exec amixer -M set Master 5%- && $refresh_i3status
+    bindsym XF86AudioMute exec amixer -M set Master toggle && $refresh_i3status
+    bindsym XF86AudioMicMute exec amixer -M set Capture toggle && $refresh_i3status
     bindsym XF86AudioPlay exec playerctl play-pause
     bindsym XF86AudioNext exec playerctl next
     bindsym XF86AudioPrev exec playerctl previous
-    bindsym XF86MonBrightnessUp exec --no-startup-id xbacklight -inc 10
-    bindsym XF86MonBrightnessDown exec --no-startup-id xbacklight -dec 10
+    bindsym XF86MonBrightnessUp exec xbacklight -inc 10
+    bindsym XF86MonBrightnessDown exec xbacklight -dec 10
 
 # Moving around:
 #
@@ -79,6 +62,9 @@ exec --no-startup-id xrandr --output WAYLAND0 --primary
     bindsym $mod+Shift+Down move down
     bindsym $mod+Shift+Up move up
     bindsym $mod+Shift+Right move right
+
+    bindsym $mod+P focus DP-1
+    bindsym $mod+O focus HDMI-A-1
 #
 # Workspaces:
 #
@@ -177,10 +163,11 @@ bar {
     swaybar_command waybar
 }
 
-bindsym Print exec selection=$(hacksaw -f "-i %i -g %g") && shotgun $selection - | xclip -t 'image/png' -selection clipboard && notify-send "Screenshot taken"
+bindsym Print exec grim -g "$(slurp)" - | wl-copy && notify-send "Screenshot taken"
 
 for_window [app_id=".*"] border pixel 1
 for_window [app_id=".*"] inhibit_idle fullscreen
+for_window [class=".*"] inhibit_idle fullscreen
 for_window [window_role="pop-up"] floating enable
 for_window [window_role="task_dialog"] floating enable
 

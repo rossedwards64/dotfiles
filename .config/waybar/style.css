@@ -1,7 +1,7 @@
 * {
     border: none;
     border-radius: 0;
-    font-family: "Iosevka", "Iosevka Nerd Font";
+    font-family: "Iosevka Nerd Font";
     font-size: 13px;
     min-height: 0;
 }
@@ -75,7 +75,7 @@ window#waybar.empty {
 #custom-gpu_percent,
 #custom-gpu_mem,
 #spotify,
-#pacman {
+#custom-pacman {
     padding: 0 6px;
     margin: 0 0px;
     color: #ffffff;

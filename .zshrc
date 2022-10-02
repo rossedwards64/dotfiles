@@ -36,7 +36,7 @@ export ZSH="$HOME/.oh-my-zsh"
 
 # Uncomment one of the following lines to change the auto-update behavior
 # zstyle ':omz:update' mode disabled  # disable automatic updates
-# zstyle ':omz:update' mode auto      # update automatically without asking
+zstyle ':omz:update' mode auto      # update automatically without asking
 # zstyle ':omz:update' mode reminder  # just remind me to update when it's time
 
 # Uncomment the following line to change how often to auto-update (in days).
@@ -114,6 +114,17 @@ export XCURSOR_SIZE=24
 export SDL_VIDEODRIVER=wayland
 export MOZ_ENABLE_WAYLAND=1
 export GTK_THEME=Catpuccin-blue:dark
+export CMAKE_GENERATOR=Ninja
+
+setopt NO_CASE_GLOB
+setopt AUTO_CD
+setopt SHARE_HISTORY
+setopt APPEND_HISTORY
+setopt INC_APPEND_HISTORY
+setopt HIST_EXPIRE_DUPS_FIRST
+setopt HIST_IGNORE_DUPS
+setopt HIST_FIND_NO_DUPS
+setopt HIST_REDUCE_BLANKS
 
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
@@ -126,16 +137,16 @@ export GTK_THEME=Catpuccin-blue:dark
 alias zshconfig="emacsclient --create-frame --alternate-editor='' ~/.zshrc"
 alias ohmyzsh="emacsclient --create-frame --alternate-editor='' ~/.oh-my-zsh"
 alias vim="nvim"
-alias mv="mv -i"
-alias cp="cp -i"
-alias rm="rm -i"
+alias mv="mv -iv"
+alias cp="cp -iv"
+alias rm="rm -iv"
 alias ls="exa"
 alias la="exa -ah"
 alias l="exa -lha"
 alias cat="bat"
 alias cd="z"
-alias ..="z .."
 alias du="dust -Hr"
+alias clear="stty sane && clear"
 alias cleanup="sudo pacman -Rns $(pacman -Qtdq)"
 alias gpumanual="echo 1 | sudo tee -a /sys/class/drm/card0/device/hwmon/[[:print:]]*/pwm1_enable"
 alias gpuauto="echo 2 | sudo tee -a /sys/class/drm/card0/device/hwmon/[[:print:]]*/pwm1_enable"

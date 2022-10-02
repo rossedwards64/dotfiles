@@ -5,4 +5,3 @@
 (package! tree-sitter)
 (package! dired-single)
 (package! wakatime-mode)
-(unpin! dirvish)
