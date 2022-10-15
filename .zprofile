@@ -2,6 +2,6 @@
 #      exec startx
 #fi      
 
-# [ "$(tty)" = "/dev/tty1" ] && exec sway && exec xrandr --output WAYLAND0 --primary
+[ "$(tty)" = "/dev/tty1" ] && exec sway && exec xrandr --output WAYLAND0 --primary
 
-[ "$(tty)" = "/dev/tty1" ] && exec /home/ross/.local/bin/wrappedHl
+# [ "$(tty)" = "/dev/tty1" ] && exec /home/ross/.local/bin/wrappedHl

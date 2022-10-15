@@ -1,6 +1,7 @@
 #!/usr/bin/env sh
 
 swaylock \
+  --daemonize \
   --hide-keyboard-layout \
 	--indicator-radius 100 \
 	--indicator-thickness 7 \
