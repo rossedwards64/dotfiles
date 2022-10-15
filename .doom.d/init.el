@@ -21,8 +21,8 @@
 
        :completion
        (company +childframe)           ; the ultimate code completion backend
-       ;;(ivy +childframe +fuzzy +icons +prescient)               ; a search engine for love and life
-       ;;(helm +childframe +fuzzy +icons)              ; the *other* search engine for love and life
+       ;;(ivy +fuzzy +icons +prescient)               ; a search engine for love and life
+       ;;(helm +fuzzy +icons)              ; the *other* search engine for love and life
        ;;ido               ; the other *other* search engine...
        (vertico +icons)           ; the search engine of the future
 
@@ -53,6 +53,7 @@
 
        :editor
        (evil +everywhere); come to the dark side, we have cookies
+       ;;(meow +qwerty +override +keypad)
        file-templates    ; auto-snippets for empty files
        fold              ; (nigh) universal code folding
        format  ; automated prettiness

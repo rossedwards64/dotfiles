@@ -95,6 +95,10 @@
       lsp-ui-imenu-enable t
       lsp-ui-imenu-auto-refresh t)
 
+(setq doom-localleader-alt-key "C-l")
+(map! :map meow-leader-keymap
+      "l" #'meow-keypad-start)
+
 (map! :leader
       :desc "Switch from header file to source file, or vice versa."
       "z" #'lsp-clangd-find-other-file)
@@ -237,5 +241,4 @@
      (set-frame-position frame
                    (+ x (/ width 2) (- (/ width 2)))
                    (+ y (/ height 2))))))
-
 #+END_SRC

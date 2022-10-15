@@ -1,6 +1,7 @@
 #!/usr/bin/env sh
 
 swaylock \
+  --daemonize \
   --hide-keyboard-layout \
 	--indicator-radius 100 \
 	--indicator-thickness 7 \
@@ -24,8 +25,7 @@ swaylock \
 	--color 00000000 \
 	--clock \
 	--indicator \
-	--grace 2 \
 	--fade-in 0.2 \
 	--effect-blur 7x5 \
 	--screenshots \
-	--effect-vignette 0.5:0.5 \
+	--effect-vignette 0.5:0.5

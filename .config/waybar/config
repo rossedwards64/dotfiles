@@ -35,7 +35,7 @@
             "on-click": "swaymsg kill"
         },
         "custom/launcher": {
-            "format": " ",
+            "format": "",
             "on-click": "$HOME/.config/polybar/forest/scripts/launcher.sh &"
         },
         "clock": {
@@ -92,7 +92,7 @@
         "network#wifi": {
             "interface": "wlan0",
             "format-ethernet": "",
-            "format-wifi": "  {essid} ({signalStrength}%)",
+            "format-wifi": " {essid} ({signalStrength}%)",
             "format-linked": "",
             "format-disconnected": "",
             "tooltip-format": "{ifname}: {ipaddr}/{cidr}",
@@ -113,13 +113,13 @@
         },
         "custom/poweroff": {
             "tooltip": false,
-            "format": " ",
+            "format": "",
             "on-click": "bash $HOME/.config/waybar/modules/poweroff.sh"
         },
         "custom/mail": {
             "tooltip": false,
             "exec": "sh $HOME/.config/waybar/modules/mail.sh",
-            "interval": 120,
+            "interval": 3600,
             "on-click": "thunderbird && swaymsg '[app_id=thunderbird] focus'"
         },
         "custom/sep": {
@@ -128,8 +128,8 @@
             "tooltip": false
         },
         "custom/pacman": {
-            "format": "  {}",
-            "interval": 1,
+            "format": " {}",
+            "interval": 600,
             "exec": "checkupdates | wc -l",
             "exec-if": "exit 0",
             "on-click": "alacritty -e 'sudo pacman -Syu'; pkill -SIGRTMIN+8 waybar",
@@ -248,7 +248,7 @@
             "format-charging": " {capacity}% [{time}]",
             "format-plugged": " {capacity}% [{time}]",
             "format-empty": "Empty",
-            "format-full": "Full [{time}]",
+            "format-full": "Full",
             "format-icons": [
                 "",
                 "",
