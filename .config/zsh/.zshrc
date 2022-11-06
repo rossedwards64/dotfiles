@@ -4,15 +4,11 @@ export PATH=$HOME/.local/bin:$PATH
 export PATH="$HOME/.emacs.d/bin:$PATH"
 export PATH="$HOME/bin:$PATH"
 export PATH="$HOME/.dotfiles/.bin:$PATH"
-export DOOMDIR="$HOME/.doom.d"
 
 source ~/.local/bin
 source ~/.emacs.d/bin
 source ~/bin
 source ~/.dotfiles/.bin
-
-# Path to your oh-my-zsh installation.
-export ZSH="$HOME/.oh-my-zsh"
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
@@ -109,7 +105,6 @@ export VISUAL="emacsclient -c -a emacs"
 export TERM="alacritty"
 export HISTCONTROL=ignoreboth
 
-
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
 
@@ -133,12 +128,14 @@ alias cat="bat"
 alias ..="cd .."
 alias clear="clear && stty sane"
 alias cleanup="sudo pacman -Rns $(pacman -Qtdq)"
+alias wget=wget --hsts-file="$XDG_DATA_HOME"/wget-hsts
 
 zstyle ':completion:*' completer _expand _complete _ignored _approximate
+zstyle ':completion:*' cache-path $XDG_CACHE_HOME/zsh/zcompcache
 zstyle :compinstall filename '/home/ross/.zshrc'
 
 autoload -Uz compinit
-compinit
+compinit -d "$XDG_CACHE_HOME"/zsh/zcompdump-"$ZSH_VERSION"
 
 prompt_context() {
     emojis=("⚡" "🔥" "💀" "👑" "😎" "🐸" "🐵" "🌈" "🍻" "🚀" "💡" "🎉" "🔑" "💣" "🚦" "🌙")
@@ -155,6 +152,7 @@ export PNPM_HOME="/home/ross/.local/share/pnpm"
 export PATH="$PNPM_HOME:$PATH"
 # pnpm end
 
+eval "$(antidot init)"
 eval "$(zoxide init zsh)"
 eval "$(starship init zsh)"
 

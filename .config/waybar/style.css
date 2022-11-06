@@ -72,8 +72,7 @@ window#waybar.empty {
 #temperature,
 #tray,
 #custom-fan_speed,
-#custom-pacman,
-#hyprland-window {
+#custom-pacman {
     padding: 0 6px;
     margin: 0 0px;
     color: #ffffff;
@@ -118,12 +117,9 @@ window#waybar.empty {
 #custom-launcher {
     color: #1794D2;
     font-size: 18px;
-    padding: 0 0px 2px 6px;
-    margin: 0 0px;
+    margin: 0 5px;
 }
 
-#gamemode {
-    font-size: 18px;
-    padding: 0 0px 2px 6px;
-    margin: 0 0px;
+#custom-poweroff {
+    margin: 0 5px 0 0;
 }

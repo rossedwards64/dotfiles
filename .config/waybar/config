@@ -82,7 +82,7 @@
         },
         "network#ethernet": {
             "interface": "enp*",
-            "format-ethernet": "",
+            "format-ethernet": "{ifname} 🖧",
             "format-wifi": "",
             "format-linked": "",
             "format-disconnected": "",
@@ -248,7 +248,7 @@
             "format-charging": " {capacity}% [{time}]",
             "format-plugged": " {capacity}% [{time}]",
             "format-empty": "Empty",
-            "format-full": "Full",
+            "format-full": "Full [{time}]",
             "format-icons": [
                 "",
                 "",
