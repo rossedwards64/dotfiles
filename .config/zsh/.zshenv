@@ -9,6 +9,7 @@ export LESSHISTFILE=-
 export CALCHISTFILE=-
 
 export ZSH="$XDG_DATA_HOME/oh-my-zsh"
+export EMACSDIR="$XDG_CONFIG_HOME/emacs"
 export DOOMDIR="$XDG_CONFIG_HOME/doom"
 export PASSWORD_STORE_DIR="$XDG_DATA_HOME/pass"
 export XINITRC="$XDG_CONFIG_HOME/X11/xinitrc"
@@ -26,4 +27,4 @@ export RUSTUP_HOME="$XDG_DATA_HOME/rustup"
 export LEIN_HOME="$XDG_DATA_HOME/lein"
 export GDBHISTFILE="$XDG_DATA_HOME/gdb/history"
 export WAKATIME_HOME="$XDG_CONFIG_HOME/wakatime"
-export WGETRC="$XDG_CONFIG_HOME/wgetrc"
+export WGETRC="$XDG_CONFIG_HOME/wget/wgetrc"

@@ -7,7 +7,7 @@ set $term alacritty
 set $menu --no-startup-id $HOME/.config/polybar/forest/scripts/launcher.sh
 set $opacity 0.9
 
-font pango:"Iosevka Nerd Font" 10
+font pango:Iosevka 10
 
 output * bg /home/ross/Pictures/wallpapers/lordgenome.png fill
 
@@ -178,6 +178,8 @@ bar {
 
 bindsym Print exec "/home/ross/.local/bin/screenshot.sh"
 bindsym Print+Shift exec "/home/ross/.local/bin/screenshot.sh" "/home/ross/Pictures/screenshots"
+
+title_align center
 
 for_window [app_id=".*"] border pixel 1
 for_window [app_id=".*"] inhibit_idle fullscreen
