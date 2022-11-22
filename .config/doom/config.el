@@ -1,4 +1,3 @@
-#+BEGIN_SRC emacs lisp
 ;;; $DOOMDIR/config.org -*- lexical-binding: t; -*-
 
 ;; login
@@ -8,8 +7,8 @@
 ;; window setup
 (add-to-list 'default-frame-alist '(inhibit-double-buffering . t))
 (add-to-list 'initial-frame-alist '(fullscreen . maximized))
-(set-frame-parameter (selected-frame) 'alpha 95)
-(add-to-list 'default-frame-alist '(alpha . 95))
+(set-frame-parameter (selected-frame) 'alpha 99)
+(add-to-list 'default-frame-alist '(alpha . 99))
 
 (setq evil-split-window-below t
       evil-vsplit-window-right t
@@ -29,9 +28,9 @@
   (doom-themes-org-config))
 
 ;; fonts
-(setq doom-font (font-spec :family "Iosevka" :size 14 :weight 'semibold)
-      doom-variable-pitch-font (font-spec :family "Iosevka" :size 14 :weight 'regular)
-      doom-big-font (font-spec :family "Iosevka" :size 24 :weight 'semibold)
+(setq doom-font (font-spec :family "Iosevka Nerd Font" :size 16 :weight 'semibold)
+      doom-variable-pitch-font (font-spec :family "Iosevka Nerd Font" :size 14 :weight 'regular)
+      doom-big-font (font-spec :family "Iosevka Nerd Font" :size 24 :weight 'semibold)
       doom-unicode-font doom-font)
 (after! doom-themes
   (setq doom-themes-enable-bold t
@@ -41,7 +40,7 @@
   '(font-lock-keyword-face :slant italic))
 
 ;; dashboard
-(setq fancy-splash-image (concat doom-private-dir "logos/nerv.png"))
+(setq fancy-splash-image (concat doom-user-dir "logos/nerv.png"))
 
 (custom-set-faces!
   '(doom-dashboard-banner :foreground "#8a0000" :weight bold)
@@ -55,15 +54,25 @@
            (insert "\n" (+doom-dashboard--center +doom-dashboard--width "They should make Worm Emacs.")))
 
 ;; enable modes
-(display-time-mode 1)
-(solaire-global-mode 1)
-(global-auto-revert-mode 1)
-(which-function-mode 1)
-(cursor-sensor-mode 1)
-(elcord-mode 1)
+(display-time-mode t)
+(solaire-global-mode t)
+(global-auto-revert-mode t)
+(which-function-mode t)
+(cursor-sensor-mode t)
+(elcord-mode t)
 (after! elcord
   elcord-use-major-mode-as-main-icon t)
 (global-wakatime-mode t)
+(pixel-scroll-precision-mode t)
+
+(add-to-list 'load-path "~/.config/emacs/.local/straight/build-29.0.50/sly")
+(require 'sly-autoloads)
+(setq inferior-lisp-program "/usr/bin/sbcl")
+
+(setq dired-listing-switches "-alhx --group-directories-first"
+      ranger-listing-switches "-alhx --group-directories-first"
+      dired-hide-details-hide-information-lines t
+      dired-hide-details-hide-symlink-targets t)
 
 ;; ssh
 (setq tramp-default-method "ssh")
@@ -85,6 +94,9 @@
 (add-hook! '(c-mode-hook c++-mode-hook)
            #'(lambda ()
                (set (make-local-variable 'compile-command) (format "make -C %s -k" (substring (get-closest-pathname) 0 -8)))))
+(add-hook! '(rust-mode-hook)
+           #'(lambda ()
+               (set (make-local-variable 'compile-command) (format "rustc %s" (substring (get-closest-pathname) 0 -8)))))
 
 (add-to-list 'auto-mode-alist '("config.org" . emacs-lisp-mode))
 
@@ -110,6 +122,10 @@
 (map! :leader
       :desc "Search for a given word in the project."
       "l" #'consult-ripgrep)
+
+(map! :leader
+      :desc "Search for a file in the project."
+      "k" #'project-find-file)
 
 ;; org
 (setq org-directory "~/Documents/org/"
@@ -245,5 +261,3 @@
      (set-frame-position frame
                    (+ x (/ width 2) (- (/ width 2)))
                    (+ y (/ height 2))))))
-
-#+END_SRC

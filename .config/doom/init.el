@@ -11,8 +11,7 @@
 ;;      'C-c c k' for non-vim users) to view its documentation. This works on
 ;;      flags as well (those symbols that start with a plus).
 ;;
-;;      Alternatively, press 'gd' (or 'C-c c d') on a module to browse its
-;;      directory (for easy access to its source code).
+;;      Alternatively, press 'gd' (or 'C-c c d') on a module to browse its directory (for easy access to its source code).
 
 (doom! :input
        ;;chinese
@@ -116,7 +115,7 @@
        ;;(beancount +lsp)         ; mind the GAAP
        (cc +lsp)         ; C > C++ == 1
        (clojure +lsp)           ; java with a lisp
-       ;;common-lisp       ; if you've seen one lisp, you've seen them all
+       common-lisp       ; if you've seen one lisp, you've seen them all
        ;;coq               ; proofs-as-programs
        ;;crystal           ; ruby at the speed of c
        ;;(csharp +lsp +unity)            ; unity, .NET, and mono shenanigans

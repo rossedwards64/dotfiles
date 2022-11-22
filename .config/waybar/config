@@ -2,7 +2,8 @@
   {
     "name": "topbar1",
     "layer": "top",
-    "position": "top", "height": 30,
+    "position": "top",
+    "height": 30,
     "output": "HDMI-A-1",
     "modules-left": [
       "custom/launcher",
@@ -226,13 +227,13 @@
       "interval": 1
     },
     "disk#root": {
-      "format": " /: {used} / {total}",
+      "format": " ROOT: {used} / {total}",
       "tooltip-format": "{used} / {total} used",
       "path": "/",
       "interval": 300
     },
     "disk#ssd": {
-      "format": " /home/ross/SSD: {used} / {total}",
+      "format": " SSD: {used} / {total}",
       "tooltip-format": "{used} / {total} used",
       "path": "/home/ross/SSD",
       "interval": 300
@@ -355,13 +356,12 @@
     "height": 30,
     "modules-left": [
       "tray",
+      "gamemode",
       "custom/sep",
       "backlight",
       "pulseaudio",
-      "idle-inhibitor",
+      "idle_inhibitor",
       "custom/sep",
-      "gamemode",
-      "idle_inhibitor"
     ],
     "modules-center": [
       "wlr/taskbar"

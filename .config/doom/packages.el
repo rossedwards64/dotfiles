@@ -5,3 +5,4 @@
 (package! tree-sitter)
 (package! dired-single)
 (package! wakatime-mode)
+(package! sly)
