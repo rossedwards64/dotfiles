@@ -1,7 +1,8 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; $DOOMDIR/packages.el
 
-;; (package! elcord)
+(package! straight :pin "3eca39d")
+(package! elcord)
 (package! tree-sitter)
 (package! dired-single)
 (package! wakatime-mode)

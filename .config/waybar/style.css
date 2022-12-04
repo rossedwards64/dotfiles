@@ -4,7 +4,7 @@
     font-family: "Iosevka Nerd Font";
     font-size: 13px;
     font-weight: normal;
-    min-height: 0;
+    min-height: 24px;
 }
 
 window#waybar {
@@ -117,7 +117,7 @@ window#waybar.empty {
 #custom-launcher {
     color: #1794D2;
     font-size: 18px;
-    margin: 0 5px;
+    padding: 0 0 0 5px;
 }
 
 #custom-poweroff {

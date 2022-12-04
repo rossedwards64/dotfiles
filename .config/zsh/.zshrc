@@ -19,12 +19,12 @@ plugins=(
 
 source $ZSH/oh-my-zsh.sh
 # export MANPATH="/usr/local/man:$MANPATH"
- export LANG=en_GB.UTF-8
- if [[ -n $SSH_CONNECTION ]]; then
-   export EDITOR='vim'
- else
-   export EDITOR='nvim'
- fi
+export LANG=en_GB.UTF-8
+if [[ -n $SSH_CONNECTION ]]; then
+    export EDITOR='vim'
+else
+    export EDITOR='nvim'
+fi
 
 export ALTERNATE_EDITOR=""
 export VISUAL="emacsclient -c -a emacs"
@@ -51,9 +51,9 @@ setopt HIST_REDUCE_BLANKS
 alias zshconfig="emacsclient --create-frame --alternate-editor='' ~/.config/zsh/.zshrc"
 alias ohmyzsh="emacsclient --create-frame --alternate-editor='' ~/.local/share/oh-my-zsh"
 alias vim="nvim"
-alias mv="mv -i"
-alias cp="cp -i"
-alias rm="rm -i"
+alias mv="mv -iv"
+alias cp="cp -iv"
+alias rm="rm -iv"
 alias ls="exa"
 alias la="exa -ah"
 alias l="exa -lah"
@@ -88,11 +88,11 @@ neofetch
 eval "$(antidot init)"
 eval "$(zoxide init zsh)"
 
-if [[ ! $TERM == "dumb" ]]; then
+if [[ $TERM == "dumb" ]] || [[ $TERM == "tramp" ]]; then
+    unsetopt zle;
+    PS1='$ '
+else
     if [ -x "$(command -v starship)" ]; then
         eval "$(starship init zsh)"
     fi
-else
-    unsetopt zle;
-    PS1='$ '
 fi
