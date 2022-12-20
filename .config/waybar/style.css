@@ -5,6 +5,7 @@
     font-size: 13px;
     font-weight: normal;
     min-height: 24px;
+    color: #ffffff;
 }
 
 window#waybar {
@@ -27,9 +28,8 @@ window#waybar.empty {
 }
 
 #workspaces button {
-    padding: 0 5px;
+    padding: 0 5px 0 5px;
     background-color: transparent;
-    color: #ffffff;
 }
 
 #workspaces button:hover {
@@ -75,7 +75,6 @@ window#waybar.empty {
 #custom-pacman {
     padding: 0 6px;
     margin: 0 0px;
-    color: #ffffff;
 }
 
 @keyframes blink {
@@ -87,7 +86,6 @@ window#waybar.empty {
 
 #battery.bat1.critical:not(.charging) {
     background-color: #f53c3c;
-    color: #ffffff;
     animation-name: blink;
     animation-duration: 0.5s;
     animation-timing-function: linear;

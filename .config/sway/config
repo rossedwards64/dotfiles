@@ -17,7 +17,7 @@ output * bg /home/ross/Pictures/wallpapers/lordgenome.png fill
 
 exec alacritty
 exec emacsclient -c -a=""
-exec webcord
+exec discord
 exec steam
 exec firefox
 exec autotiling -w 1 2 4 5 7 8 9 10
@@ -31,6 +31,7 @@ exec swayidle -w \
 ### Input configuration
 input "1:1:AT_Translated_Set_2_keyboard" {
       xkb_layout gb
+      xkb_options ctrl:nocaps
 }
 
 input "2:7:SynPS/2_Synaptics_TouchPad" {
@@ -122,7 +123,7 @@ workspace_auto_back_and_forth yes
 assign [app_id="emacs"] $ide
 assign [app_id="Alacritty"] $term
 assign [class="firefox" instance="Navigator"] $web
-assign [class="WebCord" instance="webcord"] $discord
+assign [class="Discord" instance="discord"] $discord
 assign [class="spotify" instance="Spotify"] $music
 assign [class="Steam" instance="Steam"] $steam
 assign [class="steam_app_*" instance="steam_app_*"] $game

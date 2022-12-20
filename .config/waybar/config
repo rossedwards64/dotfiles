@@ -241,7 +241,7 @@
             "states": {
                 "full": 100,
                 "good": 99,
-                "empty": 5
+                "empty": 15
             },
             "format-time": "{H}:{M}",
             "format": "{icon}  {capacity}% [{time}]",
