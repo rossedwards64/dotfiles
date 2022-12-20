@@ -34,7 +34,7 @@
       "on-click": "swaymsg kill"
     },
     "custom/launcher": {
-      "format": " ",
+      "format": "",
       "on-click": "$HOME/.config/polybar/forest/scripts/launcher.sh &"
     },
     "clock": {
@@ -212,7 +212,7 @@
       "on-click": "swaymsg kill"
     },
     "custom/launcher": {
-      "format": " ",
+      "format": "",
       "on-click": "$HOME/.config/polybar/forest/scripts/launcher.sh &"
     },
     "clock": {

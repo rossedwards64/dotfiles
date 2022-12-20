@@ -4,7 +4,6 @@ export PATH="$HOME/bin:/usr/local/bin:$HOME/.local/bin:$HOME/.config/emacs/bin:$
 # HYPHEN_INSENSITIVE="true"
 zstyle ':omz:update' mode auto      # update automatically without asking
 # zstyle ':omz:update' mode reminder  # just remind me to update when it's time
-# zstyle ':omz:update' frequency 13
 ENABLE_CORRECTION="true"
 COMPLETION_WAITING_DOTS="true"
 # DISABLE_UNTRACKED_FILES_DIRTY="true"
@@ -21,7 +20,7 @@ plugins=(
 source $ZSH/oh-my-zsh.sh
 
 # export MANPATH="/usr/local/man:$MANPATH"
-# export LANG=en_US.UTF-8
+export LANG=en_GB.UTF-8
 if [[ -n $SSH_CONNECTION ]]; then
   export EDITOR='vim'
 else
@@ -63,6 +62,7 @@ alias cd="z"
 alias cat="bat"
 alias ..="cd .."
 alias du="dust -Hr"
+alias find="fd -u"
 alias stow="stow -v"
 alias reset-zsh="source ~/.config/zsh/.zshrc"
 alias clear="clear && stty sane"
@@ -87,19 +87,14 @@ prompt_context() {
     fi
 }
 
-neofetch
-
 eval "$(antidot init)"
 eval "$(zoxide init zsh)"
 
-if [ -x "$(command -v starship)" ]; then
-    eval "$(starship init zsh)"
-fi
-if [[ ! $TERM == "dumb" ]]; then
+if [[ $TERM == "dumb" ]] || [[ $TERM == "tramp" ]]; then
+    unsetopt zle;
+    PS1='$ '
+else
     if [ -x "$(command -v starship)" ]; then
         eval "$(starship init zsh)"
     fi
-else
-    unsetopt zle;
-    PS1='$ '
 fi
