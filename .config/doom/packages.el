@@ -9,4 +9,4 @@
 (package! sly)
 (package! dashboard)
 (package! page-break-lines)
-(package! slime)
+(package! autothemer)
