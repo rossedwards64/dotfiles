@@ -1,55 +1,90 @@
+emacs lisp mode is surprisingly a lot better than org mode for editing emacs lisp
 #+BEGIN_SRC emacs lisp
 ;;; $DOOMDIR/config.org -*- lexical-binding: t; -*-
-
-;; go into elisp mode for syntax highlighting
 (add-to-list 'auto-mode-alist '("config.org" . emacs-lisp-mode))
+#+END_SRC
 
-;; window setup
+set some window configurations, load commands such as my gpu fan script
+#+BEGIN_SRC emacs lisp
 (add-to-list 'default-frame-alist '(inhibit-double-buffering . t))
 (set-frame-parameter (selected-frame) 'alpha-background 0.9)
 
 (add-to-list 'exec-path "~/bin")
 (add-to-list 'load-path "~/.config/emacs/.local/straight/build-29.0.50/sly")
 
+(require 'sly-autoloads)
+(eval-when-compile
+  (require 'cl))
 (setq-default window-combination-resize t
               x-stretch-cursor t)
+#+END_SRC
 
+i find emacs dashboard much easier to customise than the doom dashboard
+#+BEGIN_SRC emacs lisp
 (use-package! dashboard
   :init
   (setq dashboard-set-heading-icons t
         dashboard-set-file-icons t
-        dashboard-banner-logo-title "Welcome to Worm Emacs"
-        dashboard-banner-logo-png (concat doom-user-dir "logos/nerv.png")
+        dashboard-set-init-info t
+        dashboard-image-banner-max-height 250
+        dashboard-image-banner-max-width 250
+        dashboard-banner-logo-title "[ ΩΟΡΜ ΕΔΙΤΙΟΝ ]"
+        dashboard-startup-banner (concat doom-user-dir "logos/nerv.png")
         dashboard-center-content t
-        dashboard-items '((recents . 3)
-                          (projects . 3)
-                          (bookmarks . 3)
-                          (agenda . 3)
-                          (registers . 3))
         dashboard-set-navigator t
         dashboard-projects-switch-function 'projectile-switch-project
         dashboard-projects-backend 'projectile
+        dashboard-items '((recents . 3)
+                          (projects . 3)
+                          (agenda . 3))
         dashboard-footer-icon (all-the-icons-fileicon "gentoo"
                                                       :height 1.1
                                                       :v-adjust -0.05
                                                       :face 'font-lock-keyword-face)
-        dashboard-navigator-buttons `(((,(all-the-icons-octicon "octoface" :height 1.1 :v-adjust 0.0)
+        dashboard-navigator-buttons `(;; line 1
+                                      ((,(all-the-icons-octicon "octoface" :height 1.1 :v-adjust 0.0)
                                         "[ GitHub ]"
                                         "Browse GitHub profile"
                                         (lambda (&rest _) (browse-url "https://github.com/rossedwards64/dotfiles")) nil "" " |")
                                        (,(all-the-icons-faicon "refresh" :height 1.1 :v-adjust 0.0)
                                         "[ Update ]"
                                         "Update Worm Emacs"
-                                        (lambda (&rest _) (doom/upgrade)) warning "" ""))))
+                                        (lambda (&rest _) (doom/upgrade)) warning "" ""))
+                                      ;; line 2
+                                      (("" "\n" "" nil nil "" ""))
+                                      ;; line 3
+                                      ((,(all-the-icons-octicon "search" :height 0.9 :v-adjust -0.1)
+                                        " Find file" nil
+                                        (lambda (&rest _) (find-file)) nil "" "           SPC f f"))
+                                      ((,(all-the-icons-faicon "code" :height 1.0 :v-adjust -0.1)
+                                        " Open project" nil
+                                        (lambda (&rest _) (projectile-switch-project)) nil "" "        SPC p p"))
+                                      ((,(all-the-icons-octicon "book" :height 1.1 :v-adjust -0.1)
+                                        " Org Agenda" nil
+                                        (lambda (&rest _) (dired)) nil "" "           SPC o A"))
+                                      ((,(all-the-icons-faicon "cogs" :height 0.9 :v-adjust -0.1)
+                                        " Open settings" nil
+                                        (lambda (&rest _) (doom/open-private-config)) nil "" "          SPC f P  "))))
 
-  :config
-  (dashboard-setup-startup-hook)
-  (dashboard-modify-heading-icons '((recents . "file-text")
-                                    (bookmarks . "book")))
-  (custom-set-faces! '(dashboard-banner-logo-title :inherit (font-lock-function-name-face bold)))
-  (setq initial-buffer-choice #'doom-fallback-buffer
-        doom-fallback-buffer-name "*dashboard*"))
+  (map! :leader
+        :desc "Go back to the dashboard"
+        "d" #'(lambda ()
+                (interactive)
+                (with-selected-frame (selected-frame)
+                  (switch-to-buffer (doom-fallback-buffer))
+                  (dashboard-refresh-buffer)))))
 
+:config
+(dashboard-setup-startup-hook)
+(dashboard-modify-heading-icons '((recents . "file-text")
+                                  (bookmarks . "book")))
+(custom-set-faces! '(dashboard-banner-logo-title :inherit (font-lock-function-name-face bold)))
+(setq initial-buffer-choice #'doom-fallback-buffer
+      doom-fallback-buffer-name "*dashboard*")
+#+END_SRC
+
+set all the variables
+#+BEGIN_SRC emacs lisp
 (setq user-full-name "Ross Edwards"
       user-mail-address "redwards64@hotmail.com"
       doom-theme 'doom-ayu-mirage
@@ -68,16 +103,7 @@
       doom-modeline-display-default-persp-name t
       doom-modeline-unicode-fallback t
       doom-ayu-mirage-brighter-comments t
-      lsp-ui-doc-enable t
-      lsp-ui-doc-show-with-cursor t
-      lsp-ui-doc-show-with-mouse t
-      lsp-headerline-breadcrumb-enable t
-      lsp-ui-sideline-enable t
-      lsp-ui-sideline-show-code-actions t
-      lsp-ui-sideline-show-hover t
-      lsp-ui-peek-enable t
-      lsp-ui-imenu-enable t
-      lsp-ui-imenu-auto-refresh t
+      treesit-extra-load-path '("/usr/lib/tree-sitter/lib")
       evil-split-window-below t
       evil-vsplit-window-right t
       display-line-numbers-type 'relative
@@ -102,8 +128,10 @@
       cider-completion-annotations-include-ns 'always
       tree-sitter-hl-mode t
       doom-localleader-alt-key "C-l")
+#+END_SRC
 
-;; enable modes
+enable some fun little modes
+#+BEGIN_SRC emacs lisp
 (display-time-mode t)
 (solaire-global-mode t)
 (global-auto-revert-mode t)
@@ -114,7 +142,18 @@
 (pixel-scroll-precision-mode t)
 (vertico-grid-mode t)
 (vertico-indexed-mode t)
+#+END_SRC
 
+use tree-sitter modes instead
+#+BEGIN_SRC emacs lisp
+(push '(c-mode . c-ts-mode) major-mode-remap-alist)
+(push '(c++-mode . c++-ts-mode) major-mode-remap-alist)
+(push '(css-mode . css-ts-mode) major-mode-remap-alist)
+(push '(js-json-mode . json-ts-mode) major-mode-remap-alist)
+#+END_SRC
+
+set up some functionality after packages have loaded
+#+BEGIN_SRC emacs lisp
 ;;; :app everywhere
 (after! emacs-everywhere
   (setq emacs-everywhere-frame-name-format "emacs-anywhere")
@@ -141,36 +180,79 @@
     '(misc-info minor-modes checker input-method buffer-encoding major-mode process vcs " ")))
 
 (after! elcord
-  elcord-use-major-mode-as-main-icon t)
+  (setq elcord-use-major-mode-as-main-icon t))
 
+(after! lsp-mode
+  (setq lsp-ui-doc-enable t
+        lsp-ui-doc-show-with-cursor t
+        lsp-ui-doc-show-with-mouse t
+        lsp-headerline-breadcrumb-enable t
+        lsp-ui-sideline-enable t
+        lsp-ui-sideline-show-code-actions t
+        lsp-ui-sideline-show-hover t
+        lsp-ui-peek-enable t
+        lsp-ui-imenu-enable t
+        lsp-ui-imenu-auto-refresh t)
+  (add-to-list 'lsp-language-id-configuration '(c-ts-mode . "c"))
+  (add-to-list 'lsp-language-id-configuration '(c++-ts-mode . "cpp"))
+  (add-to-list 'lsp-language-id-configuration '(css-ts-mode . "css"))
+  (add-to-list 'lsp-language-id-configuration '(js-json-mode . "json"))
+  (add-hook! '(rust-mode-hook rustic-mode-hook rust-ts-mode-hook)
+             #'(lambda ()
+                 (set (make-local-variable 'compile-command) "cargo build")
+                 (lsp-rust-analyzer-inlay-hints-mode t)))
+  (add-hook! '(c-mode-hook c-ts-mode-hook c++-mode-hook c++-ts-mode-hook)
+             #'(lambda ()
+                (map! :leader
+                        :desc "Switch from header file to source file, or vice versa"
+                        "z" #'lsp-clangd-find-other-file))))
+#+END_SRC
+
+
+set up programming language specific functionality
+#+BEGIN_SRC emacs lisp
 (add-hook! '(c-mode-hook c++-mode-hook makefile-mode-hook makefile-gmake-mode-hook)
            #'(lambda ()
                (set (make-local-variable 'compile-command) (format "make -C %s -k" (substring (get-closest-pathname) 0 -8)))))
-(add-hook! '(rust-mode-hook)
+(add-hook! '(rust-mode-hook rust-ts-mode-hook rustic-mode-hook)
            #'(lambda ()
-               (set (make-local-variable 'compile-command) "cargo build")
+               (set (make-local-variable 'compile-command) "cargo build --verbose")
                (lsp-rust-analyzer-inlay-hints-mode t)))
 (add-hook! 'tree-sitter-after-on-hook #'tree-sitter-hl-mode)
 (add-hook! '(cider-mode-hook cider-repl-mode-hook)
            #'(lambda ()
                (cider-company-enable-fuzzy-completion)
                (map! :leader
-                     :desc "View Clojure documentation in a popup buffer."
+                     :desc "View Clojure documentation in a popup buffer"
                      "j" #'cider-cheatsheet)))
+(add-hook! '(emacs-lisp-mode org-mode)
+           #'(lambda ()
+             (defun begin-src-block ()
+               (interactive)
+               (insert "#+BEGIN_SRC emacs lisp"))
+             (defun end-src-block ()
+               (interactive)
+               (insert "#+END_SRC"))
+             (map! :leader
+                   :desc "Insert beginning of source block"
+                   "i b" #'begin-src-block)
+             (map! :leader
+                   :desc "Inserts end of source block"
+                   "i n" #'end-src-block)))
+#+END_SRC
 
-(require 'sly-autoloads)
-(eval-when-compile
-  (require 'cl))
-
-(map! :map meow-leader-keymap
-      "l" #'meow-keypad-start)
+some basic keybinds
+#+BEGIN_SRC emacs lisp
+(when (require 'meow nil 'noerror)
+ (map! :map meow-leader-keymap
+       "l" #'meow-keypad-start))
 (map! :leader
-      :desc "Switch from header file to source file, or vice versa."
-      "z" #'lsp-clangd-find-other-file)
-(map! :leader
-      :desc "Search for a word in the project."
+      :desc "Search for a word in the project"
       "l" #'consult-ripgrep)
+#+END_SRC
 
+this is to keep the text in the modeline from going off the edge of the screen
+#+BEGIN_SRC emacs lisp
 (custom-set-faces!
   '(font-lock-comment-face :slant italic)
   '(font-lock-keyword-face :slant italic)
@@ -180,10 +262,12 @@
   '(doom-dashboard-loaded :inherit font-lock-warning-face)
   '(doom-dashboard-menu-desc :inherit font-lock-string-face)
   '(doom-dashboard-menu-title :inherit font-lock-function-name-face)
-  '(mode-line :family "Iosevka" :height 1.0)
-  '(mode-line-inactive :family "Iosevka" :height 1.0))
+  '(mode-line :family "Iosevka Nerd Font" :height 1.0)
+  '(mode-line-inactive :family "Iosevka Nerd Font" :height 1.0))
+#+END_SRC
 
-;; makefile
+automatically get the closest makefile from the current directory
+#+BEGIN_SRC emacs lisp
 (cl-defun get-closest-pathname (&optional (file "Makefile"))
   "Determine the pathname of the first instance of FILE starting from the current directory towards root.
    This may not do the correct thing in the presence of links.
@@ -196,8 +280,10 @@
                         return d
                         if (equal d root)
                         return nil))))
+#+END_SRC
 
-;; ligatures
+enable ligatures
+#+BEGIN_SRC emacs lisp
 (set-ligatures! 'MAJOR-MODE
     ;; Functional
     :lambda        "lambda keyword"
@@ -249,5 +335,4 @@
   :tuple         "⨂"
   :pipe          ""
   :dot           "•")
-
 #+END_SRC

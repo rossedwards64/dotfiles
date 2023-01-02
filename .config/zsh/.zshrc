@@ -83,8 +83,6 @@ prompt_context() {
     fi
 }
 
-neofetch
-
 eval "$(antidot init)"
 eval "$(zoxide init zsh)"
 
