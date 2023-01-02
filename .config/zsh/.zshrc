@@ -28,7 +28,7 @@ fi
 
 export ALTERNATE_EDITOR=""
 export VISUAL="emacsclient -c -a emacs"
-export TERM="alacritty"
+export TERM="st"
 export HISTCONTROL=ignoreboth
 export ARCHFLAGS="-arch x86_64"
 export _JAVA_AWT_WM_NONREPARENTING=1
@@ -57,14 +57,14 @@ alias rm="rm -iv"
 alias ls="exa"
 alias la="exa -ah"
 alias l="exa -lah"
-alias cd="z"
 alias cat="bat"
 alias ..="cd .."
 alias du="dust -Hr"
 alias stow="stow -v"
 alias reset-zsh="source ~/.config/zsh/.zshrc"
 alias clear="clear && stty sane"
-alias cleanup="sudo pacman -Rns $(pacman -Qtdq)"
+alias update-world="emerge -uDNa"
+alias cleanup="emerge -ac"
 alias wget=wget --hsts-file="$XDG_DATA_HOME"/wget-hsts
 
 zstyle ':completion:*' completer _expand _complete _ignored _approximate
@@ -82,9 +82,6 @@ prompt_context() {
         prompt_segment black white "$USER"
     fi
 }
-
-eval "$(antidot init)"
-eval "$(zoxide init zsh)"
 
 if [[ $TERM == "dumb" ]] || [[ $TERM == "tramp" ]]; then
     unsetopt zle;

@@ -229,18 +229,18 @@ set up programming language specific functionality
                      "j" #'cider-cheatsheet)))
 (add-hook! '(emacs-lisp-mode-hook org-mode-hook)
            #'(lambda ()
-             (defun begin-src-block ()
-               (interactive)
-               (insert "#+BEGIN_SRC emacs lisp"))
-             (defun end-src-block ()
-               (interactive)
-               (insert "#+END_SRC"))
-             (map! :leader
-                   :desc "Insert beginning of source block"
-                   "i b" #'begin-src-block)
-             (map! :leader
-                   :desc "Inserts end of source block"
-                   "i n" #'end-src-block)))
+               (defun begin-src-block ()
+                 (interactive)
+                 (insert "#+BEGIN_SRC emacs lisp"))
+               (defun end-src-block ()
+                 (interactive)
+                 (insert "#+END_SRC"))
+               (map! :leader
+                     :desc "Insert beginning of source block"
+                     "i b" #'begin-src-block)
+               (map! :leader
+                     :desc "Inserts end of source block"
+                     "i n" #'end-src-block)))
 #+END_SRC
 
 some basic keybinds

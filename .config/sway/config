@@ -14,8 +14,8 @@ client.focused_tab_title c4c7c5 212b30 ffffff
 client.urgent c4c7c5 eb4d4b ffffff
 
 output * scale 1
-output * res 1366x768
-output * bg /home/ross/Pictures/wallpapers/lordgenome.png fill
+output * res 1280x800
+output * bg /home/ross/Pictures/wallpapers/wallpaper.jpg fill
 
 exec alacritty
 exec emacsclient -c -a=""

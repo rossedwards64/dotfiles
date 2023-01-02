@@ -1,7 +1,7 @@
 #!/bin/sh
 
-userresources=$HOME/.Xresources
-usermodmap=$HOME/.Xmodmap
+userresources=$XDG_CONFIG_HOME/X11/Xresources
+usermodmap=$XDG_CONFIG_HOME/X11/Xmodmap
 sysresources=/etc/X11/xinit/.Xresources
 sysmodmap=/etc/X11/xinit/.Xmodmap
 
@@ -57,4 +57,7 @@ case $NAME in
                                                  --date-color=ffffffff --greeter-color=ffffffff --verif-color=ffffffff --wrong-color=ffffffff --modif-color=ffffffff &
         setxkbmap gb
         exec i3 ;;
+    ross-thinkpad-x200)
+	nitrogen --restore &
+	exec ~/bin/startdwm ;;
 esac
