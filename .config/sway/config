@@ -3,8 +3,8 @@ set $left h
 set $down j
 set $up k
 set $right l
-set $term alacritty
 set $menu $HOME/.config/rofi/scripts/launcher.sh
+set $term LIBGL_ALWAYS_SOFTWARE=1 alacritty
 set $opacity 0.9
 
 font pango:Iosevka 10

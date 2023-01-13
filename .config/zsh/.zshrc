@@ -28,7 +28,7 @@ fi
 
 export ALTERNATE_EDITOR=""
 export VISUAL="emacsclient -c -a emacs"
-export TERM="st"
+export TERM="alacritty"
 export HISTCONTROL=ignoreboth
 export ARCHFLAGS="-arch x86_64"
 export _JAVA_AWT_WM_NONREPARENTING=1

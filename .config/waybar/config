@@ -31,7 +31,7 @@
             "custom/poweroff"
         ],
         "custom/launcher": {
-            "format": "",
+            "format": " ",
             "on-click": "$HOME/.config/polybar/forest/scripts/launcher.sh &"
         },
         "clock": {
@@ -126,9 +126,8 @@
         "custom/pacman": {
             "format": " {}",
             "interval": 600,
-            "exec": "checkupdates | wc -l",
+            "exec": "eix --installed --upgrade --format '<installedversions:NAMEVERSION>' | head -n -1 | wc -l",
             "exec-if": "exit 0",
-            "on-click": "alacritty -e 'sudo pacman -Syu'; pkill -SIGRTMIN+8 waybar",
             "signal": 8
         },
         "custom/fan_speed": {
