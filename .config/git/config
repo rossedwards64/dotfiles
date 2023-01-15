@@ -5,3 +5,5 @@
 	helper = store
 [pull]
 	rebase = true
+[protocol "file"]
+	allow = always

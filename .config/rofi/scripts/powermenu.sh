@@ -5,7 +5,7 @@
 ## Github  : @adi1090x
 ## Twitter : @adi1090x
 
-dir="$HOME/.config/rofi/style"
+dir="~/.config/rofi/rofi"
 uptime=$(uptime -p | sed -e 's/up //g')
 
 rofi_command="rofi -theme $dir/powermenu.rasi"
@@ -58,16 +58,18 @@ case $chosen in
         ;;
     $lock)
 		if [[ -f /usr/bin/swaylock ]]; then
-            "$HOME/.local/bin/lock.sh"
-		elif [[ -f /usr/bin/betterlockscreen ]]; then
-			betterlockscreen -l
-		fi
+            exec swayidle -w \
+                    timeout 300 '/home/ross/.local/bin/lock.sh' \
+                    timeout 600 'swaymsg "output * dpms off"' resume 'swaymsg "output * dpms on"' \
+                    before-sleep '/home/ross/.local/bin/lock.sh'
+        fi
         ;;
     $suspend)
 		ans=$(confirm_exit &)
 		if [[ $ans == "yes" || $ans == "YES" || $ans == "y" || $ans == "Y" ]]; then
-			playerctl pause
+			mpc -q pause
 			pactl set-sink-mute @DEFAULT_SINK@
+            pactl set-source-mute @DEFAULT_SOURCE@
 			systemctl suspend
 		elif [[ $ans == "no" || $ans == "NO" || $ans == "n" || $ans == "N" ]]; then
 			exit 0
@@ -78,12 +80,8 @@ case $chosen in
     $logout)
 		ans=$(confirm_exit &)
 		if [[ $ans == "yes" || $ans == "YES" || $ans == "y" || $ans == "Y" ]]; then
-			if [[ "$DESKTOP_SESSION" == "Openbox" ]]; then
-				openbox --exit
-			elif [[ "$DESKTOP_SESSION" == "bspwm" ]]; then
-				bspc quit
-			elif [[ "$DESKTOP_SESSION" == "i3" ]]; then
-				i3-msg exit
+			if [[ "$DESKTOP_SESSION" == "sway" ]]; then
+				swaymsg exit
 			fi
 		elif [[ $ans == "no" || $ans == "NO" || $ans == "n" || $ans == "N" ]]; then
 			exit 0

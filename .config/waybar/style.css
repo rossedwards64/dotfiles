@@ -3,7 +3,9 @@
     border-radius: 0;
     font-family: "Iosevka Nerd Font";
     font-size: 13px;
+    font-weight: normal;
     min-height: 24px;
+    color: #ffffff;
 }
 
 window#waybar {
@@ -17,11 +19,19 @@ window#waybar.empty {
     color: rgba(0,0,0,0);
 }
 
-.topbar {
+.topbar1 {
     border-bottom: 3px solid rgba(100, 114, 125, 1);
 }
 
-.bottombar {
+.bottombar1 {
+    border-top: 3px solid rgba(100, 114, 125, 1);
+}
+
+.topbar2 {
+    border-bottom: 3px solid rgba(100, 114, 125, 1);
+}
+
+.bottombar2 {
     border-top: 3px solid rgba(100, 114, 125, 1);
 }
 
@@ -74,7 +84,7 @@ window#waybar.empty {
 #custom-gpu_temp,
 #custom-gpu_percent,
 #custom-gpu_mem,
-#spotify,
+#custom-spotify,
 #custom-pacman {
     padding: 0 6px;
     margin: 0 0px;
@@ -88,18 +98,14 @@ window#waybar.empty {
     }
 }
 
-#battery.bat2.critical:not(.charging) {
-    background-color: #f53c3c;
-    color: #ffffff;
+#temperature.critical {
+    background-color: #eb4d4b;
+    border-bottom: 3px solid rgba(100, 114, 125, 1);
     animation-name: blink;
     animation-duration: 0.5s;
     animation-timing-function: linear;
     animation-iteration-count: infinite;
     animation-direction: alternate;
-}
-
-#temperature.critical {
-    background-color: #eb4d4b;
 }
 
 #taskbar button:hover {

@@ -5,6 +5,6 @@ export VIMINIT='let $MYVIMRC = !has("nvim") ? "$XDG_CONFIG_HOME/vim/vimrc" : "$X
 #      exec startx "$XDG_CONFIG_HOME/X11/xinitrc"
 #fi
 
-[ "$(tty)" = "/dev/tty1" ] && exec sway
+# [ "$(tty)" = "/dev/tty1" ] && exec sway
 
-# [ "$(tty)" = "/dev/tty1" ] && exec /home/ross/.local/bin/wrappedHl
+[ "$(tty)" = "/dev/tty1" ] && exec /home/ross/.local/bin/wrappedHl

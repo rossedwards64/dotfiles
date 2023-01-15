@@ -2,7 +2,7 @@
 
 default_sink=$(pactl get-default-sink)
 headphones_sink=$(pactl list | grep "Headset" | grep "stereo$" | head -n1 | cut -c 8-77)
-monitor_sink=$(pactl list | grep "hdmi" | head -n1 | cut -c 8-47)
+monitor_sink=$(pactl list | grep "hdmi" | head -n1 | cut -c 8-54)
 
 if [[ "$default_sink" == "$headphones_sink" ]]; then
     pactl set-default-sink "$monitor_sink"

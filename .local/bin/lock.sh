@@ -1,6 +1,8 @@
 #!/usr/bin/env sh
 
 swaylock \
+  --font Iosekva \
+  --font-size 36 \
   --daemonize \
   --hide-keyboard-layout \
 	--indicator-radius 100 \

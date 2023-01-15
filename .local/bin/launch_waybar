@@ -1,0 +1,13 @@
+#!/usr/bin/env sh
+
+CONFIG_FILE="$HOME/.dotfiles/.config/waybar/config"
+STYLE_FILE="$HOME/.dotfiles/.config/waybar/style.css"
+
+trap "killall waybar" EXIT
+
+while true; do
+    waybar &
+    inotifywait -e create,modify "$CONFIG_FILE"
+    inotifywait -e create,modify "$STYLE_FILE"
+    killall waybar
+done
