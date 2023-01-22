@@ -2,7 +2,7 @@
 
 # Color files
 PFILE="$HOME/.config/polybar/forest/colors.ini"
-RFILE="$HOME/.config/polybar/forest/scripts/rofi/colors.rasi"
+RFILE="$HOME/.config/rofi/rofi/colors.rasi"
 
 # Change colors
 change_color() {

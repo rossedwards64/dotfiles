@@ -5,7 +5,7 @@
 ## Github  : @adi1090x
 ## Twitter : @adi1090x
 
-dir="~/.config/polybar/forest/scripts/rofi"
+dir="~/.config/rofi/rofi"
 uptime=$(uptime -p | sed -e 's/up //g')
 
 rofi_command="rofi -theme $dir/powermenu.rasi"
@@ -57,13 +57,11 @@ case $chosen in
         fi
         ;;
     $lock)
-		if [[ -f /usr/bin/i3lock ]]; then
-			i3lock --blur=8 --force-clock --bar-indicator --bar-orientation=horizontal \
-                    --time-pos="683:100" --bar-direction=1 --bar-pos="424" --ind-pos="683:384" --ring-width=10 \
-                    --time-font=Iosevka:Bold --date-font=Iosevka:Bold --layout-font=Iosevka:Bold --verif-font=Iosevka:Bold \
-                    --wrong-font=Iosevka:Bold --greeter-font=Iosevka:Bold --verif-text="Verifying password..." --greeter-text="Please enter your password to unlock." \
-                    --noinput-text="No text has been entered!" --wrong-text="Incorrect password! Try again." --layout-color=ffffffff --time-color=ffffffff \
-                    --date-color=ffffffff --greeter-color=ffffffff --verif-color=ffffffff --wrong-color=ffffffff --modif-color=ffffffff
+		if [[ -f /usr/bin/swaylock ]]; then
+            exec swayidle -w \
+                    timeout 300 '/home/ross/.local/bin/lock.sh' \
+                    timeout 600 'swaymsg "output * dpms off"' resume 'swaymsg "output * dpms on"' \
+                    before-sleep '/home/ross/.local/bin/lock.sh'
 		elif [[ -f /usr/bin/betterlockscreen ]]; then
 			betterlockscreen -l
 		fi
@@ -89,6 +87,9 @@ case $chosen in
 				bspc quit
 			elif [[ "$DESKTOP_SESSION" == "i3" ]]; then
 				i3-msg exit
+			fi
+			elif [[ "$DESKTOP_SESSION" == "sway" ]]; then
+				swaymsg exit
 			fi
 		elif [[ $ans == "no" || $ans == "NO" || $ans == "n" || $ans == "N" ]]; then
 			exit 0

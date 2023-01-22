@@ -115,7 +115,7 @@ window#waybar.empty {
 #custom-launcher {
     color: #1794D2;
     font-size: 18px;
-    padding: 0 0 0 5px;
+    padding: 0 5px;
 }
 
 #custom-poweroff {

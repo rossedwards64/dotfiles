@@ -4,7 +4,7 @@ set $down j
 set $up k
 set $right l
 set $term alacritty
-set $menu $HOME/.config/polybar/forest/scripts/launcher.sh
+set $menu $HOME/.config/rofi/scripts/launcher.sh
 set $opacity 0.9
 
 font pango:Iosevka 10
@@ -13,6 +13,8 @@ client.focused_inactive c4c7c5 64727d ffffff 2e9ef4 555a5c
 client.focused_tab_title c4c7c5 212b30 ffffff
 client.urgent c4c7c5 eb4d4b ffffff
 
+output * scale 1
+output * res 1366x768
 output * bg /home/ross/Pictures/wallpapers/lordgenome.png fill
 
 exec alacritty
@@ -27,6 +29,12 @@ exec swayidle -w \
          timeout 300 '/home/ross/.local/bin/lock.sh' \
          timeout 600 'swaymsg "output * dpms off"' resume 'swaymsg "output * dpms on"' \
          before-sleep '/home/ross/.local/bin/lock.sh'
+
+set $gnome-schema org.gnome.desktop.interface
+exec_always {
+    gsettings set $gnome-schema gtk-theme 'rose-pine-moon-gtk'
+    gsettings set $gnome-schema icon-theme 'rose-pine-moon-icons'
+}
 
 ### Input configuration
 input "1:1:AT_Translated_Set_2_keyboard" {
@@ -89,8 +97,8 @@ set $web "Web"
 set $discord "Discord"
 set $music "Spotify"
 set $steam "Steam"
-set $ws7 "7"
-set $ws8 "8"
+set $game "Game"
+set $fm "File Manager"
 set $ws9 "9"
 set $ws10 "10"
 
@@ -102,7 +110,7 @@ bindsym $mod+4 workspace $discord
 bindsym $mod+5 workspace $music
 bindsym $mod+6 workspace $steam
 bindsym $mod+7 workspace $game
-bindsym $mod+8 workspace number $ws8
+bindsym $mod+8 workspace $fm
 bindsym $mod+9 workspace number $ws9
 bindsym $mod+0 workspace number $ws10
 
@@ -114,7 +122,7 @@ bindsym $mod+Shift+4 move container to workspace $discord, workspace $discord
 bindsym $mod+Shift+5 move container to workspace $music, workspace $music
 bindsym $mod+Shift+6 move container to workspace $steam, workspace $steam
 bindsym $mod+Shift+7 move container to workspace $game, workspace $game
-bindsym $mod+Shift+8 move container to workspace number $ws8, workspace number $ws8
+bindsym $mod+Shift+8 move container to workspace $fm, workspace $fm
 bindsym $mod+Shift+9 move container to workspace number $ws9, workspace number $ws9
 bindsym $mod+Shift+0 move container to workspace number $ws10, workspace number $10
 
@@ -123,10 +131,13 @@ workspace_auto_back_and_forth yes
 assign [app_id="emacs"] $ide
 assign [app_id="Alacritty"] $term
 assign [class="firefox" instance="Navigator"] $web
-assign [class="Discord" instance="discord"] $discord
+assign [class="discord" instance="discord"] $discord
 assign [class="spotify" instance="Spotify"] $music
 assign [class="Steam" instance="Steam"] $steam
+assign [app_id="Lutris"] $steam
+assign [app_id="org.libretro.Retroarch"] $steam
 assign [class="steam_app_*" instance="steam_app_*"] $game
+assign [class="Pcmanfm"] $fm
 
 # Layout stuff:
 bindsym $mod+b splith

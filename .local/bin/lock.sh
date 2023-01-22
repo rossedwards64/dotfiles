@@ -1,7 +1,12 @@
 #!/usr/bin/env sh
 
 swaylock \
+  --font Iosevka \
+  --font-size 36 \
   --daemonize \
+	--clock \
+	--indicator \
+	--screenshots \
   --hide-keyboard-layout \
 	--indicator-radius 100 \
 	--indicator-thickness 7 \
@@ -23,9 +28,6 @@ swaylock \
   --inside-wrong-color f38ba8 \
   --inside-clear-color a6e3a1 \
 	--color 00000000 \
-	--clock \
-	--indicator \
 	--fade-in 0.2 \
 	--effect-blur 7x5 \
-	--screenshots \
 	--effect-vignette 0.5:0.5

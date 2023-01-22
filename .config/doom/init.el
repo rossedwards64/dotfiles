@@ -126,7 +126,7 @@
        ;;dhall
        ;;(elixir +lsp)            ; erlang done right
        ;;(elm +lsp)               ; care for a cup of TEA?
-       (emacs-lisp +lsp +tree-sitter)        ; drown in parentheses
+       emacs-lisp        ; drown in parentheses
        ;;(erlang +lsp)            ; an elegant language for a more civilized age
        ;;(ess +lsp)               ; emacs speaks statistics
        ;;factor
@@ -141,7 +141,7 @@
        ;;hy                ; readability of scheme w/ speed of python
        ;;idris             ; a language you can depend on
        (json +lsp +tree-sitter)              ; At least it ain't XML
-       (java +lsp +tree-sitter)       ; the poster child for carpal tunnel syndrome
+       ;;(java +lsp +tree-sitter)       ; the poster child for carpal tunnel syndrome
        ;;(javascript +lsp)        ; all(hope(abandon(ye(who(enter(here))))))
        ;;(julia +lsp)             ; a better, faster MATLAB
        ;;(kotlin +lsp)            ; a better, slicker Java(Script)

@@ -30,10 +30,6 @@
             "custom/sep",
             "custom/poweroff"
         ],
-        "sway/window": {
-            "format": "{} ",
-            "on-click": "swaymsg kill"
-        },
         "custom/launcher": {
             "format": "",
             "on-click": "$HOME/.config/polybar/forest/scripts/launcher.sh &"
@@ -160,8 +156,10 @@
             "wlr/taskbar"
         ],
         "modules-right": [
-            "sway/workspaces",
+            "custom/sep",
             "sway/mode",
+            "custom/sep",
+            "sway/workspaces",
             "hyprland/window"
         ],
         "tray": {
