@@ -5,7 +5,11 @@ set $up k
 set $right l
 set $term alacritty
 set $menu $HOME/.config/rofi/scripts/launcher.sh
+set $powermenu $HOME/.config/waybar/modules/poweroff.sh
+set $lock $HOME/.local/bin/lock.sh
+set $check-mute $HOME/.local/bin/check_mute.sh
 set $opacity 0.9
+set $gnome-schema org.gnome.desktop.interface
 
 font pango:Iosevka 10
 client.focused c4c7c5 212b30 ffffff
@@ -19,25 +23,27 @@ output * bg /home/ross/Pictures/wallpapers/lordgenome.png fill
 
 exec alacritty
 exec emacsclient -c -a=""
+exec intellij-idea-ultimate-edition
 exec discord
-exec steam
 exec firefox
+exec ncspot
 exec autotiling -w 1 2 4 5 7 8 9 10
+
+xwayland enable
 
 ### Idle configuration
 exec swayidle -w \
-         timeout 300 '/home/ross/.local/bin/lock.sh' \
+         timeout 300 $lock \
          timeout 600 'swaymsg "output * dpms off"' resume 'swaymsg "output * dpms on"' \
-         before-sleep '/home/ross/.local/bin/lock.sh'
+         before-sleep $lock
 
-set $gnome-schema org.gnome.desktop.interface
 exec_always {
     gsettings set $gnome-schema gtk-theme 'rose-pine-moon-gtk'
     gsettings set $gnome-schema icon-theme 'rose-pine-moon-icons'
 }
 
 ### Input configuration
-input "1:1:AT_Translated_Set_2_keyboard" {
+input "type:keyboard" {
       xkb_layout gb
       xkb_options ctrl:nocaps
 }
@@ -56,20 +62,22 @@ input "2:7:SynPS/2_Synaptics_TouchPad" {
 bindsym $mod+Return exec $term
 bindsym $mod+Shift+g exec emacsclient -c -a=""
 bindsym $mod+Shift+q kill
-bindsym $mod+d exec $menu
+bindsym $mod+d exec "pkill rofi || $menu"
+bindsym $mod+Escape exec "pkill rofi || $powermenu"
 bindsym $mod+Shift+c reload
 bindsym $mod+Shift+e exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -B 'Yes, exit sway' 'swaymsg exit'
+bindsym $mod+Shift+s exec $lock
 floating_modifier $mod normal
 
-bindsym XF86AudioRaiseVolume exec pactl set-sink-volume @DEFAULT_SINK@ +5%
-bindsym XF86AudioLowerVolume exec pactl set-sink-volume @DEFAULT_SINK@ -5%
-bindsym XF86AudioMute exec pactl set-sink-mute @DEFAULT_SINK@ toggle && "/home/ross/.local/bin/check_mute.sh" "getspeaker"
-bindsym XF86AudioMicMute exec pactl set-source-mute @DEFAULT_SOURCE@ toggle && "/home/ross/.local/bin/check_mute.sh" "getmic"
-bindsym XF86AudioPlay exec playerctl play-pause
-bindsym XF86AudioNext exec playerctl next
-bindsym XF86AudioPrev exec playerctl previous
-bindsym XF86MonBrightnessUp exec xbacklight -inc 10
-bindsym XF86MonBrightnessDown exec xbacklight -dec 10
+bindsym --locked XF86AudioRaiseVolume exec wpctl set-volume -l 1.5 @DEFAULT_AUDIO_SINK@ 5%+
+bindsym --locked XF86AudioLowerVolume exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
+bindsym --locked XF86AudioMute exec wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle && $check-mute "getspeaker"
+bindsym --locked XF86AudioMicMute exec wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle && $check-mute "getmic"
+bindsym --locked XF86AudioPlay exec playerctl play-pause
+bindsym --locked XF86AudioNext exec playerctl next
+bindsym --locked XF86AudioPrev exec playerctl previous
+bindsym --locked XF86MonBrightnessUp exec xbacklight -inc 10
+bindsym --locked XF86MonBrightnessDown exec xbacklight -dec 10
 
 # Moving around:
 bindsym $mod+$left focus left
@@ -90,6 +98,11 @@ bindsym $mod+Shift+Down move down
 bindsym $mod+Shift+Up move up
 bindsym $mod+Shift+Right move right
 
+bindgesture pinch:inward+up move up
+bindgesture pinch:inward+down move down
+bindgesture pinch:inward+left move left
+bindgesture pinch:inward+right move right
+
 # Workspaces:
 set $ide "IDE"
 set $term "Terminal"
@@ -98,8 +111,8 @@ set $discord "Discord"
 set $music "Spotify"
 set $steam "Steam"
 set $game "Game"
-set $fm "File Manager"
-set $ws9 "9"
+set $fm "Explorer"
+set $intellij "IntelliJ"
 set $ws10 "10"
 
 # switch to workspace
@@ -111,7 +124,7 @@ bindsym $mod+5 workspace $music
 bindsym $mod+6 workspace $steam
 bindsym $mod+7 workspace $game
 bindsym $mod+8 workspace $fm
-bindsym $mod+9 workspace number $ws9
+bindsym $mod+9 workspace $intellij
 bindsym $mod+0 workspace number $ws10
 
 # move focused container to workspace
@@ -123,10 +136,13 @@ bindsym $mod+Shift+5 move container to workspace $music, workspace $music
 bindsym $mod+Shift+6 move container to workspace $steam, workspace $steam
 bindsym $mod+Shift+7 move container to workspace $game, workspace $game
 bindsym $mod+Shift+8 move container to workspace $fm, workspace $fm
-bindsym $mod+Shift+9 move container to workspace number $ws9, workspace number $ws9
+bindsym $mod+Shift+9 move container to workspace $intellij, workspace $intellij
 bindsym $mod+Shift+0 move container to workspace number $ws10, workspace number $10
 
 workspace_auto_back_and_forth yes
+
+bindgesture swipe:right workspace prev
+bindgesture swipe:left workspace next
 
 assign [app_id="emacs"] $ide
 assign [app_id="Alacritty"] $term
@@ -138,6 +154,7 @@ assign [app_id="Lutris"] $steam
 assign [app_id="org.libretro.Retroarch"] $steam
 assign [class="steam_app_*" instance="steam_app_*"] $game
 assign [class="Pcmanfm"] $fm
+assign [class="jetbrains-idea" instance="jetbrains-idea"] $intellij
 
 # Layout stuff:
 bindsym $mod+b splith
@@ -169,6 +186,7 @@ mode "resize" {
     bindsym Return mode "default"
     bindsym Escape mode "default"
 }
+
 bindsym $mod+r mode "resize"
 
 bar {
@@ -182,7 +200,6 @@ title_align center
 
 for_window [app_id=".*"] border pixel 1
 for_window [app_id=".*"] inhibit_idle fullscreen
-for_window [class="chip8"] floating enable
 for_window [window_role="pop-up"] floating enable
 for_window [window_role="task_dialog"] floating enable
 

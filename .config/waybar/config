@@ -20,6 +20,7 @@
         "modules-right": [
             "custom/sep",
             "custom/pacman",
+            "custom/restart_needed",
             "network#vpn",
             "network#wifi",
             "network#ethernet",
@@ -37,7 +38,7 @@
         "clock": {
             "interval": 1,
             "format": "<b>{:%a %d-%m-%y %H:%M:%S}</b>",
-            "format-alt": "<b>{:%A, %d of %B, %Y %H:%S:%S}</b>",
+            "format-alt": "<b>{:%A, %d of %B, %Y %H:%M:%S}</b>",
             "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"
         },
         "cpu": {
@@ -110,7 +111,7 @@
         "custom/poweroff": {
             "tooltip": false,
             "format": "",
-            "on-click": "bash $HOME/.config/waybar/modules/poweroff.sh"
+            "on-click": "$HOME/.config/waybar/modules/poweroff.sh &"
         },
         "custom/mail": {
             "tooltip": false,
@@ -130,6 +131,11 @@
             "exec-if": "exit 0",
             "on-click": "alacritty -e 'sudo pacman -Syu'; pkill -SIGRTMIN+8 waybar",
             "signal": 8
+        },
+        "custom/restart_needed": {
+          "format": "{}",
+          "interval": 600,
+          "exec": "[ -d /lib/modules/`uname -r` ] || echo '*'"
         },
         "custom/fan_speed": {
             "format": " {}",
@@ -160,7 +166,6 @@
             "sway/mode",
             "custom/sep",
             "sway/workspaces",
-            "hyprland/window"
         ],
         "tray": {
             "icon-size": 13,
@@ -185,7 +190,7 @@
         },
         "pulseaudio": {
             "format": "{volume}% {icon}",
-            "format-bluetooth": "{volume}% {icon}",
+            "format-bluetooth": "{volume}% {icon} ",
             "format-muted": "",
             "format-icons": {
                 "headphone": "",
@@ -254,9 +259,6 @@
                 "",
                 ""
             ]
-        },
-        "hyprland/window": {
-            "format": "{}"
         }
     }
 ]

@@ -1,4 +1,5 @@
-export PATH="$HOME/bin:/usr/local/bin:$HOME/.local/bin:$XDG_CONFIG_HOME/emacs/bin:$HOME/bin:$HOME/.dotfiles/.bin:$XDG_DATA_HOME/cargo/bin:$PATH"
+export PATH="/usr/lib/jvm/java-19-openjdk:$HOME/bin:/usr/local/bin:$HOME/.local/bin:"`
+       `"$XDG_CONFIG_HOME/emacs/bin:$HOME/bin:$HOME/.dotfiles/.bin:$XDG_DATA_HOME/cargo/bin:$PATH"
 #ZSH_THEME="sorin"
 # ZSH_THEME_RANDOM_CANDIDATES=( "robbyrussell" "agnoster" )
 # HYPHEN_INSENSITIVE="true"
@@ -17,6 +18,7 @@ plugins=(
     command-not-found
 )
 
+export ZSH_COMPDUMP=$ZSH/cache/.zcompdump-$HOST
 source $ZSH/oh-my-zsh.sh
 # export MANPATH="/usr/local/man:$MANPATH"
 export LANG=en_GB.UTF-8
@@ -27,13 +29,14 @@ else
 fi
 
 export ALTERNATE_EDITOR=""
+export BROWSER="firefox"
 export VISUAL="emacsclient -c -a emacs"
 export TERM="alacritty"
 export HISTCONTROL=ignoreboth
 export ARCHFLAGS="-arch x86_64"
 export _JAVA_AWT_WM_NONREPARENTING=1
 export XCURSOR_SIZE=24
-export SDL_VIDEODRIVER=wayland
+#export SDL_VIDEODRIVER=wayland
 export MOZ_ENABLE_WAYLAND=1
 export GTK_THEME=rose-pine-moon-gtk
 export CMAKE_GENERATOR=Ninja
@@ -86,11 +89,13 @@ prompt_context() {
 eval "$(antidot init)"
 eval "$(zoxide init zsh)"
 
-if [[ $TERM == "dumb" ]] || [[ $TERM == "tramp" ]]; then
+if [[ $TERM == "tramp" ]] && [[ -n $INSIDE_EMACS ]]; then
     unsetopt zle;
-    PS1='$ '
+    PS1='[\u@\h \W]\$ '
 else
     if [ -x "$(command -v starship)" ]; then
         eval "$(starship init zsh)"
     fi
 fi
+
+source /home/ross/.config/broot/launcher/bash/br
