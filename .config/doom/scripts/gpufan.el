@@ -1,6 +1,6 @@
 ;;; ../../.dotfiles/.config/doom/scripts/gpufan.el -*- lexical-binding: t; -*-
 
-(defun gpu-fan-speed (speed password)
+(defun ross/gpu-fan-speed (speed password)
   "Set the fan speed of the GPU"
   (interactive "sEnter the desired GPU speed as a percentage: \nsEnter the superuser password: \n")
     (with-temp-buffer

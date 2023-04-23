@@ -1,4 +1,5 @@
 \.git
+\.gitignore
 misc
 LICENSE
 ^/.*\.org

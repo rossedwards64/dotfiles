@@ -28,6 +28,7 @@ else
 fi
 
 export ALTERNATE_EDITOR=""
+export BROWSER="firefox"
 export VISUAL="emacsclient -c -a emacs"
 export TERM="alacritty"
 export HISTCONTROL=ignoreboth
@@ -71,6 +72,7 @@ alias wget=wget --hsts-file="$XDG_DATA_HOME"/wget-hsts
 alias xbindkeys=xbindkeys -f "$XDG_CONFIG_HOME"/xbindkeys/config
 alias gpumanual="echo 1 | sudo tee -a /sys/class/drm/card0/device/hwmon/[[:print:]]*/pwm1_enable"
 alias gpuauto="echo 2 | sudo tee -a /sys/class/drm/card0/device/hwmon/[[:print:]]*/pwm1_enable"
+alias fix-monitor="xrandr --output XWAYLAND0 --primary --verbose"
 
 zstyle ':completion:*' completer _expand _complete _ignored _approximate
 zstyle ':completion:*' cache-path "$XDG_CACHE_HOME"/zsh/zcompcache
@@ -90,7 +92,7 @@ prompt_context() {
 eval "$(antidot init)"
 eval "$(zoxide init zsh)"
 
-if [[ $TERM == "dumb" ]] || [[ $TERM == "tramp" ]]; then
+if [[ $TERM == "tramp" ]] && [[ -n $INSIDE_EMACS ]]; then
     unsetopt zle;
     PS1='$ '
 else
@@ -98,3 +100,5 @@ else
         eval "$(starship init zsh)"
     fi
 fi
+
+source /home/ross/.config/broot/launcher/bash/br
