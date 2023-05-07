@@ -4,10 +4,11 @@ cd ~ || exit
 
 export _JAVA_AWT_WM_NONREPARENTING=1
 export XCURSOR_SIZE=24
-export SDL_VIDEODRIVER=wayland
 export MOZ_ENABLE_WAYLAND=1
 export GTK_THEME=rose-pine-moon-gtk
 export LIBSEAT_BACKEND=logind
 export WLR_RENDERER_ALLOW_SOFTWARE=1
+
+xrandr --output DP-1 --primary --verbose
 
 exec Hyprland

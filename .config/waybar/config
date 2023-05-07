@@ -26,6 +26,7 @@
       "network#disconnected",
       "custom/sep",
       "custom/pacman",
+      "custom/restart_needed",
       "custom/sep",
       "custom/poweroff"
     ],
@@ -154,6 +155,11 @@
       "exec-if": "exit 0",
       "on-click": "alacritty -e 'sudo pacman -Syu'; pkill -SIGRTMIN+8 waybar",
       "signal": 8
+    },
+    "custom/restart_needed": {
+      "format": "{}",
+      "interval": 600,
+      "exec": "[ -d /lib/modules/`uname -r` ] || echo '*'"
     },
     "custom/gpu": {
       "exec": "$HOME/.config/waybar/modules/custom-gpu.sh",
@@ -367,30 +373,28 @@
     "modules-left": [
       "tray",
       "gamemode",
+      "hyprland/language",
       "custom/sep",
       "backlight",
       "pulseaudio",
       "idle_inhibitor",
       "custom/sep",
+      "hyprland/submap"
     ],
     "modules-center": [
       "wlr/taskbar"
     ],
     "modules-right": [
-      "sway/workspaces",
       "custom/sep",
-      "sway/mode",
-      "hyprland/window",
-      "custom/sep",
-      "hyprland/submap"
+      "hyprland/window"
     ],
     "tray": {
-      "icon-size": 13,
+      "icon-size": 24,
       "spacing": 10
     },
     "wlr/taskbar": {
       "format": "{icon} {name}",
-      "icon-size": 13,
+      "icon-size": 24,
       "tooltip": false,
       "on-click": "activate",
       "on-click-right": "close"
@@ -444,7 +448,7 @@
       "use-icon": true,
       "icon-name": "input-gaming-symbolic",
       "icon-spacing": 4,
-      "icon-size": 16,
+      "icon-size": 24,
       "tooltip": true,
       "tooltip-format": "Games running: {count}"
     },
@@ -456,6 +460,10 @@
       "format": "Mode: {}",
       "max-length": 8,
       "tooltip": false
+    },
+    "hyprland/language": {
+      "format": "{}",
+      "keyboard-name": "at-translated-set-2-keyboard"
     },
     "custom/sep": {
     "format": "|",
@@ -474,19 +482,16 @@
       "wlr/taskbar"
     ],
     "modules-right": [
-      "sway/workspaces",
-      "custom/sep",
-      "sway/mode",
       "custom/sep",
       "hyprland/window"
     ],
     "tray": {
-      "icon-size": 13,
+      "icon-size": 24,
       "spacing": 10
     },
     "wlr/taskbar": {
       "format": "{icon} {name}",
-      "icon-size": 13,
+      "icon-size": 24,
       "tooltip": false,
       "on-click": "activate",
       "on-click-right": "close"

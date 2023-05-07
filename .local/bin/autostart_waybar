@@ -1,3 +1,0 @@
-#!/usr/bin/env sh
-
-nohup /home/ross/.local/bin/launch_waybar &>"/tmp/start-$(basename "$1").log" &
