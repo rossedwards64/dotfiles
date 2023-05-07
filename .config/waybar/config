@@ -133,9 +133,9 @@
             "signal": 8
         },
         "custom/restart_needed": {
-          "format": "{}",
-          "interval": 600,
-          "exec": "[ -d /lib/modules/`uname -r` ] || echo '*'"
+            "format": "{}",
+            "interval": 600,
+            "exec": "[ -d /lib/modules/`uname -r` ] || echo '*'"
         },
         "custom/fan_speed": {
             "format": " {}",
@@ -151,32 +151,43 @@
         "modules-left": [
             "tray",
             "gamemode",
+            "hyprland/language",
             "custom/sep",
             "battery#bat1",
             "backlight",
             "pulseaudio",
             "idle_inhibitor",
-            "custom/sep"
+            "custom/sep",
+            "hyprland/submap"
         ],
         "modules-center": [
             "wlr/taskbar"
         ],
         "modules-right": [
             "custom/sep",
-            "sway/mode",
-            "custom/sep",
-            "sway/workspaces",
+            "hyprland/window"
         ],
         "tray": {
-            "icon-size": 13,
+            "icon-size": 24,
             "spacing": 10
         },
         "wlr/taskbar": {
-            "format": "{icon} {name}",
-            "icon-size": 13,
-            "tooltip": false,
+            "format": "{icon}",
+            "icon-size": 24,
+            "tooltip": "true",
             "on-click": "activate",
             "on-click-right": "close"
+        },
+        "hyprland/window": {
+            "format": "{}",
+            "separate-outputs": true
+        },
+        "hyprland/submap": {
+            "format": "Mode: {}",
+        },
+        "hyprland/language": {
+            "format": "{}",
+            "keyboard-name": "at-translated-set-2-keyboard"
         },
         "sway/mode": {
             "format": "<span style=\"italic\">{}</span>"
@@ -227,7 +238,7 @@
             "use-icon": true,
             "icon-name": "input-gaming-symbolic",
             "icon-spacing": 4,
-            "icon-size": 16,
+            "icon-size": 20,
             "tooltip": true,
             "tooltip-format": "Games running: {count}"
         },

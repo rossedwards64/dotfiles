@@ -23,8 +23,8 @@ output * bg /home/ross/Pictures/wallpapers/lordgenome.png fill
 
 exec alacritty
 exec emacsclient -c -a=""
-exec intellij-idea-ultimate-edition
-exec discord
+#exec intellij-idea-ultimate-edition
+exec flatpak run com.discordapp.Discord
 exec firefox
 exec ncspot
 exec autotiling -w 1 2 4 5 7 8 9 10
@@ -36,6 +36,8 @@ exec swayidle -w \
          timeout 300 $lock \
          timeout 600 'swaymsg "output * dpms off"' resume 'swaymsg "output * dpms on"' \
          before-sleep $lock
+
+exec swayosd
 
 exec_always {
     gsettings set $gnome-schema gtk-theme 'rose-pine-moon-gtk'

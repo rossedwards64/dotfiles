@@ -58,10 +58,7 @@ case $chosen in
         ;;
     $lock)
 		if [[ -f /usr/bin/swaylock ]]; then
-            exec swayidle -w \
-                    timeout 300 '/home/ross/.local/bin/lock.sh' \
-                    timeout 600 'swaymsg "output * dpms off"' resume 'swaymsg "output * dpms on"' \
-                    before-sleep '/home/ross/.local/bin/lock.sh'
+            exec /home/ross/.local/bin/lock.sh
 		elif [[ -f /usr/bin/betterlockscreen ]]; then
 			betterlockscreen -l
 		fi

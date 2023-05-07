@@ -72,8 +72,12 @@ window#waybar.empty {
 #temperature,
 #tray,
 #custom-fan_speed,
+#gamemode,
+#window,
+#language,
+#submap,
 #custom-pacman {
-    padding: 0 6px;
+    padding: 0 5px;
     margin: 0 0px;
 }
 

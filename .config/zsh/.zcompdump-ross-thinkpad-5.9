@@ -89,6 +89,7 @@ _comps=(
 'bibtex' '_bibtex'
 'bindkey' '_bindkey'
 'bison' '_bison'
+'bluetoothctl' '_bluetoothctl'
 'bmake' '_make'
 'bogofilter' '_bogofilter'
 'bogotune' '_bogofilter'
@@ -981,8 +982,6 @@ _comps=(
 'podtoc' '_perl_modules'
 'poff' '_pon'
 'policytool' '_java'
-'polybar' '_polybar'
-'polybar-msg' '_polybar_msg'
 'pon' '_pon'
 'popd' '_directory_stack'
 'postconf' '_postfix'
@@ -1542,6 +1541,7 @@ _comps=(
 'zeal' '_zeal'
 'zed' '_zed'
 'zegrep' '_grep'
+'zellij' '_zellij'
 'zen' '_webbrowser'
 'zf_chgrp' '_chown'
 'zf_chmod' '_chmod'
@@ -1692,22 +1692,22 @@ bindkey '^[,' _history-complete-newer
 bindkey '^[/' _history-complete-older
 bindkey '^[~' _bash_complete-word
 
-autoload -Uz _alacritty _bat _bootctl _btm _busctl \
-            _bwrap _cargo _checkupdates _coredumpctl _curl \
-            _exa _fd _flatpak _hostnamectl _journalctl \
-            _kernel-install _libinput _localectl _loginctl _machinectl \
-            _mako _makoctl _meson _mkinitcpio _mpv \
-            _networkctl _ninja _oomctl _paccache _pacdiff \
-            _paclist _paclog-pkglist _pacman _pacscripts _pacsearch \
-            _pacsort _pactree _pass _pass-audit _pass-import \
-            _pass-update _pimport _playerctl _polybar _polybar_msg \
-            _procs _pulseaudio _rankmirrors _resolvectl _rg \
-            _sd _sd_hosts_or_user_at_host _sd_machines _sd_outputmodes _sd_unit_files \
-            _starship _sway _swayidle _swaylock _swaymsg \
-            _systemctl _systemd _systemd-analyze _systemd-delta _systemd-inhibit \
-            _systemd-nspawn _systemd-path _systemd-run _systemd-tmpfiles _timedatectl \
-            _tldr _udevadm _updpkgsums _wl-copy _wl-paste \
-            _xss-lock _yay _zoxide _cdr _all_labels \
+autoload -Uz _alacritty _bat _bluetoothctl _bootctl _btm \
+            _busctl _bwrap _cargo _checkupdates _coredumpctl \
+            _curl _exa _fd _flatpak _hostnamectl \
+            _journalctl _kernel-install _libinput _localectl _loginctl \
+            _machinectl _mako _makoctl _meson _mkinitcpio \
+            _mpv _networkctl _ninja _oomctl _paccache \
+            _pacdiff _paclist _paclog-pkglist _pacman _pacscripts \
+            _pacsearch _pacsort _pactree _pass _pass-audit \
+            _pass-import _pass-update _pimport _playerctl _procs \
+            _pulseaudio _rankmirrors _resolvectl _rg _sd \
+            _sd_hosts_or_user_at_host _sd_machines _sd_outputmodes _sd_unit_files _starship \
+            _sway _swayidle _swaylock _swaymsg _systemctl \
+            _systemd _systemd-analyze _systemd-delta _systemd-inhibit _systemd-nspawn \
+            _systemd-path _systemd-run _systemd-tmpfiles _timedatectl _tldr \
+            _udevadm _updpkgsums _wl-copy _wl-paste _xss-lock \
+            _yay _zellij _zoxide _cdr _all_labels \
             _all_matches _alternative _approximate _arg_compile _arguments \
             _bash_completions _cache_invalid _call_function _combination _complete \
             _complete_debug _complete_help _complete_help_generic _complete_tag _comp_locale \
@@ -1866,5 +1866,5 @@ autoload -Uz +X _call_program
 typeset -gUa _comp_assocs
 _comp_assocs=( '' )
 
-#omz revision: 75405b7b0ae03a1fdf2fdb172d2a50cd5f570162
+#omz revision: 2e7a247cab663fbc0aafdefa15bf10eb4dd64563
 #omz fpath: /home/ross/.local/share/oh-my-zsh/plugins/command-not-found /home/ross/.local/share/oh-my-zsh/plugins/zsh-syntax-highlighting /home/ross/.local/share/oh-my-zsh/plugins/zsh-autosuggestions /home/ross/.local/share/oh-my-zsh/plugins/git /home/ross/.local/share/oh-my-zsh/functions /home/ross/.local/share/oh-my-zsh/completions /home/ross/.local/share/oh-my-zsh/cache/completions /usr/local/share/zsh/site-functions /usr/share/zsh/site-functions /usr/share/zsh/functions/Calendar /usr/share/zsh/functions/Chpwd /usr/share/zsh/functions/Completion /usr/share/zsh/functions/Completion/Base /usr/share/zsh/functions/Completion/Linux /usr/share/zsh/functions/Completion/Unix /usr/share/zsh/functions/Completion/X /usr/share/zsh/functions/Completion/Zsh /usr/share/zsh/functions/Exceptions /usr/share/zsh/functions/MIME /usr/share/zsh/functions/Math /usr/share/zsh/functions/Misc /usr/share/zsh/functions/Newuser /usr/share/zsh/functions/Prompts /usr/share/zsh/functions/TCP /usr/share/zsh/functions/VCS_Info /usr/share/zsh/functions/VCS_Info/Backends /usr/share/zsh/functions/Zftp /usr/share/zsh/functions/Zle

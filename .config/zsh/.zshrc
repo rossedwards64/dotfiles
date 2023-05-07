@@ -1,15 +1,7 @@
-export PATH="/usr/lib/jvm/java-19-openjdk:$HOME/bin:/usr/local/bin:$HOME/.local/bin:"`
-       `"$XDG_CONFIG_HOME/emacs/bin:$HOME/bin:$HOME/.dotfiles/.bin:$XDG_DATA_HOME/cargo/bin:$PATH"
-#ZSH_THEME="sorin"
-# ZSH_THEME_RANDOM_CANDIDATES=( "robbyrussell" "agnoster" )
-# HYPHEN_INSENSITIVE="true"
-zstyle ':omz:update' mode auto      # update automatically without asking
-# zstyle ':omz:update' mode reminder  # just remind me to update when it's time
+zstyle ':omz:update' mode auto
 ENABLE_CORRECTION="true"
 COMPLETION_WAITING_DOTS="true"
-# DISABLE_UNTRACKED_FILES_DIRTY="true"
 HIST_STAMPS="dd/mm/yyyy"
-# ZSH_CUSTOM=/path/to/new-custom-folder
 
 plugins=(
     git
@@ -18,28 +10,7 @@ plugins=(
     command-not-found
 )
 
-export ZSH_COMPDUMP=$ZSH/cache/.zcompdump-$HOST
 source $ZSH/oh-my-zsh.sh
-# export MANPATH="/usr/local/man:$MANPATH"
-export LANG=en_GB.UTF-8
-if [[ -n $SSH_CONNECTION ]]; then
-    export EDITOR='vim'
-else
-    export EDITOR='nvim'
-fi
-
-export ALTERNATE_EDITOR=""
-export BROWSER="firefox"
-export VISUAL="emacsclient -c -a emacs"
-export TERM="alacritty"
-export HISTCONTROL=ignoreboth
-export ARCHFLAGS="-arch x86_64"
-export _JAVA_AWT_WM_NONREPARENTING=1
-export XCURSOR_SIZE=24
-#export SDL_VIDEODRIVER=wayland
-export MOZ_ENABLE_WAYLAND=1
-export GTK_THEME=rose-pine-moon-gtk
-export CMAKE_GENERATOR=Ninja
 
 setopt NO_CASE_GLOB
 setopt AUTO_CD

@@ -7,6 +7,7 @@ swaylock \
   --clock \
   --indicator \
   --screenshots \
+  --grace 5 \
   --hide-keyboard-layout \
   --indicator-radius 100 \
   --indicator-thickness 7 \
@@ -24,7 +25,7 @@ swaylock \
   --line-clear-color 00000000 \
   --separator-color 00000000 \
   --inside-color cba6f7 \
-  --inside-ver-color 89b4fa\
+  --inside-ver-color 89b4fa \
   --inside-wrong-color f38ba8 \
   --inside-clear-color a6e3a1 \
   --color 00000000 \
