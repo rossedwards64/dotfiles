@@ -1,14 +1,7 @@
-export PATH="$HOME/bin:/usr/local/bin:$HOME/.local/bin:$XDG_CONFIG_HOME/emacs/bin:$HOME/bin:$HOME/.dotfiles/.bin:$XDG_DATA_HOME/cargo/bin:$PATH"
-#ZSH_THEME="sorin"
-# ZSH_THEME_RANDOM_CANDIDATES=( "robbyrussell" "agnoster" )
-# HYPHEN_INSENSITIVE="true"
-zstyle ':omz:update' mode auto      # update automatically without asking
-# zstyle ':omz:update' mode reminder  # just remind me to update when it's time
+zstyle ':omz:update' mode auto
 ENABLE_CORRECTION="true"
 COMPLETION_WAITING_DOTS="true"
-# DISABLE_UNTRACKED_FILES_DIRTY="true"
 HIST_STAMPS="dd/mm/yyyy"
-# ZSH_CUSTOM=/path/to/new-custom-folder
 
 plugins=(
     git
@@ -18,25 +11,8 @@ plugins=(
 )
 
 source $ZSH/oh-my-zsh.sh
-# export MANPATH="/usr/local/man:$MANPATH"
-export LANG=en_GB.UTF-8
-if [[ -n $SSH_CONNECTION ]]; then
-    export EDITOR='vim'
-else
-    export EDITOR='nvim'
-fi
 
-export ALTERNATE_EDITOR=""
-export VISUAL="emacsclient -c -a emacs"
-export TERM="alacritty"
-export HISTCONTROL=ignoreboth
-export ARCHFLAGS="-arch x86_64"
-export _JAVA_AWT_WM_NONREPARENTING=1
-export XCURSOR_SIZE=24
-export SDL_VIDEODRIVER=wayland
-export MOZ_ENABLE_WAYLAND=1
-export GTK_THEME=rose-pine-moon-gtk
-export CMAKE_GENERATOR=Ninja
+bindkey -r '^[l'
 
 setopt NO_CASE_GLOB
 setopt AUTO_CD
@@ -63,9 +39,26 @@ alias du="dust -Hr"
 alias stow="stow -v"
 alias reset-zsh="source ~/.config/zsh/.zshrc"
 alias clear="clear && stty sane"
+<<<<<<< HEAD
 alias update-world="emerge -uDNa"
 alias cleanup="emerge -ac"
 alias wget=wget --hsts-file="$XDG_DATA_HOME"/wget-hsts
+=======
+alias cleanup="sudo emerge --ask --verbose --depclean"
+alias upgrade="sudo emerge --ask --verboes --update --deep --newuse --with-bdeps=y --keep-going @world"
+alias wget="wget --hsts-file=$XDG_DATA_HOME/wget-hsts"
+
+if [[ -n "$TERM" ]] && [[ "$TERM" != "dumb" ]]; then
+    export BOLD="$(tput bold)"
+    export MAGENTA="$(tput setaf 5)"
+    export RED="$(tput setaf 1)"
+    export CYAN="$(tput setaf 6)"
+    export RMYELLOW="$(tput setaf 3)"
+    export GREEN="$(tput setaf 2)"
+    export BLUE="$(tput setaf 4)"
+    export NORM="$(tput sgr0)"
+fi
+>>>>>>> 377dc60 (topgrade config)
 
 zstyle ':completion:*' completer _expand _complete _ignored _approximate
 zstyle ':completion:*' cache-path $XDG_CACHE_HOME/zsh/zcompcache
@@ -83,11 +76,20 @@ prompt_context() {
     fi
 }
 
+<<<<<<< HEAD
 if [[ $TERM == "dumb" ]] || [[ $TERM == "tramp" ]]; then
+=======
+eval "$(antidot init)"
+eval "$(zoxide init zsh)"
+
+if [[ $TERM == "tramp" ]] && [[ -n $INSIDE_EMACS ]]; then
+>>>>>>> 377dc60 (topgrade config)
     unsetopt zle;
-    PS1='$ '
+    PS1='[\u@\h \W]\$ '
 else
     if [ -x "$(command -v starship)" ]; then
         eval "$(starship init zsh)"
     fi
 fi
+
+source /home/ross/.config/broot/launcher/bash/br
