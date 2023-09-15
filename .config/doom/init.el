@@ -15,7 +15,7 @@
 
 (doom! :input
        ;;chinese
-       ;;japanese
+       japanese
        ;;layout            ; auie,ctsrnm is the superior home row
 
        :completion
@@ -42,7 +42,7 @@
        ophints           ; highlight the region an operation acts on
        (popup +all +defaults)   ; tame sudden yet inevitable temporary windows
        ;;tabs              ; a tab bar for Emacs
-       ;;(treemacs +lsp)          ; a project drawer, like neotree but cooler
+       (treemacs +lsp)          ; a project drawer, like neotree but cooler
        unicode           ; extended unicode support for various languages
        vc-gutter         ; vcs diff in the fringe
        vi-tilde-fringe   ; fringe tildes to mark beyond EOB
@@ -168,13 +168,13 @@
        ;;(ruby +rails +lsp)     ; 1.step {|i| p "Ruby is #{i.even? ? 'love' : 'life'}"}
        (rust +lsp +tree-sitter)              ; Fe2O3.unwrap().unwrap().unwrap().unwrap()
        ;;(scala +lsp)             ; java, but good
-       (scheme +guile +mit)   ; a fully conniving family of lisps
-       (sh +lsp +tree-sitter)                ; she sells {ba,z,fi}sh shells on the C xor
+       ;;(scheme +guile +mit)   ; a fully conniving family of lisps
+       (sh +lsp +tree-sitter) ; she sells {ba,z,fi}sh shells on the C xor
        ;;sml
        ;;solidity          ; do you need a blockchain? No.
        ;;(swift +lsp)             ; who asked for emoji variables?
        ;;terra             ; Earth and Moon in alignment for performance.
-       ;;(web +lsp)               ; the tubes
+       (web +lsp)               ; the tubes
        (yaml +lsp +tree-sitter)              ; JSON, but readable
        ;;(zig +lsp)               ; C, but simpler
 

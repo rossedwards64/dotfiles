@@ -24,6 +24,7 @@ set some window configurations, load programs and some elisp packages
 i find emacs dashboard much easier to customise than the doom dashboard
 #+BEGIN_SRC emacs lisp
 (use-package! dashboard
+  :after (all-the-icons)
   :init
   (setq dashboard-set-heading-icons t
         dashboard-set-file-icons t
@@ -55,10 +56,10 @@ i find emacs dashboard much easier to customise than the doom dashboard
   (map! :leader
         :desc "Go back to the dashboard"
         "d o" #'(lambda ()
-                (interactive)
-                (with-selected-frame (selected-frame)
-                  (switch-to-buffer (doom-fallback-buffer))
-                  (dashboard-refresh-buffer))))
+                  (interactive)
+                  (with-selected-frame (selected-frame)
+                    (switch-to-buffer (doom-fallback-buffer))
+                    (dashboard-refresh-buffer))))
   :config
   (dashboard-setup-startup-hook)
   (dashboard-modify-heading-icons '((recents . "file-text")
@@ -74,7 +75,7 @@ set all the variables
 (defvar default-font "Iosevka Nerd Font")
 (setq user-full-name "Ross Edwards"
       user-mail-address "redwards64@hotmail.com"
-      doom-theme 'modus-vivendi-deuteranopia
+      doom-theme 'doom-horizon
       doom-font (font-spec :family default-font :size 18 :weight 'normal)
       doom-unicode-font (font-spec :family default-font :size 18 :weight 'normal)
       doom-variable-pitch-font (font-spec :family default-font :size 18 :weight 'normal)
@@ -90,6 +91,22 @@ set all the variables
       doom-modeline-indent-info t
       doom-modeline-display-default-persp-name t
       doom-modeline-unicode-fallback t
+      lsp-enable-folding t
+      lsp-enable-snippet t
+      lsp-inlay-hint-enable t
+      lsp-enable-text-document-color t
+      lsp-enable-relative-indentation t
+      lsp-rust-analyzer-lens-references-adt-enable t
+      lsp-rust-analyzer-lens-references-enum-variant-enable t
+      lsp-rust-analyzer-lens-references-method-enable t
+      lsp-rust-analyzer-lens-references-trait-enable t
+      lsp-rust-analyzer-binding-mode-hints t
+      lsp-rust-analyzer-display-lifetime-elision-hints-enable t
+      lsp-rust-analyzer-display-lifetime-elision-hints-use-parameter-names t
+      lsp-rust-analyzer-display-chaining-hints t
+      lsp-rust-analyzer-display-reborrow-hints t
+      lsp-rust-analyzer-display-parameter-hints t
+      lsp-rust-analyzer-closing-brace-hints t
       lsp-modeline-code-actions-segments '(icon count name)
       lsp-ui-doc-enable t
       lsp-ui-doc-position 'bottom
@@ -198,10 +215,10 @@ set up programming language specific functionality
                (map! :leader
                       :desc "Switch from header file to source file, or vice versa"
                       "z" #'lsp-clangd-find-other-file)))
+(add-hook! '(lsp-ui-mode-hook) #'lsp-ui-imenu)
 (add-hook! '(rust-mode-hook rust-ts-mode-hook rustic-mode-hook)
            #'(lambda ()
-               (set (make-local-variable 'compile-command) "cargo build --verbose")
-               (lsp-rust-analyzer-inlay-hints-mode t)))
+               (set (make-local-variable 'compile-command) #'rustic-cargo-build)))
 (add-hook! 'tree-sitter-after-on-hook #'tree-sitter-hl-mode)
 (add-hook! '(cider-mode-hook cider-repl-mode-hook clojure-mode-hook)
            #'(lambda ()
@@ -223,7 +240,7 @@ set up programming language specific functionality
              (map! :leader
                    :desc "Inserts end of source block"
                    "i n" #'end-src-block)))
-(add-hook! '(emacs-lisp-mode-hook clojure-mode-hook) #'lispy-mode)
+;; (add-hook! '(emacs-lisp-mode-hook clojure-mode-hook) #'lispy-mode)
 #+END_SRC
 
 todo list reminders

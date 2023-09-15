@@ -10,7 +10,7 @@ BSSIDS="$(nmcli device wifi list |
 # get geographical location
 LOC=""
 REQUEST_GEO="$(wget -qO - http://openwifi.su/api/v1/bssids/"$BSSIDS")"
-if [ "$(jq ".count_results" <<< "$REQUEST_GEO")" -gt 0 ]; then
+if [[ "$(jq ".count_results" <<< "$REQUEST_GEO")" -gt 0 ]]; then
     LAT="$(jq ".lat" <<< "$REQUEST_GEO")"
     LON="$(jq ".lon" <<< "$REQUEST_GEO")"
     LOC="$LAT,$LON"

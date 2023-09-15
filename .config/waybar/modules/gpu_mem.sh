@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-gpu_dir=/sys/class/drm/card0/device
+gpu_dir=/sys/class/drm/card1/device
 gpu_mem_total=$(cat $gpu_dir/mem_info_vram_total)
 gpu_mem_used=$(cat $gpu_dir/mem_info_vram_used)
 
