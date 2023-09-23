@@ -18,3 +18,4 @@
   (:host github
    :repo "lewang/command-log-mode"))
 (package! org-alert)
+(package! arduino-mode)

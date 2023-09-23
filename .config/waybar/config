@@ -3,7 +3,7 @@
         "name": "topbar",
         "layer": "top",
         "position": "top",
-        "height": 30,
+        "height": 32,
         "modules-left": [
             "custom/launcher",
             "custom/sep",
@@ -25,6 +25,7 @@
             "network#wifi",
             "network#ethernet",
             "network#disconnected",
+            "bluetooth",
             "custom/sep",
             "custom/mail",
             "custom/weather",
@@ -102,6 +103,16 @@
             "tooltip-format": "{ifname}: {ipaddr}/{cidr}",
             "on-click": "nm-connection-editor"
         },
+        "bluetooth": {
+            "format": " {status}",
+            "format-connected": " {num_connections} connected",
+            "format-disabled": " disabled",
+            "format-off": " off",
+            "format-on": " on",
+            "tooltip-format": "{controller_alias}\t{controller_address}",
+            "tooltip-format-connected": "{controller_alias}\t{controller_address}\n\n{device_enumerate}",
+            "tooltip-format-enumerate-connected": "{device_alias}\t{device_address}"
+        },
         "custom/weather": {
             "return-type": "json",
             "exec": "sh $HOME/.config/waybar/modules/weather.sh",
@@ -138,7 +149,7 @@
             "exec": "[ -d /lib/modules/`uname -r` ] || echo '*'"
         },
         "custom/fan_speed": {
-            "format": " {}",
+            "format": "󰈐 {}",
             "interval": 1,
             "exec": "cat /proc/acpi/ibm/fan | grep speed | cut -f 3"
         }
@@ -147,7 +158,7 @@
         "name": "bottombar",
         "layer": "top",
         "position": "bottom",
-        "height": 30,
+        "height": 32,
         "modules-left": [
             "tray",
             "gamemode",
@@ -155,7 +166,7 @@
             "custom/sep",
             "battery#bat1",
             "backlight",
-            "pulseaudio",
+            "wireplumber",
             "idle_inhibitor",
             "custom/sep",
             "hyprland/submap"
@@ -199,9 +210,8 @@
                 "deactivated": ""
             }
         },
-        "pulseaudio": {
+        "wireplumber": {
             "format": "{volume}% {icon}",
-            "format-bluetooth": "{volume}% {icon} ",
             "format-muted": "",
             "format-icons": {
                 "headphone": "",
@@ -215,8 +225,7 @@
                     ""
                 ]
             },
-            "scroll-step": 1,
-            "on-click": "alsamixer"
+            "on-click": "helvum"
         },
         "backlight": {
             "device": "intel_backlight",

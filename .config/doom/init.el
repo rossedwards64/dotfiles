@@ -16,7 +16,7 @@
 
 (doom! :input
        ;;chinese
-       ;;japanese
+       japanese
        ;;layout            ; auie,ctsrnm is the superior home row
 
        :completion
@@ -56,7 +56,7 @@
        ;;(meow +qwerty +override +keypad)
        file-templates                   ; auto-snippets for empty files
        fold                             ; (nigh) universal code folding
-       format                 ; automated prettiness
+       format                           ; automated prettiness
        ;;god               ; run Emacs commands without modifier keys
        lispy                       ; vim for lisp, for people who don't like vim
        multiple-cursors            ; editing in many places at once
@@ -77,8 +77,8 @@
        ;;eshell            ; the elisp shell that works everywhere
        ;;shell             ; simple shell REPL for Emacs
        ;;term              ; basic terminal emulator for Emacs
-
        vterm                            ; the best terminal emulation in Emacs
+                                        ;
        :checkers
        (syntax +childframe)          ; tasing you for every semicolon you forget
        (spell +flyspell)             ; tasing you for misspelling mispelling
@@ -149,7 +149,7 @@
        ;;         +lsp +fold)             ; writing papers in Emacs has never been so fun
        ;;lean              ; for folks with too much to prove
        ;;ledger            ; be audit you can be
-       lua                 ; one-based indices? one-based indices
+       lua               ; one-based indices? one-based indices
        (markdown +grip)  ; writing docs for people to ignore
        ;;nim               ; python + lisp at the speed of c
        ;;nix               ; I hereby declare "nix geht mehr!"
@@ -169,13 +169,13 @@
        ;;(ruby +rails +lsp)     ; 1.step {|i| p "Ruby is #{i.even? ? 'love' : 'life'}"}
        (rust +lsp +tree-sitter)      ; Fe2O3.unwrap().unwrap().unwrap().unwrap()
        ;;(scala +lsp)             ; java, but good
-       (scheme +guile +mit)          ; a fully conniving family of lisps
+       ;;(scheme +guile +mit)          ; a fully conniving family of lisps
        (sh +lsp +tree-sitter)        ; she sells {ba,z,fi}sh shells on the C xor
        ;;sml
        ;;solidity          ; do you need a blockchain? No.
        ;;(swift +lsp)             ; who asked for emoji variables?
        ;;terra             ; Earth and Moon in alignment for performance.
-       ;;(web +lsp)               ; the tubes
+       (web +lsp +tree-sitter)               ; the tubes
        (yaml +lsp +tree-sitter)      ; JSON, but readable
        ;;(zig +lsp)               ; C, but simpler
 

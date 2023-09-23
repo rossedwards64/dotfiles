@@ -3,7 +3,9 @@
 .config/doom/logos/
 .config/doom/modules/
 .config/doom/themes/
-.config/git/credentials/
+.config/git/credentials
 .config/tmux/plugins
 .config/zsh/history
+.config/zsh/.zcompdump*
+.config/zsh/.zfunc/**
 .config/nvim/

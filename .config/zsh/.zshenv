@@ -5,9 +5,8 @@ export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:="$HOME/.config"}"
 export XDG_STATE_HOME="${XDG_STATE_HOME:="$HOME/.local/state"}"
 
 # Paths
-export PATH="$HOME/.local/bin:$XDG_CONFIG_HOME/emacs/bin:"`
-            `"$HOME/bin:$HOME/.dotfiles/.bin:"`
-            `"$XDG_DATA_HOME/cargo/bin:$PATH"
+export PATH="${PATH}:$HOME/.local/bin:$XDG_CONFIG_HOME/emacs/bin:"`
+            `"$HOME/bin:$HOME/.dotfiles/.bin:$XDG_DATA_HOME/cargo/bin"
 export MANPATH="/usr/local/man:$MANPATH"
 
 # ZSH dirs
@@ -17,10 +16,10 @@ export ZSH_COMPDUMP="$ZSH/cache/.zcompdump-$HOST"
 
 # Shell enviornment
 export LANG="en_GB.UTF-8"
-export EDITOR='nvim'
-export ALTERNATE_EDITOR=""
+export EDITOR='emacsclient -c -a ""'
+export ALTERNATE_EDITOR="nvim"
 export BROWSER="firefox"
-export VISUAL="emacsclient -c -a emacs"
+export VISUAL='emacsclient -c -a ""'
 export TERM="alacritty"
 export ARCHFLAGS="-arch x86_64"
 export GTK_THEME="rose-pine-moon-gtk"
@@ -31,7 +30,7 @@ export CMAKE_GENERATOR="Ninja"
 export XAUTHORITY="$XDG_RUNTIME_DIR/Xauthority"
 
 # Home dirs
-export CARGO_HOME="$XDG_DATA_cargo/HOME"
+export CARGO_HOME="$XDG_DATA_HOME/cargo"
 export EMACSDIR="$XDG_CONFIG_HOME/emacs"
 export DOOMDIR="$XDG_CONFIG_HOME/doom"
 export GNUPGHOME="$XDG_DATA_HOME/gnupg"
@@ -41,6 +40,8 @@ export PASSWORD_STORE_DIR="$XDG_DATA_HOME/pass"
 export RUSTUP_HOME="$XDG_DATA_HOME/rustup"
 export WAKATIME_HOME="$XDG_CONFIG_HOME/wakatime"
 export WINEPREFIX="$XDG_DATA_HOME/wineprefixes/default"
+export KDEHOME="$XDG_CONFIG_HOME/kde"
+export ROSWELL_HOME="$XDG_CONFIG_HOME/roswell"
 
 # Startup files
 export GTK2_RC_FILES="$XDG_CONFIG_HOME/gtk-2.0/gtkrc"
@@ -62,3 +63,8 @@ export _JAVA_OPTIONS='-Djava.util.prefs.userRoot='"$XDG_CONFIG_HOME"'/java, '`
                      `'-Dawt.useSystemAAFontSettings=on, -Dswing.aatext=true'
 export JDK_JAVA_OPTIONS="$_JAVA_OPTIONS"
 export GRADLE_USER_HOME="$XDG_DATA_HOME/gradle"
+
+# Workarounds
+export PROTON_USE_WINED3D=1
+export MESA_GL_VERSION_OVERRIDE=4.6
+export MESA_GLSL_VERSION_OVERRIDE=460

@@ -4,13 +4,35 @@ COMPLETION_WAITING_DOTS="true"
 HIST_STAMPS="dd/mm/yyyy"
 
 plugins=(
+    archlinux
+    colored-man-pages
+    command-not-found
+    cp
+    #emacs
+    extract
+    fd
+    fzf
     git
+    gitfast
+    gpg-agent
+    history
+    isodate
+    jsontools
+    lein
+    otp
+    pass
+    ripgrep
+    ros
+    rsync
+    tmux
+    torrent
     zsh-autosuggestions
     zsh-syntax-highlighting
-    command-not-found
 )
 
 source $ZSH/oh-my-zsh.sh
+
+bindkey -r '^[l'
 
 setopt NO_CASE_GLOB
 setopt AUTO_CD
@@ -28,18 +50,31 @@ alias vim="nvim"
 alias mv="mv -iv"
 alias cp="cp -iv"
 alias rm="rm -iv"
-alias ls="exa"
-alias la="exa -ah"
-alias l="exa -lah"
+alias ls="eza"
+alias la="eza -ah"
+alias l="eza -lah"
 alias cd="z"
 alias cat="bat"
 alias ..="cd .."
+alias grep="rg"
+alias find="fd"
 alias du="dust -Hr"
 alias stow="stow -v"
 alias reset-zsh="source ~/.config/zsh/.zshrc"
 alias clear="clear && stty sane"
 alias cleanup="sudo pacman -Rns $(pacman -Qtdq)"
-alias wget=wget --hsts-file="$XDG_DATA_HOME"/wget-hsts
+alias wget="wget --hsts-file=$XDG_DATA_HOME/wget-hsts"
+
+if [[ -n "$TERM" ]] && [[ "$TERM" != "dumb" ]]; then
+    export BOLD="$(tput bold)"
+    export MAGENTA="$(tput setaf 5)"
+    export RED="$(tput setaf 1)"
+    export CYAN="$(tput setaf 6)"
+    export RMYELLOW="$(tput setaf 3)"
+    export GREEN="$(tput setaf 2)"
+    export BLUE="$(tput setaf 4)"
+    export NORM="$(tput sgr0)"
+fi
 
 zstyle ':completion:*' completer _expand _complete _ignored _approximate
 zstyle ':completion:*' cache-path $XDG_CACHE_HOME/zsh/zcompcache
