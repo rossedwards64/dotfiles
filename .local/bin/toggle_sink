@@ -27,7 +27,7 @@ is_default_device() {
     fi
 }
 
- if is_default_device "$headset"; then
+if is_default_device "$headset"; then
     device_id="$(get_device_id "$monitor")"
     notify-send "Changing default sink to monitor."
 elif is_default_device "$monitor"; then

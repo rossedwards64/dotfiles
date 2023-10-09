@@ -4,7 +4,7 @@
         "layer": "top",
         "position": "top",
         "height": 32,
-        "output": "DP-1",
+        "output": "HDMI-A-1",
         "modules-left": [
             "custom/launcher",
             "custom/sep",
@@ -34,7 +34,7 @@
         ],
         "custom/launcher": {
             "format": "",
-            "on-click": "$HOME/.config/rofi/scripts/launcher.sh"
+            "on-click": "$HOME/.config/rofi/scripts/launcher"
         },
         "clock": {
             "interval": 1,
@@ -65,7 +65,7 @@
             "interval": 1
         },
         "custom/cpu_temp": {
-            "exec": "$HOME/.config/waybar/modules/cpu_temp.sh",
+            "exec": "$HOME/.config/waybar/modules/cpu_temp",
             "format": " {}",
             "interval": 1
         },
@@ -126,18 +126,18 @@
         },
         "custom/weather": {
             "return-type": "json",
-            "exec": "sh $HOME/.config/waybar/modules/weather.sh",
+            "exec": "sh $HOME/.config/waybar/modules/weather",
             "interval": 300,
             "on-click": "firefox https://wttr.in"
         },
         "custom/poweroff": {
             "tooltip": false,
             "format": " ",
-            "on-click": "bash $HOME/.config/waybar/modules/poweroff.sh"
+            "on-click": "bash $HOME/.config/waybar/modules/poweroff"
         },
         "custom/mail": {
             "tooltip": false,
-            "exec": "sh $HOME/.config/waybar/modules/mail.sh",
+            "exec": "sh $HOME/.config/waybar/modules/mail",
             "interval": 120,
             "on-click": "thunderbird && swaymsg '[app_id=thunderbird] focus'"
         },
@@ -160,7 +160,7 @@
             "exec": "[ -d /lib/modules/`uname -r` ] || echo '*'"
         },
         "custom/gpu": {
-            "exec": "$HOME/.config/waybar/modules/custom-gpu.sh",
+            "exec": "$HOME/.config/waybar/modules/custom-gpu",
             "return-type": "json",
             "format": "{}",
             "interval": 2,
@@ -170,17 +170,17 @@
             "on-click": "powerupp"
         },
         "custom/gpu_percent": {
-            "exec": "$HOME/.config/waybar/modules/gpu_percent.sh",
+            "exec": "$HOME/.config/waybar/modules/gpu_percent",
             "format": " GPU: {}",
             "interval": 1
         },
         "custom/gpu_temp": {
-            "exec": "$HOME/.config/waybar/modules/gpu_temp.sh",
+            "exec": "$HOME/.config/waybar/modules/gpu_temp",
             "format": " {}",
             "interval": 1
         },
         "custom/gpu_mem": {
-            "exec": "$HOME/.config/waybar/modules/gpu_mem.sh",
+            "exec": "$HOME/.config/waybar/modules/gpu_mem",
             "format": "{}",
             "interval": 1
         },
@@ -190,7 +190,7 @@
         "layer": "top",
         "position": "bottom",
         "height": 32,
-        "output": "DP-1",
+        "output": "HDMI-A-1",
         "modules-left": [
             "tray",
             "idle_inhibitor",
@@ -252,7 +252,7 @@
         "custom/spotify": {
             "interval": 1,
             "return-type": "json",
-            "exec": "$HOME/.config/waybar/modules/spotify.sh",
+            "exec": "$HOME/.config/waybar/modules/spotify",
             "exec-if": "pgrep spotify",
             "escape": true
         },
@@ -285,7 +285,7 @@
         "layer": "top",
         "position": "top",
         "height": 32,
-        "output": "HDMI-A-1",
+        "output": "DP-1",
         "modules-left": [
 
         ],
@@ -301,7 +301,7 @@
         "layer": "top",
         "position": "bottom",
         "height": 32,
-        "output": "HDMI-A-1",
+        "output": "DP-1",
         "modules-left": [
 
         ],

@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+
+usage() {
+    cat <<EOF
+Script for muting the speaker or microphone.
+m: Toggle microphone mute.
+s: Toggle speaker mute.
+h: Help.
+EOF
+}
+
+# TODO: convert to using wpctl
+toggle_device() {
+    device="$1"
+    command="$2"
+    default_device="$3"
+
+    status="$(pactl "$command" "$default_device" | cut -c 7-9)"
+    if [[ "$status" == 'yes' ]]; then
+        notify-send "Muted $device"
+    elif [[ "$status" == 'no' ]]; then
+        notify-send "Unmuted $device"
+    fi
+}
+
+while getopts "hms" arg; do
+    case "$arg" in
+        m)
+            toggle_device 'Microphone' 'get-source-mute' '@DEFAULT_SOURCE@'
+            ;;
+        s)
+            toggle_device 'Speaker' 'get-sink-mute' '@DEFAULT_SINK@'
+            ;;
+        h)
+            usage
+            exit 0
+            ;;
+        *)
+            usage
+            exit 1
+            ;;
+    esac
+done

@@ -1,11 +1,9 @@
-emacs lisp mode is surprisingly a lot better than org mode for editing emacs lisp
-#+BEGIN_SRC emacs lisp
-;;; $DOOMDIR/config.org -*- lexical-binding: t; -*-
-(add-to-list 'auto-mode-alist '("config.org" . emacs-lisp-mode))
+#+BEGIN_SRC emacs-lisp
+;; $DOOMDIR/config.org -*- lexical-binding: t -*-
 #+END_SRC
 
 set some window configurations, load programs and some elisp packages
-#+BEGIN_SRC emacs lisp
+#+BEGIN_SRC emacs-lisp
 (add-to-list 'default-frame-alist '(inhibit-double-buffering . t))
 (add-to-list 'default-frame-alist '(alpha-background . 0.9))
 (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
@@ -22,7 +20,7 @@ set some window configurations, load programs and some elisp packages
 #+END_SRC
 
 i find emacs dashboard much easier to customise than the doom dashboard
-#+BEGIN_SRC emacs lisp
+#+BEGIN_SRC emacs-lisp
 (use-package! dashboard
   :after (all-the-icons)
   :init
@@ -71,7 +69,7 @@ i find emacs dashboard much easier to customise than the doom dashboard
 #+END_SRC
 
 set all the variables
-#+BEGIN_SRC emacs lisp
+#+BEGIN_SRC emacs-lisp
 (defvar default-font "Iosevka Nerd Font")
 (setq user-full-name "Ross Edwards"
       user-mail-address "redwards64@hotmail.com"
@@ -148,12 +146,12 @@ set all the variables
       tree-sitter-hl-mode t
       mu4e-mu-binary "/usr/bin/mu"
       mu4e-maildir "~/Mail"
-      twittering-use-master-password t
+      elcord-refresh-rate 120
       doom-localleader-alt-key "C-l")
 #+END_SRC
 
 enable some fun little modes
-#+BEGIN_SRC emacs lisp
+#+BEGIN_SRC emacs-lisp
 (global-tree-sitter-mode t)
 (solaire-global-mode t)
 (global-auto-revert-mode t)
@@ -167,8 +165,7 @@ enable some fun little modes
 #+END_SRC
 
 set up some functionality after packages have loaded
-#+BEGIN_SRC emacs lisp
-;;; :app everywhere
+#+BEGIN_SRC emacs-lisp
 (after! emacs-everywhere
   (setq emacs-everywhere-frame-name-format "emacs-anywhere")
   (remove-hook 'emacs-everywhere-init-hooks #'hide-mode-line-mode)
@@ -202,7 +199,7 @@ set up some functionality after packages have loaded
 #+END_SRC
 
 set up programming language specific functionality
-#+BEGIN_SRC emacs lisp
+#+BEGIN_SRC emacs-lisp
 (add-hook! '(c-mode-hook c++-mode-hook makefile-mode-hook makefile-gmake-mode-hook c-ts-mode-hook c++-ts-mode-hook)
            #'(lambda ()
                (set (make-local-variable 'compile-command) (format "make -C %s -k" (substring (ross/get-closest-pathname) 0 -8)))
@@ -220,7 +217,8 @@ set up programming language specific functionality
            #'(lambda ()
                (set (make-local-variable 'compile-command) #'rustic-cargo-build)))
 (add-hook! 'tree-sitter-after-on-hook #'tree-sitter-hl-mode)
-(add-hook! '(cider-mode-hook cider-repl-mode-hook clojure-mode-hook)
+(add-hook! '(emacs-lisp-mode-hook clojure-mode-hook) #'enable-paredit-mode)
+(add-hook! '(cider-mode-hook cider-repl-mode-hook)
            #'(lambda ()
                (cider-company-enable-fuzzy-completion)
                (map! :leader
@@ -228,23 +226,22 @@ set up programming language specific functionality
                      "j" #'cider-cheatsheet)))
 (add-hook! '(emacs-lisp-mode-hook org-mode-hook)
            #'(lambda ()
-             (defun begin-src-block ()
-               (interactive)
-               (insert "#+BEGIN_SRC emacs lisp"))
-             (defun end-src-block ()
-               (interactive)
-               (insert "#+END_SRC"))
-             (map! :leader
-                   :desc "Insert beginning of source block"
-                   "i b" #'begin-src-block)
-             (map! :leader
-                   :desc "Inserts end of source block"
-                   "i n" #'end-src-block)))
-;; (add-hook! '(emacs-lisp-mode-hook clojure-mode-hook) #'lispy-mode)
+               (defun begin-src-block ()
+                 (interactive)
+                 (insert "#+BEGIN_SRC emacs-lisp"))
+              (defun end-src-block ()
+                (interactive)
+                (insert "#+END_SRC"))
+              (map! :leader
+                    :desc "Insert beginning of source block"
+                    "i b" #'begin-src-block)
+              (map! :leader
+                    :desc "Inserts end of source block"
+                    "i n" #'end-src-block)))
 #+END_SRC
 
 todo list reminders
-#+BEGIN_SRC emacs lisp
+#+BEGIN_SRC emacs-lisp
 (use-package! org-alert
   :custom (alert-default-style 'notifications)
   :config (setq org-alert-interval 86400
@@ -253,7 +250,7 @@ todo list reminders
 #+END_SRC
 
 some basic keybinds
-#+BEGIN_SRC emacs lisp
+#+BEGIN_SRC emacs-lisp
 (when (require 'meow nil 'noerror)
  (map! :map meow-leader-keymap
        "l" #'meow-keypad-start))
@@ -263,7 +260,7 @@ some basic keybinds
 #+END_SRC
 
 this is to keep the text in the modeline from going off the edge of the screen
-#+BEGIN_SRC emacs lisp
+#+BEGIN_SRC emacs-lisp
 (custom-set-faces!
   '(font-lock-comment-face :slant italic)
   '(font-lock-keyword-face :slant italic)
@@ -278,7 +275,7 @@ this is to keep the text in the modeline from going off the edge of the screen
 #+END_SRC
 
 automatically get the closest makefile from the current directory
-#+BEGIN_SRC emacs lisp
+#+BEGIN_SRC emacs-lisp
 (cl-defun ross/get-closest-pathname (&optional (file "Makefile"))
   "Determine the pathname of the first instance of FILE starting from the current directory towards root.
    This may not do the correct thing in the presence of links.
@@ -294,7 +291,7 @@ automatically get the closest makefile from the current directory
 #+END_SRC
 
 run astyle to format the buffer
-#+BEGIN_SRC emacs lisp
+#+BEGIN_SRC emacs-lisp
 (defun ross/format-buffer-astyle ()
   "Format all the files inside src using .astylerc"
   (interactive)
