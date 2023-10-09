@@ -1,13 +1,35 @@
+PATH="${PATH}:$HOME/.local/bin:$XDG_CONFIG_HOME/emacs/bin:"`
+     `"$HOME/bin:$HOME/.dotfiles/.bin:""$XDG_DATA_HOME/cargo/bin:"
+
 zstyle ':omz:update' mode auto
 ENABLE_CORRECTION="true"
 COMPLETION_WAITING_DOTS="true"
 HIST_STAMPS="dd/mm/yyyy"
 
 plugins=(
+    colored-man-pages
+    command-not-found
+    cp
+    #emacs
+    extract
+    fd
+    fzf
     git
+    gitfast
+    gpg-agent
+    history
+    isodate
+    jsontools
+    lein
+    otp
+    pass
+    ripgrep
+    ros
+    rsync
+    tmux
+    torrent
     zsh-autosuggestions
     zsh-syntax-highlighting
-    command-not-found
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -35,6 +57,7 @@ alias la="exa -ah"
 alias l="exa -lah"
 alias cat="bat"
 alias ..="cd .."
+alias grep="rg"
 alias du="dust -Hr"
 alias stow="stow -v"
 alias reset-zsh="source ~/.config/zsh/.zshrc"
@@ -45,7 +68,7 @@ alias cleanup="emerge -ac"
 alias wget=wget --hsts-file="$XDG_DATA_HOME"/wget-hsts
 =======
 alias cleanup="sudo emerge --ask --verbose --depclean"
-alias upgrade="sudo emerge --ask --verboes --update --deep --newuse --with-bdeps=y --keep-going @world"
+alias upgrade="sudo emerge --ask --verbose --update --deep --newuse --with-bdeps=y --keep-going=y @world"
 alias wget="wget --hsts-file=$XDG_DATA_HOME/wget-hsts"
 
 if [[ -n "$TERM" ]] && [[ "$TERM" != "dumb" ]]; then

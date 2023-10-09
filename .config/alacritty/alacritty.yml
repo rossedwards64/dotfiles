@@ -18,7 +18,7 @@ window:
     y: 10
   dynamic_padding: true
   decorations: full
-  opacity: 0.9
+  opacity: 1.0
   dynamic_title: true
   class:
     instance: Alacritty
@@ -191,6 +191,5 @@ debug:
   render_timer: false
   persistent_logging: false
   log_level: Warn
-  renderer: None
   print_events: false
   highlight_damage: false

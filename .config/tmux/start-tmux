@@ -1,0 +1,4 @@
+new-session -s "my-session" -d
+split-window -h
+split-window -v
+attach-session -d

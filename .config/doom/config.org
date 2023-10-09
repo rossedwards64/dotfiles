@@ -1,14 +1,12 @@
-emacs lisp mode is surprisingly a lot better than org mode for editing emacs lisp
-#+BEGIN_SRC emacs lisp
-;;; $DOOMDIR/config.org -*- lexical-binding: t; -*-
-(add-to-list 'auto-mode-alist '("config.org" . emacs-lisp-mode))
+#+BEGIN_SRC emacs-lisp
+;; $DOOMDIR/config.org -*- lexical-binding: t; -*-
 #+END_SRC
 
 set some window configurations, load programs and some elisp packages
-#+BEGIN_SRC emacs lisp
+#+BEGIN_SRC emacs-lisp
 (add-to-list 'default-frame-alist '(inhibit-double-buffering . t))
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
-(add-to-list 'default-frame-alist '(alpha-background . 0.9))
+;; (add-to-list 'default-frame-alist '(alpha-background . 0.9))
 (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
 (add-to-list 'exec-path "/usr/local/bin")
 (require 'sly-autoloads)
@@ -21,8 +19,9 @@ set some window configurations, load programs and some elisp packages
 #+END_SRC
 
 i find emacs dashboard much easier to customise than the doom dashboard
-#+BEGIN_SRC emacs lisp
+#+BEGIN_SRC emacs-lisp
 (use-package! dashboard
+  :after (all-the-icons)
   :init
   (setq dashboard-set-heading-icons t
         dashboard-set-file-icons t
@@ -54,10 +53,10 @@ i find emacs dashboard much easier to customise than the doom dashboard
   (map! :leader
         :desc "Go back to the dashboard"
         "d o" #'(lambda ()
-                (interactive)
-                (with-selected-frame (selected-frame)
-                  (switch-to-buffer (doom-fallback-buffer))
-                  (dashboard-refresh-buffer))))
+                  (interactive)
+                  (with-selected-frame (selected-frame)
+                    (switch-to-buffer (doom-fallback-buffer))
+                    (dashboard-refresh-buffer))))
   :config
   (dashboard-setup-startup-hook)
   (dashboard-modify-heading-icons '((recents . "file-text")
@@ -69,11 +68,14 @@ i find emacs dashboard much easier to customise than the doom dashboard
 #+END_SRC
 
 set all the variables
-#+BEGIN_SRC emacs lisp
+#+BEGIN_SRC emacs-lisp
 (defvar default-font "Iosevka Nerd Font")
 (setq user-full-name "Ross Edwards"
       user-mail-address "redwards64@hotmail.com"
-      doom-theme 'modus-vivendi-deuteranopia
+      doom-theme 'doom-rouge
+      doom-rouge-brighter-comments t
+      doom-rouge-brighter-tabs t
+      doom-rouge-comment-bg t
       doom-font (font-spec :family default-font :size 18 :weight 'normal)
       doom-unicode-font (font-spec :family default-font :size 18 :weight 'normal)
       doom-variable-pitch-font (font-spec :family default-font :size 18 :weight 'normal)
@@ -89,6 +91,22 @@ set all the variables
       doom-modeline-indent-info t
       doom-modeline-display-default-persp-name t
       doom-modeline-unicode-fallback t
+      lsp-enable-folding t
+      lsp-enable-snippet t
+      lsp-enable-text-document-color t
+      lsp-enable-relative-indentation t
+      lsp-inlay-hint-enable t
+      lsp-rust-analyzer-lens-references-adt-enable t
+      lsp-rust-analyzer-lens-references-enum-variant-enable t
+      lsp-rust-analyzer-lens-references-method-enable t
+      lsp-rust-analyzer-lens-references-trait-enable t
+      lsp-rust-analyzer-binding-mode-hints t
+      lsp-rust-analyzer-display-lifetime-elision-hints-enable t
+      lsp-rust-analyzer-display-lifetime-elision-hints-use-parameter-names t
+      lsp-rust-analyzer-display-chaining-hints t
+      lsp-rust-analyzer-display-reborrow-hints t
+      lsp-rust-analyzer-display-parameter-hints t
+      lsp-rust-analyzer-closing-brace-hints t
       lsp-modeline-code-actions-segments '(icon count name)
       lsp-ui-doc-enable t
       lsp-ui-doc-position 'bottom
@@ -130,12 +148,11 @@ set all the variables
       tree-sitter-hl-mode t
       mu4e-mu-binary "/usr/bin/mu"
       mu4e-maildir "~/Mail"
-      twittering-use-master-password t
       doom-localleader-alt-key "C-l")
 #+END_SRC
 
 enable some fun little modes
-#+BEGIN_SRC emacs lisp
+#+BEGIN_SRC emacs-lisp
 (global-tree-sitter-mode t)
 (solaire-global-mode t)
 (global-auto-revert-mode t)
@@ -151,7 +168,7 @@ enable some fun little modes
 #+END_SRC
 
 set up some functionality after packages have loaded
-#+BEGIN_SRC emacs lisp
+#+BEGIN_SRC emacs-lisp
 ;;; :app everywhere
 (after! emacs-everywhere
   (setq emacs-everywhere-frame-name-format "emacs-anywhere")
@@ -178,6 +195,7 @@ set up some functionality after packages have loaded
     '(misc-info minor-modes checker input-method buffer-encoding major-mode process vcs " ")))
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 (after! lsp-mode
   (add-to-list 'lsp-language-id-configuration '(c-ts-mode . "c"))
   (add-to-list 'lsp-language-id-configuration '(c++-ts-mode . "cpp"))
@@ -202,6 +220,8 @@ set up some functionality after packages have loaded
 (after! elcord
   (setq elcord-use-major-mode-as-main-icon t))
 
+=======
+>>>>>>> dfc57dd (fix doom config file)
 (add-hook! command-log-mode-hook
            (lambda ()
              (text-scale-decrease 2)))
@@ -209,7 +229,7 @@ set up some functionality after packages have loaded
 #+END_SRC
 
 set up programming language specific functionality
-#+BEGIN_SRC emacs lisp
+#+BEGIN_SRC emacs-lisp
 (add-hook! '(c-mode-hook c++-mode-hook makefile-mode-hook makefile-gmake-mode-hook c-ts-mode-hook c++-ts-mode-hook)
            #'(lambda ()
                (set (make-local-variable 'compile-command)
@@ -226,9 +246,9 @@ set up programming language specific functionality
                       "z" #'lsp-clangd-find-other-file)))
 (add-hook! '(rust-mode-hook rust-ts-mode-hook rustic-mode-hook)
            #'(lambda ()
-               (set (make-local-variable 'compile-command) "cargo build --verbose")
-               (lsp-rust-analyzer-inlay-hints-mode t)))
+               (set (make-local-variable 'compile-command) #'rustic-cargo-build)))
 (add-hook! 'tree-sitter-after-on-hook #'tree-sitter-hl-mode)
+(add-hook! '(emacs-lisp-mode-hook clojure-mode-hook lisp-mode-hook) #'enable-paredit-mode)
 (add-hook! '(cider-mode-hook cider-repl-mode-hook clojure-mode-hook)
            #'(lambda ()
                (cider-company-enable-fuzzy-completion)
@@ -237,6 +257,7 @@ set up programming language specific functionality
                      "j" #'cider-cheatsheet)))
 (add-hook! '(emacs-lisp-mode-hook org-mode-hook)
            #'(lambda ()
+<<<<<<< HEAD
 <<<<<<< HEAD
                (defun begin-src-block ()
                  (interactive)
@@ -264,10 +285,24 @@ set up programming language specific functionality
                    :desc "Inserts end of source block"
                    "i n" #'end-src-block)))
 (add-hook! '(emacs-lisp-mode-hook clojure-mode-hook) #'lispy-mode)
+=======
+              (defun begin-src-block ()
+                (interactive)
+                (insert "#+BEGIN_SRC emacs-lisp"))
+              (defun end-src-block ()
+                (interactive)
+                (insert "#+END_SRC"))
+              (map! :leader
+                    :desc "Insert beginning of source block"
+                    "i b" #'begin-src-block)
+              (map! :leader
+                    :desc "Inserts end of source block"
+                    "i n" #'end-src-block)))
+>>>>>>> dfc57dd (fix doom config file)
 #+END_SRC
 
 todo list reminders
-#+BEGIN_SRC emacs lisp
+#+BEGIN_SRC emacs-lisp
 (use-package! org-alert
   :custom (alert-default-style 'notifications)
   :config (setq org-alert-interval 86400
@@ -277,7 +312,7 @@ todo list reminders
 #+END_SRC
 
 some basic keybinds
-#+BEGIN_SRC emacs lisp
+#+BEGIN_SRC emacs-lisp
 (when (require 'meow nil 'noerror)
  (map! :map meow-leader-keymap
        "l" #'meow-keypad-start))
@@ -287,7 +322,7 @@ some basic keybinds
 #+END_SRC
 
 this is to keep the text in the modeline from going off the edge of the screen
-#+BEGIN_SRC emacs lisp
+#+BEGIN_SRC emacs-lisp
 (custom-set-faces!
   '(font-lock-comment-face :slant italic)
   '(font-lock-keyword-face :slant italic)
@@ -302,7 +337,7 @@ this is to keep the text in the modeline from going off the edge of the screen
 #+END_SRC
 
 automatically get the closest makefile from the current directory
-#+BEGIN_SRC emacs lisp
+#+BEGIN_SRC emacs-lisp
 (cl-defun ross/get-closest-pathname (&optional (file "Makefile"))
   "Determine the pathname of the first instance of FILE starting from the current directory towards root.
    This may not do the correct thing in the presence of links.
@@ -318,7 +353,7 @@ automatically get the closest makefile from the current directory
 #+END_SRC
 
 run astyle to format the buffer
-#+BEGIN_SRC emacs lisp
+#+BEGIN_SRC emacs-lisp
 (defun ross/format-buffer-astyle ()
   "Format all the files inside src using .astylerc"
   (interactive)

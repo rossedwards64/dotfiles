@@ -5,9 +5,6 @@ export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:="$HOME/.config"}"
 export XDG_STATE_HOME="${XDG_STATE_HOME:="$HOME/.local/state"}"
 
 # Paths
-export PATH="$HOME/.local/bin:$XDG_CONFIG_HOME/emacs/bin:"`
-            `"$HOME/bin:$HOME/.dotfiles/.bin:"`
-            `"$XDG_DATA_HOME/cargo/bin:$PATH"
 export MANPATH="/usr/local/man:$MANPATH"
 
 # ZSH dirs
@@ -19,7 +16,7 @@ export ZSH_COMPDUMP="$ZSH/cache/.zcompdump-$HOST"
 export LANG="en_GB.UTF-8"
 export EDITOR='emacsclient -c -a ""'
 export ALTERNATE_EDITOR="nvim"
-export BROWSER="firefox"
+export BROWSER="falkon"
 export VISUAL='emacsclient -c -a ""'
 export TERM="alacritty"
 export ARCHFLAGS="-arch x86_64"
@@ -28,7 +25,7 @@ export XCURSOR_SIZE=24
 #export SDL_VIDEODRIVER="wayland"
 export MOZ_ENABLE_WAYLAND=1
 export CMAKE_GENERATOR="Ninja"
-export XAUTHORITY="$XDG_RUNTIME_DIR/Xauthority"
+#export XAUTHORITY="$XDG_RUNTIME_DIR/Xauthority"
 
 # Home dirs
 export CARGO_HOME="$XDG_DATA_HOME/cargo"
