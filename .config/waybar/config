@@ -39,7 +39,7 @@
         "clock": {
             "interval": 1,
             "format": "<b>{:%a %d-%m-%y %H:%M:%S}</b>",
-            "format-alt": "<b>{:%A, %d of %B, %Y %H:%S:%S}</b>",
+            "format-alt": "<b>{:%A, %d of %B, %Y %H:%M:%S}</b>",
             "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"
         },
         "cpu": {
@@ -80,18 +80,16 @@
         "network#ethernet": {
             "interface": "eno*",
             "format-ethernet": " {ifname}: {ipaddr}/{cidr}",
-            "format-wifi": "",
             "format-linked": "",
-            "format-disconnected": "",
+            "format-disconnected": "{ifname}: N/A",
             "tooltip-format": "{ifname}: {ipaddr}/{cidr}",
             "on-click": "nm-connection-editor"
         },
         "network#wifi": {
             "interface": "wlp*",
-            "format-ethernet": "",
-            "format-wifi": " {essid} ({signalStrength}%)",
+            "format-wifi": " {ifname}: {essid} ({signalStrength}%)",
             "format-linked": "",
-            "format-disconnected": "",
+            "format-disconnected": "{ifname}: N/A",
             "tooltip-format": "{ifname}: {ipaddr}/{cidr}",
             "on-click": "nm-connection-editor"
         },
@@ -157,7 +155,7 @@
         "custom/restart_needed": {
             "format": "{}",
             "interval": 600,
-            "exec": "[ -d /lib/modules/`uname -r` ] || echo '*'"
+            "exec": "$HOME/.config/waybar/modules/restart-needed"
         },
         "custom/gpu": {
             "exec": "$HOME/.config/waybar/modules/custom-gpu",
@@ -290,7 +288,7 @@
 
         ],
         "modules-center": [
-
+            "hyprland/window"
         ],
         "modules-right": [
 

@@ -1,0 +1,6 @@
+plugins = [
+    { git = "https://github.com/Duckonaut/split-monitor-workspaces", branch = "main", name = "split-monitor-workspaces" },
+    { git = "https://github.com/ItsDrike/hyprland-dwindle-autogroup", branch = "main", name = "hyprland-dwindle-autogroup" },
+    { git = "https://github.com/VortexCoyote/hyprfocus", branch = "main", name = "hyprfocus" },
+    { git = "https://github.com/hyprwm/hyprland-plugins", branch = "main", name = "hyprbars" },
+]

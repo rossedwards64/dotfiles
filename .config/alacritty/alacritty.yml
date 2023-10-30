@@ -76,7 +76,7 @@ shell:
   args:
     - -l
     - -c
-    - "tmux new -f ~/.config/tmux/tmux.conf || tmux -f ~/.config/tmux/tmux.conf"
+    - "$HOME/.config/tmux/start-tmux.sh"
 
 mouse:
   double_click: { threshold: 300 }

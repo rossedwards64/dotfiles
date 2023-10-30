@@ -4,8 +4,9 @@
 .config/doom/modules/
 .config/doom/themes/
 .config/git/credentials
+.config/nvim/
 .config/tmux/plugins
-.config/zsh/history
 .config/zsh/.zcompdump-ross-desktop-*
 .config/zsh/.zfunc/**
-.config/nvim/
+.config/zsh/history
+.config/ncspot/userstate.cbor

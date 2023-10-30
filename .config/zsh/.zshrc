@@ -2,6 +2,7 @@ zstyle ':omz:update' mode auto
 ENABLE_CORRECTION="true"
 COMPLETION_WAITING_DOTS="true"
 HIST_STAMPS="dd/mm/yyyy"
+HISTFILE="$HOME/.cache/zsh/history"
 
 plugins=(
     archlinux
@@ -69,7 +70,7 @@ alias svn="svn --config-dir \"$XDG_CONFIG_HOME\"/subversion"
 
 zstyle ':completion:*' completer _expand _complete _ignored _approximate
 zstyle ':completion:*' cache-path $XDG_CACHE_HOME/zsh/zcompcache
-zstyle :compinstall filename '/home/ross/.zshrc'
+zstyle :compinstall filename '/home/ross/.config/zsh/.zshrc'
 
 fpath+=$XDG_CONFIG_HOME/.zfunc
 autoload -Uz compinit

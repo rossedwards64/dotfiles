@@ -1,20 +1,23 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; $DOOMDIR/packages.el
 
-;;(package! straight :pin "3eca39d")
-;;(unpin! rustic)
-(package! elcord)
-(package! dired-single)
-(package! wakatime-mode)
-(package! dashboard)
-(package! page-break-lines)
+(package! arduino-mode)
 (package! autothemer)
-;;(package! treesit-auto
-;;	:recipe 
-;;	(:host github
-;;	 :repo "renzmann/treesit-auto"))
+(package! catppuccin-theme)
 (package! command-log-mode
-	:recipe
-	(:host github
-	 :repo "lewang/command-log-mode"))
+  :recipe
+  (:host github
+   :repo "lewang/command-log-mode"))
+(package! dashboard)
+(package! dired-single)
+(package! elcord)
 (package! org-alert)
+(package! page-break-lines)
+(package! structurizr
+  :recipe
+  (:host github
+   :repo "gilesp/structurizr-mode"))
+(package! systemd-mode)
+(package! timu-caribbean-theme)
+(package! timu-macos-theme)
+(package! wakatime-mode)

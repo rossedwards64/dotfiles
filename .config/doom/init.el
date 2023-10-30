@@ -157,7 +157,7 @@
             +hugo +roam2 +pandoc
             +present +brain +noter +pomodoro)               ; organize your plain life in plain text
        ;;(php +lsp +hack)               ; perl's insecure younger brother
-       ;;plantuml          ; diagrams for confusing people more
+       plantuml          ; diagrams for confusing people more
        ;;(purescript +lsp)        ; javascript, but functional
        ;;(python +lsp)            ; beautiful is better than ugly
        ;;qt                ; the 'cutest' gui framework ever

@@ -54,7 +54,6 @@ export WGETRC="$XDG_CONFIG_HOME/wget/wgetrc"
 export XINITRC="$XDG_CONFIG_HOME/X11/xinitrc"
 
 # History files
-export HISTFILE="$XDG_DATA_HOME/zsh/history"
 export HISTCONTROL="ignoreboth"
 export GDBHISTFILE="$XDG_DATA_HOME/gdb/history"
 export LESSHISTFILE=-
