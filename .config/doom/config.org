@@ -1,11 +1,7 @@
-emacs lisp mode is surprisingly a lot better than org mode for editing emacs lisp
-#+BEGIN_SRC emacs lisp
-;;; $DOOMDIR/config.org -*- lexical-binding: t; -*-
-(add-to-list 'auto-mode-alist '("config.org" . emacs-lisp-mode))
-#+END_SRC
-
+* Doom Emacs Config
 set some window configurations, load programs and some elisp packages
-#+BEGIN_SRC emacs lisp
+#+BEGIN_SRC emacs-lisp
+;; $DOOMDIR/config.org -*- lexical-binding: t; -*-
 (add-to-list 'default-frame-alist '(inhibit-double-buffering . t))
 (add-to-list 'default-frame-alist '(alpha-background . 0.9))
 (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
@@ -20,7 +16,7 @@ set some window configurations, load programs and some elisp packages
 #+END_SRC
 
 i find emacs dashboard much easier to customise than the doom dashboard
-#+BEGIN_SRC emacs lisp
+#+BEGIN_SRC emacs-lisp
 (use-package! dashboard
   :after (all-the-icons)
   :init
@@ -37,12 +33,12 @@ i find emacs dashboard much easier to customise than the doom dashboard
         dashboard-projects-backend 'projectile
         dashboard-items '((projects . 3)
                           (agenda . 3))
-        dashboard-footer-icon (all-the-icons-fileicon "gentoo"
+        dashboard-footer-icon (all-the-icons-fileicon "arch-linux"
                                                       :height 1.1
                                                       :v-adjust -0.05
                                                       :face 'font-lock-keyword-face)
         dashboard-navigator-buttons `(;; line 1
-                                      ((,(all-the-icons-octicon "octoface" :height 1.1 :v-adjust 0.0)
+                                      ((,(all-the-icons-octicon "logo-github" :height 1.1 :v-adjust 0.0)
                                         "[ GitHub ]"
                                         "Browse GitHub profile"
                                         (lambda (&rest _) (browse-url "https://github.com/rossedwards64/dotfiles")) nil "" " |")
@@ -69,122 +65,144 @@ i find emacs dashboard much easier to customise than the doom dashboard
 #+END_SRC
 
 set all the variables
-#+BEGIN_SRC emacs lisp
-(defvar default-font "Iosevka Nerd Font")
-(setq user-full-name "Ross Edwards"
-      user-mail-address "redwards64@hotmail.com"
-      doom-theme 'doom-horizon
-      doom-font (font-spec :family default-font :size 18 :weight 'normal)
-      doom-unicode-font (font-spec :family default-font :size 18 :weight 'normal)
-      doom-variable-pitch-font (font-spec :family default-font :size 18 :weight 'normal)
-      doom-big-font (font-spec :family default-font :size 24 :weight 'normal)
-      doom-modeline-enable-word-count t
-      doom-modeline-persp-name t
-      doom-modeline-persp-icon t
-      doom-modeline-hud t
-      doom-modeline-height 40
+#+BEGIN_SRC emacs-lisp
+(let ((default-font "Iosevka NF"))
+  (setq doom-big-font (font-spec :family default-font :size 24 :weight 'normal)
+        doom-font (font-spec :family default-font :size 18 :weight 'normal)
+        doom-symbol-font (font-spec :family default-font :size 18 :weight 'normal)
+        doom-variable-pitch-font (font-spec :family default-font :size 18 :weight 'normal))
+  (custom-set-faces!
+        '(font-lock-comment-face :slant italic)
+        '(font-lock-keyword-face :slant italic)
+        '(mode-line :family default-font :height 1.0)
+        '(mode-line-inactive :family default-font :height 1.0)))
+
+(setq +format-with nil
+      TeX-fold-auto t
+      all-the-icons-scale-factor 1.1
+      dired-hide-details-hide-information-lines t
+      dired-hide-details-hide-symlink-targets t
+      dired-listing-switches "-alh --group-directories-first"
+      dired-omit-mode t
+      display-line-numbers-type 'relative
+      display-time-day-and-date t
+      doom-localleader-alt-key "C-l"
       doom-modeline-bar-width 10
-      doom-modeline-major-mode-icon t
       doom-modeline-buffer-encoding t
-      doom-modeline-indent-info t
       doom-modeline-display-default-persp-name t
+      doom-modeline-enable-word-count t
+      doom-modeline-height 40
+      doom-modeline-hud t
+      doom-modeline-indent-info t
+      doom-modeline-major-mode-icon t
+      doom-modeline-persp-icon t
+      doom-modeline-persp-name t
       doom-modeline-unicode-fallback t
+      doom-theme 'everblush
+      evil-split-window-below t
+      evil-vsplit-window-right t
+      find-function-C-source-directory "~/Documents/repos/emacs/src"
+      flycheck-plantuml-exec-path "/usr/bin/plantuml"
+      inferior-lisp-program "/usr/bin/sbcl"
+      lem-current-user "DrGamerPhD"
+      lem-instance-url "https://programming.dev"
       lsp-enable-folding t
-      lsp-enable-snippet t
-      lsp-inlay-hint-enable t
-      lsp-enable-text-document-color t
+      lsp-enable-on-type-formatting t
       lsp-enable-relative-indentation t
+      lsp-enable-semantic-highlighting t
+      lsp-enable-snippet t
+      lsp-enable-text-document-color t
+      lsp-headerline-breadcrumb-enable t
+      lsp-inlay-hint-enable nil
+      lsp-java-configuration-runtimes '[(:name "JavaSE-17" :path "/usr/lib/jvm/java-17-openjdk" :default t)]
+      lsp-modeline-code-actions-segments '(icon count name)
+      lsp-rust-analyzer-binding-mode-hints t
+      lsp-rust-analyzer-closing-brace-hints t
+      lsp-rust-analyzer-display-chaining-hints t
+      lsp-rust-analyzer-display-lifetime-elision-hints-enable t
+      lsp-rust-analyzer-display-lifetime-elision-hints-use-parameter-names t
+      lsp-rust-analyzer-display-parameter-hints t
+      lsp-rust-analyzer-display-reborrow-hints t
       lsp-rust-analyzer-lens-references-adt-enable t
       lsp-rust-analyzer-lens-references-enum-variant-enable t
       lsp-rust-analyzer-lens-references-method-enable t
       lsp-rust-analyzer-lens-references-trait-enable t
-      lsp-rust-analyzer-binding-mode-hints t
-      lsp-rust-analyzer-display-lifetime-elision-hints-enable t
-      lsp-rust-analyzer-display-lifetime-elision-hints-use-parameter-names t
-      lsp-rust-analyzer-display-chaining-hints t
-      lsp-rust-analyzer-display-reborrow-hints t
-      lsp-rust-analyzer-display-parameter-hints t
-      lsp-rust-analyzer-closing-brace-hints t
-      lsp-modeline-code-actions-segments '(icon count name)
       lsp-ui-doc-enable t
       lsp-ui-doc-position 'bottom
       lsp-ui-doc-show-with-cursor t
       lsp-ui-doc-show-with-mouse t
-      lsp-headerline-breadcrumb-enable t
+      lsp-ui-imenu-auto-refresh t
+      lsp-ui-imenu-enable t
+      lsp-ui-peek-enable t
       lsp-ui-sideline-enable t
       lsp-ui-sideline-show-code-actions t
       lsp-ui-sideline-show-diagnostics t
       lsp-ui-sideline-show-hover t
-      lsp-ui-peek-enable t
-      lsp-ui-imenu-enable t
-      lsp-ui-imenu-auto-refresh t
-      lsp-enable-on-type-formatting t
-      +format-with-lsp nil
-      treesit-extra-load-path '("/usr/local/include/tree_sitter/lib")
-      evil-split-window-below t
-      evil-vsplit-window-right t
-      display-line-numbers-type 'relative
-      display-time-day-and-date t
-      visible-bell t
-      tramp-terminal-type "tramp"
-      tramp-default-method "ssh"
-      server-use-tcp t
-      all-the-icons-scale-factor 1.1
-      org-directory "~/Documents/org/"
-      org-agenda-files '("~/Documents/org/agenda.org")
-      org-modules '(habit)
-      org-support-shift-select t
-      org-log-done 'time
-      org-pretty-entities-include-sub-superscripts t
-      org-startup-with-inline-images t
-      inferior-lisp-program "/usr/bin/sbcl"
-      dired-listing-switches "-alhx --group-directories-first"
-      ranger-listing-switches "-alhx --group-directories-first"
-      dired-omit-mode t
-      dired-hide-details-hide-information-lines t
-      dired-hide-details-hide-symlink-targets t
-      cider-completion-annotations-include-ns 'always
-      mu4e-mu-binary "/usr/bin/mu"
       mu4e-maildir "~/Mail"
-      twittering-use-master-password t
-      doom-localleader-alt-key "C-l")
+      mu4e-mu-binary "/usr/bin/mu"
+      org-agenda-files '("~/Documents/org/agenda.org")
+      org-directory "~/Documents/org/"
+      org-log-done 'time
+      org-modules '(org-habit)
+      org-plantuml-exec-path "/usr/bin/plantuml"
+      org-pretty-entities-include-sub-superscripts t
+      org-return-follows-link t
+      org-startup-with-inline-images t
+      org-support-shift-select t
+      plantuml-exec-path "/usr/bin/plantuml"
+      plantuml-jar-path "/usr/share/java/plantuml/plantuml.jar"
+      projectile-auto-discover t
+      ranger-listing-switches "-alh --group-directories-first"
+      server-use-tcp t
+      tramp-default-method "ssh"
+      tramp-terminal-type "tramp"
+      treesit-extra-load-path '("/usr/local/include/tree_sitter/lib")
+      user-full-name "Ross Edwards"
+      user-mail-address "redwards64@hotmail.com"
+      visible-bell t)
 #+END_SRC
 
 enable some fun little modes
-#+BEGIN_SRC emacs lisp
-(global-tree-sitter-mode t)
+#+BEGIN_SRC emacs-lisp
+;;(global-tree-sitter-mode t)
 (solaire-global-mode t)
 (global-auto-revert-mode t)
 (global-wakatime-mode t)
 (display-time-mode t)
 (which-function-mode t)
 (cursor-sensor-mode t)
-(elcord-mode t)
+
+;; check to see if discord is running before enabling
+;; could maybe poll for it
+(elcord-mode nil)
+
 (pixel-scroll-precision-mode t)
 (vertico-indexed-mode t)
+(apheleia-global-mode t)
+(show-smartparens-global-mode t)
+(global-emojify-mode nil)
+(global-spell-fu-mode nil)
 #+END_SRC
 
 set up some functionality after packages have loaded
-#+BEGIN_SRC emacs lisp
-;;; :app everywhere
+#+BEGIN_SRC emacs-lisp
+;; :app everywhere
 (after! emacs-everywhere
   (setq emacs-everywhere-frame-name-format "emacs-anywhere")
   (remove-hook 'emacs-everywhere-init-hooks #'hide-mode-line-mode)
   (defadvice! center-emacs-everywhere-in-origin-window (frame window-info)
-   :override #'emacs-everywhere-set-frame-position
-   (cl-destructuring-bind (x y width height)
-     (emacs-everywhere-window-geometry window-info)
-     (set-frame-position frame
-                   (+ x (/ width 2) (- (/ width 2)))
-                   (+ y (/ height 2))))))
+    :override #'emacs-everywhere-set-frame-position
+    (cl-destructuring-bind (x y width height)
+        (emacs-everywhere-window-geometry window-info)
+      (set-frame-position frame
+                          (+ x (/ width 2) (- (/ width 2)))
+                          (+ y (/ height 2))))))
 
 (after! doom-themes
   (setq doom-themes-enable-bold t
-      doom-themes-enable-italic t
-      doom-themes-padded-modeline t)
-  (doom-themes-treemacs-config)
-  (doom-themes-visual-bell-config)
-  (doom-themes-org-config))
+        doom-themes-enable-italic t
+        doom-themes-padded-modeline t)
+  (doom-themes-visual-bell-config))
 
 (after! doom-modeline
   (doom-modeline-def-modeline 'main
@@ -192,62 +210,45 @@ set up some functionality after packages have loaded
     '(misc-info minor-modes checker input-method buffer-encoding major-mode process vcs " ")))
 
 (after! elcord
-  (setq elcord-use-major-mode-as-main-icon t))
+  (setq elcord-use-major-mode-as-main-icon t
+        elcord-quiet t
+        elcord-refresh-rate 120))
 
 (add-hook! command-log-mode-hook
-           (lambda ()
-             (text-scale-decrease 2)))
-
-()
+  (text-scale-decrease 2))
 #+END_SRC
 
 set up programming language specific functionality
-#+BEGIN_SRC emacs lisp
-(add-hook! '(c-mode-hook c++-mode-hook makefile-mode-hook makefile-gmake-mode-hook c-ts-mode-hook c++-ts-mode-hook)
-           #'(lambda ()
-               (set (make-local-variable 'compile-command)
-                    (format "make -C %s -k"
-                            (substring (ross/get-closest-pathname) 0 -8)))
-               (setq c-basic-offset 4
-                     c-ts-mode-indent-offset 4
-                     gdb-many-windows t
-                     +format-with "clang-format")
-               (map! :leader
-                     :desc "Open GDB"
-                     "d g" #'gdb)
-               (map! :leader
-                     :desc "Switch from header file to source file, or vice versa"
-                     "z" #'lsp-clangd-find-other-file)))
-(add-hook! '(lsp-ui-mode-hook) #'lsp-ui-imenu)
+#+BEGIN_SRC emacs-lisp
+(add-hook! '(c-mode-hook c++-mode-hook makefile-mode-hook
+             makefile-gmake-mode-hook c-ts-mode-hook c++-ts-mode-hook)
+  (setq-local c-basic-offset 4
+              gdb-many-windows t
+              compile-command (format "make -C %s -k"
+                                      (substring (ross/get-closest-pathname)
+                                                 0 -8))
+              +format-with "clang-format"))
+
 (add-hook! '(rust-mode-hook rust-ts-mode-hook rustic-mode-hook)
-           #'(lambda ()
-               (set (make-local-variable 'compile-command) "cargo build --verbose")))
+  (setq-local compile-comand "cargo build --verbose"))
+
 (add-hook! 'tree-sitter-after-on-hook #'tree-sitter-hl-mode)
-(add-hook! '(cider-mode-hook cider-repl-mode-hook clojure-mode-hook)
-           #'(lambda ()
-               (cider-company-enable-fuzzy-completion)
-               (map! :leader
-                     :desc "View Clojure documentation in a popup buffer"
-                     "j" #'cider-cheatsheet)))
-(add-hook! '(emacs-lisp-mode-hook org-mode-hook)
-           #'(lambda ()
-             (defun begin-src-block ()
-               (interactive)
-               (insert "#+BEGIN_SRC emacs lisp"))
-             (defun end-src-block ()
-               (interactive)
-               (insert "#+END_SRC"))
-             (map! :leader
-                   :desc "Insert beginning of source block"
-                   "i b" #'begin-src-block)
-             (map! :leader
-                   :desc "Inserts end of source block"
-                   "i n" #'end-src-block)))
-(add-hook! '(emacs-lisp-mode-hook clojure-mode-hook) #'lispy-mode)
+
+(add-hook! '(clojure-mode-hook clojurescript-mode-hook) #'clj-refactor-mode
+  (cljr-add-keybindings-with-prefix "C-c C-m"))
+
+(add-hook! '(lisp-mode-hook emacs-lisp-mode-hook clojure-mode-hook) #'enable-paredit-mode)
+
+(add-hook! '(dashboard-after-initialize-hook) #'dashboard-refresh-buffer)
+
+(add-hook! '(text-mode-hook) #'emojify-mode #'spell-fu-mode)
+(add-hook! '(prog-mode-hook) (emojify-mode nil) (spell-fu-mode nil))
+
+(add-hook! '(LaTeX-mode-hook) #'TeX-fold-mode #'turn-on-auto-fill)
 #+END_SRC
 
 todo list reminders
-#+BEGIN_SRC emacs lisp
+#+BEGIN_SRC emacs-lisp
 (use-package! org-alert
   :custom (alert-default-style 'notifications)
   :config (setq org-alert-interval 86400
@@ -256,35 +257,39 @@ todo list reminders
 #+END_SRC
 
 some basic keybinds
-#+BEGIN_SRC emacs lisp
+#+BEGIN_SRC emacs-lisp
 (when (require 'meow nil 'noerror)
- (map! :map meow-leader-keymap
-       "l" #'meow-keypad-start))
+  (map! :map meow-leader-keymap
+        "l" #'meow-keypad-start))
 (map! :leader
       :desc "Search for a word in the project"
       "l" #'consult-ripgrep)
-(map! :leader
-      :desc "Switch between header and source in new window"
-      "k" #'(lambda (lsp-clangd-find-other-file)))
+
+(let ((c-related-modes '(c-mode-hook c++-mode-hook
+                         c-ts-mode-hook c++-ts-mode-hook)))
+  (map! :leader
+        :desc "Open GDB"
+        :mode c-related-modes
+        "d g" #'gdb)
+  (map! :leader
+        :desc "Switch from header file to source file, or vice versa"
+        :mode c-related-modes
+        "C-z" #'lsp-clangd-find-other-file))
+
+(let ((clojure-related-modes '(clojure-mode clojurescript-mode)))
+  (map! :leader
+        :desc "View Clojure documentation in a popup buffer"
+        :mode clojure-related-modes
+        "j" #'cider-cheatsheet))
 #+END_SRC
 
 this is to keep the text in the modeline from going off the edge of the screen
-#+BEGIN_SRC emacs lisp
-(custom-set-faces!
-  '(font-lock-comment-face :slant italic)
-  '(font-lock-keyword-face :slant italic)
-  '(doom-dashboard-banner :foreground "#8a0000" :weight bold)
-  '(doom-dashboard-footer :inherit font-lock-constant-face)
-  '(doom-dashboard-footer-icon :inherit all-the-icons-red)
-  '(doom-dashboard-loaded :inherit font-lock-warning-face)
-  '(doom-dashboard-menu-desc :inherit font-lock-string-face)
-  '(doom-dashboard-menu-title :inherit font-lock-function-name-face)
-  '(mode-line :family default-font :height 1.0)
-  '(mode-line-inactive :family default-font :height 1.0))
+#+BEGIN_SRC emacs-lisp
+
 #+END_SRC
 
 automatically get the closest makefile from the current directory
-#+BEGIN_SRC emacs lisp
+#+BEGIN_SRC emacs-lisp
 (cl-defun ross/get-closest-pathname (&optional (file "Makefile"))
   "Determine the pathname of the first instance of FILE starting from the current directory towards root.
    This may not do the correct thing in the presence of links.
@@ -292,15 +297,15 @@ automatically get the closest makefile from the current directory
   (let ((root (expand-file-name "/")))
     (expand-file-name file
                       (cl-loop
-                        for d = default-directory then (expand-file-name ".." d)
-                        if (file-exists-p (expand-file-name file d))
-                        return d
-                        if (equal d root)
-                        return nil))))
+                       for d = default-directory then (expand-file-name ".." d)
+                       if (file-exists-p (expand-file-name file d))
+                       return d
+                       if (equal d root)
+                       return nil))))
 #+END_SRC
 
 run astyle to format the buffer
-#+BEGIN_SRC emacs lisp
+#+BEGIN_SRC emacs-lisp
 (defun ross/format-buffer-astyle ()
   "Format all the files inside src using .astylerc"
   (interactive)

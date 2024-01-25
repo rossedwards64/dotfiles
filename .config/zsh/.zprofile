@@ -1,4 +1,3 @@
-if [ "$(tty)" = "/dev/tty1" ]; then
-    exec Hyprland
-    #exec sway
+if [[ -z ${WAYLAND_DISPLAY} ]] && [[ ${XDG_VTNR} -eq 1 ]]; then
+    exec sway
 fi

@@ -1,0 +1,52 @@
+command_key = ":"
+inital_screen = "library"
+use_nerdfont = true
+flip_status_indicators = true
+audio_cache = true
+volnorm = true
+volnorm_pregain = 0.0
+notify = true
+bitrate = 320
+gapless = true
+shuffle = false
+repeat = "off"
+playback_state = "Paused"
+hide_display_names = true
+
+statusbar_format = "%artists - %title"
+
+[keybindings]
+"Shift+q" = "quit"
+"Ctrl+f" = "move right 1"
+"Ctrl+b" = "move left 1"
+"q" = "noop"
+"Ctrl+a" = "noop"
+"Ctrl+e" = "noop"
+
+[theme]
+background = "#191414"
+primary = "#FFFFFF"
+seconary = "light black"
+title = "#1DB954"
+playing = "#1DB954"
+playing_selected = "#1ED760"
+playing_bg = "#191414"
+highlight = "#FFFFFF"
+highlight_bg = "#484848"
+error = "#FFFFFF"
+error_bg = "red"
+statusbar = "#191414"
+statusbar_progress = "#1DB954"
+statusbar_bg = "#1DB954"
+cmdline = "#FFFFFF"
+cmdline_bg = "#191414"
+search_match = "light red"
+
+[track_format]
+left = "%artists - %title"
+center = "%album"
+right = "%saved %duration"
+
+[notification_format]
+title = "%title"
+body = "%artists"

@@ -1,0 +1,20 @@
+name: default
+root: ~/
+
+windows:
+  - project:
+      layout: cb9b,157x33,0,0{78x33,0,0,5,78x33,79,0[78x17,79,0,6,78x15,79,18,7]}
+      panes:
+        - clear
+        - clear
+        - clear
+  - music:
+      panes:
+        - ncspot
+  - misc:
+      layout: 5ccf,157x33,0,0,10
+      panes:
+        - clear
+  - monitor:
+      panes:
+        - btop

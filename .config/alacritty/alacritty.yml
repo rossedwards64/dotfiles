@@ -31,16 +31,16 @@ scrolling:
 
 font:
   normal:
-    family: Iosevka Nerd Font
+    family: Iosevka NF
     style: Regular
   bold:
-    family: Iosevka Nerd Font
+    family: Iosevka NF
     style: Bold
   italic:
-    family: Iosevka Nerd Font
+    family: Iosevka NF
     style: Italic
   bold_italic:
-    family: Iosevka Nerd Font
+    family: Iosevka NF
     style: Bold Italic
   size: 12.0
   offset:
@@ -76,7 +76,7 @@ shell:
   args:
     - -l
     - -c
-    - "tmux new -f ~/.config/tmux/tmux.conf || tmux -f ~/.config/tmux/tmux.conf"
+    - "$HOME/.config/tmux/start-tmux.sh"
 
 mouse:
   double_click: { threshold: 300 }

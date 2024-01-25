@@ -50,9 +50,9 @@ alias vim="nvim"
 alias mv="mv -iv"
 alias cp="cp -iv"
 alias rm="rm -iv"
-alias ls="eza"
-alias la="eza -ah"
-alias l="eza -lah"
+alias ls="eza --icons --color=always"
+alias la="eza --icons --color=always -ah"
+alias l="eza --icons --color=always -lah"
 alias cd="z"
 alias cat="bat"
 alias ..="cd .."
@@ -64,6 +64,17 @@ alias reset-zsh="source ~/.config/zsh/.zshrc"
 alias clear="clear && stty sane"
 alias cleanup="sudo pacman -Rns $(pacman -Qtdq)"
 alias wget="wget --hsts-file=$XDG_DATA_HOME/wget-hsts"
+alias pkgsearch="yay -Slq | \
+                    fzf --preview 'yay -Si {}' \
+                        --layout=reverse \
+                        --bind 'enter:execute(yay -S {})+accept'"
+
+if [[ ${XDG_CURRENT_DESKTOP} = "sway" ]]; then
+    alias zathura="swayhide zathura"
+    alias imv="swayhide imv"
+    alias mpv="swayhide mpv"
+    alias vlc="swayhide vlc"
+fi
 
 if [[ -n "$TERM" ]] && [[ "$TERM" != "dumb" ]]; then
     export BOLD="$(tput bold)"
@@ -94,6 +105,7 @@ prompt_context() {
 
 eval "$(antidot init)"
 eval "$(zoxide init zsh)"
+eval "$(rtx activate zsh)"
 
 if [[ $TERM == "tramp" ]] && [[ -n $INSIDE_EMACS ]]; then
     unsetopt zle;

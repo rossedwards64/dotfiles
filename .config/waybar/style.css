@@ -1,59 +1,59 @@
 @import "frappe.css";
 
 * {
-    border: none;
-    border-radius: 0;
-    font-family: "Iosevka Nerd Font";
-    font-size: 13px;
-    font-weight: normal;
-    min-height: 24px;
-    color: @text;
+  border: none;
+  border-radius: 0;
+  font-family: "Iosevka NF";
+  font-size: 13px;
+  font-weight: normal;
+  min-height: 24px;
+  color: @text;
 }
 
 window#waybar {
-    background: @mantle;
-    background-color: @mantle;
-    color: #C4C7C5;
-    transition-property: background-color;
-    transition-duration: .5s;
+  background: @mantle;
+  background-color: @mantle;
+  color: #c4c7c5;
+  transition-property: background-color;
+  transition-duration: 0.5s;
 }
 
 /* window > box {} */
 
 window#waybar.empty {
-    color: @crust;
+  color: @crust;
 }
 
 .topbar {
-    border-bottom: 3px solid @overlay2;
+  border-bottom: 3px solid @overlay2;
 }
 
 .bottombar {
-    border-top: 3px solid @overlay2;
+  border-top: 3px solid @overlay2;
 }
 
 #workspaces button {
-    padding: 0 5px 0 5px;
-    background-color: transparent;
+  padding: 0 5px 0 5px;
+  background-color: transparent;
 }
 
 #workspaces button:hover {
-    background: @crust;
-    box-shadow: inset 0 3px @lavender;
+  background: @crust;
+  box-shadow: inset 0 3px @lavender;
 }
 
 #workspaces button.focused {
-    background-color: @base;
-    box-shadow: inset 0 3px @lavender;
+  background-color: @base;
+  box-shadow: inset 0 3px @lavender;
 }
 
 #workspaces button.urgent {
-    background-color: @red;
+  background-color: @red;
 }
 
 #mode {
-    background-color: @mantle;
-    border-top: 3px solid @lavender;
+  background-color: @mantle;
+  border-top: 3px solid @lavender;
 }
 
 #backlight,
@@ -81,53 +81,56 @@ window#waybar.empty {
 #window,
 #language,
 #submap,
-#bluetooth
-#custom-pacman {
-    padding: 0 5px;
-    margin: 0 0px;
+#bluetooth #custom-pacman {
+  padding: 0 5px;
+  margin: 0 0px;
 }
 
 @keyframes blink {
-    to {
-        background-color: @subtext1;
-        color: @crust;
-    }
+  to {
+    background-color: @subtext1;
+    color: @crust;
+  }
 }
 
 #battery.bat1.critical:not(.charging) {
-    background-color: @red;
-    animation-name: blink;
-    animation-duration: 0.5s;
-    animation-timing-function: linear;
-    animation-iteration-count: infinite;
-    animation-direction: alternate;
+  background-color: @red;
+  animation-name: blink;
+  animation-duration: 0.5s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
 }
 
 #temperature.critical {
-    background-color: @red;
+  background-color: @red;
 }
 
 #taskbar button:hover {
-    background: @crust;
-    box-shadow: inset 0 3px @lavender;
+  background: @crust;
+  box-shadow: inset 0 3px @lavender;
 }
 
 #taskbar button.active {
-    background-color: @crust;
-    box-shadow: inset 0 3px @lavender;
+  background-color: @crust;
+  box-shadow: inset 0 3px @lavender;
 }
 
 #custom-sep {
-    color: @subtext1;
-    padding: 0 5px;
+  color: @subtext1;
+  padding: 0 5px;
 }
 
 #custom-launcher {
-    color: #1794D2;
-    font-size: 18px;
-    padding: 0 5px;
+  color: #1794d2;
+  font-size: 18px;
+  padding: 0 5px;
 }
 
 #custom-poweroff {
-    margin: 0 5px 0 0;
+  margin: 0 5px 0 0;
+}
+
+#custom-notification {
+  font-family: "Iosevka NF";
 }

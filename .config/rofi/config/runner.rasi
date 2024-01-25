@@ -2,7 +2,7 @@ configuration {
     show-icons:                     false;
     display-run: 		            "";
     disable-history:                false;
-    click-to-exit: 		            true;
+    click-to-exit: 		        true;
     location:                       0;
 }
 
@@ -32,7 +32,7 @@ prompt {
 
 textbox-prompt-colon {
     expand: 			            false;
-    str: 			                "ﲵ";
+    str: 			                "";
     border-radius:                  100%;
     background-color:               @BG;
     text-color:                     @FG;

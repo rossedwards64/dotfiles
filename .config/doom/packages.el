@@ -1,21 +1,40 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; $DOOMDIR/packages.el
 
-;;(package! straight :pin "3eca39d")
-;;(unpin! rustic)
-(package! elcord)
-(package! dired-single)
-(package! wakatime-mode)
-(package! dashboard)
-(package! page-break-lines)
+;; (package! arduino-mode)
 (package! autothemer)
-;; (package! treesit-auto
-;;   :recipe
-;;   (:host github
-;;    :repo "renzmann/treesit-auto"))
+(package! catppuccin-theme)
+(package! dashboard)
+(package! dired-single)
+(package! elcord)
+(package! org-alert)
+(package! page-break-lines)
+(package! timu-caribbean-theme)
+(package! timu-macos-theme)
+(package! kanagawa-theme)
+(package! wakatime-mode)
+
 (package! command-log-mode
   :recipe
   (:host github
    :repo "lewang/command-log-mode"))
-(package! org-alert)
-(package! arduino-mode)
+(package! ef-themes
+  :recipe
+  (:host github
+   :repo "protesilaos/ef-themes"))
+(package! lem
+  :recipe
+  (:host codeberg
+   :repo "martianh/lem.el"))
+(package! standard-themes
+  :recipe
+  (:host github
+   :repo "protesilaos/standard-themes"))
+(package! structurizr-mode
+  :recipe
+  (:host github
+   :repo "gilesp/structurizr-mode"))
+(package! tronesque
+  :recipe
+  (:host github
+   :repo "aurelienbottazini/tronesque"))

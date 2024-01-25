@@ -21,10 +21,10 @@
 
        :completion
        (company +childframe +tng)       ; the ultimate code completion backend
-       ;;(ivy +fuzzy +icons +prescient)               ; a search engine for love and life
-       ;;(helm +fuzzy +icons)              ; the *other* search engine for love and life
+       ;;(ivy +fuzzy +icons +prescient +childframe)               ; a search engine for love and life
+       ;;(helm +fuzzy +childframe)              ; the *other* search engine for love and life
        ;;ido               ; the other *other* search engine...
-       (vertico +icons)                 ; the search engine of the future
+       (vertico +icons +childframe)                 ; the search engine of the future
 
        :ui
        deft                ; notational velocity for Emacs
@@ -43,11 +43,11 @@
        ophints                  ; highlight the region an operation acts on
        (popup +all +defaults)   ; tame sudden yet inevitable temporary windows
        ;;tabs              ; a tab bar for Emacs
-       (treemacs +lsp)          ; a project drawer, like neotree but cooler
+       ;;(treemacs +lsp)          ; a project drawer, like neotree but cooler
        unicode                  ; extended unicode support for various languages
        vc-gutter                ; vcs diff in the fringe
        vi-tilde-fringe          ; fringe tildes to mark beyond EOB
-       (window-select +numbers) ; visually switch windows
+       (window-select +numbers +switch-window) ; visually switch windows
        workspaces       ; tab emulation, persistence & separate workspaces
        ;;zen               ; distraction-free coding or writing
 
@@ -56,12 +56,12 @@
        ;;(meow +qwerty +override +keypad)
        file-templates                   ; auto-snippets for empty files
        fold                             ; (nigh) universal code folding
-       format                           ; automated prettiness
+       (format +onsave)                           ; automated prettiness
        ;;god               ; run Emacs commands without modifier keys
-       lispy                       ; vim for lisp, for people who don't like vim
+       ;;lispy                       ; vim for lisp, for people who don't like vim
        multiple-cursors            ; editing in many places at once
        ;;objed             ; text object editing for the innocent
-       ;;parinfer          ; turn lisp into python, sort of
+       parinfer          ; turn lisp into python, sort of
        rotate-text               ; cycle region at point between text candidates
        snippets                  ; my elves. They type so I don't have to
        word-wrap                 ; soft wrapping with language-aware indent
@@ -70,7 +70,7 @@
        (dired +icons)    ; making dired pretty [functional]
        electric          ; smarter, keyword-based electric-indent
        (ibuffer +icons)  ; interactive buffer management
-       undo              ; persistent, smarter undo for your inevitable mistakes
+       (undo +tree)              ; persistent, smarter undo for your inevitable mistakes
        vc                ; version-control and Emacs, sitting in a tree
 
        :term
@@ -81,7 +81,7 @@
                                         ;
        :checkers
        (syntax +childframe)          ; tasing you for every semicolon you forget
-       (spell +flyspell)             ; tasing you for misspelling mispelling
+       (spell +everywhere +hunspell)             ; tasing you for misspelling mispelling
        grammar                       ; tasing grammar mistake every you make
 
        :tools
@@ -98,7 +98,7 @@
        (lsp +peek)                            ; M-x vscode
        magit                                  ; a git porcelain for Emacs
        make                                   ; run make tasks from Emacs
-       pass                                   ; password manager for nerds
+       (pass +auth)                                   ; password manager for nerds
        pdf                                    ; pdf enhancements
        ;;prodigy           ; FIXME managing external services & code builders
        rgb                ; creating color strings
@@ -132,7 +132,7 @@
        ;;factor
        ;;faust             ; dsp, but you get to keep your soul
        ;;fortran           ; in FORTRAN, GOD is REAL (unless declared INTEGER)
-       ;;(fsharp +lsp)            ; ML stands for Microsoft's Language
+       (fsharp +lsp)            ; ML stands for Microsoft's Language
        ;;fstar             ; (dependent) types and (monadic) effects and Z3
        ;;(gdscript +lsp)          ; the language you waited for
        ;;(go +lsp)         ; the hipster dialect
@@ -145,24 +145,24 @@
        ;;(javascript +lsp)        ; all(hope(abandon(ye(who(enter(here))))))
        ;;(julia +lsp)             ; a better, faster MATLAB
        ;;(kotlin +lsp)            ; a better, slicker Java(Script)
-       ;;(latex +latexmk +cdlatex
-       ;;         +lsp +fold)             ; writing papers in Emacs has never been so fun
+       (latex +latexmk +cdlatex +lsp +fold) ; writing papers in Emacs has never been so fun
        ;;lean              ; for folks with too much to prove
        ;;ledger            ; be audit you can be
-       lua               ; one-based indices? one-based indices
+       ;;lua               ; one-based indices? one-based indices
        (markdown +grip)  ; writing docs for people to ignore
        ;;nim               ; python + lisp at the speed of c
        ;;nix               ; I hereby declare "nix geht mehr!"
        ;;(ocaml +lsp)             ; an objective camel
        (org +pretty +journal +dragndrop
-            +hugo +roam2 +pandoc
-            +present +brain +noter +pomodoro) ; organize your plain life in plain text
+            +gnuplot +hugo +roam2 +pandoc
+            +present +brain +noter
+            +passwords +pomodoro) ; organize your plain life in plain text
        ;;(php +lsp +hack)               ; perl's insecure younger brother
-       ;;plantuml          ; diagrams for confusing people more
+       plantuml          ; diagrams for confusing people more
        ;;(purescript +lsp)        ; javascript, but functional
        ;;(python +lsp)            ; beautiful is better than ugly
        ;;qt                ; the 'cutest' gui framework ever
-       (racket +lsp +xp)                ; a DSL for DSLs
+       ;;(racket +lsp +xp)                ; a DSL for DSLs
        ;;raku              ; the artist formerly known as perl6
        ;;rest              ; Emacs as a REST client
        ;;rst               ; ReST in peace
@@ -190,7 +190,7 @@
        everywhere                   ; *leave* Emacs!? You must be joking
        irc                          ; how neckbeards socialize
        (rss +org)                   ; emacs as an RSS reader
-       twitter                      ; twitter client https://twitter.com/vnought
+       ;;twitter                      ; twitter client https://twitter.com/vnought
 
        :config
        literate

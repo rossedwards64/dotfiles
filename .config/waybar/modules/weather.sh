@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 # weather information for location based on seen WiFi BSSIDs or IP as fallback
 
 # get close WiFi BSSIDs

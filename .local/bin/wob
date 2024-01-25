@@ -52,3 +52,4 @@ if [[ "$SYS" == "volume" ]]; then
 elif [[ "$SYS" == "brightness" ]]; then
     set_brightness
 fi
+

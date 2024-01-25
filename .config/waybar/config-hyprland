@@ -34,7 +34,7 @@
         ],
         "custom/launcher": {
             "format": "",
-            "on-click": "$HOME/.config/polybar/forest/scripts/launcher.sh &"
+            "on-click": "$HOME/.config/rofi/scripts/launcher &"
         },
         "clock": {
             "interval": 1,
@@ -54,7 +54,7 @@
             "interval": 300
         },
         "memory": {
-            "format": " {used:0.1f}G",
+            "format": "󰍛 {used:0.1f}G",
             "tooltip-format": "{used:0.1f}G / {total:0.1f}G used",
             "interval": 1
         },
@@ -80,7 +80,7 @@
         },
         "network#ethernet": {
             "interface": "enp*",
-            "format-ethernet": "{ifname} 🖧",
+            "format-ethernet": "{ifname} 󰈀",
             "format-wifi": "",
             "format-linked": "",
             "format-disconnected": "",
@@ -104,8 +104,12 @@
             "on-click": "nm-connection-editor"
         },
         "bluetooth": {
-            "format": " {status}",
-            "format-connected": " {num_connections} connected",
+            "controller": "ross-thinkpad",
+            "format-device-preference": [
+                "ross-thinkpad"
+            ],
+            "format": " {controller_alias}",
+            "format-connected": " {device_alias}",
             "format-disabled": " disabled",
             "format-off": " off",
             "format-on": " on",
@@ -117,7 +121,7 @@
             "return-type": "json",
             "exec": "sh $HOME/.config/waybar/modules/weather.sh",
             "interval": 300,
-            "on-click": "firefox https://wttr.in && swaymsg '[app_id=firefox] focus'"
+            "on-click": "firefox https://wttr.in && hyprctl dispatch focuswindow 'firefox'"
         },
         "custom/poweroff": {
             "tooltip": false,
@@ -128,7 +132,7 @@
             "tooltip": false,
             "exec": "sh $HOME/.config/waybar/modules/mail.sh",
             "interval": 3600,
-            "on-click": "thunderbird && swaymsg '[app_id=thunderbird] focus'"
+            "on-click": "thunderbird && hyprctl dispatch focuswindow 'thunderbird'"
         },
         "custom/sep": {
             "format": "|",
@@ -145,14 +149,15 @@
         },
         "custom/restart_needed": {
             "format": "{}",
-            "interval": 600,
-            "exec": "[ -d /lib/modules/`uname -r` ] || echo '*'"
+            "interval": 3600,
+            "exec": "$HOME/.config/waybar/modules/restart-needed"
         },
         "custom/fan_speed": {
             "format": "󰈐 {}",
             "interval": 1,
             "exec": "cat /proc/acpi/ibm/fan | grep speed | cut -f 3"
-        }
+        },
+
     },
     {
         "name": "bottombar",
@@ -176,6 +181,8 @@
         ],
         "modules-right": [
             "custom/sep",
+            "custom/spotify",
+            "custom/sep",
             "hyprland/window"
         ],
         "tray": {
@@ -185,13 +192,18 @@
         "wlr/taskbar": {
             "format": "{icon}",
             "icon-size": 24,
+            "icon-theme": [
+                "rose-pine-moon-icons"
+            ],
             "tooltip": "true",
             "on-click": "activate",
-            "on-click-right": "close"
+            "on-click-right": "close",
+            "sort-by-app-id": true
         },
         "hyprland/window": {
             "format": "{}",
-            "separate-outputs": true
+            "separate-outputs": true,
+            "max-length": 36
         },
         "hyprland/submap": {
             "format": "Mode: {}",
@@ -242,7 +254,7 @@
         "gamemode": {
             "format": "{glyph}",
             "format-alt": "{glyph} {count}",
-            "glyph": "",
+            "glyph": "",
             "hide-not-running": false,
             "use-icon": true,
             "icon-name": "input-gaming-symbolic",
@@ -260,10 +272,12 @@
             "bat": "BAT0",
             "adapter": "AC",
             "interval": 10,
-            "full-at": 99,
+            "full-at": 100,
             "states": {
                 "full": 100,
                 "good": 99,
+                "warning": 30,
+                "critical": 20,
                 "empty": 15
             },
             "format-time": "{H}:{M}",
@@ -279,6 +293,13 @@
                 "",
                 ""
             ]
+        },
+        "custom/spotify": {
+            "interval": 1,
+            "return-type": "json",
+            "exec": "$HOME/.config/waybar/modules/spotify",
+            "exec-if": "pgrep ncspot || pgrep spot || pgrep spotify",
+            "escape": true,
         }
     }
 ]

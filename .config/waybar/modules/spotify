@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+player="$(playerctl -li chromium.instance2 | head -n1)"
+class="$(playerctl metadata --player="${player}" --format '{{lc(status)}}')"
+icon=""
+info="$(playerctl metadata --player="${player}" --format '{{artist}} - {{title}}')"
+pos="$(playerctl metadata --player="${player}" --format '{{duration(position)}}|{{duration(mpris:length)}}')"
+
+if [[ "${#info}" -gt 24 ]]; then
+  info="$(echo "$info" | cut -c1-24)..."
+fi
+
+text="$icon $info $pos"
+
+if [[ "$class" == "paused" ]]; then
+  text+=" 󰏤"
+elif [[ "$class" == "stopped" ]]; then
+  text+=" 󰓛"
+fi
+
+echo -e "{\"text\":\"$text\", \"class\":\"$class\"}"

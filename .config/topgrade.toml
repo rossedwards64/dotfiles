@@ -1,0 +1,72 @@
+[misc]
+assume_yes = true
+bashit_branch = "stable"
+cleanup = true
+disable = []
+display_time = true
+ignore_failures = []
+#log_filters = ["topgrade::command=debug", "warn"]
+no_retry = true
+no_self_update = true
+notify_each_step = false
+only = []
+pre_sudo = true
+remote_topgrade_path = "/usr/bin/topgrade"
+#remote_topgrades = ["desktop", "ross-thinkpad-x200"]
+run_in_tmux = false
+set_title = true
+skip_notify = false
+ssh_arguments = "-o ConnectTimeout=2"
+sudo_command = "sudo"
+tmux_arguments = "-S /var/tmux.sock"
+
+[git]
+max_concurrency = 5
+repos = []
+push_only_repos = []
+pull_only_repos = ["~/Documents/programming/repos/*"]
+pull_predefined = true
+pull_arguments = "--rebase --autostash"
+push_arguments = "--all"
+
+[composer]
+self_update = true
+
+[pre_commands]
+#"Emacs Snapshot" = "rm -rf ~/.emacs.d/elpa.bak && cp -rl ~/.emacs.d/elpa ~/.emacs.d/elpa.bak"
+
+[commands]
+#"Python Environment" = "~/dev/.env/bin/pip install -i https://pypi.python.org/simple -U --upgrade-strategy eager jupyter"
+#"Doom Emacs" = "doom upgrade && doom purge"
+
+[brew]
+#greedy_cask = true
+
+[linux]
+arch_package_manager = "yay"
+yay_arguments = "--nodevel --answerclean None --removemake --topdown --cleanafter"
+show_arch_news = true
+enable_tlmgr = true
+#emerge_sync_flags = "-q"
+#emerge_update_flags = "-uDNa --with-bdeps=y world"
+
+[npm]
+use_sudo = true
+
+[firmware]
+upgrade = true
+
+[flatpak]
+use_sudo = true
+
+[yarn]
+use_sudo = true
+
+[vim]
+force_plug_update = true
+
+[python]
+enable_pip_review = false
+enable_pip_review_local = false
+enable_pipupgrade = false
+pipupgrade_arguments = "-y -u --pip-path pip"

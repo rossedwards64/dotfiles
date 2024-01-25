@@ -1,11 +1,7 @@
 #!/usr/bin/env bash
 
-sleep 1
-killall xdg-desktop-portal-hyprland
-killall xdg-desktop-portal-wlr
-killall xdg-desktop-portal
-/usr/lib/xdg-desktop-portal-hyprland &
-sleep 2
-/usr/lib/xdg-desktop-portal-gtk &
-sleep 2
-/usr/lib/xdg-desktop-portal &
+for portal in xdg-desktop-portal{,-gtk,-hyprland}.service; do
+    if ! systemctl --user is-active --quiet "${portal}"; then
+        systemctl --user start "${portal}"
+    fi
+done
