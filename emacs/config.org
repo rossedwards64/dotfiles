@@ -1,0 +1,861 @@
+#+title: Emacs Configuration
+#+PROPERTY: header-args :tangle ./init.el
+
+* Table of Contents :TOC:
+- [[#early-init][Early Init]]
+- [[#general][General]]
+- [[#themes][Themes]]
+- [[#functions][Functions]]
+- [[#org-mode][Org-Mode]]
+- [[#ui][UI]]
+- [[#file-manager][File Manager]]
+- [[#e-mail][E-Mail]]
+- [[#navigation][Navigation]]
+- [[#text-editing][Text Editing]]
+- [[#programming][Programming]]
+  - [[#general-1][General]]
+  - [[#language-servers][Language Servers]]
+  - [[#programming-languages][Programming Languages]]
+- [[#documents][Documents]]
+- [[#project-tools][Project Tools]]
+- [[#startup-dashboard][Startup Dashboard]]
+- [[#package-manager][Package Manager]]
+
+* Early Init
+#+BEGIN_SRC emacs-lisp :tangle ./early-init.el
+;;; early-init.el -*- lexical-binding: t; -*-
+
+(setenv "LSP_USE_PLISTS" "true")
+(setq package-enable-at-startup nil)
+#+END_SRC
+
+* General
+#+BEGIN_SRC emacs-lisp :noweb strip-export
+;;; init.el -*- lexical-binding: t; -*-
+
+(defvar desktop-hostname "ross-desktop")
+(defvar laptop-hostname "ross-thinkpad")
+(defvar other-laptop-hostname "ross-thinkpad-x200")
+
+<<functions>>
+
+<<package-manager>>
+
+(use-package no-littering
+  :config
+  (setq no-littering-etc-directory (expand-file-name "config/" user-emacs-directory)
+	no-littering-var-directory (expand-file-name "data/" user-emacs-directory)))
+
+<<themes>>
+
+(use-package all-the-icons
+  :if (display-graphic-p))
+
+(use-package nerd-icons)
+
+<<dashboard>>
+
+(use-package emacs
+  :elpaca nil
+  :init
+  (add-to-list 'default-frame-alist '(fullscreen . maximized))
+  
+  (blink-cursor-mode -1)
+  (global-hl-line-mode 1)
+  (global-prettify-symbols-mode 1)
+  (menu-bar-mode -1)
+  (pixel-scroll-precision-mode 1)
+  (savehist-mode 1)
+  (scroll-bar-mode -1)
+  (set-fringe-mode 1)
+  (tool-bar-mode -1)
+  
+  (advice-add #'completing-read-multiple :filter-args
+	      (lambda (args)
+		(cons (format "[CRM%s] %s"
+			      (replace-regexp-in-string
+			       "\\`\\[.*?]\\*\\|\\[.*?\\*\\'" ""
+			       crm-separator)
+			      (car args))
+		      (cdr args))))
+
+  (fset 'yes-or-no-p 'y-or-n-p)
+  
+  ;; set some basic stuff like font and getting rid of toolbar
+  (setq auto-save-default nil
+        completion-cycle-threshold 3
+	delete-auto-save-files t
+	gc-cons-threshold (* 50 1000 1000)
+	inhibit-startup-message t
+	load-prefer-newer t
+	make-backup-files nil
+	read-process-output-max (* 1024 1024)
+	require-final-newline t
+	tab-always-indent 'complete
+	treesit-extra-load-path '("/usr/local/include/tree_sitter/lib")
+	visible-bell t
+        enable-recursive-minibuffers t
+	switch-to-buffer-obey-display-actions t
+	warning-minimum-level :error) ;; to make it shut up about obsolete functions in packages
+
+  (mapc #'ross/set-font (frame-list))
+  (add-hook 'after-make-frame-functions #'ross/set-font)
+
+  (add-hook 'emacs-startup-hook
+	    (lambda ()
+	      (message "Emacs loaded in %s with %d garbage collections."
+		       (format "%.2f seconds"
+			       (float-time
+				(time-subtract after-init-time before-init-time)))
+		       gcs-done)))
+  
+  (add-hook 'prog-mode-hook
+	    (lambda ()
+	      (which-function-mode 1)
+	      (display-line-numbers-mode 1)))
+
+  (dolist (hook '(prog-mode-hook ielm-mode-hook))
+    (add-hook hook 'eldoc-mode)))
+
+(use-package exec-path-from-shell
+  :config
+  (exec-path-from-shell-initialize))
+
+(use-package vterm)
+(use-package pass)
+#+END_SRC
+
+* Themes
+#+NAME: themes
+#+BEGIN_SRC emacs-lisp :tangle no
+(use-package doom-themes
+  :init
+  (setq doom-themes-enable-bold t
+	doom-themes-enable-italic t)
+  (doom-themes-visual-bell-config)
+  (doom-themes-org-config))
+
+(use-package ef-themes)
+
+(use-package standard-themes)
+
+(use-package kanagawa-theme
+  :config
+  (let ((theme 'kanagawa))
+    (ross/set-theme-maybe-daemon theme)))
+
+(use-package kuronami-theme)
+#+END_SRC
+
+* Functions
+#+NAME: functions
+#+BEGIN_SRC emacs-lisp :tangle no
+(defun ross/set-font (frame)
+  "Apply Iosevka font to FRAME."
+  (when (display-graphic-p frame)
+   (let ((font-name "Iosevka NF")
+	 (font-height (pcase (system-name)
+			(`(or ,laptop-hostname
+			      ,other-laptop-hostname) 120)
+			(desktop-hostname 130))))
+     (progn
+       (dolist (mode '(default fixed-pitch variable-pitch))
+	 (set-face-attribute mode nil
+			     :family font-name
+			     :font font-name
+			     :height font-height
+			     :weight 'regular))
+       (let ((font-name-and-size (concat font-name "-"
+					 (number-to-string (/ font-height 10)))))
+	 (progn
+	   (add-to-list 'default-frame-alist `(font . ,font-name-and-size))
+	   (set-frame-font font-name-and-size nil t)))))))
+
+(defun ross/set-theme-maybe-daemon (theme)
+  "Apply THEME to FRAME and handle normal and client Emacs instances."
+  (if (daemonp)
+      (add-hook 'after-make-frame-functions
+		(lambda (frame)
+		  (ross/set-theme-daemon theme frame)))
+    (ross/set-theme theme)))
+
+(defun ross/set-theme-daemon (theme frame)
+  "Apply THEME to FRAME and clean up `after-make-frame-functions' hook."
+  (ross/set-theme theme frame)
+  (remove-hook 'after-make-frame-functions #'ross/set-theme)
+  (fmakunbound 'ross/set-theme))
+
+(defun ross/set-theme (theme &optional frame)
+  "Apply THEME to FRAME."
+  (if frame
+      (with-selected-frame frame
+	(load-theme theme t))
+    (load-theme theme t)))
+
+(with-eval-after-load "org"
+  (defun ross/tangle-and-eval-config ()
+    "Tangles the code blocks from config.org to init.el,
+     and re-evaluates init.el."
+    (interactive)
+    (org-babel-tangle-file (concat user-emacs-directory "config.org"))
+    (load (concat user-emacs-directory "init.el"))))
+
+(with-eval-after-load "cl-lib"
+    (cl-defun ross/get-closest-pathname (&optional (file "Makefile"))
+      "Determine the pathname of the first instance of FILE starting from the
+       current directory towards root.
+       This may not do the correct thing in the presence of links.
+       If it does not find FILE, then it shall return the name of FILE in the
+       current directory, suitable for creation."
+      (let ((root (expand-file-name "/")))
+	(expand-file-name file
+			  (cl-loop
+			   for d = default-directory then
+(expand-file-name ".." d)
+			   if (file-exists-p (expand-file-name file d))
+			   return d
+			   if (equal d root)
+			   return nil))))
+
+    (defun ross/format-buffer-astyle ()
+      "Format all the files inside src using .astylerc"
+      (interactive)
+      (with-temp-buffer
+	(let ((astylerc (ross/get-closest-pathname ".astylerc")))
+	  (shell-command (format "astyle %s/* --options=%s"
+				 (ross/get-closest-pathname "src") astylerc) t t)))))
+#+END_SRC
+
+* Org-Mode
+#+BEGIN_SRC emacs-lisp
+(use-package org
+  :bind
+  (:map global-map
+	("C-h r" . #'ross/tangle-and-eval-config)
+	:map org-src-mode-map
+	("C-c C-c" . #'org-edit-src-exit))
+  :init
+  (setq org-src-preserve-indentation t
+	org-src-window-setup 'other-window
+	org-agenda-files '("~/Documents/org/agenda.org")
+	org-directory "~/Documents/org/"
+	org-log-done 'time
+	org-plantuml-exec-path "/usr/bin/plantuml"
+	org-pretty-entities-include-sub-superscripts t
+	org-return-follows-link t
+	org-startup-with-inline-images t
+	org-support-shift-select t))
+
+(use-package toc-org
+  :hook ((org-mode . toc-org-mode)))
+(use-package org-modern
+  :hook ((org-mode . org-modern-mode)))
+(use-package org-bullets
+  :disabled
+  :hook ((org-mode . org-bullets-mode)))
+(use-package org-super-agenda
+  :hook ((org-mode . org-super-agenda-mode)))
+(use-package helm-org-rifle)
+(use-package org-recent-headings
+  :hook ((org-mode . org-recent-headings-mode)))
+(use-package org-sticky-header
+  :hook ((org-mode . org-sticky-header-mode)))
+(use-package org-bookmark-heading)
+(use-package org-roam)
+(use-package ox-pandoc)
+(use-package org-noter)
+(use-package org-gcal)
+(use-package org-roam-ui)
+(use-package org-ac)
+(use-package org-alert)
+(use-package org-auto-tangle
+  :config
+  (org-auto-tangle-mode 1))
+(use-package org-tidy
+  :config
+  (org-tidy-mode 1))
+#+END_SRC
+
+* UI
+#+BEGIN_SRC emacs-lisp
+(use-package doom-modeline
+  :init
+  (doom-modeline-mode 1)
+  (column-number-mode 1)
+  (size-indication-mode 1)
+  (setq doom-modeline-height 45
+	doom-modeline-indent-info t)
+  (doom-modeline-def-modeline 'main
+    '(bar modals matches buffer-info remote-host buffer-position selection-info)
+    '(misc-info minor-modes checker input-method buffer-encoding major-mode process vcs " ")))
+
+(use-package anzu
+  :init
+  (anzu-mode 1))
+
+(use-package company
+  :diminish
+  :hook (prog-mode . company-mode))
+
+(use-package company-posframe
+  :hook (company-mode . company-posframe-mode))
+
+(use-package vertico
+  :config
+  (vertico-mode 1)
+  (setq completion-in-region-function
+	(lambda (&rest args)
+	  (apply (if vertico-mode
+		     #'consult-completion-in-region
+		   #'completion--in-region)
+		 args))))
+
+(use-package orderless
+  :init
+  (setq completion-styles '(orderless basic)
+	completion-category-defaults nil
+	completion-category-overrides '((file (styles partial-completion)))))
+
+(use-package dabbrev
+  :elpaca nil
+  :bind
+  (("M-/" . dabbrev-completion)
+   ("C-M-/" . dabbrev-expand))
+  :config
+  (add-to-list 'dabbrev-ignored-buffer-regexps "\\` ")
+  (dolist (mode '(doc-view-mode pdf-view-mode))
+    (add-to-list 'dabbrev-ignored-buffer-modes mode)))
+
+(use-package consult
+  :bind
+  (:map mode-specific-map
+	("M-x" . consult-mode-command)
+	("ch" . consult-history)
+	("cm" . consult-man)
+	("ci" . consult-info)
+	:map global-map
+	([remap switch-to-buffer] . consult-buffer)
+	([remap switch-to-buffer-other-window] . consult-buffer-other-window)
+	([remap switch-to-buffer-other-frame] . consult-buffer-other-frame)
+	([remap switch-to-buffer-other-tab] . consult-buffer-other-tab)
+	([remap bookmark-jump] . consult-bookmark)
+	([remap project-switch-to-buffer] . consult-project-buffer)
+	([remap help-with-tutorial] . consult-theme)
+	([remap Info-search] . consult-info)
+	([remap compile-goto-error] . consult-compile-error)
+	([remap goto-line] . consult-goto-line)
+	([remap imenu] . consult-imenu)
+	:map goto-map
+	("o" . consult-outline)
+	("m" . consult-mark)
+	("k" . consult-global-mark)
+	("I" . consult-imenu-multi)
+	:map search-map
+	("d" . consult-find)
+	("c" . consult-locate)
+	("g" . consult-ripgrep)
+	("G" . consult-git-grep)
+	("l" . consult-line)
+	("L" . consult-line-multi)
+	("k" . consult-keep-lines)
+	("u" . consult-focus-lines)
+	:map isearch-mode-map
+	("e" . consult-isearch-history)))
+
+(use-package ibuffer
+  :elpaca nil
+  :bind
+  (:map global-map
+	([remap list-buffers] . ibuffer)))
+
+(use-package marginalia
+  :init
+  (marginalia-mode 1)
+  :bind
+  (:map minibuffer-local-map
+      ("M-A" . marginalia-cycle)))
+
+(use-package popper
+  :disabled
+  :bind
+  (("C-`" . popper-toggle)
+   ("M-`" . popper-cycle)
+   ("C-M-`" . popper-toggle-type))
+  :init
+  (setq popper-reference-buffers
+      '("^\\*Messages\\*"
+	"^\\*Output\\*$"
+	"^\\*Async Shell Command\\*"
+	"^\\*\\([Hh]elp\\*\\|Apropos\\)"
+	"^\\*Warnings"
+	"^\\*Backtrace"
+	"^\\*CPU-Profiler-Report"
+	"^\\*Memory-Profiler-Report"
+	"^\\*Process List"
+	"^\\*Completions"
+	"^\\*Local variables\\*$"
+	"^\\*\\(?:[Cc]ompil\\(?:ation\\|e-Log\\)\\|Messages\\)"
+	"^\\*\\(?:Wo\\)?Man "
+	"^\\*Calc"
+	"^\\*info\\*$"
+	"^\\*\\(?:v?term\\|e?shell\\)-popup"
+	"^\\*Shell Command Output\\*"
+	help-mode
+	compilation-mode
+	occur-mode
+	completion-list-mode))
+  (popper-mode 1)
+  (popper-echo-mode 1))
+
+(use-package popwin
+  :config (popwin-mode 1))
+
+(use-package winum
+  :config (winum-mode 1))
+
+(use-package command-log-mode)
+
+(use-package counsel)
+
+(use-package helpful
+  :bind
+  ([remap describe-function] . counsel-describe-function)
+  ([remap describe-command] . helpful-command)
+  ([remap describe-variable] . counsel-describe-variable)
+  ([remap describe-key] . helpful-key)
+  :custom
+  (counsel-describe-function-function #'helpful-callable)
+  (counsel-describe-symbol-function #'helpful-symbol)
+  (counsel-describe-variable-function #'helpful-variable))
+
+(use-package embark
+  :bind
+  (("C-." . embark-act)
+   ("C-h B" . embark-bindings))
+  :config
+  (add-to-list 'display-buffer-alist
+	       '("\\'\\*Embark Collect \\(Live\\|Completions\\)\\*"
+		 nil
+		 (window-parameters (mode-line-format . none)))))
+
+(use-package embark-consult
+  :hook
+  (embark-collect-mode . consult-preview-at-point-mode))
+
+(use-package wgrep)
+
+(use-package which-key
+  :diminish t
+  :init
+  (which-key-setup-minibuffer)
+  (which-key-mode 1))
+#+END_SRC
+
+* File Manager
+#+BEGIN_SRC emacs-lisp
+(use-package nerd-icons-dired)
+(use-package dirvish)
+(use-package diredfl)
+(use-package fd-dired)
+(use-package dired-rsync)
+(use-package diredfl)
+#+END_SRC
+
+* E-Mail
+#+BEGIN_SRC emacs-lisp
+(use-package mu4e
+  :elpaca nil
+  :ensure nil
+  :after (org))
+
+(use-package org-msg)
+(use-package mu4e-alert)
+#+END_SRC
+
+* Navigation
+#+BEGIN_SRC emacs-lisp
+(use-package mwim
+  :bind
+  (:map global-map
+	("C-a" . mwim-beginning-of-code-or-line)
+	("C-e" . mwim-end-of-code-or-line)
+   :map org-mode-map
+        ("C-a" . mwim-beginning-of-code-or-line)
+	("C-e" . mwim-end-of-code-or-line)))
+#+END_SRC
+
+* Text Editing
+#+BEGIN_SRC emacs-lisp
+(use-package rainbow-delimiters
+  :hook (prog-mode . rainbow-delimiters-mode))
+
+(use-package paredit
+  :hook
+  (emacs-lisp-mode . paredit-mode)
+  (lisp-mode . paredit-mode)
+  (lisp-interaction-mode . paredit-mode)
+  (scheme-mode . paredit-mode))
+
+(use-package smartparens
+  :config
+  (smartparens-global-mode 1))
+
+(use-package drag-stuff
+  :hook ((prog-mode . drag-stuff-mode))
+  :bind
+  (("M-<up>" . drag-stuff-up)
+   ("M-<down>" . drag-stuff-down)))
+
+(use-package format-all
+  :commands format-all-mode
+  :hook ((prog-mode . format-all-mode)))
+
+(use-package multiple-cursors
+  :bind
+  (:map global-map
+	("C-c ml" . mc/edit-lines)
+	("C-c mn" . mc/mark-next-like-this)
+	("C-c mp" . mc/mark-previous-like-this)
+	("C-c ma" . mc/mark-all-like-this)))
+
+(use-package iedit)
+#+END_SRC
+
+* Programming
+** General
+#+BEGIN_SRC emacs-lisp
+(use-package flycheck
+  :init
+  (global-flycheck-mode 1))
+
+(use-package tree-sitter)
+(use-package tree-sitter-langs)
+(use-package treesit-auto)
+
+(setq major-mode-remap-alist
+      '((bash-mode . bash-ts-mode)
+	(c++-mode . c++-ts-mode)
+	(c-mode . c-ts-mode)
+	(c-or-c++-mode . c-or-c++-ts-mode)
+	(css-mode . css-ts-mode)
+	(js-mode . js-ts-mode)
+	(json-mode . json-ts-mode)
+	(python-mode . python-ts-mode)
+	(sh-mode . bash-ts-mode)
+	(yaml-mode . yaml-ts-mode)))
+
+(add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode)
+
+(use-package apheleia
+  :config
+  (apheleia-global-mode 1))
+#+END_SRC
+
+** Language Servers
+#+BEGIN_SRC emacs-lisp
+(use-package lsp-mode
+  :init
+  (setq lsp-keymap-prefix "C-c c")
+  :hook
+  ((lsp-mode . lsp-enable-which-key-integration)
+   (prog-mode . lsp-deferred))
+  :config
+  (setq lsp-diagnostics-mode t
+	lsp-enable-folding t
+	lsp-enable-on-type-formatting t
+	lsp-enable-relative-indentation t
+	lsp-enable-semantic-highlighting t
+	lsp-enable-snippet t
+	lsp-enable-text-document-color t
+	lsp-headerline-breadcrumb-enable t
+	lsp-inlay-hint-enable nil
+	lsp-inlay-hint-enable t
+	lsp-modeline-code-actions-enable t
+	lsp-modeline-code-actions-segments '(icon count name)
+	lsp-rust-analyzer-binding-mode-hints t
+	lsp-rust-analyzer-closing-brace-hints t
+	lsp-rust-analyzer-display-chaining-hints t
+	lsp-rust-analyzer-display-lifetime-elision-hints-enable t
+	lsp-rust-analyzer-display-lifetime-elision-hints-use-parameter-names t
+	lsp-rust-analyzer-display-parameter-hints t
+	lsp-rust-analyzer-display-reborrow-hints t
+	lsp-rust-analyzer-lens-references-adt-enable t
+	lsp-rust-analyzer-lens-references-enum-variant-enable t
+	lsp-rust-analyzer-lens-references-method-enable t
+	lsp-rust-analyzer-lens-references-trait-enable t
+	lsp-ui-doc-enable t
+	lsp-ui-doc-position 'bottom
+	lsp-ui-doc-show-with-cursor t
+	lsp-ui-doc-show-with-mouse t
+	lsp-ui-imenu-auto-refresh t
+	lsp-ui-imenu-enable t
+	lsp-ui-mode t
+	lsp-ui-peek-enable t
+	lsp-ui-sideline-enable t
+	lsp-ui-sideline-show-code-actions t
+	lsp-ui-sideline-show-diagnostics t
+	lsp-ui-sideline-show-hover t
+        lsp-semantic-tokens-mode t)
+  :commands lsp)
+
+(use-package lsp-ui
+  :commands lsp-ui-mode)
+
+(use-package helm-lsp
+  :commands helm-lsp-workspace-symbol)
+
+(use-package dap-mode)
+#+END_SRC
+
+** Programming Languages
+*** C/C++
+#+BEGIN_SRC emacs-lisp
+(dolist (hook '(c-mode-hook c++-mode-hook makefile-mode-hook
+			    makefile-gmake-mode-hook c-ts-mode-hook c++-ts-mode-hook))
+  (add-hook hook (lambda ()
+		   (setq-local c-basic-offset 4
+			       gdb-many-windows t
+			       compile-command (format "make -C %s -k"
+						       (substring (ross/get-closest-pathname)
+								  0 -8))
+			       +format-with "clang-format"))))
+
+(use-package modern-cpp-font-lock)
+(use-package preproc-font-lock)
+(use-package disaster)
+(use-package irony
+  :hook ((c-mode . irony-mode)
+	 (c++-mode . irony-mode)
+	 (c-ts-mode . irony-mode)
+	 (c++-ts-mode . irony-mode)))
+(use-package company-irony)
+(use-package flycheck-irony)
+(use-package company-irony-c-headers)
+(use-package irony-eldoc)
+
+(setq c-basic-offset 4)
+#+END_SRC
+
+*** Rust
+#+BEGIN_SRC emacs-lisp
+(use-package rustic
+  :config
+  (setq lsp-rust-analyzer-cargo-watch-command "clippy")
+  (add-to-list 'tree-sitter-major-mode-language-alist '(rustic-mode . rust)))
+
+(dolist (hook '(rust-mode-hook rust-ts-mode-hook rustic-mode-hook))
+  (add-hook hook (lambda ()
+		   (setq-local compile-comand "cargo build --verbose")
+		   (lsp-deferred))))
+#+END_SRC
+
+*** Lisp
+**** General
+#+BEGIN_SRC emacs-lisp
+(use-package lisp-extra-font-lock)
+#+END_SRC
+
+**** Clojure
+#+BEGIN_SRC emacs-lisp
+(use-package cider)
+(use-package flycheck-clj-kondo)
+(use-package anakondo)
+(use-package clojure-mode-extra-font-locking)
+#+END_SRC
+
+**** Common Lisp
+#+BEGIN_SRC emacs-lisp
+(use-package sly)
+(setq inferior-lisp-program "ros -L sbcl -Q run")
+#+END_SRC
+
+**** Emacs Lisp
+#+BEGIN_SRC emacs-lisp
+(use-package elisp-def
+  :config
+  (dolist (hook '(emacs-lisp-mode-hook ielm-mode-hook))
+    (add-hook hook #'elisp-def-mode)))
+
+(use-package elisp-demos
+  :config
+  (advice-add 'describe-function-1 :after #'elisp-demos-advice-describe-function-1)
+  (advice-add 'helpful-update :after #'elisp-demos-advice-helpful-update))
+
+(use-package macrostep)
+(use-package morlock)
+#+END_SRC
+
+*** Nix
+#+BEGIN_SRC emacs-lisp
+(use-package nix-mode
+  :hook (nix-mode . lsp-deferred))
+
+(use-package nix-ts-mode
+  :hook (nix-ts-mode . lsp-deferred))
+
+(use-package nixos-options)
+(use-package nixpkgs-fmt)
+(use-package nix-update)
+#+END_SRC
+
+*** Arduino
+#+BEGIN_SRC emacs-lisp
+(use-package platformio-mode)
+(use-package arduino-mode)
+#+END_SRC
+
+*** Shell
+#+BEGIN_SRC emacs-lisp
+(use-package company-shell)
+#+END_SRC
+
+*** LaTeX
+#+BEGIN_SRC emacs-lisp
+(use-package auctex
+  :elpaca (auctex :pre-build (("./autogen.sh")
+			      ("./configure" "--without-texmf-dir" "--with-lispdir=.")
+			      ("make")))
+  :hook ((LaTeX-mode . lsp-deferred))
+  :config
+  (setq-default TeX-global-pdf-mode 1
+		preview-scale-function 1.5)
+  (setq TeX-auto-save 1
+	TeX-parse-self t
+	default-truncate-lines t
+	TeX-save-query nil
+	TeX-source-correlate-method 'synctex))
+
+(use-package auctex-latexmk)
+(use-package latex-preview-pane)
+(use-package company-auctex)
+(use-package company-reftex)
+(use-package magic-latex-buffer)
+#+END_SRC
+
+*** Java
+#+BEGIN_SRC emacs-lisp
+(use-package lsp-java
+  :config
+  (setq lsp-java-configuration-runtimes '[(:name "JavaSE-17" :path "/usr/lib/jvm/java-17-openjdk" :default t)]))
+#+END_SRC
+
+* Documents
+#+BEGIN_SRC emacs-lisp
+(use-package pdf-tools)
+#+END_SRC
+
+* Project Tools
+#+BEGIN_SRC emacs-lisp
+(use-package projectile
+  :bind
+  (:map project-prefix-map
+	([remap project-find-dir] . projectile-find-dir)
+	([remap project-dired] . projectile-dired)
+	([remap project-compile] . projectile-compile-project)
+	([remap project-find-file] . projectile-find-file)
+	([remap project-kill-buffers] . projectile-kill-buffers)
+	([remap project-switch-project] . projectile-switch-project)
+	([remap project-shell] . projectile-run-shell)
+	([remap project-eshell] . projectile-run-eshell)
+	([remap project-shell-command] . projectile-run-shell-command-in-root)
+	([remap project-async-shell-command] . projectile-run-async-shell-command-in-root)))
+
+(use-package magit
+  :bind (("C-c v g" . magit)))
+
+(use-package ibuffer-projectile)
+(use-package ibuffer-git)
+#+END_SRC
+
+* Startup Dashboard
+This is a massive configuration block that won't be updated very
+often, so have org-babel tangle it into the first src block so I don't
+have to scroll past it every time I read or edit my config.
+#+NAME: dashboard
+#+BEGIN_SRC emacs-lisp :tangle no
+(use-package dashboard
+  :after (all-the-icons)
+  :init
+  (setq dashboard-set-heading-icons t
+	dashboard-set-file-icons t
+	dashboard-set-init-info t
+	dashboard-image-banner-max-height 250
+	dashboard-image-banner-max-width 250
+	dashboard-banner-logo-title "[ Ω Ο Ρ Μ  Ε Δ Ι Τ Ι Ο Ν ]"
+	dashboard-startup-banner (concat user-emacs-directory "logos/nerv.png")
+	dashboard-center-content t
+	dashboard-set-navigator t
+	dashboard-projects-switch-function 'projectile-switch-project
+	dashboard-projects-backend 'projectile
+	dashboard-items '((projects . 3)
+			  (agenda . 3))
+	dashboard-footer-icon (all-the-icons-fileicon "gentoo"
+						      :height 1.1
+						      :v-adjust -0.05
+						      :face 'font-lock-keyword-face)
+	dashboard-navigator-buttons `(;; line 1
+				      ((,(all-the-icons-octicon "octoface" :height 1.1 :v-adjust 0.0)
+					"[ GitHub ]"
+					"Browse GitHub profile"
+					(lambda (&rest _) (browse-url "https://github.com/rossedwards64/dotfiles")) nil "" ""))))
+  :config
+  (add-hook 'elpaca-after-init-hook #'dashboard-insert-startupify-lists)
+  (add-hook 'elpaca-after-init-hook #'dashboard-initialize)
+  (dashboard-setup-startup-hook)
+  (dashboard-modify-heading-icons '((recents . "file-text")
+				    (bookmarks . "book")))
+  (setq initial-buffer-choice (lambda () (get-buffer-create "*dashboard*"))))
+#+END_SRC
+
+* Package Manager
+Same as the [[*Startup Dashboard][startup dashboard config]]. This is the bootstrapping code
+for Elpaca, obtained from [[https://github.com/progfolio/elpaca#installer][the Elpaca Github repository]].
+#+NAME: package-manager
+#+BEGIN_SRC emacs-lisp :tangle no
+(defvar elpaca-installer-version 0.6)
+(defvar elpaca-directory (expand-file-name "elpaca/" user-emacs-directory))
+(defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
+(defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
+(defvar elpaca-order '(elpaca :repo "https://github.com/progfolio/elpaca.git"
+			      :ref nil
+			      :files (:defaults "elpaca-test.el" (:exclude "extensions"))
+			      :build (:not elpaca--activate-package)))
+(let* ((repo  (expand-file-name "elpaca/" elpaca-repos-directory))
+       (build (expand-file-name "elpaca/" elpaca-builds-directory))
+       (order (cdr elpaca-order))
+       (default-directory repo))
+  (add-to-list 'load-path (if (file-exists-p build) build repo))
+  (unless (file-exists-p repo)
+    (make-directory repo t)
+    (when (< emacs-major-version 28) (require 'subr-x))
+    (condition-case-unless-debug err
+	(if-let ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
+		 ((zerop (call-process "git" nil buffer t "clone"
+				       (plist-get order :repo) repo)))
+		 ((zerop (call-process "git" nil buffer t "checkout"
+				       (or (plist-get order :ref) "--"))))
+		 (emacs (concat invocation-directory invocation-name))
+		 ((zerop (call-process emacs nil buffer nil "-Q" "-L" "." "--batch"
+				       "--eval" "(byte-recompile-directory \".\" 0 'force)")))
+		 ((require 'elpaca))
+		 ((elpaca-generate-autoloads "elpaca" repo)))
+	    (progn (message "%s" (buffer-string)) (kill-buffer buffer))
+	  (error "%s" (with-current-buffer buffer (buffer-string))))
+      ((error) (warn "%s" err) (delete-directory repo 'recursive))))
+  (unless (require 'elpaca-autoloads nil t)
+    (require 'elpaca)
+    (elpaca-generate-autoloads "elpaca" repo)
+    (load "./elpaca-autoloads")))
+(add-hook 'after-init-hook #'elpaca-process-queues)
+(elpaca `(,@elpaca-order))
+
+(elpaca elpaca-use-package
+  (elpaca-use-package-mode)
+  (setq elpaca-use-package-by-default t ;; use-package will use elpaca by default
+	use-package-always-ensure t))
+
+(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+(add-hook 'elpaca-after-init-hook (lambda () (load custom-file 'noerror)))
+
+(elpaca-wait)
+#+END_SRC

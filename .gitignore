@@ -1,13 +1,2 @@
-.config/alacritty/themes
-.config/alacritty/themes/**
-.config/doom/config.el
-.config/doom/logos/
-.config/doom/modules/
-.config/doom/themes/
-.config/git/credentials
-.config/nvim/
-.config/nyxt/
-.config/tmux/plugins
-.config/zsh/.zcompdump*
-.config/zsh/.zfunc/**
-.config/zsh/history
+emacs/**
+!emacs/config.org

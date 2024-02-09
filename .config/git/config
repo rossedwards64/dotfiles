@@ -1,7 +1,0 @@
-[user]
-	name = Ross Edwards
-	email = redwards64@hotmail.com
-[credential]
-	helper = store
-[pull]
-	rebase = true
