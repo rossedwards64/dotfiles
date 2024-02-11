@@ -58,10 +58,25 @@
 (use-package emacs
   :elpaca nil
   :init
-  (set-frame-parameter nil 'alpha-background (pcase (system-name)
+  (dolist (frame-setting `((fullscreen . maximized)
+			   (alpha-background .
+					     ,(pcase (system-name)
 					       ((or desktop-hostname
-						     laptop-hostname) 95)
-					       (other-laptop-hostname 100)))
+						    laptop-hostname) 95)
+					       (other-laptop-hostname 100)))))
+    
+    (add-to-list 'default-frame-alist frame-setting))
+  
+  (blink-cursor-mode -1)
+  (global-hl-line-mode 1)
+  (global-prettify-symbols-mode 1)
+  (menu-bar-mode -1)
+  (pixel-scroll-precision-mode 1)
+  (savehist-mode 1)
+  (scroll-bar-mode -1)
+  (set-fringe-mode 1)
+  (tool-bar-mode -1)
+  
   (advice-add #'completing-read-multiple :filter-args
 	      (lambda (args)
 		(cons (format "[CRM%s] %s"
@@ -75,7 +90,6 @@
   
   ;; set some basic stuff like font and getting rid of toolbar
   (setq auto-save-default nil
-        completion-cycle-threshold 3
 	delete-auto-save-files t
 	gc-cons-threshold (* 50 1000 1000)
 	inhibit-startup-message t
@@ -85,13 +99,15 @@
 	require-final-newline t
 	tab-always-indent 'complete
 	treesit-extra-load-path '("/usr/local/include/tree_sitter/lib")
+	vc-follow-symlinks t
 	visible-bell t
+        completion-cycle-threshold 3
         enable-recursive-minibuffers t
 	warning-minimum-level :error) ;; to make it shut up about obsolete functions in packages
 
   (mapc #'ross/set-font (frame-list))
   (add-hook 'after-make-frame-functions #'ross/set-font)
-  (ross/set-theme 'kanagawa)
+  (add-hook 'after-make-frame-functions #'ross/set-alpha)
 
   (add-hook 'emacs-startup-hook
 	    (lambda ()
@@ -107,17 +123,7 @@
 	      (display-line-numbers-mode 1)))
 
   (dolist (hook '(prog-mode-hook ielm-mode-hook))
-    (add-hook hook 'eldoc-mode))
-
-  (blink-cursor-mode -1)
-  (global-hl-line-mode 1)
-  (global-prettify-symbols-mode 1)
-  (menu-bar-mode -1)
-  (pixel-scroll-precision-mode 1)
-  (savehist-mode 1)
-  (scroll-bar-mode -1)
-  (set-fringe-mode 1)
-  (tool-bar-mode -1))
+    (add-hook hook #'eldoc-mode)))
 
 (use-package exec-path-from-shell
   :config
@@ -136,12 +142,26 @@
 	doom-themes-enable-italic t)
   (doom-themes-visual-bell-config)
   (doom-themes-org-config))
+
 (use-package ef-themes)
+
 (use-package standard-themes)
+
 (use-package kanagawa-theme
   :config
-  (load-theme 'kanagawa t))
+  (let ((theme 'kanagawa))
+    (ross/set-theme-maybe-daemon theme)))
+
 (use-package kuronami-theme)
+
+(use-package everblush-theme
+  :elpaca
+  (:host github
+   :repo "Everblush/emacs"
+   :main "everblush-theme.el")
+  :init
+  (add-to-list 'custom-theme-load-path
+	       (concat elpaca-builds-directory "/everblush-theme")))
 #+END_SRC
 
 * Functions
@@ -150,34 +170,46 @@
 (defun ross/set-font (frame)
   "Apply Iosevka font to FRAME."
   (when (display-graphic-p frame)
-   (let ((font-name "Iosevka NF")
-	 (font-height (pcase (system-name)
-			("ross-thinkpad" 120)
-			("ross-desktop" 135))))
-     (progn
-       (dolist (mode '(default fixed-pitch variable-pitch))
-	 (set-face-attribute mode nil
-			     :family font-name
-			     :font font-name
-			     :height font-height
-			     :weight 'regular))
-       (let ((font-name-and-size (concat font-name "-"
-					 (number-to-string (/ font-height 10)))))
-	 (progn
-	   (add-to-list 'default-frame-alist `(font . ,font-name-and-size))
-	   (set-frame-font font-name-and-size nil t)))))))
+    (let ((font-name "Iosevka NF")
+	  (font-height (pcase (system-name)
+			 ((or laptop-hostname
+			      other-laptop-hostname) 120)
+			 (desktop-hostname 130))))
+      (dolist (mode '(default fixed-pitch variable-pitch))
+	(set-face-attribute mode nil
+			    :family font-name
+			    :font font-name
+			    :height font-height
+			    :weight 'regular))
+      (let ((font-name-and-size (concat font-name "-"
+					(number-to-string (/ font-height 10)))))
+	(add-to-list 'default-frame-alist `(font . ,font-name-and-size))
+	(set-frame-font font-name-and-size nil t)))))
 
-(defun ross/set-theme (theme)
-  "Applies THEME to all themes if running as a daemon,
-   only to current frame otherwise."
-  (add-hook 'after-make-frame-functions
-	    (lambda (frame)
-	      (with-selected-frame frame
-		(load-theme theme t)))))
+(defun ross/set-theme-maybe-daemon (theme)
+  "Apply THEME to FRAME and handle normal and client Emacs instances."
+  (if (daemonp)
+      (add-hook 'after-make-frame-functions
+		(lambda (frame)
+		  (ross/set-theme-daemon theme frame)))
+    (ross/set-theme theme)))
+
+(defun ross/set-theme-daemon (theme frame)
+  "Apply THEME to FRAME and clean up `after-make-frame-functions' hook."
+  (ross/set-theme theme frame)
+  (remove-hook 'after-make-frame-functions #'ross/set-theme)
+  (fmakunbound 'ross/set-theme))
+
+(defun ross/set-theme (theme &optional frame)
+  "Apply THEME to FRAME."
+  (if frame
+      (with-selected-frame frame
+	(load-theme theme t))
+    (load-theme theme t)))
 
 (with-eval-after-load "org"
   (defun ross/tangle-and-eval-config ()
-    "Tangles the code blocks from config.org to init.el, 
+    "Tangles the code blocks from config.org to init.el,
      and re-evaluates init.el."
     (interactive)
     (org-babel-tangle-file (concat user-emacs-directory "config.org"))
@@ -194,7 +226,7 @@
 	(expand-file-name file
 			  (cl-loop
 			   for d = default-directory then
-(expand-file-name ".." d)
+			   (expand-file-name ".." d)
 			   if (file-exists-p (expand-file-name file d))
 			   return d
 			   if (equal d root)
@@ -234,7 +266,7 @@
 (use-package org-modern
   :hook ((org-mode . org-modern-mode)))
 (use-package org-bullets
-  :disabled t
+  :disabled
   :hook ((org-mode . org-bullets-mode)))
 (use-package org-super-agenda
   :hook ((org-mode . org-super-agenda-mode)))
@@ -359,7 +391,7 @@
       ("M-A" . marginalia-cycle)))
 
 (use-package popper
-  :disabled t
+  :disabled
   :bind
   (("C-`" . popper-toggle)
    ("M-`" . popper-cycle)
@@ -474,10 +506,10 @@
 
 (use-package paredit
   :hook
-  (emacs-lisp-mode . paredit-mode)
-  (lisp-mode . paredit-mode)
-  (lisp-interaction-mode . paredit-mode)
-  (scheme-mode . paredit-mode))
+  ((emacs-lisp-mode . paredit-mode)
+   (lisp-mode . paredit-mode)
+   (lisp-interaction-mode . paredit-mode)
+   (scheme-mode . paredit-mode)))
 
 (use-package smartparens
   :config
@@ -541,8 +573,10 @@
   (setq lsp-keymap-prefix "C-c c")
   :hook
   ((lsp-mode . lsp-enable-which-key-integration)
+   (lsp-mode . yas-minor-mode)
    (prog-mode . lsp-deferred))
   :config
+  (add-to-list 'lsp-language-id-configuration '(LaTeX-mode . "latex"))
   (setq lsp-diagnostics-mode t
 	lsp-enable-folding t
 	lsp-enable-on-type-formatting t
@@ -694,21 +728,36 @@
 
 *** LaTeX
 #+BEGIN_SRC emacs-lisp
+(use-package lsp-latex)
+
 (use-package auctex
   :elpaca (auctex :pre-build (("./autogen.sh")
 			      ("./configure" "--without-texmf-dir" "--with-lispdir=.")
 			      ("make")))
-  :hook ((LaTeX-mode . lsp-deferred))
+  :hook ((tex-mode . lsp-deferred)
+	 (TeX-mode . lsp-deferred))
   :config
+  (add-to-list 'auto-mode-alist '("\\.tex\\'" . latex-mode))
   (setq-default TeX-global-pdf-mode 1
 		preview-scale-function 1.5)
   (setq TeX-auto-save 1
 	TeX-parse-self t
 	default-truncate-lines t
 	TeX-save-query nil
-	TeX-source-correlate-method 'synctex))
+	TeX-source-correlate-mode t
+	TeX-source-correlate-method 'synctex
+	TeX-source-correlate-start-server nil
+	LaTeX-electric-left-right-brace t
+	TeX-electric-sub-and-superscript t
+	TeX-save-query nil
+	bibtex-dialect 'biblatex
+	bibtex-align-at-equal-sign t
+	bibtex-text-indentation 20))
 
-(use-package auctex-latexmk)
+(use-package auctex-latexmk
+  :init (setq auctex-latexmk-inherit-TeX-PDF-mode t)
+  :config (auctex-latexmk-setup))
+
 (use-package latex-preview-pane)
 (use-package company-auctex)
 (use-package company-reftex)
@@ -722,9 +771,18 @@
   (setq lsp-java-configuration-runtimes '[(:name "JavaSE-17" :path "/usr/lib/jvm/java-17-openjdk" :default t)]))
 #+END_SRC
 
+*** Groovy
+#+BEGIN_SRC emacs-lisp
+(use-package groovy-mode)
+(use-package gradle-mode)
+(use-package flycheck-gradle)
+#+END_SRC
+
 * Documents
 #+BEGIN_SRC emacs-lisp
-(use-package pdf-tools)
+(use-package pdf-tools
+  :config
+  (add-to-list 'auto-mode-alist '("\\.pdf\\'" . pdf-view-mode)))
 #+END_SRC
 
 * Project Tools
@@ -748,6 +806,12 @@
 
 (use-package ibuffer-projectile)
 (use-package ibuffer-git)
+(use-package git-gutter-fringe
+  :init
+  (global-git-gutter-mode +1))
+(use-package diff-hl
+  :init
+  (global-diff-hl-mode +1))
 #+END_SRC
 
 * Startup Dashboard

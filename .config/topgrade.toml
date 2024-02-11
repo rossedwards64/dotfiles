@@ -22,12 +22,9 @@ tmux_arguments = "-S /var/tmux.sock"
 
 [git]
 max_concurrency = 5
-repos = []
-push_only_repos = []
-pull_only_repos = ["~/Documents/programming/repos/*"]
+repos = ["~/Documents/programming/repos/*"]
+arguments = "--rebase --autostash"
 pull_predefined = true
-pull_arguments = "--rebase --autostash"
-push_arguments = "--all"
 
 [composer]
 self_update = true
