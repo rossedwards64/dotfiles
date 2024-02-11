@@ -86,13 +86,13 @@ case $chosen in
         fi
         ;;
     "$lock")
-        sh "$HOME/.local/bin/lock"
+        swaylock
         ;;
     "$suspend")
         ans=$(rdialog &)
         if [[ $ans == "yes" ]] || [[ $ans == "YES" ]] || [[ $ans == "y" ]]; then
             playerctl pause
-            sh "$HOME/.local/bin/lock"
+            swaylock
             systemctl suspend
         elif [[ $ans == "no" ]] || [[ $ans == "NO" ]] || [[ $ans == "n" ]]; then
             exit

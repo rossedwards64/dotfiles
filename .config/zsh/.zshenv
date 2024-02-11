@@ -5,9 +5,13 @@ export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:="$HOME/.config"}"
 export XDG_STATE_HOME="${XDG_STATE_HOME:="$HOME/.local/state"}"
 
 # Paths
-export PATH="$HOME/.local/bin:$XDG_CONFIG_HOME/emacs/bin:"`
-            `"$HOME/bin:$HOME/.dotfiles/.bin:"`
-            `"$XDG_DATA_HOME/cargo/bin:$PATH"
+typeset -U path PATH
+export path=("$path[@]"
+	     ~/.local/bin
+	     $XDG_CONFIG_HOME/emacs/bin
+	     ~/.dotfiles/.bin
+	     $XDG_DATA_HOME/cargo/bin)
+
 export MANPATH="/usr/local/man:$MANPATH"
 
 # ZSH dirs
@@ -31,7 +35,7 @@ export CMAKE_GENERATOR="Ninja"
 export XAUTHORITY="$XDG_RUNTIME_DIR/Xauthority"
 
 # Home dirs
-export CARGO_HOME="$XDG_DATA_cargo/HOME"
+export CARGO_HOME="$XDG_DATA_HOME/cargo"
 export EMACSDIR="$XDG_CONFIG_HOME/emacs"
 export DOOMDIR="$XDG_CONFIG_HOME/doom"
 export GNUPGHOME="$XDG_DATA_HOME/gnupg"
@@ -66,3 +70,8 @@ export _JAVA_OPTIONS='-Djava.util.prefs.userRoot='"$XDG_CONFIG_HOME"'/java, '`
                      `'-Dawt.useSystemAAFontSettings=on, -Dswing.aatext=true'
 export JDK_JAVA_OPTIONS="$_JAVA_OPTIONS"
 export GRADLE_USER_HOME="$XDG_DATA_HOME/gradle"
+
+# TeXLive overrides
+export TEXMFHOME="$XDG_DATA_HOME/texlive/texmf"
+export TEXMFVAR="$XDG_STATE_HOME/texlive/texmf-var"
+export TEXMFCONFIG="$XDG_CONFIG_HOME/texlive/texmf-config"

@@ -1,0 +1,334 @@
+[
+    {
+        "name": "topbar1",
+        "layer": "top",
+        "position": "top",
+        "height": 32,
+        "output": "DP-1",
+        "modules-left": [
+            "custom/launcher",
+            "custom/sep",
+            "memory",
+            "cpu",
+            "custom/cpu_temp",
+            "custom/gpu_percent",
+            "custom/gpu_mem",
+            "custom/gpu_temp",
+            "custom/sep"
+        ],
+        "modules-center": [
+            "clock"
+        ],
+        "modules-right": [
+            "custom/sep",
+            "network#vpn",
+            "network#wifi",
+            "network#ethernet",
+            "network#disconnected",
+            "custom/sep",
+            "custom/pacman",
+            "custom/restart_needed",
+            "custom/weather",
+            "custom/sep",
+            "custom/poweroff"
+        ],
+        "custom/launcher": {
+            "format": "",
+            "on-click": "$HOME/.config/rofi/scripts/launcher"
+        },
+        "clock": {
+            "interval": 1,
+            "format": "<b>{:%a %d-%m-%y %H:%M:%S}</b>",
+            "format-alt": "<b>{:%A, %d of %B, %Y %H:%M:%S}</b>",
+            "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"
+        },
+        "cpu": {
+            "format": " CPU: {usage}% {avg_frequency}GHz",
+            "tooltip": false,
+            "interval": 1
+        },
+        "memory": {
+            "format": " RAM: {used:0.1f}G",
+            "tooltip-format": "{used:0.1f}G / {total:0.1f}G used",
+            "interval": 1
+        },
+        "temperature": {
+            "critical-threshold": 70,
+            "format": "{icon} {temperatureC}°C",
+            "format-icons": [
+                "",
+                "",
+                "",
+                "",
+                ""
+            ],
+            "interval": 1
+        },
+        "custom/cpu_temp": {
+            "exec": "$HOME/.config/waybar/modules/cpu_temp",
+            "format": " {}",
+            "interval": 1
+        },
+        "network#disconnected": {
+            "tooltip-format": "No connection!",
+            "format-ethernet": "",
+            "format-wifi": "",
+            "format-linked": "",
+            "format-disconnected": "",
+            "on-click": "nm-connection-editor"
+        },
+        "network#ethernet": {
+            "interface": "eno*",
+            "format-ethernet": " {ifname}: {ipaddr}/{cidr}",
+            "format-linked": "",
+            "format-disconnected": "{ifname}: N/A",
+            "tooltip-format": "{ifname}: {ipaddr}/{cidr}",
+            "on-click": "nm-connection-editor"
+        },
+        "network#wifi": {
+            "interface": "wlp*",
+            "format-wifi": " {ifname}: {essid} ({signalStrength}%)",
+            "format-linked": "",
+            "format-disconnected": "{ifname}: N/A",
+            "tooltip-format": "{ifname}: {ipaddr}/{cidr}",
+            "on-click": "nm-connection-editor"
+        },
+        "network#vpn": {
+            "interface": "tun0",
+            "format": "",
+            "format-disconnected": "",
+            "tooltip-format": "{ifname}: {ipaddr}/{cidr}",
+            "on-click": "nm-connection-editor"
+        },
+        "pulseaudio": {
+            "scroll-step": 1,
+            "format": "{icon} {volume}%{format_source}",
+            "format-bluetooth": "{icon} {volume}%{format_source}",
+            "format-bluetooth-muted": " {icon}{format_source}",
+            "format-muted": " {format_source}",
+            "format-source": "  {volume}%",
+            "format-source-muted": " ",
+            "format-icons": {
+                "headphone": "",
+                "phone": "",
+                "portable": "",
+                "car": "",
+                "default": [
+                    "",
+                    "",
+                    ""
+                ]
+            },
+            "scroll-step": 1,
+            "on-click": "alsamixer"
+        },
+        "custom/weather": {
+            "return-type": "json",
+            "exec": "sh $HOME/.config/waybar/modules/weather",
+            "interval": 300,
+            "on-click": "firefox https://wttr.in"
+        },
+        "custom/poweroff": {
+            "tooltip": false,
+            "format": " ",
+            "on-click": "bash $HOME/.config/rofi/scripts/powermenu"
+        },
+        "custom/mail": {
+            "tooltip": false,
+            "exec": "sh $HOME/.config/waybar/modules/mail",
+            "interval": 120,
+            "on-click": "thunderbird && swaymsg '[app_id=thunderbird] focus'"
+        },
+        "custom/sep": {
+            "format": "|",
+            "interval": "once",
+            "tooltip": false
+        },
+        "custom/pacman": {
+            "format": " Updates: {}",
+            "interval": 1,
+            "exec": "checkupdates | wc -l",
+            "exec-if": "exit 0",
+            "on-click": "alacritty -e 'sudo pacman -Syu'; pkill -SIGRTMIN+8 waybar",
+            "signal": 8
+        },
+        "custom/restart_needed": {
+            "format": "{}",
+            "interval": 600,
+            "exec": "$HOME/.config/waybar/modules/restart-needed"
+        },
+        "custom/gpu": {
+            "exec": "$HOME/.config/waybar/modules/custom-gpu",
+            "return-type": "json",
+            "format": "{}",
+            "interval": 2,
+            "tooltip": "{tooltip}",
+            "max-length": 19,
+            "min-length": 19,
+            "on-click": "powerupp"
+        },
+        "custom/gpu_percent": {
+            "exec": "$HOME/.config/waybar/modules/gpu_percent",
+            "format": " GPU: {}",
+            "interval": 1
+        },
+        "custom/gpu_temp": {
+            "exec": "$HOME/.config/waybar/modules/gpu_temp",
+            "format": " {}",
+            "interval": 1
+        },
+        "custom/gpu_mem": {
+            "exec": "$HOME/.config/waybar/modules/gpu_mem",
+            "format": "{}",
+            "interval": 1
+        },
+    },
+    {
+        "name": "bottombar1",
+        "layer": "top",
+        "position": "bottom",
+        "height": 32,
+        "output": "DP-1",
+        "modules-left": [
+            "tray",
+            "idle_inhibitor",
+            "custom/sep",
+            "pulseaudio",
+            "custom/spotify",
+            "custom/sep"
+        ],
+        "modules-center": [
+            "wlr/taskbar"
+        ],
+        "modules-right": [
+            "custom/sep",
+            "disk#root",
+            "disk#ssd",
+            "disk#ssd2",
+            "disk#hdd",
+        ],
+        "tray": {
+            "icon-size": 24,
+            "spacing": 10,
+            "show-passive-items": true
+        },
+        "wlr/taskbar": {
+            "format": "{icon}",
+            "icon-theme": [
+                "rose-pine-moon-icons"
+            ],
+            "icon-size": 24,
+            "tooltip": false,
+            "on-click": "activate",
+            "on-click-right": "close"
+        },
+        "idle_inhibitor": {
+            "format": "{icon}",
+            "format-icons": {
+                "activated": "",
+                "deactivated": ""
+            },
+            "start-activated": true
+        },
+        "pulseaudio": {
+            "scroll-step": 1,
+            "format": "{icon} {volume}%{format_source}",
+            "format-bluetooth": "{icon} {volume}%{format_source}",
+            "format-bluetooth-muted": " {icon}{format_source}",
+            "format-muted": " {format_source}",
+            "format-source": "  {volume}%",
+            "format-source-muted": " ",
+            "format-icons": {
+                "headphone": "",
+                "phone": "",
+                "portable": "",
+                "car": "",
+                "default": [
+                    "",
+                    "",
+                    ""
+                ]
+            },
+            "scroll-step": 1,
+        },
+        "custom/spotify": {
+            "interval": 1,
+            "return-type": "json",
+            "exec": "$HOME/.config/waybar/modules/spotify",
+            "exec-if": "pgrep ncspot || pgrep spot || pgrep spotify",
+            "escape": true
+        },
+        "disk#root": {
+            "format": " ROOT: {used}",
+            "tooltip-format": "{used} / {total} used",
+            "path": "/",
+            "interval": 300
+        },
+        "disk#ssd": {
+            "format": " SSD: {used}",
+            "tooltip-format": "{used} / {total} used",
+            "path": "/SSD",
+            "interval": 300
+        },
+        "disk#ssd2": {
+            "format": " SSD2: {used}",
+            "tooltip-format": "{used} / {total} used",
+            "path": "/SSD2",
+            "interval": 300
+        },
+        "disk#hdd": {
+            "format": " HDD: {used}",
+            "tooltip-format": "{used} / {total} used",
+            "path": "/HDD",
+            "interval": 300
+        },
+        "custom/sep": {
+            "format": "|",
+            "interval": "once",
+            "tooltip": false
+        }
+    },
+    {
+        "name": "topbar2",
+        "layer": "top",
+        "position": "top",
+        "height": 32,
+        "output": "DP-1",
+        "modules-left": [
+
+        ],
+        "modules-center": [
+            "hyprland/window"
+        ],
+        "modules-right": [
+
+        ],
+    },
+    {
+        "name": "bottombar2",
+        "layer": "top",
+        "position": "bottom",
+        "height": 32,
+        "output": "DP-1",
+        "modules-left": [
+
+        ],
+        "modules-center": [
+            "wlr/taskbar"
+        ],
+        "modules-right": [
+
+        ],
+        "wlr/taskbar": {
+            "format": "{icon} {name}",
+            "icon-size": 24,
+            "icon-theme": [
+                "rose-pine-moon-icons"
+            ],
+            "tooltip": false,
+            "on-click": "activate",
+            "on-click-right": "close",
+            "sort-by-app-id": true
+        },
+    }
+]

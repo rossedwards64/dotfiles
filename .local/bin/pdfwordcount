@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+if [[ ! "$1" = *.pdf ]]; then
+    echo "Input must be a PDF file."
+    exit 1
+fi
+
+file="$1"
+
+trim_pdf() {
+    pdftotext "$1" - | tr ' ' '\n'
+}
+
+get_words() {
+    trim_pdf "$1" | sort | uniq | grep '^[A-Za-z]'
+}
+
+word_count() {
+    trim_pdf "$1" | grep -Fc "$(get_words "$1")"
+}
+
+word_count "$file"

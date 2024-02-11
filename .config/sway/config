@@ -1,185 +1,263 @@
-set $mod Mod4
-set $left h
-set $down j
-set $up k
-set $right l
-set $term alacritty
-set $menu $HOME/.config/rofi/scripts/launcher.sh
 
-font pango:Iosevka 10
-client.focused c4c7c5 212b30 ffffff
-client.focused_inactive c4c7c5 64727d ffffff 2e9ef4 555a5c
-client.focused_tab_title c4c7c5 212b30 ffffff
-client.urgent c4c7c5 eb4d4b ffffff
+set {
+    $MOD Mod4
+    $LEFT h
+    $DOWN j
+    $UP k
+    $RIGHT l
+    $OPACITY 0.9
+    $FONT Iosevka Nerd Font
+    $WAYBAR waybar -c $CONFIG_HOME/waybar/config-sway
+    $SESSION_VARS DISPLAY WAYLAND_DISPLAY XDG_CURRENT_DESKTOP \
+                  XDG_SESSION_TYPE XDG_SESSION_DESKTOP SWAYSOCK
 
-### Monitor settings
-output HDMI-A-1 resolution 1920x1080@75Hz transform 270 pos 0 0 bg /home/ross/Pictures/wallpapers/Evangelion/landscape.jpg fill
-output DP-1 resolution 1920x1080@144Hz transform 0 pos 1080 670 bg /home/ross/Pictures/wallpapers/Gurren\ Lagann/simon.jpg fill
+    # paths
+    $CONFIG_HOME $HOME/.config
+    $DATA_HOME $HOME/.local
+    $LOCKSCRIPT $DATA_HOME/bin/lock
+    $MENU $ROFISCRIPTS/launcher
+    $MUTESCRIPT $DATA_HOME/bin/check-mute
+    $POWERMENU $ROFISCRIPTS/powermenu
+    $ROFISCRIPTS $CONFIG_HOME/rofi/scripts
+    $RUNNER $ROFISCRIPTS/runner
+    $SCREENSHOT $ROFISCRIPTS/screenshot
+    $WOBSCRIPT $DATA_HOME/bin/wob
+    $WOBSOCK $XDG_RUNTIME_DIR/wob.sock
+    $WALLPAPERS /home/ross/Pictures/wallpapers
 
-### Idle configuration
-exec swayidle -w \
-         timeout 300 "/home/ross/.local/bin/lock.sh" \
-         timeout 600 'swaymsg "output * dpms off"' resume 'swaymsg "output * dpms on"' \
-         before-sleep '/home/ross/.local/bin/lock.sh'
+    # window regexes
+    $ANY ".*"
+    $DISCORD "^discord$"
+    $EMACS "^emacs(client)?$"
+    $EPICGAMES "^heroic$"
+    $FACTORIO "^factorio$"
+    $FIREFOX "^firefox$"
+    $FREETUBE "^FreeTube$"
+    $GAMESCOPE "^gamescope.*$"
+    $INTELLIJ "^jetbrains-idea$"
+    $ITCHIO "^itch$"
+    $LUTRIS "^lutris$"
+    $MINECRAFT "^com-atlauncher-App$"
+    $MPV "^mpv$"
+    $SPOTIFY "^(dev\.alextren\.)?Spot(ify)?$"
+    $STEAM "^steam$"
+    $STEAM_GAME "^steam_app_[0-9]*$"
+    $TERMINAL "^Alacritty$"
+    $VLC "^vlc$"
+    $XWVB "^xwaylandvideobridge$"
+    $XDMAN "^xdm-app$"
+    $YOMIHUSTLE "^youronlymoveishustle.*$"
+}
 
-### Startup apps
-exec alacritty
-exec emacsclient -c -a=""
-exec discord
-exec steam
-exec lutris
-exec firefox
-exec_always autotiling -w 1 2 4 5 7 8 9 10
+floating_modifier $MOD normal
+font pango:$FONT 10
+focus_follows_mouse always
+show_marks on
+smart_borders off
+smart_gaps inverse_outer
+popup_during_fullscreen smart
+title_align center
+workspace_auto_back_and_forth yes
+xwayland enable
+
+output DP-1 {
+    resolution 1920x1080@144Hz
+    scale 1
+    transform 0
+    pos 0 0
+    bg $WALLPAPERS/Chainsaw\ Man/csm.jpg fill
+}
+
+output HDMI-A-1 {
+    resolution 1920x1080@75Hz
+    scale 1
+    transform 0
+    pos 1920 190
+    bg $WALLPAPERS/Gurren\ Lagann/simon.jpg fill
+}
+
+exec {
+    systemctl --user import-environment $SESSION_VARS
+    dbus-update-activation-environment --systemd $SESSION_VARS
+    swayidle -w
+    udiskie -ant &
+    wl-paste --type image --watch cliphist store
+    wl-paste --type text --watch cliphist store
+    autotiling -w 1 2 3 4 5 6 7 8 9 10
+    $HOME/.config/hypr/scripts/start_emacs.sh
+    $WAYBAR
+    alacritty
+    firefox
+    flatpak run com.discordapp.Discord
+    #flatpak run com.valvesoftware.Steam
+    flatpak run io.free.FreeTube
+    flatpak ru com.spotify.Client
+    #flatpak run com.jetbrains.IntelliJ-IDEA-Ultimate
+    #flatpak run dev.alextren.Spot
+    #lutris
+    #obs --minimize-to-tray
+    xdman-beta
+    flatpak run com.sindresorhus.Caprine
+}
+
+exec_always {
+    (pkill $WAYBAR && $WAYBAR) || $WAYBAR
+    rm -f $WOBSOCK && mkfifo $WOBSOCK && tail -f $WOBSOCK | wob
+}
 
 input "type:keyboard" {
-      xkb_layout us
+      xkb_layout gb
       xkb_options ctrl:nocaps
 }
 
-### Key bindings
-bindsym $mod+Return exec $term
-bindsym $mod+Shift+g exec emacsclient -c -a=""
-bindsym $mod+Shift+q kill
-bindsym $mod+d exec $menu
-floating_modifier $mod normal
-bindsym $mod+Shift+c reload
-bindsym $mod+Shift+e exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -B 'Yes, exit sway' 'swaymsg exit'
-bindsym XF86AudioRaiseVolume exec pactl set-sink-volume @DEFAULT_SINK@ +5%
-bindsym XF86AudioLowerVolume exec pactl set-sink-volume @DEFAULT_SINK@ -5%
-bindsym XF86AudioMute exec pactl set-sink-mute @DEFAULT_SINK@ toggle && "/home/ross/.local/bin/check_mute.sh" "getspeaker"
-bindsym XF86AudioMicMute exec pactl set-source-mute @DEFAULT_SOURCE@ toggle && "/home/ross/.local/bin/check_mute.sh" "getmic"
-bindsym $mod+C exec "/home/ross/.local/bin/toggle_sink.sh"
-bindsym XF86AudioPlay exec playerctl play-pause
-bindsym XF86AudioNext exec playerctl next
-bindsym XF86AudioPrev exec playerctl previous
-bindsym XF86MonBrightnessUp exec xbacklight -inc 10
-bindsym XF86MonBrightnessDown exec xbacklight -dec 10
-
-# Moving around
-bindsym $mod+$left focus left
-bindsym $mod+$down focus down
-bindsym $mod+$up focus up
-bindsym $mod+$right focus right
-bindsym $mod+Left focus left
-bindsym $mod+Down focus down
-bindsym $mod+Up focus up
-bindsym $mod+Right focus right
-
-bindsym $mod+Shift+$left move left
-bindsym $mod+Shift+$down move down
-bindsym $mod+Shift+$up move up
-bindsym $mod+Shift+$right move right
-bindsym $mod+Shift+Left move left
-bindsym $mod+Shift+Down move down
-bindsym $mod+Shift+Up move up
-bindsym $mod+Shift+Right move right
-
-# Workspaces
-set $ide "IDE"
-set $term "Terminal"
-set $web "Web"
-set $discord "Discord"
-set $music "Spotify"
-set $steam "Steam"
-set $game "Game"
-set $ws8 "8"
-set $ws9 "9"
-set $ws10 "10"
-
-# switch to workspace
-bindsym $mod+1 workspace $ide
-bindsym $mod+2 workspace $term
-bindsym $mod+3 workspace $web
-bindsym $mod+4 workspace $discord
-bindsym $mod+5 workspace $music
-bindsym $mod+6 workspace $steam
-bindsym $mod+7 workspace $game
-bindsym $mod+8 workspace number $ws8
-bindsym $mod+9 workspace number $ws9
-bindsym $mod+0 workspace number $ws10
-
-# move focused container to workspace
-bindsym $mod+Shift+1 move container to workspace $ide, workspace $ide
-bindsym $mod+Shift+2 move container to workspace $term, workspace $term
-bindsym $mod+Shift+3 move container to workspace $web, workspace $web
-bindsym $mod+Shift+4 move container to workspace $discord, workspace $discord
-bindsym $mod+Shift+5 move container to workspace $music, workspace $discord
-bindsym $mod+Shift+6 move container to workspace $steam, workspace $steam
-bindsym $mod+Shift+7 move container to workspace $game, workspace $game
-bindsym $mod+Shift+8 move container to workspace number $ws8, workspace number $ws8
-bindsym $mod+Shift+9 move container to workspace number $ws9, workspace number $ws9
-bindsym $mod+Shift+0 move container to workspace number $ws10, workspace number $ws10
-
-workspace_auto_back_and_forth yes
-
-bindsym $mod+Shift+p move workspace to output DP-1
-bindsym $mod+p focus output DP-1
-bindsym $mod+Shift+o move workspace to output HDMI-A-1
-bindsym $mod+o focus output HDMI-A-1
-
-assign [app_id="emacs"] $ide
-assign [app_id="Alacritty"] $term
-assign [class="firefox" instance="Navigator"] $web
-assign [class="discord" instance="discord"] $discord
-assign [class="spotify" instance="Spotify"] $music
-assign [class="Steam" instance="Steam"] $steam
-assign [app_id="lutris"] $steam
-assign [class="steam_app_*" instance="steam_app_*"] $game
-
-bindsym $mod+b splith
-bindsym $mod+v splitv
-bindsym $mod+s layout stacking
-bindsym $mod+w layout tabbed
-bindsym $mod+e layout toggle split
-bindsym $mod+f fullscreen
-bindsym $mod+Shift+space floating toggle
-bindsym $mod+space focus mode_toggle
-bindsym $mod+a focus parent
-
-bindsym $mod+Shift+minus move scratchpad
-bindsym $mod+minus scratchpad show
-
-mode "resize" {
-    bindsym $left resize shrink width 10px
-    bindsym $down resize grow height 10px
-    bindsym $up resize shrink height 10px
-    bindsym $right resize grow width 10px
-
-    bindsym Left resize shrink width 10px
-    bindsym Down resize grow height 10px
-    bindsym Up resize shrink height 10px
-    bindsym Right resize grow width 10px
-
-    bindsym Return mode "default"
-    bindsym Escape mode "default"
+input "2:7:SynPS/2_Synaptics_TouchPad" {
+    dwt enabled
+    tap enabled
+    natural_scroll enabled
+    middle_emulation enabled
 }
-bindsym $mod+r mode "resize"
+
+seat {
+     seat0 xcursor_theme Catppuccin-Mocha-Dark-Cursors 24
+}
+
+assign {
+    [app_id=$EMACS] 1
+    [app_id=$TERMINAL] 2
+    [app_id=$FIREFOX class=$FIREFOX] 3
+    [class=$DISCORD] 4
+    [app_id=$LUTRIS] 6
+    [app_id=$SPOTIFY] 5
+    [class=$STEAM] 6
+    [class=$STEAM_GAME] 7
+    [class=$INTELLIJ] 9
+}
+
+for_window {
+    [window_role="pop-up"] floating enable
+    [window_role="task_dialog"] floating enable
+
+    # any window
+    [title=$ANY app_id=$ANY instance=$ANY class=$ANY] {
+        border normal 5
+        inhibit_idle fullscreen
+        title_format "<b>%title</b> (%app_id%instance,%shell)"
+    }
+
+    [class=$STEAM_GAME] {
+        inhibit_idle fullscreen
+        fullscreen enable
+    }
+}
 
 bar {
-    swaybar_command waybar
+    swaybar_command $WAYBAR
 }
 
-bindsym Print exec "/home/ross/.local/bin/screenshot.sh"
-bindsym Print+Shift exec "/home/ross/.local/bin/screenshot.sh" "/home/ross/Pictures/screenshots"
+gaps {
+    inner 5
+    outer 5
+}
 
-for_window [app_id="chip8"] floating enable
-for_window [app_id=".*"] border pixel 1
-for_window [app_id=".*"] inhibit_idle fullscreen
-for_window [class=".*"] inhibit_idle fullscreen
-for_window [window_role="pop-up"] floating enable
-for_window [window_role="task_dialog"] floating enable
+bindsym {
+    $MOD+Return exec alacritty
+    $MOD+Shift+g exec emacsclient -c -a=""
+    $MOD+Ctrl+g exec emacsclient --eval "(emacs-everywhere)"
+    $MOD+Shift+q kill
+    $MOD+d exec "pkill rofi || $MENU"
+    $MOD+r exec "pkill rofi || $RUNNER"
+    $MOD+Escape exec "pkill rofi || $POWERMENU"
+    $MOD+Shift+c reload
+    $MOD+Shift+s exec $LOCK
+    $MOD+$LEFT focus left
+    $MOD+$DOWN focus down
+    $MOD+$UP focus up
+    $MOD+$RIGHT focus right
+    $MOD+Left focus left
+    $MOD+Down focus down
+    $MOD+Up focus up
+    $MOD+Right focus right
+    $MOD+Shift+$LEFT move left
+    $MOD+Shift+$DOWN move down
+    $MOD+Shift+$UP move up
+    $MOD+Shift+$RIGHT move right
+    $MOD+Shift+Left move left
+    $MOD+Shift+Down move down
+    $MOD+Shift+Up move up
+    $MOD+Shift+Right move right
+    $MOD+Shift+r mode "resize"
+    Print exec $SCREENSHOT
+    $MOD+b splith
+    $MOD+v splitv
+    $MOD+s layout stacking
+    $MOD+w layout tabbed
+    $MOD+e layout toggle split
+    $MOD+f fullscreen
+    $MOD+Shift+space floating toggle
+    $MOD+space focus mode_toggle
+    $MOD+a focus parent
+    $MOD+Shift+minus move scratchpad
+    $MOD+minus scratchpad show
+    $MOD+shift+b border toggle
+    $MOD+1 workspace number 1
+    $MOD+2 workspace number 2
+    $MOD+3 workspace number 3
+    $MOD+4 workspace number 4
+    $MOD+5 workspace number 5
+    $MOD+6 workspace number 6
+    $MOD+7 workspace number 7
+    $MOD+8 workspace number 8
+    $MOD+9 workspace number 9
+    $MOD+0 workspace number 10
+    $MOD+Shift+1 move container to workspace number 1, workspace number 1
+    $MOD+Shift+2 move container to workspace number 2, workspace number 2
+    $MOD+Shift+3 move container to workspace number 3, workspace number 3
+    $MOD+Shift+4 move container to workspace number 4, workspace number 4
+    $MOD+Shift+5 move container to workspace number 5, workspace number 5
+    $MOD+Shift+6 move container to workspace number 6, workspace number 6
+    $MOD+Shift+7 move container to workspace number 7, workspace number 7
+    $MOD+Shift+8 move container to workspace number 8, workspace number 8
+    $MOD+Shift+9 move container to workspace number 9, workspace number 9
+    $MOD+Shift+0 move container to workspace number 10, workspace number 10
+}
 
-title_align center
+bindsym --locked {
+    XF86AudioRaiseVolume exec $WOBSCRIPT "-v" "-i5"
+    XF86AudioLowerVolume exec $WOBSCRIPT "-v" "-d5"
+    XF86AudioMute exec wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle && \
+                    $check-mute "getspeaker"
+    XF86AudioMicMute exec wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle && \
+                    $check-mute "getmic"
+    XF86AudioPlay exec playerctl play-pause
+    XF86AudioNext exec playerctl next
+    XF86AudioPrev exec playerctl previous
+    XF86MonBrightnessUp exec xbacklight -inc 10
+    XF86MonBrightnessDown exec xbacklight -dec 10
+}
 
-gaps inner 5
-gaps outer 5
+bindgesture {
+    pinch:inward+up move up
+    pinch:inward+down move down
+    pinch:inward+left move left
+    pinch:inward+right move right
+    swipe:right workspace prev
+    swipe:left workspace next
+}
 
-default_border pixel
-default_floating_border pixel
+mode "resize" {
+    bindsym {
+        $LEFT resize shrink width 10px
+        $DOWN resize grow height 10px
+        $UP resize shrink height 10px
+        $RIGHT resize grow width 10px
+        Left resize shrink width 10px
+        Down resize grow height 10px
+        Up resize shrink height 10px
+        Right resize grow width 10px
+        Return mode "default"
+        Escape mode "default"
+    }
+}
 
-smart_gaps on
-smart_gaps inverse_outer
-smart_borders on
-smart_borders no_gaps
-
+include colours/catppuccin_mocha
 include /etc/sway/config.d/*

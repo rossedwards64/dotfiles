@@ -157,7 +157,6 @@ set all the variables
 
 enable some fun little modes
 #+BEGIN_SRC emacs-lisp
-(global-tree-sitter-mode t)
 (solaire-global-mode t)
 (global-auto-revert-mode t)
 (global-wakatime-mode t)
@@ -268,12 +267,6 @@ this is to keep the text in the modeline from going off the edge of the screen
 (custom-set-faces!
   '(font-lock-comment-face :slant italic)
   '(font-lock-keyword-face :slant italic)
-  '(doom-dashboard-banner :foreground "#8a0000" :weight bold)
-  '(doom-dashboard-footer :inherit font-lock-constant-face)
-  '(doom-dashboard-footer-icon :inherit all-the-icons-red)
-  '(doom-dashboard-loaded :inherit font-lock-warning-face)
-  '(doom-dashboard-menu-desc :inherit font-lock-string-face)
-  '(doom-dashboard-menu-title :inherit font-lock-function-name-face)
   '(mode-line :family default-font :height 1.0)
   '(mode-line-inactive :family default-font :height 1.0))
 #+END_SRC

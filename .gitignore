@@ -10,3 +10,5 @@
 .config/zsh/.zfunc/**
 .config/zsh/history
 .config/ncspot/userstate.cbor
+.config/emacs
+!.config/emacs/config.org

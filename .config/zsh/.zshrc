@@ -86,6 +86,7 @@ prompt_context() {
 
 eval "$(antidot init)"
 eval "$(zoxide init zsh)"
+eval "$(rtx activate zsh)"
 
 if [[ $TERM == "tramp" ]] && [[ -n $INSIDE_EMACS ]]; then
     unsetopt zle;
