@@ -58,7 +58,14 @@
 (use-package emacs
   :elpaca nil
   :init
-  (add-to-list 'default-frame-alist '(fullscreen . maximized))
+  (dolist (frame-setting `((fullscreen . maximized)
+			   (alpha-background .
+					     ,(pcase (system-name)
+						((or (pred (string-equal desktop-hostname))
+						     (pred (string-equal laptop-hostname))) 95)
+						((pred (string-equal other-laptop-hostname)) 100)))))
+    
+    (add-to-list 'default-frame-alist frame-setting))
   
   (blink-cursor-mode -1)
   (global-hl-line-mode 1)
@@ -83,7 +90,6 @@
   
   ;; set some basic stuff like font and getting rid of toolbar
   (setq auto-save-default nil
-        completion-cycle-threshold 3
 	delete-auto-save-files t
 	gc-cons-threshold (* 50 1000 1000)
 	inhibit-startup-message t
@@ -93,9 +99,10 @@
 	require-final-newline t
 	tab-always-indent 'complete
 	treesit-extra-load-path '("/usr/local/include/tree_sitter/lib")
+	vc-follow-symlinks t
 	visible-bell t
+        completion-cycle-threshold 3
         enable-recursive-minibuffers t
-	switch-to-buffer-obey-display-actions t
 	warning-minimum-level :error) ;; to make it shut up about obsolete functions in packages
 
   (mapc #'ross/set-font (frame-list))
@@ -115,7 +122,7 @@
 	      (display-line-numbers-mode 1)))
 
   (dolist (hook '(prog-mode-hook ielm-mode-hook))
-    (add-hook hook 'eldoc-mode)))
+    (add-hook hook #'eldoc-mode)))
 
 (use-package exec-path-from-shell
   :config
@@ -145,6 +152,15 @@
     (ross/set-theme-maybe-daemon theme)))
 
 (use-package kuronami-theme)
+
+(use-package everblush-theme
+  :elpaca
+  (:host github
+   :repo "Everblush/emacs"
+   :main "everblush-theme.el")
+  :init
+  (add-to-list 'custom-theme-load-path
+	       (concat elpaca-builds-directory "/everblush-theme")))
 #+END_SRC
 
 * Functions
@@ -153,23 +169,21 @@
 (defun ross/set-font (frame)
   "Apply Iosevka font to FRAME."
   (when (display-graphic-p frame)
-   (let ((font-name "Iosevka NF")
-	 (font-height (pcase (system-name)
-			(`(or ,laptop-hostname
-			      ,other-laptop-hostname) 120)
-			(desktop-hostname 130))))
-     (progn
-       (dolist (mode '(default fixed-pitch variable-pitch))
-	 (set-face-attribute mode nil
-			     :family font-name
-			     :font font-name
-			     :height font-height
-			     :weight 'regular))
-       (let ((font-name-and-size (concat font-name "-"
-					 (number-to-string (/ font-height 10)))))
-	 (progn
-	   (add-to-list 'default-frame-alist `(font . ,font-name-and-size))
-	   (set-frame-font font-name-and-size nil t)))))))
+    (let ((font-name "Iosevka NF")
+	  (font-height (pcase (system-name)
+			 ((or (pred (string-equal laptop-hostname))
+			      (pred (string-equal other-laptop-hostname))) 120)
+			 ((pred (string-equal desktop-hostname)) 130))))
+      (dolist (mode '(default fixed-pitch variable-pitch))
+	(set-face-attribute mode nil
+			    :family font-name
+			    :font font-name
+			    :height font-height
+			    :weight 'regular))
+      (let ((font-name-and-size (concat font-name "-"
+					(number-to-string (/ font-height 10)))))
+	(add-to-list 'default-frame-alist `(font . ,font-name-and-size))
+	(set-frame-font font-name-and-size nil t)))))
 
 (defun ross/set-theme-maybe-daemon (theme)
   "Apply THEME to FRAME and handle normal and client Emacs instances."
@@ -211,7 +225,7 @@
 	(expand-file-name file
 			  (cl-loop
 			   for d = default-directory then
-(expand-file-name ".." d)
+			   (expand-file-name ".." d)
 			   if (file-exists-p (expand-file-name file d))
 			   return d
 			   if (equal d root)
@@ -466,7 +480,14 @@
 (use-package mu4e
   :elpaca nil
   :ensure nil
-  :after (org))
+  :after (org)
+  :config
+  (setq mu4e-maildir "~/Mail"
+	mu4e-user-mail-address-list '("redwards64@hotmail.com"
+				      "redwards6469@gmail.com")
+	mu4e-get-mail-command "mbsync --all"
+	mu4e-change-filenames-when-moving t
+	mu4e-update-interval 3600))
 
 (use-package org-msg)
 (use-package mu4e-alert)
@@ -491,10 +512,10 @@
 
 (use-package paredit
   :hook
-  (emacs-lisp-mode . paredit-mode)
-  (lisp-mode . paredit-mode)
-  (lisp-interaction-mode . paredit-mode)
-  (scheme-mode . paredit-mode))
+  ((emacs-lisp-mode . paredit-mode)
+   (lisp-mode . paredit-mode)
+   (lisp-interaction-mode . paredit-mode)
+   (scheme-mode . paredit-mode)))
 
 (use-package smartparens
   :config
@@ -558,8 +579,26 @@
   (setq lsp-keymap-prefix "C-c c")
   :hook
   ((lsp-mode . lsp-enable-which-key-integration)
+   (lsp-mode . yas-minor-mode)
    (prog-mode . lsp-deferred))
   :config
+  ;; manually add the AUCTeX modes to the texlab client
+  (with-eval-after-load "latex"
+    (maphash (lambda (k v)
+	       (let ((mode-list (lsp--client-major-modes v))
+		     (tex-mode-list '(tex-mode latex-mode))
+		     (auctex-mode-list '(TeX-mode LaTeX-mode)))
+		 (when (and (equal k 'texlab2)
+			    (cl-intersection mode-list tex-mode-list))
+		   (progn
+		     (dolist (mode auctex-mode-list)
+		       ;; can't use mode-list variable because we are
+		       ;; modifying a global value
+		       (setf (lsp--client-major-modes v)
+			     (cl-pushnew mode mode-list)))
+		     (add-to-list 'lsp-language-id-configuration '(`mode . "latex"))))))
+	     lsp-clients))
+  
   (setq lsp-diagnostics-mode t
 	lsp-enable-folding t
 	lsp-enable-on-type-formatting t
@@ -711,21 +750,36 @@
 
 *** LaTeX
 #+BEGIN_SRC emacs-lisp
+(use-package lsp-latex)
+
 (use-package auctex
   :elpaca (auctex :pre-build (("./autogen.sh")
 			      ("./configure" "--without-texmf-dir" "--with-lispdir=.")
 			      ("make")))
-  :hook ((LaTeX-mode . lsp-deferred))
-  :config
+  :after (lsp-mode)
+  :hook (((tex-mode TeX-mode) . lsp-deferred))
+  :mode ("\\.tex\\'" . LaTeX-mode)
+  :config  
   (setq-default TeX-global-pdf-mode 1
 		preview-scale-function 1.5)
   (setq TeX-auto-save 1
 	TeX-parse-self t
 	default-truncate-lines t
 	TeX-save-query nil
-	TeX-source-correlate-method 'synctex))
+	TeX-source-correlate-mode t
+	TeX-source-correlate-method 'synctex
+	TeX-source-correlate-start-server nil
+	LaTeX-electric-left-right-brace t
+	TeX-electric-sub-and-superscript t
+	TeX-save-query nil
+	bibtex-dialect 'biblatex
+	bibtex-align-at-equal-sign t
+	bibtex-text-indentation 20))
 
-(use-package auctex-latexmk)
+(use-package auctex-latexmk
+  :init (setq auctex-latexmk-inherit-TeX-PDF-mode t)
+  :config (auctex-latexmk-setup))
+
 (use-package latex-preview-pane)
 (use-package company-auctex)
 (use-package company-reftex)
@@ -739,9 +793,17 @@
   (setq lsp-java-configuration-runtimes '[(:name "JavaSE-17" :path "/usr/lib/jvm/java-17-openjdk" :default t)]))
 #+END_SRC
 
+*** Groovy
+#+BEGIN_SRC emacs-lisp
+(use-package groovy-mode)
+(use-package gradle-mode)
+(use-package flycheck-gradle)
+#+END_SRC
+
 * Documents
 #+BEGIN_SRC emacs-lisp
-(use-package pdf-tools)
+(use-package pdf-tools
+  :mode ("\\.pdf\\'" . pdf-view-mode))
 #+END_SRC
 
 * Project Tools
@@ -765,6 +827,12 @@
 
 (use-package ibuffer-projectile)
 (use-package ibuffer-git)
+(use-package git-gutter-fringe
+  :init
+  (global-git-gutter-mode +1))
+(use-package diff-hl
+  :init
+  (global-diff-hl-mode +1))
 #+END_SRC
 
 * Startup Dashboard
