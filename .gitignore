@@ -1,2 +1,2 @@
-emacs/**
-!emacs/config.org
+modules/home-manager/emacs/config/**
+!modules/home-manager/emacs/config/config.org

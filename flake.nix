@@ -14,40 +14,57 @@
   outputs = { self, nixpkgs, home-manager, nixos-hardware, ... }@inputs:
     let
       inherit (self) outputs;
+      username = "ross";
       lib = nixpkgs.lib // home-manager.lib;
-      sysArch = "x86_64-linux";
-      args = { inherit inputs outputs; };
+      system = "x86_64-linux";
+
+      args = { inherit inputs outputs username; };
 
       sysModules = [
-        ./configuration.nix
+        ./modules/nixos
         ({ config, pkgs, options, ... }: {
           nix.registry.nixpkgs.flake = nixpkgs;
         })
       ];
 
       homeConfig = lib.homeManagerConfiguration {
-        pkgs = nixpkgs.legacyPackages.x86_64-linux;
+        pkgs = nixpkgs.legacyPackages.${system};
+        modules = [
+          {
+            home = {
+              username = "${username}";
+              homeDirectory = "/home/${username}";
+            };
+            programs.home-manager.enable = true;
+          }
+          ./home/home.nix
+        ];
         extraSpecialArgs = args;
       };
+
     in {
       nixosConfigurations = {
         ross-desktop = lib.nixosSystem {
-          system = sysArch;
-          modules = sysModules;
+          system = system;
+          modules = [ ./hosts/ross-desktop/configuration.nix ] ++ sysModules;
           specialArgs = args;
         };
 
         ross-thinkpad = lib.nixosSystem {
-          system = sysArch;
-          modules = [ nixos-hardware.nixosModules.lenovo-thinkpad-x230 ]
-            ++ sysModules;
+          system = system;
+          modules = [
+            nixos-hardware.nixosModules.lenovo-thinkpad-x230
+            ./hosts/ross-thinkpad/configuration.nix
+          ] ++ sysModules;
           specialArgs = args;
         };
 
         ross-thinkpad-x200 = lib.nixosSystem {
-          system = sysArch;
-          modules = [ nixos-hardware.nixosModules.lenovo-thinkpad-x200s ]
-            ++ sysModules;
+          system = system;
+          modules = [
+            nixos-hardware.nixosModules.lenovo-thinkpad-x200s
+            ./hosts/ross-thinkpad-x200/configuration.nix
+          ] ++ sysModules;
           specialArgs = args;
         };
       };

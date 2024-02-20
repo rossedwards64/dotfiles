@@ -12,7 +12,6 @@ in {
       catppuccin-kde
       catppuccin-sddm-corners
       rose-pine-icon-theme
-
     ];
 
     gtk = with pkgs; {

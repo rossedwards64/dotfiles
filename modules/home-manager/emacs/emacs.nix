@@ -12,14 +12,14 @@ in {
     };
 
     xdg.configFile = {
-      "emacs/init.el" = {
-        enable = false;
-        source = ../emacs/init.el;
-      };
-
       "emacs/early-init.el" = {
         enable = false;
-        source = ../emacs/early-init.el;
+        source = ./config/early-init.el;
+      };
+      
+      "emacs/init.el" = {
+        enable = false;
+        source = ./config/init.el;
       };
     };
   };

@@ -1,3 +1,4 @@
+
 #+title: Emacs Configuration
 #+PROPERTY: header-args :tangle ./init.el
 
@@ -58,24 +59,24 @@
 (use-package emacs
   :elpaca nil
   :init
-  (dolist (frame-setting `((fullscreen . maximized)
-			   (alpha-background .
-					     ,(pcase (system-name)
-						((or (pred (string-equal desktop-hostname))
-						     (pred (string-equal laptop-hostname))) 95)
-						((pred (string-equal other-laptop-hostname)) 100)))))
-    
+  (dolist (frame-setting
+	   `((fullscreen . maximized)
+	     (alpha-background . ,(pcase (system-name)
+				    ((or (pred (string-equal desktop-hostname))
+					 (pred (string-equal laptop-hostname))) 95)
+				    ((pred (string-equal other-laptop-hostname)) 100)))))
     (add-to-list 'default-frame-alist frame-setting))
   
-  (blink-cursor-mode -1)
-  (global-hl-line-mode 1)
-  (global-prettify-symbols-mode 1)
+  (global-hl-line-mode +1)
+  (global-prettify-symbols-mode +1)
   (menu-bar-mode -1)
-  (pixel-scroll-precision-mode 1)
-  (savehist-mode 1)
+  (pixel-scroll-precision-mode +1)
+  (savehist-mode +1)
+  (auto-fill-mode +1)
   (scroll-bar-mode -1)
-  (set-fringe-mode 1)
+  (set-fringe-mode +1)
   (tool-bar-mode -1)
+  (blink-cursor-mode -1)
   
   (advice-add #'completing-read-multiple :filter-args
 	      (lambda (args)
@@ -103,10 +104,14 @@
 	visible-bell t
         completion-cycle-threshold 3
         enable-recursive-minibuffers t
+	fill-indent-according-to-mode t
 	warning-minimum-level :error) ;; to make it shut up about obsolete functions in packages
 
-  (mapc #'ross/set-font (frame-list))
-  (add-hook 'after-make-frame-functions #'ross/set-font)
+  (let* ((font "Iosevka NF")
+	(set-font (lambda (frame)
+		    (ross/set-font font frame))))
+    (mapc set-font (frame-list))
+    (add-hook 'after-make-frame-functions set-font))
 
   (add-hook 'emacs-startup-hook
 	    (lambda ()
@@ -118,8 +123,8 @@
   
   (add-hook 'prog-mode-hook
 	    (lambda ()
-	      (which-function-mode 1)
-	      (display-line-numbers-mode 1)))
+	      (which-function-mode +1)
+	      (display-line-numbers-mode +1)))
 
   (dolist (hook '(prog-mode-hook ielm-mode-hook))
     (add-hook hook #'eldoc-mode)))
@@ -143,42 +148,45 @@
   (doom-themes-org-config))
 
 (use-package ef-themes)
-
 (use-package standard-themes)
-
-(use-package kanagawa-theme
-  :config
-  (let ((theme 'kanagawa))
-    (ross/set-theme-maybe-daemon theme)))
-
+(use-package kanagawa-theme)
 (use-package kuronami-theme)
 
 (use-package everblush-theme
   :elpaca
   (:host github
-   :repo "Everblush/emacs"
-   :main "everblush-theme.el")
+	 :repo "Everblush/emacs"
+	 :main "everblush-theme.el")
   :init
   (add-to-list 'custom-theme-load-path
-	       (concat elpaca-builds-directory "/everblush-theme")))
+	       (concat elpaca-builds-directory "everblush-theme"))
+  :config
+  (ross/set-theme-maybe-daemon 'everblush))
 #+END_SRC
 
 * Functions
 #+NAME: functions
 #+BEGIN_SRC emacs-lisp :tangle no
-(defun ross/set-font (frame)
-  "Apply Iosevka font to FRAME."
+(defun ross/open-config ()
+  "Switch to 'config.org'."
+  (interactive)
+  (switch-to-buffer (find-file-noselect
+		     (concat user-emacs-directory "config.org"))))
+
+(defun ross/set-font (font frame)
+  "Apply FONT to FRAME."
   (when (display-graphic-p frame)
     (let ((font-name "Iosevka NF")
 	  (font-height (pcase (system-name)
 			 ((or (pred (string-equal laptop-hostname))
-			      (pred (string-equal other-laptop-hostname))) 120)
-			 ((pred (string-equal desktop-hostname)) 130))))
+			      (pred (string-equal other-laptop-hostname)))
+			  120)
+			 ((pred (string-equal desktop-hostname)) 150))))
       (dolist (mode '(default fixed-pitch variable-pitch))
 	(set-face-attribute mode nil
 			    :family font-name
-			    :font font-name
 			    :height font-height
+			    :width 'normal
 			    :weight 'regular))
       (let ((font-name-and-size (concat font-name "-"
 					(number-to-string (/ font-height 10)))))
@@ -208,36 +216,37 @@
 
 (with-eval-after-load "org"
   (defun ross/tangle-and-eval-config ()
-    "Tangles the code blocks from config.org to init.el,
-     and re-evaluates init.el."
+    "Tangles the code blocks from 'config.org' to 'init.el',
+     and re-evaluates 'init.el'."
     (interactive)
     (org-babel-tangle-file (concat user-emacs-directory "config.org"))
     (load (concat user-emacs-directory "init.el"))))
 
 (with-eval-after-load "cl-lib"
-    (cl-defun ross/get-closest-pathname (&optional (file "Makefile"))
-      "Determine the pathname of the first instance of FILE starting from the
+  (cl-defun ross/get-closest-pathname (&optional (file "Makefile"))
+    "Determine the pathname of the first instance of FILE starting from the
        current directory towards root.
        This may not do the correct thing in the presence of links.
        If it does not find FILE, then it shall return the name of FILE in the
        current directory, suitable for creation."
-      (let ((root (expand-file-name "/")))
-	(expand-file-name file
-			  (cl-loop
-			   for d = default-directory then
-			   (expand-file-name ".." d)
-			   if (file-exists-p (expand-file-name file d))
-			   return d
-			   if (equal d root)
-			   return nil))))
+    (let ((root (expand-file-name "/")))
+      (expand-file-name file
+			(cl-loop
+			 for d = default-directory then
+			 (expand-file-name ".." d)
+			 if (file-exists-p (expand-file-name file d))
+			 return d
+			 if (equal d root)
+			 return nil))))
 
-    (defun ross/format-buffer-astyle ()
-      "Format all the files inside src using .astylerc"
-      (interactive)
-      (with-temp-buffer
-	(let ((astylerc (ross/get-closest-pathname ".astylerc")))
-	  (shell-command (format "astyle %s/* --options=%s"
-				 (ross/get-closest-pathname "src") astylerc) t t)))))
+  (defun ross/format-buffer-astyle ()
+    "Format all the files inside src using '.astylerc'"
+    (interactive)
+    (with-temp-buffer
+      (let ((astylerc (ross/get-closest-pathname ".astylerc")))
+	(shell-command (format "astyle %s/* --options=%s"
+			       (ross/get-closest-pathname "src") astylerc)
+		       t t)))))
 #+END_SRC
 
 * Org-Mode
@@ -251,14 +260,18 @@
   :init
   (setq org-src-preserve-indentation t
 	org-src-window-setup 'other-window
-	org-agenda-files '("~/Documents/org/agenda.org")
-	org-directory "~/Documents/org/"
+	org-directory "~/Documents/org"
+	org-agenda-files (cl-map 'list (lambda (path)
+				      (concat org-directory path))
+			      '("/agenda.org"))
 	org-log-done 'time
 	org-plantuml-exec-path "/usr/bin/plantuml"
 	org-pretty-entities-include-sub-superscripts t
 	org-return-follows-link t
 	org-startup-with-inline-images t
-	org-support-shift-select t))
+	org-support-shift-select t
+	org-src-window-setup 'current-window
+	org-roam-directory (concat org-directory "/roam")))
 
 (use-package toc-org
   :hook ((org-mode . toc-org-mode)))
@@ -275,28 +288,42 @@
 (use-package org-sticky-header
   :hook ((org-mode . org-sticky-header-mode)))
 (use-package org-bookmark-heading)
-(use-package org-roam)
+
+(use-package org-roam
+  :bind
+  (:map global-map
+	("C-c nl" . org-roam-buffer-toggle)
+	("C-c nf" . org-roam-node-find)
+	("C-c ng" . org-roam-graph)
+	("C-c ni" . org-roam-node-insert)
+	("C-c nc" . org-roam-capture)
+	("C-c nj" . org-roam-dailies-capture-today))
+  :config
+  (setq org-roam-node-display-template
+	(concat "${title:*} " (propertize "${tags:10}"
+					  'face 'org-tag)))
+  (org-roam-db-autosync-enable))
+
 (use-package ox-pandoc)
-(use-package org-noter)
 (use-package org-gcal)
 (use-package org-roam-ui)
 (use-package org-ac)
 (use-package org-alert)
+
 (use-package org-auto-tangle
-  :config
-  (org-auto-tangle-mode 1))
+  :config (org-auto-tangle-mode +1))
+
 (use-package org-tidy
-  :config
-  (org-tidy-mode 1))
+  :config (org-tidy-mode +1))
 #+END_SRC
 
 * UI
 #+BEGIN_SRC emacs-lisp
 (use-package doom-modeline
   :init
-  (doom-modeline-mode 1)
-  (column-number-mode 1)
-  (size-indication-mode 1)
+  (doom-modeline-mode +1)
+  (column-number-mode +1)
+  (size-indication-mode +1)
   (setq doom-modeline-height 45
 	doom-modeline-indent-info t)
   (doom-modeline-def-modeline 'main
@@ -305,7 +332,7 @@
 
 (use-package anzu
   :init
-  (anzu-mode 1))
+  (anzu-mode +1))
 
 (use-package company
   :diminish
@@ -316,7 +343,8 @@
 
 (use-package vertico
   :config
-  (vertico-mode 1)
+  (vertico-mode +1)
+  (vertico-indexed-mode +1)
   (setq completion-in-region-function
 	(lambda (&rest args)
 	  (apply (if vertico-mode
@@ -326,9 +354,9 @@
 
 (use-package orderless
   :init
-  (setq completion-styles '(orderless basic)
+  (setq completion-styles '(substring orderless basic)
 	completion-category-defaults nil
-	completion-category-overrides '((file (styles partial-completion)))))
+	completion-category-overrides '((file (styles basic partial-completion)))))
 
 (use-package dabbrev
   :elpaca nil
@@ -384,10 +412,10 @@
 
 (use-package marginalia
   :init
-  (marginalia-mode 1)
+  (marginalia-mode +1)
   :bind
   (:map minibuffer-local-map
-      ("M-A" . marginalia-cycle)))
+	("M-A" . marginalia-cycle)))
 
 (use-package popper
   :disabled
@@ -397,35 +425,35 @@
    ("C-M-`" . popper-toggle-type))
   :init
   (setq popper-reference-buffers
-      '("^\\*Messages\\*"
-	"^\\*Output\\*$"
-	"^\\*Async Shell Command\\*"
-	"^\\*\\([Hh]elp\\*\\|Apropos\\)"
-	"^\\*Warnings"
-	"^\\*Backtrace"
-	"^\\*CPU-Profiler-Report"
-	"^\\*Memory-Profiler-Report"
-	"^\\*Process List"
-	"^\\*Completions"
-	"^\\*Local variables\\*$"
-	"^\\*\\(?:[Cc]ompil\\(?:ation\\|e-Log\\)\\|Messages\\)"
-	"^\\*\\(?:Wo\\)?Man "
-	"^\\*Calc"
-	"^\\*info\\*$"
-	"^\\*\\(?:v?term\\|e?shell\\)-popup"
-	"^\\*Shell Command Output\\*"
-	help-mode
-	compilation-mode
-	occur-mode
-	completion-list-mode))
-  (popper-mode 1)
-  (popper-echo-mode 1))
+	'("^\\*Messages\\*"
+	  "^\\*Output\\*$"
+	  "^\\*Async Shell Command\\*"
+	  "^\\*\\([Hh]elp\\*\\|Apropos\\)"
+	  "^\\*Warnings"
+	  "^\\*Backtrace"
+	  "^\\*CPU-Profiler-Report"
+	  "^\\*Memory-Profiler-Report"
+	  "^\\*Process List"
+	  "^\\*Completions"
+	  "^\\*Local variables\\*$"
+	  "^\\*\\(?:[Cc]ompil\\(?:ation\\|e-Log\\)\\|Messages\\)"
+	  "^\\*\\(?:Wo\\)?Man "
+	  "^\\*Calc"
+	  "^\\*info\\*$"
+	  "^\\*\\(?:v?term\\|e?shell\\)-popup"
+	  "^\\*Shell Command Output\\*"
+	  help-mode
+	  compilation-mode
+	  occur-mode
+	  completion-list-mode))
+  (popper-mode +1)
+  (popper-echo-mode +1))
 
 (use-package popwin
-  :config (popwin-mode 1))
+  :config (popwin-mode +1))
 
 (use-package winum
-  :config (winum-mode 1))
+  :config (winum-mode +1))
 
 (use-package command-log-mode)
 
@@ -462,17 +490,44 @@
   :diminish t
   :init
   (which-key-setup-minibuffer)
-  (which-key-mode 1))
+  (which-key-mode +1))
+
+(use-package smooth-scrolling
+  :config
+  (smooth-scrolling-mode +1)
+  (setq smooth-scroll-margin 5))
+
+(use-package ligature
+  :config
+  (ligature-set-ligatures 't '("www"))
+  (ligature-set-ligatures 'eww-mode '("ff" "fi" "ffi"))
+  (ligature-set-ligatures 'prog-mode '("|||>" "<|||" "<==>" "<!--" "####" "~~>" "***" "||=" "||>"
+                                       ":::" "::=" "=:=" "===" "==>" "=!=" "=>>" "=<<" "=/=" "!=="
+                                       "!!." ">=>" ">>=" ">>>" ">>-" ">->" "->>" "-->" "---" "-<<"
+                                       "<~~" "<~>" "<*>" "<||" "<|>" "<$>" "<==" "<=>" "<=<" "<->"
+                                       "<--" "<-<" "<<=" "<<-" "<<<" "<+>" "</>" "###" "#_(" "..<"
+                                       "..." "+++" "/==" "///" "_|_" "www" "&&" "^=" "~~" "~@" "~="
+                                       "~>" "~-" "**" "*>" "*/" "||" "|}" "|]" "|=" "|>" "|-" "{|"
+                                       "[|" "]#" "::" ":=" ":>" ":<" "$>" "==" "=>" "!=" "!!" ">:"
+                                       ">=" ">>" ">-" "-~" "-|" "->" "--" "-<" "<~" "<*" "<|" "<:"
+                                       "<$" "<=" "<>" "<-" "<<" "<+" "</" "#{" "#[" "#:" "#=" "#!"
+                                       "##" "#(" "#?" "#_" "%%" ".=" ".-" ".." ".?" "+>" "++" "?:"
+                                       "?=" "?." "??" ";;" "/*" "/=" "/>" "//" "__" "~~" "(*" "*)"
+                                       "\\\\" "://"))
+  (global-ligature-mode t))
+
+(use-package golden-ratio)
 #+END_SRC
 
 * File Manager
 #+BEGIN_SRC emacs-lisp
-(use-package nerd-icons-dired)
+(use-package nerd-icons-dired
+  :hook ((dired-mode . nerd-icons-dired-mode)))
 (use-package dirvish)
-(use-package diredfl)
+(use-package diredfl
+  :config (diredfl-global-mode +1))
 (use-package fd-dired)
 (use-package dired-rsync)
-(use-package diredfl)
 #+END_SRC
 
 * E-Mail
@@ -519,13 +574,14 @@
 
 (use-package smartparens
   :config
-  (smartparens-global-mode 1))
+  (smartparens-global-mode +1))
 
 (use-package drag-stuff
   :hook ((prog-mode . drag-stuff-mode))
   :bind
-  (("M-<up>" . drag-stuff-up)
-   ("M-<down>" . drag-stuff-down)))
+  (:map global-map
+	("M-<up>" . drag-stuff-up)
+	("M-<down>" . drag-stuff-down)))
 
 (use-package format-all
   :commands format-all-mode
@@ -546,8 +602,9 @@
 ** General
 #+BEGIN_SRC emacs-lisp
 (use-package flycheck
-  :init
-  (global-flycheck-mode 1))
+  :init (global-flycheck-mode +1)
+  :config
+  (setq flycheck-emacs-lisp-load-path load-path))
 
 (use-package tree-sitter)
 (use-package tree-sitter-langs)
@@ -569,7 +626,7 @@
 
 (use-package apheleia
   :config
-  (apheleia-global-mode 1))
+  (apheleia-global-mode +1))
 #+END_SRC
 
 ** Language Servers
@@ -737,7 +794,7 @@
 (use-package nix-update)
 #+END_SRC
 
-*** Arduino
+*** Embedded
 #+BEGIN_SRC emacs-lisp
 (use-package platformio-mode)
 (use-package arduino-mode)
@@ -746,6 +803,8 @@
 *** Shell
 #+BEGIN_SRC emacs-lisp
 (use-package company-shell)
+(use-package shelldoc)
+(use-package shfmt)
 #+END_SRC
 
 *** LaTeX
@@ -757,24 +816,34 @@
 			      ("./configure" "--without-texmf-dir" "--with-lispdir=.")
 			      ("make")))
   :after (lsp-mode)
-  :hook (((tex-mode TeX-mode) . lsp-deferred))
+  :hook
+  (((tex-mode TeX-mode) . lsp-deferred)
+   (LaTeX-mode . TeX-source-correlate-mode))
   :mode ("\\.tex\\'" . LaTeX-mode)
-  :config  
-  (setq-default TeX-global-pdf-mode 1
+  :config
+  (setq-default TeX-global-pdf-mode +1
 		preview-scale-function 1.5)
-  (setq TeX-auto-save 1
-	TeX-parse-self t
-	default-truncate-lines t
-	TeX-save-query nil
-	TeX-source-correlate-mode t
-	TeX-source-correlate-method 'synctex
-	TeX-source-correlate-start-server nil
-	LaTeX-electric-left-right-brace t
+  (setq LaTeX-electric-left-right-brace t
+	TeX-auto-save +1
 	TeX-electric-sub-and-superscript t
+	TeX-output-dir "build"
+	TeX-parse-self t
 	TeX-save-query nil
-	bibtex-dialect 'biblatex
+	TeX-save-query nil
+	TeX-source-correlate-method 'synctex
+	TeX-source-correlate-mode t
+	TeX-source-correlate-mode t
+	TeX-source-correlate-start-server nil
+	TeX-source-correlate-start-server t
 	bibtex-align-at-equal-sign t
-	bibtex-text-indentation 20))
+	bibtex-dialect 'biblatex
+	bibtex-text-indentation 20
+	default-truncate-lines t)
+  (add-to-list 'TeX-expand-list
+	       '("%sn" (lambda () server-name)))
+  (setcar (cdr (assoc 'output-pdf
+		      TeX-view-program-selection))
+	  "Zathura"))
 
 (use-package auctex-latexmk
   :init (setq auctex-latexmk-inherit-TeX-PDF-mode t)
@@ -783,7 +852,9 @@
 (use-package latex-preview-pane)
 (use-package company-auctex)
 (use-package company-reftex)
+(use-package company-bibtex)
 (use-package magic-latex-buffer)
+(use-package ebib)
 #+END_SRC
 
 *** Java
@@ -800,10 +871,23 @@
 (use-package flycheck-gradle)
 #+END_SRC
 
+*** Haskell
+#+BEGIN_SRC emacs-lisp
+(use-package haskell-mode
+  :hook
+  (((haskell-mode haskell-literate-mode) . lsp-deferred)))
+
+(use-package flycheck-haskell)
+(use-package lsp-haskell)
+(use-package dante)
+(use-package hindent)
+#+END_SRC
+
 * Documents
 #+BEGIN_SRC emacs-lisp
 (use-package pdf-tools
-  :mode ("\\.pdf\\'" . pdf-view-mode))
+  :mode ("\\.pdf\\'" . pdf-view-mode)
+  :hook ((pdf-view-mode . pdf-tools-enable-minor-modes)))
 #+END_SRC
 
 * Project Tools

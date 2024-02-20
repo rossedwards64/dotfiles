@@ -4,7 +4,7 @@
   imports = [
     ./alacritty.nix
     ./desktop.nix
-    ./emacs.nix
+    ./emacs/emacs.nix
     ./email.nix
     ./fonts.nix
     ./games.nix
@@ -15,6 +15,7 @@
     ./system.nix
     ./theme.nix
     ./tmux.nix
+    ./topgrade.nix
     ./zsh.nix
   ];
 
@@ -32,6 +33,7 @@
     system.enable = true;
     theme.enable = true;
     tmux.enable = true;
+    topgrade.enable = true;
     zsh.enable = true;
   };
 }

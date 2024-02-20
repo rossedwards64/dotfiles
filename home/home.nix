@@ -1,16 +1,11 @@
-{ config, pkgs, ... }:
+{ pkgs, ... }:
 
 {
-  imports = [ ./modules ];
+  imports = [ ../modules/home-manager ];
 
-  programs.home-manager.enable = true;
   xdg.enable = true;
 
   home = {
-    username = "ross";
-    homeDirectory = "/home/ross";
-    stateVersion = "23.11";
-
     pointerCursor = with pkgs; {
       gtk.enable = true;
       package = catppuccin-cursors.mochaDark;
@@ -23,5 +18,6 @@
       "$HOME/.dotfiles/.bin"
       "$XDG_DATA_HOME/cargo/bin"
     ];
+    stateVersion = "23.11";
   };
 }

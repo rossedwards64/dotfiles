@@ -48,6 +48,7 @@ in {
           WINEPREFIX = "$XDG_DATA_HOME/wineprefixes/default";
           XCURSOR_SIZE = 24;
           XINITRC = "$XDG_CONFIG_HOME/X11/xinitrc";
+          STACK_XDG = 1;
         };
 
         initExtraFirst = ''
@@ -89,8 +90,10 @@ in {
           find = "fd";
           du = "dust -Hr";
           clear = "clear && stty sane";
-          update-system = "sudo nixos-rebuild switch";
-          update-home = "home-manager switch";
+          update-system =
+            "(cd $HOME/.dotfiles && sudo nixos-rebuild switch --flake .#)";
+          update-home =
+            "(cd $HOME/.dotfiles && home-manager switch --flake .#)";
         };
 
         oh-my-zsh = {
