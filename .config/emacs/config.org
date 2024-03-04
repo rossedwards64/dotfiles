@@ -19,6 +19,7 @@
   - [[#programming-languages][Programming Languages]]
 - [[#documents][Documents]]
 - [[#project-tools][Project Tools]]
+- [[#lemmy][Lemmy]]
 - [[#startup-dashboard][Startup Dashboard]]
 - [[#package-manager][Package Manager]]
 
@@ -26,34 +27,36 @@
 #+BEGIN_SRC emacs-lisp :tangle ./early-init.el
   ;;; early-init.el -*- lexical-binding: t; -*-
 
-  (setenv "LSP_USE_PLISTS" "true")
+(setenv "LSP_USE_PLISTS" "true")
 
-  (defvar font-name "Iosevka NF")
-  (defvar desktop-hostname "ross-desktop")
-  (defvar laptop-hostname "ross-thinkpad")
-  (defvar other-laptop-hostname "ross-thinkpad-x200")
+(defvar font-name "Iosevka NF")
+(defvar desktop-hostname "ross-desktop")
+(defvar laptop-hostname "ross-thinkpad")
+(defvar other-laptop-hostname "ross-thinkpad-x200")
+(defvar macbook-hostname "rossedwards")
 
-  (defun ross/set-font (frame)
-    "Apply FONT to FRAME."
-    (when (display-graphic-p frame)
-      (let ((font-height (pcase (system-name)
-			   ((or (pred (string-equal laptop-hostname))
-				(pred (string-equal other-laptop-hostname))) 120)
-			   ((pred (string-equal desktop-hostname)) 150))))
-	(dolist (mode '(default fixed-pitch variable-pitch))
-	  (set-face-attribute mode nil
-			      :family font-name
-			      :height font-height
-			      :width 'normal
-			      :weight 'regular))
-	(let ((font-name-and-size (concat font-name "-"
-					  (number-to-string (/ font-height 10)))))
-	  (add-to-list 'default-frame-alist `(font . ,font-name-and-size))
-	  (set-frame-font font-name-and-size nil t)))))
+(defun ross/set-font (frame)
+  "Apply FONT to FRAME."
+  (when (display-graphic-p frame)
+    (let ((font-height (pcase (system-name)
+			 ((or (pred (string-equal laptop-hostname))
+			      (pred (string-equal other-laptop-hostname))) 120)
+			 ((pred (string-equal desktop-hostname)) 150)
+			 ((pred (string-equal macbook-hostname)) 180))))
+      (dolist (mode '(default fixed-pitch variable-pitch))
+	(set-face-attribute mode nil
+			    :family font-name
+			    :height font-height
+			    :width 'normal
+			    :weight 'regular))
+      (let ((font-name-and-size (concat font-name "-"
+					(number-to-string (/ font-height 10)))))
+	(add-to-list 'default-frame-alist `(font . ,font-name-and-size))
+	(set-frame-font font-name-and-size nil t)))))
 
-  (add-hook 'after-make-frame-functions (lambda (frame) (ross/set-font frame)))
+(add-hook 'after-make-frame-functions (lambda (frame) (ross/set-font frame)))
 
-  (setq package-enable-at-startup nil)
+(setq package-enable-at-startup nil)
 #+END_SRC
 
 * General
@@ -102,7 +105,8 @@
 	     (alpha-background . ,(pcase (system-name)
 				    ((or (pred (string-equal desktop-hostname))
 					 (pred (string-equal laptop-hostname))) 95)
-				    ((pred (string-equal other-laptop-hostname)) 100)))))
+				    ((or (pred (string-equal other-laptop-hostname))
+					 (pred (string-equal macbook-hostname)) 100))))))
     (add-to-list 'default-frame-alist frame-setting))
   
   (advice-add #'completing-read-multiple :filter-args
@@ -119,6 +123,9 @@
   ;; set some basic stuff like font and getting rid of toolbar
   (setq auto-save-default nil
 	delete-auto-save-files t
+	display-line-numbers-type 'relative
+	fill-indent-according-to-mode t
+	find-function-C-source-directory "~/Documents/programming/repos/emacs/src"
 	gc-cons-threshold (* 50 1000 1000)
 	inhibit-startup-message t
 	load-prefer-newer t
@@ -126,17 +133,17 @@
 	read-process-output-max (* 1024 1024)
 	require-final-newline t
 	tab-always-indent 'complete
+	tab-width 4
 	treesit-extra-load-path '("/usr/local/include/tree_sitter/lib")
 	vc-follow-symlinks t
 	visible-bell t
         completion-cycle-threshold 3
         enable-recursive-minibuffers t
-	fill-indent-according-to-mode t
 	warning-minimum-level :error) ;; to make it shut up about obsolete functions in packages
 
   (toggle-text-mode-auto-fill)
-  (auto-fill-mode +1)
   (blink-cursor-mode -1)
+  (global-auto-revert-mode +1)
   (global-display-fill-column-indicator-mode +1)
   (global-hl-line-mode +1)
   (global-prettify-symbols-mode +1)
@@ -303,22 +310,6 @@
 	("C-c na" . #'org-agenda))
   :hook ((org-mode . auto-complete-mode)))
 
-(use-package toc-org
-  :hook ((org-mode . toc-org-mode)))
-(use-package org-modern
-  :hook ((org-mode . org-modern-mode)))
-(use-package org-bullets
-  :disabled
-  :hook ((org-mode . org-bullets-mode)))
-(use-package org-super-agenda
-  :hook ((org-mode . org-super-agenda-mode)))
-(use-package helm-org-rifle)
-(use-package org-recent-headings
-  :hook ((org-mode . org-recent-headings-mode)))
-(use-package org-sticky-header
-  :hook ((org-mode . org-sticky-header-mode)))
-(use-package org-bookmark-heading)
-
 (use-package org-roam
   :bind
   (:map global-map
@@ -334,17 +325,38 @@
 					  'face 'org-tag)))
   (org-roam-db-autosync-enable))
 
-(use-package ox-pandoc)
-(use-package org-gcal)
-(use-package org-roam-ui)
-(use-package org-ac)
-(use-package org-alert)
+(use-package org-alert
+  :config
+  (setq alert-default-style 'libnotify
+	org-alert-interval 300
+	org-alert-notify-cutoff 10
+	org-alert-notify-after-event-cutoff 10
+	org-alert-notification-title "---TODO REMINDER---"
+	org-alert-time-match-string "\\(?:SCHEDULED\\|DEADLINE\\):.*?<.*?\\([0-9]\\{2\\}:[0-9]\\{2\\}\\).*>")
+  (org-alert-enable))
 
 (use-package org-auto-tangle
   :config (org-auto-tangle-mode +1))
-
 (use-package org-tidy
   :config (org-tidy-mode +1))
+(use-package toc-org
+  :hook ((org-mode . toc-org-mode)))
+(use-package org-modern
+  :hook ((org-mode . org-modern-mode)))
+(use-package org-bullets
+  :disabled
+  :hook ((org-mode . org-bullets-mode)))
+(use-package org-super-agenda
+  :hook ((org-mode . org-super-agenda-mode)))
+(use-package org-recent-headings
+  :hook ((org-mode . org-recent-headings-mode)))
+(use-package org-sticky-header
+  :hook ((org-mode . org-sticky-header-mode)))
+
+(use-package helm-org-rifle)
+(use-package org-bookmark-heading)
+(use-package ox-pandoc)
+(use-package org-ac)
 #+END_SRC
 
 * UI
@@ -568,11 +580,19 @@
 
 * File Manager
 #+BEGIN_SRC emacs-lisp
+(use-package dired
+  :elpaca nil
+  :init
+  (setq dired-listing-switches "-lhAX --group-directories-first"
+	dired-switches-in-mode-line 'as-is))
+
 (use-package nerd-icons-dired
   :hook ((dired-mode . nerd-icons-dired-mode)))
+
 (use-package dirvish)
 (use-package diredfl
   :config (diredfl-global-mode +1))
+
 (use-package fd-dired)
 (use-package dired-rsync)
 #+END_SRC
@@ -652,7 +672,9 @@
 #+BEGIN_SRC emacs-lisp
 (use-package flycheck
   :init (global-flycheck-mode +1)
-  :config (setq flycheck-emacs-lisp-load-path load-path))
+  :config
+  (setq flycheck-emacs-lisp-load-path load-path)
+  (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc)))
 
 (use-package tree-sitter
   :hook ((tree-sitter-after-on . tree-sitter-hl-mode))
@@ -671,7 +693,9 @@
 (use-package tree-sitter-langs)
 
 (use-package treesit-auto
-  :config (global-treesit-auto-mode +1))
+  :config
+  (global-treesit-auto-mode +1)
+  (setq treesit-auto-install t))
 
 (use-package apheleia
   :config (apheleia-global-mode +1))
@@ -984,6 +1008,14 @@ The `with-eval-after-load` block is a workaround for [[https://github.com/emacs-
 
 (use-package diff-hl
   :init (global-diff-hl-mode +1))
+#+END_SRC
+
+* Lemmy
+#+BEGIN_SRC emacs-lisp
+(use-package lem
+  :config
+  (setq lem-current-user "DrGamerPhD"
+	lem-instance-url "https://programming.dev"))
 #+END_SRC
 
 * Startup Dashboard
