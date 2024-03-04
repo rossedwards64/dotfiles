@@ -1,0 +1,54 @@
+# start gmail
+
+IMAPAccount gmail
+Host imap.gmail.com
+User redwards6469@gmail.com
+PassCmd "pass email/google/app-password"
+TLSType IMAPS
+CertificateFile /etc/ssl/certs/ca-certificates.crt
+
+IMAPStore gmail-remote
+Account gmail
+
+MaildirStore gmail-local
+SubFolders Verbatim
+Path ~/Mail/gmail/
+Inbox ~/Mail/gmail/Inbox
+
+Channel gmail
+Far :gmail-remote:
+Near :gmail-local:
+Patterns * ![Gmail]* "[Gmail]/Sent Mail" "[Gmail]/Starred" "[Gmail]/All Mail"
+Create Both
+Expunge Both
+SyncState *
+
+# end gmail
+
+# start outlook
+
+IMAPAccount outlook
+Host outlook.office365.com
+User redwards64@hotmail.com
+Port 993
+PassCmd "pass email/hotmail/personal"
+TLSType IMAPS
+CertificateFile /etc/ssl/certs/ca-certificates.crt
+
+IMAPStore outlook-remote
+Account outlook
+
+MaildirStore outlook-local
+SubFolders Verbatim
+Path ~/Mail/outlook/
+Inbox ~/Mail/outlook/Inbox
+
+Channel outlook
+Far :outlook-remote:
+Near :outlook-local:
+Patterns * ![Outlook]* "[Outlook]/Sent Mail" "[Outlook]/Starred" "[Outlook]/All Mail"
+Create Both
+Expunge Both
+SyncState *
+
+# end outlook
