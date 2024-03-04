@@ -1,5 +1,6 @@
-#+title: Emacs Configuration
-#+PROPERTY: header-args :tangle ./init.el
+#+TITLE: Emacs Configuration
+#+PROPERTY: header-args :tangle ./init.el :comments both :padline
+#+AUTO_TANGLE: t
 
 * Table of Contents :TOC:
 - [[#early-init][Early Init]]
@@ -23,19 +24,41 @@
 
 * Early Init
 #+BEGIN_SRC emacs-lisp :tangle ./early-init.el
-;;; early-init.el -*- lexical-binding: t; -*-
+  ;;; early-init.el -*- lexical-binding: t; -*-
 
-(setenv "LSP_USE_PLISTS" "true")
-(setq package-enable-at-startup nil)
+  (setenv "LSP_USE_PLISTS" "true")
+
+  (defvar font-name "Iosevka NF")
+  (defvar desktop-hostname "ross-desktop")
+  (defvar laptop-hostname "ross-thinkpad")
+  (defvar other-laptop-hostname "ross-thinkpad-x200")
+
+  (defun ross/set-font (frame)
+    "Apply FONT to FRAME."
+    (when (display-graphic-p frame)
+      (let ((font-height (pcase (system-name)
+			   ((or (pred (string-equal laptop-hostname))
+				(pred (string-equal other-laptop-hostname))) 120)
+			   ((pred (string-equal desktop-hostname)) 150))))
+	(dolist (mode '(default fixed-pitch variable-pitch))
+	  (set-face-attribute mode nil
+			      :family font-name
+			      :height font-height
+			      :width 'normal
+			      :weight 'regular))
+	(let ((font-name-and-size (concat font-name "-"
+					  (number-to-string (/ font-height 10)))))
+	  (add-to-list 'default-frame-alist `(font . ,font-name-and-size))
+	  (set-frame-font font-name-and-size nil t)))))
+
+  (add-hook 'after-make-frame-functions (lambda (frame) (ross/set-font frame)))
+
+  (setq package-enable-at-startup nil)
 #+END_SRC
 
 * General
 #+BEGIN_SRC emacs-lisp :noweb strip-export
 ;;; init.el -*- lexical-binding: t; -*-
-
-(defvar desktop-hostname "ross-desktop")
-(defvar laptop-hostname "ross-thinkpad")
-(defvar other-laptop-hostname "ross-thinkpad-x200")
 
 <<functions>>
 
@@ -57,25 +80,30 @@
 
 (use-package emacs
   :elpaca nil
+  :hook
+  ((emacs-startup . (lambda ()
+		      (message "Emacs loaded in %s with %d garbage collections."
+			       (format "%.2f seconds"
+				       (float-time
+					(time-subtract after-init-time before-init-time)))
+			       gcs-done)))
+   (prog-mode . which-function-mode)
+   (prog-mode . display-line-numbers-mode)
+   ((prog-mode ielm-mode) . eldoc-mode)
+   (text-mode . visual-line-mode))
+  :bind
+  (:map global-map
+	("C-c fp" . ross/open-config))
   :init
-  (dolist (frame-setting `((fullscreen . maximized)
-			   (alpha-background .
-					     ,(pcase (system-name)
-					       ((or desktop-hostname
-						    laptop-hostname) 95)
-					       (other-laptop-hostname 100)))))
-    
+  (mapc (lambda (frame) (ross/set-font frame)) (frame-list))
+
+  (dolist (frame-setting
+	   `((fullscreen . maximized)
+	     (alpha-background . ,(pcase (system-name)
+				    ((or (pred (string-equal desktop-hostname))
+					 (pred (string-equal laptop-hostname))) 95)
+				    ((pred (string-equal other-laptop-hostname)) 100)))))
     (add-to-list 'default-frame-alist frame-setting))
-  
-  (blink-cursor-mode -1)
-  (global-hl-line-mode 1)
-  (global-prettify-symbols-mode 1)
-  (menu-bar-mode -1)
-  (pixel-scroll-precision-mode 1)
-  (savehist-mode 1)
-  (scroll-bar-mode -1)
-  (set-fringe-mode 1)
-  (tool-bar-mode -1)
   
   (advice-add #'completing-read-multiple :filter-args
 	      (lambda (args)
@@ -103,27 +131,21 @@
 	visible-bell t
         completion-cycle-threshold 3
         enable-recursive-minibuffers t
+	fill-indent-according-to-mode t
 	warning-minimum-level :error) ;; to make it shut up about obsolete functions in packages
 
-  (mapc #'ross/set-font (frame-list))
-  (add-hook 'after-make-frame-functions #'ross/set-font)
-  (add-hook 'after-make-frame-functions #'ross/set-alpha)
-
-  (add-hook 'emacs-startup-hook
-	    (lambda ()
-	      (message "Emacs loaded in %s with %d garbage collections."
-		       (format "%.2f seconds"
-			       (float-time
-				(time-subtract after-init-time before-init-time)))
-		       gcs-done)))
-  
-  (add-hook 'prog-mode-hook
-	    (lambda ()
-	      (which-function-mode 1)
-	      (display-line-numbers-mode 1)))
-
-  (dolist (hook '(prog-mode-hook ielm-mode-hook))
-    (add-hook hook #'eldoc-mode)))
+  (toggle-text-mode-auto-fill)
+  (auto-fill-mode +1)
+  (blink-cursor-mode -1)
+  (global-display-fill-column-indicator-mode +1)
+  (global-hl-line-mode +1)
+  (global-prettify-symbols-mode +1)
+  (menu-bar-mode -1)
+  (pixel-scroll-precision-mode +1)
+  (savehist-mode +1)
+  (scroll-bar-mode -1)
+  (set-fringe-mode +1)
+  (tool-bar-mode -1))
 
 (use-package exec-path-from-shell
   :config
@@ -136,6 +158,8 @@
 * Themes
 #+NAME: themes
 #+BEGIN_SRC emacs-lisp :tangle no
+(use-package autothemer)
+
 (use-package doom-themes
   :init
   (setq doom-themes-enable-bold t
@@ -143,48 +167,58 @@
   (doom-themes-visual-bell-config)
   (doom-themes-org-config))
 
-(use-package ef-themes)
+(use-package rose-pine-emacs
+  :disabled t
+  :elpaca
+  (:host github
+	 :repo "thongpv87/rose-pine-emacs"
+	 :main nil)
+  :init
+  (add-to-list 'custom-theme-load-path
+	       (concat elpaca-builds-directory "rose-pine-emacs")))
 
-(use-package standard-themes)
-
-(use-package kanagawa-theme
-  :config
-  (let ((theme 'kanagawa))
-    (ross/set-theme-maybe-daemon theme)))
-
-(use-package kuronami-theme)
+(use-package tronesque
+  :disabled t
+  :elpaca
+  (:host github
+	 :repo "aurelienbottazini/tronesque"
+	 :files (:defaults "themes/*.el" (:exclude "*"))
+	 :main "themes/tronesque-theme.el")
+  :init
+  (add-to-list 'custom-theme-load-path
+	       (concat elpaca-builds-directory "tronesque")))
 
 (use-package everblush-theme
   :elpaca
   (:host github
-   :repo "Everblush/emacs"
-   :main "everblush-theme.el")
+	 :repo "Everblush/emacs"
+	 :main "everblush-theme.el")
   :init
   (add-to-list 'custom-theme-load-path
-	       (concat elpaca-builds-directory "/everblush-theme")))
+	       (concat elpaca-builds-directory "everblush-theme"))
+  :config
+  (ross/set-theme-maybe-daemon 'everblush))
+
+(use-package ef-themes)
+(use-package standard-themes)
+(use-package kanagawa-theme)
+(use-package kuronami-theme)
+(use-package catppuccin-theme)
+(use-package timu-caribbean-theme)
+(use-package timu-macos-theme)
+(use-package gruber-darker-theme)
+(use-package exotica-theme)
+(use-package toxi-theme)
 #+END_SRC
 
 * Functions
 #+NAME: functions
 #+BEGIN_SRC emacs-lisp :tangle no
-(defun ross/set-font (frame)
-  "Apply Iosevka font to FRAME."
-  (when (display-graphic-p frame)
-    (let ((font-name "Iosevka NF")
-	  (font-height (pcase (system-name)
-			 ((or laptop-hostname
-			      other-laptop-hostname) 120)
-			 (desktop-hostname 130))))
-      (dolist (mode '(default fixed-pitch variable-pitch))
-	(set-face-attribute mode nil
-			    :family font-name
-			    :font font-name
-			    :height font-height
-			    :weight 'regular))
-      (let ((font-name-and-size (concat font-name "-"
-					(number-to-string (/ font-height 10)))))
-	(add-to-list 'default-frame-alist `(font . ,font-name-and-size))
-	(set-frame-font font-name-and-size nil t)))))
+(defun ross/open-config ()
+  "Switch to 'config.org'."
+  (interactive)
+  (switch-to-buffer (find-file-noselect
+		     (concat user-emacs-directory "config.org"))))
 
 (defun ross/set-theme-maybe-daemon (theme)
   "Apply THEME to FRAME and handle normal and client Emacs instances."
@@ -209,57 +243,65 @@
 
 (with-eval-after-load "org"
   (defun ross/tangle-and-eval-config ()
-    "Tangles the code blocks from config.org to init.el,
-     and re-evaluates init.el."
+    "Tangles the code blocks from 'config.org' to 'init.el',
+     and re-evaluates 'init.el'."
     (interactive)
     (org-babel-tangle-file (concat user-emacs-directory "config.org"))
     (load (concat user-emacs-directory "init.el"))))
 
 (with-eval-after-load "cl-lib"
-    (cl-defun ross/get-closest-pathname (&optional (file "Makefile"))
-      "Determine the pathname of the first instance of FILE starting from the
+  (cl-defun ross/get-closest-pathname (&optional (file "Makefile"))
+    "Determine the pathname of the first instance of FILE starting from the
        current directory towards root.
        This may not do the correct thing in the presence of links.
        If it does not find FILE, then it shall return the name of FILE in the
        current directory, suitable for creation."
-      (let ((root (expand-file-name "/")))
-	(expand-file-name file
-			  (cl-loop
-			   for d = default-directory then
-			   (expand-file-name ".." d)
-			   if (file-exists-p (expand-file-name file d))
-			   return d
-			   if (equal d root)
-			   return nil))))
+    (let ((root (expand-file-name "/")))
+      (expand-file-name file
+			(cl-loop
+			 for d = default-directory then
+			 (expand-file-name ".." d)
+			 if (file-exists-p (expand-file-name file d))
+			 return d
+			 if (equal d root)
+			 return nil))))
 
-    (defun ross/format-buffer-astyle ()
-      "Format all the files inside src using .astylerc"
-      (interactive)
-      (with-temp-buffer
-	(let ((astylerc (ross/get-closest-pathname ".astylerc")))
-	  (shell-command (format "astyle %s/* --options=%s"
-				 (ross/get-closest-pathname "src") astylerc) t t)))))
+  (defun ross/format-buffer-astyle ()
+    "Format all the files inside src using '.astylerc'"
+    (interactive)
+    (with-temp-buffer
+      (let ((astylerc (ross/get-closest-pathname ".astylerc")))
+	(shell-command (format "astyle %s/* --options=%s"
+			       (ross/get-closest-pathname "src") astylerc)
+		       t t)))))
 #+END_SRC
 
 * Org-Mode
 #+BEGIN_SRC emacs-lisp
 (use-package org
-  :bind
-  (:map global-map
-	("C-h r" . #'ross/tangle-and-eval-config)
-	:map org-src-mode-map
-	("C-c C-c" . #'org-edit-src-exit))
   :init
   (setq org-src-preserve-indentation t
 	org-src-window-setup 'other-window
-	org-agenda-files '("~/Documents/org/agenda.org")
-	org-directory "~/Documents/org/"
+	org-directory "~/Documents/org"
+	org-agenda-files (cl-map 'list (lambda (path)
+				      (concat org-directory path))
+			      '("/agenda.org"))
 	org-log-done 'time
-	org-plantuml-exec-path "/usr/bin/plantuml"
+	org-plantuml-exec-path (executable-find "plantuml")
 	org-pretty-entities-include-sub-superscripts t
 	org-return-follows-link t
 	org-startup-with-inline-images t
-	org-support-shift-select t))
+	org-support-shift-select t
+	org-src-window-setup 'current-window
+	org-roam-directory (concat org-directory "/roam"))
+  :bind
+  (:map help-map
+	("r" . #'ross/tangle-and-eval-config)
+	:map org-src-mode-map
+	("C-c C-c" . #'org-edit-src-exit)
+	:map global-map
+	("C-c na" . #'org-agenda))
+  :hook ((org-mode . auto-complete-mode)))
 
 (use-package toc-org
   :hook ((org-mode . toc-org-mode)))
@@ -276,28 +318,42 @@
 (use-package org-sticky-header
   :hook ((org-mode . org-sticky-header-mode)))
 (use-package org-bookmark-heading)
-(use-package org-roam)
+
+(use-package org-roam
+  :bind
+  (:map global-map
+	("C-c nl" . org-roam-buffer-toggle)
+	("C-c nf" . org-roam-node-find)
+	("C-c ng" . org-roam-graph)
+	("C-c ni" . org-roam-node-insert)
+	("C-c nc" . org-roam-capture)
+	("C-c nj" . org-roam-dailies-capture-today))
+  :config
+  (setq org-roam-node-display-template
+	(concat "${title:*} " (propertize "${tags:10}"
+					  'face 'org-tag)))
+  (org-roam-db-autosync-enable))
+
 (use-package ox-pandoc)
-(use-package org-noter)
 (use-package org-gcal)
 (use-package org-roam-ui)
 (use-package org-ac)
 (use-package org-alert)
+
 (use-package org-auto-tangle
-  :config
-  (org-auto-tangle-mode 1))
+  :config (org-auto-tangle-mode +1))
+
 (use-package org-tidy
-  :config
-  (org-tidy-mode 1))
+  :config (org-tidy-mode +1))
 #+END_SRC
 
 * UI
 #+BEGIN_SRC emacs-lisp
 (use-package doom-modeline
   :init
-  (doom-modeline-mode 1)
-  (column-number-mode 1)
-  (size-indication-mode 1)
+  (doom-modeline-mode +1)
+  (column-number-mode +1)
+  (size-indication-mode +1)
   (setq doom-modeline-height 45
 	doom-modeline-indent-info t)
   (doom-modeline-def-modeline 'main
@@ -306,18 +362,32 @@
 
 (use-package anzu
   :init
-  (anzu-mode 1))
+  (global-anzu-mode +1))
 
 (use-package company
   :diminish
-  :hook (prog-mode . company-mode))
+  :config
+  (global-company-mode +1)
+  (setq company-idle-delay (lambda () (if (company-in-string-or-comment) nil 0.5))
+	company-insertion-on-trigger t
+	company-minimum-prefix-length 1
+	company-selection-wrap-around t
+	company-tooltip-align-annotations t
+	company-tooltip-limit 10
+	company-tooltip-margin 3
+	company-tooltip-offset-display 'lines))
 
 (use-package company-posframe
   :hook (company-mode . company-posframe-mode))
 
+(use-package company-quickhelp
+  :config
+  (company-quickhelp-mode +1))
+
 (use-package vertico
   :config
-  (vertico-mode 1)
+  (vertico-mode +1)
+  (vertico-indexed-mode +1)
   (setq completion-in-region-function
 	(lambda (&rest args)
 	  (apply (if vertico-mode
@@ -327,9 +397,9 @@
 
 (use-package orderless
   :init
-  (setq completion-styles '(orderless basic)
+  (setq completion-styles '(substring orderless basic)
 	completion-category-defaults nil
-	completion-category-overrides '((file (styles partial-completion)))))
+	completion-category-overrides '((file (styles basic partial-completion)))))
 
 (use-package dabbrev
   :elpaca nil
@@ -340,6 +410,8 @@
   (add-to-list 'dabbrev-ignored-buffer-regexps "\\` ")
   (dolist (mode '(doc-view-mode pdf-view-mode))
     (add-to-list 'dabbrev-ignored-buffer-modes mode)))
+
+(use-package counsel)
 
 (use-package consult
   :bind
@@ -385,10 +457,10 @@
 
 (use-package marginalia
   :init
-  (marginalia-mode 1)
+  (marginalia-mode +1)
   :bind
   (:map minibuffer-local-map
-      ("M-A" . marginalia-cycle)))
+	("M-A" . marginalia-cycle)))
 
 (use-package popper
   :disabled
@@ -398,39 +470,37 @@
    ("C-M-`" . popper-toggle-type))
   :init
   (setq popper-reference-buffers
-      '("^\\*Messages\\*"
-	"^\\*Output\\*$"
-	"^\\*Async Shell Command\\*"
-	"^\\*\\([Hh]elp\\*\\|Apropos\\)"
-	"^\\*Warnings"
-	"^\\*Backtrace"
-	"^\\*CPU-Profiler-Report"
-	"^\\*Memory-Profiler-Report"
-	"^\\*Process List"
-	"^\\*Completions"
-	"^\\*Local variables\\*$"
-	"^\\*\\(?:[Cc]ompil\\(?:ation\\|e-Log\\)\\|Messages\\)"
-	"^\\*\\(?:Wo\\)?Man "
-	"^\\*Calc"
-	"^\\*info\\*$"
-	"^\\*\\(?:v?term\\|e?shell\\)-popup"
-	"^\\*Shell Command Output\\*"
-	help-mode
-	compilation-mode
-	occur-mode
-	completion-list-mode))
-  (popper-mode 1)
-  (popper-echo-mode 1))
+	'("^\\*Messages\\*"
+	  "^\\*Output\\*$"
+	  "^\\*Async Shell Command\\*"
+	  "^\\*\\([Hh]elp\\*\\|Apropos\\)"
+	  "^\\*Warnings"
+	  "^\\*Backtrace"
+	  "^\\*CPU-Profiler-Report"
+	  "^\\*Memory-Profiler-Report"
+	  "^\\*Process List"
+	  "^\\*Completions"
+	  "^\\*Local variables\\*$"
+	  "^\\*\\(?:[Cc]ompil\\(?:ation\\|e-Log\\)\\|Messages\\)"
+	  "^\\*\\(?:Wo\\)?Man "
+	  "^\\*Calc"
+	  "^\\*info\\*$"
+	  "^\\*\\(?:v?term\\|e?shell\\)-popup"
+	  "^\\*Shell Command Output\\*"
+	  help-mode
+	  compilation-mode
+	  occur-mode
+	  completion-list-mode))
+  (popper-mode +1)
+  (popper-echo-mode +1))
 
 (use-package popwin
-  :config (popwin-mode 1))
+  :config (popwin-mode +1))
 
 (use-package winum
-  :config (winum-mode 1))
+  :config (winum-mode +1))
 
 (use-package command-log-mode)
-
-(use-package counsel)
 
 (use-package helpful
   :bind
@@ -463,17 +533,48 @@
   :diminish t
   :init
   (which-key-setup-minibuffer)
-  (which-key-mode 1))
+  (which-key-mode +1))
+
+(use-package smooth-scrolling
+  :config
+  (smooth-scrolling-mode +1)
+  (setq smooth-scroll-margin 5))
+
+(use-package ligature
+  :config
+  (ligature-set-ligatures 't '("www"))
+  (ligature-set-ligatures 'eww-mode '("ff" "fi" "ffi"))
+  (ligature-set-ligatures 'prog-mode '("|||>" "<|||" "<==>" "<!--" "####" "~~>" "***" "||=" "||>"
+                                       ":::" "::=" "=:=" "===" "==>" "=!=" "=>>" "=<<" "=/=" "!=="
+                                       "!!." ">=>" ">>=" ">>>" ">>-" ">->" "->>" "-->" "---" "-<<"
+                                       "<~~" "<~>" "<*>" "<||" "<|>" "<$>" "<==" "<=>" "<=<" "<->"
+                                       "<--" "<-<" "<<=" "<<-" "<<<" "<+>" "</>" "###" "#_(" "..<"
+                                       "..." "+++" "/==" "///" "_|_" "www" "&&" "^=" "~~" "~@" "~="
+                                       "~>" "~-" "**" "*>" "*/" "||" "|}" "|]" "|=" "|>" "|-" "{|"
+                                       "[|" "]#" "::" ":=" ":>" ":<" "$>" "==" "=>" "!=" "!!" ">:"
+                                       ">=" ">>" ">-" "-~" "-|" "->" "--" "-<" "<~" "<*" "<|" "<:"
+                                       "<$" "<=" "<>" "<-" "<<" "<+" "</" "#{" "#[" "#:" "#=" "#!"
+                                       "##" "#(" "#?" "#_" "%%" ".=" ".-" ".." ".?" "+>" "++" "?:"
+                                       "?=" "?." "??" ";;" "/*" "/=" "/>" "//" "__" "~~" "(*" "*)"
+                                       "\\\\" "://"))
+  (global-ligature-mode +1))
+
+(use-package golden-ratio
+  :config (golden-ratio-mode +1))
+
+(use-package solaire-mode
+  :config (solaire-global-mode +1))
 #+END_SRC
 
 * File Manager
 #+BEGIN_SRC emacs-lisp
-(use-package nerd-icons-dired)
+(use-package nerd-icons-dired
+  :hook ((dired-mode . nerd-icons-dired-mode)))
 (use-package dirvish)
-(use-package diredfl)
+(use-package diredfl
+  :config (diredfl-global-mode +1))
 (use-package fd-dired)
 (use-package dired-rsync)
-(use-package diredfl)
 #+END_SRC
 
 * E-Mail
@@ -481,7 +582,21 @@
 (use-package mu4e
   :elpaca nil
   :ensure nil
-  :after (org))
+  :after (org)
+  :bind
+  (:map global-map
+	("C-c MM" . mu4e))
+  :config
+  (setq mu4e-maildir "~/Mail"
+	mu4e-user-mail-address-list '("redwards64@hotmail.com"
+				      "redwards6469@gmail.com")
+	mu4e-get-mail-command "mbsync --all"
+	mu4e-change-filenames-when-moving t
+	mu4e-update-interval 3600
+	mu4e-notification-support t
+	mail-user-agent 'mu4e-user-agent)
+  :custom
+  (read-mail-command 'mu4e))
 
 (use-package org-msg)
 (use-package mu4e-alert)
@@ -493,9 +608,6 @@
   :bind
   (:map global-map
 	("C-a" . mwim-beginning-of-code-or-line)
-	("C-e" . mwim-end-of-code-or-line)
-   :map org-mode-map
-        ("C-a" . mwim-beginning-of-code-or-line)
 	("C-e" . mwim-end-of-code-or-line)))
 #+END_SRC
 
@@ -506,20 +618,19 @@
 
 (use-package paredit
   :hook
-  ((emacs-lisp-mode . paredit-mode)
-   (lisp-mode . paredit-mode)
-   (lisp-interaction-mode . paredit-mode)
-   (scheme-mode . paredit-mode)))
+  (((emacs-lisp-mode lisp-mode
+     lisp-interaction-mode scheme-mode)
+    . paredit-mode)))
 
 (use-package smartparens
-  :config
-  (smartparens-global-mode 1))
+  :config (smartparens-global-mode +1))
 
 (use-package drag-stuff
   :hook ((prog-mode . drag-stuff-mode))
   :bind
-  (("M-<up>" . drag-stuff-up)
-   ("M-<down>" . drag-stuff-down)))
+  (:map global-map
+	("M-<up>" . drag-stuff-up)
+	("M-<down>" . drag-stuff-down)))
 
 (use-package format-all
   :commands format-all-mode
@@ -540,43 +651,59 @@
 ** General
 #+BEGIN_SRC emacs-lisp
 (use-package flycheck
-  :init
-  (global-flycheck-mode 1))
+  :init (global-flycheck-mode +1)
+  :config (setq flycheck-emacs-lisp-load-path load-path))
 
-(use-package tree-sitter)
+(use-package tree-sitter
+  :hook ((tree-sitter-after-on . tree-sitter-hl-mode))
+  :config
+  (setq major-mode-remap-alist '((bash-mode . bash-ts-mode)
+				 (c++-mode . c++-ts-mode)
+				 (c-mode . c-ts-mode)
+				 (c-or-c++-mode . c-or-c++-ts-mode)
+				 (css-mode . css-ts-mode)
+				 (js-mode . js-ts-mode)
+				 (json-mode . json-ts-mode)
+				 (python-mode . python-ts-mode)
+				 (sh-mode . bash-ts-mode)
+				 (yaml-mode . yaml-ts-mode))))
+
 (use-package tree-sitter-langs)
-(use-package treesit-auto)
 
-(setq major-mode-remap-alist
-      '((bash-mode . bash-ts-mode)
-	(c++-mode . c++-ts-mode)
-	(c-mode . c-ts-mode)
-	(c-or-c++-mode . c-or-c++-ts-mode)
-	(css-mode . css-ts-mode)
-	(js-mode . js-ts-mode)
-	(json-mode . json-ts-mode)
-	(python-mode . python-ts-mode)
-	(sh-mode . bash-ts-mode)
-	(yaml-mode . yaml-ts-mode)))
-
-(add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode)
+(use-package treesit-auto
+  :config (global-treesit-auto-mode +1))
 
 (use-package apheleia
-  :config
-  (apheleia-global-mode 1))
+  :config (apheleia-global-mode +1))
 #+END_SRC
 
 ** Language Servers
+The `with-eval-after-load` block is a workaround for [[https://github.com/emacs-lsp/lsp-mode/issues/4332][this issue]].
 #+BEGIN_SRC emacs-lisp
 (use-package lsp-mode
-  :init
-  (setq lsp-keymap-prefix "C-c c")
+  :init (setq lsp-keymap-prefix "C-c c")
   :hook
   ((lsp-mode . lsp-enable-which-key-integration)
    (lsp-mode . yas-minor-mode)
    (prog-mode . lsp-deferred))
+  :bind
+  (:map lsp-mode-map
+	("C-c z" . lsp-clangd-find-other-file))
   :config
-  (add-to-list 'lsp-language-id-configuration '(LaTeX-mode . "latex"))
+  (with-eval-after-load "latex"
+    (maphash (lambda (k v)
+	       (let ((mode-list (lsp--client-major-modes v))
+		     (tex-mode-list '(tex-mode latex-mode))
+		     (auctex-mode-list '(TeX-mode LaTeX-mode)))
+		 (when (and (equal k 'texlab2)
+			    (cl-intersection mode-list tex-mode-list))
+		   (progn
+		     (dolist (mode auctex-mode-list)
+		       (setf (lsp--client-major-modes v)
+			     (cl-pushnew mode mode-list)))
+		     (add-to-list 'lsp-language-id-configuration '(`mode . "latex"))))))
+	     lsp-clients))
+  
   (setq lsp-diagnostics-mode t
 	lsp-enable-folding t
 	lsp-enable-on-type-formatting t
@@ -627,54 +754,63 @@
 ** Programming Languages
 *** C/C++
 #+BEGIN_SRC emacs-lisp
-(dolist (hook '(c-mode-hook c++-mode-hook makefile-mode-hook
-			    makefile-gmake-mode-hook c-ts-mode-hook c++-ts-mode-hook))
-  (add-hook hook (lambda ()
-		   (setq-local c-basic-offset 4
-			       gdb-many-windows t
-			       compile-command (format "make -C %s -k"
-						       (substring (ross/get-closest-pathname)
-								  0 -8))
-			       +format-with "clang-format"))))
+(use-package cc-mode
+  :elpaca nil
+  :hook
+  (((c-mode c++-mode c-ts-mode c++-ts-mode makefile-mode makefile-gmake-mode)
+    . (lambda ()
+	(setq-local c-basic-offset 4
+		    gdb-many-windows t
+		    compile-command (format "make -C %s -k"
+					    (substring (ross/get-closest-pathname)
+	       					       0 -8))
+		    +format-with "clang-format"))))
+  :config (setq c-basic-offset 4))
 
-(use-package modern-cpp-font-lock)
-(use-package preproc-font-lock)
-(use-package disaster)
 (use-package irony
-  :hook ((c-mode . irony-mode)
-	 (c++-mode . irony-mode)
-	 (c-ts-mode . irony-mode)
-	 (c++-ts-mode . irony-mode)))
+  :hook (((c-mode c++-mode c-ts-mode c++-ts-mode) . irony-mode)))
+
+(use-package modern-cpp-font-lock
+  :config (modern-c++-font-lock-global-mode +1))
+
 (use-package company-irony)
 (use-package flycheck-irony)
 (use-package company-irony-c-headers)
 (use-package irony-eldoc)
-
-(setq c-basic-offset 4)
+(use-package disaster)
 #+END_SRC
 
 *** Rust
 #+BEGIN_SRC emacs-lisp
 (use-package rustic
+  :hook
+  (((rust-mode rust-ts-mode rustic-mode)
+    . (lambda ()
+	(setq-local compile-comand "cargo build --verbose")
+	(lsp-deferred))))
   :config
   (setq lsp-rust-analyzer-cargo-watch-command "clippy")
   (add-to-list 'tree-sitter-major-mode-language-alist '(rustic-mode . rust)))
-
-(dolist (hook '(rust-mode-hook rust-ts-mode-hook rustic-mode-hook))
-  (add-hook hook (lambda ()
-		   (setq-local compile-comand "cargo build --verbose")
-		   (lsp-deferred))))
 #+END_SRC
 
 *** Lisp
 **** General
 #+BEGIN_SRC emacs-lisp
-(use-package lisp-extra-font-lock)
+(use-package lisp-extra-font-lock
+  :config (lisp-extra-font-lock-global-mode +1))
 #+END_SRC
 
 **** Clojure
 #+BEGIN_SRC emacs-lisp
-(use-package cider)
+(use-package cider
+  :hook ((clojure-mode . cider-jack-in-clj)
+	 (clojurescript-mode . cider-jack-in-cljs)))
+
+(use-package clj-refactor
+  :hook (((clojure-mode clojurescript-mode) . clj-refactor-mode)
+	 ((clojure-mode clojurescript-mode)
+	  . (lambda () (cljr-add-keybindings-with-prefix "C-c C-m")))))
+
 (use-package flycheck-clj-kondo)
 (use-package anakondo)
 (use-package clojure-mode-extra-font-locking)
@@ -682,8 +818,8 @@
 
 **** Common Lisp
 #+BEGIN_SRC emacs-lisp
-(use-package sly)
-(setq inferior-lisp-program "ros -L sbcl -Q run")
+(use-package sly
+  :config (setq inferior-lisp-program "ros -L sbcl -Q run"))
 #+END_SRC
 
 **** Emacs Lisp
@@ -699,31 +835,34 @@
   (advice-add 'helpful-update :after #'elisp-demos-advice-helpful-update))
 
 (use-package macrostep)
-(use-package morlock)
+(use-package morlock
+  :config (global-morlock-mode +1))
 #+END_SRC
 
 *** Nix
 #+BEGIN_SRC emacs-lisp
-(use-package nix-mode
-  :hook (nix-mode . lsp-deferred))
-
-(use-package nix-ts-mode
-  :hook (nix-ts-mode . lsp-deferred))
-
+(use-package nix-mode)
+(use-package nix-ts-mode)
 (use-package nixos-options)
 (use-package nixpkgs-fmt)
 (use-package nix-update)
 #+END_SRC
 
-*** Arduino
+*** Embedded
 #+BEGIN_SRC emacs-lisp
 (use-package platformio-mode)
-(use-package arduino-mode)
+(use-package arduino-mode
+  :hook ((arduino-mode . irony-mode))
+  :config
+  (add-to-list 'irony-supported-major-modes 'arduino-mode)
+  (add-to-list 'irony-lang-compile-option-alist '(arduino-mode . "c++")))
 #+END_SRC
 
 *** Shell
 #+BEGIN_SRC emacs-lisp
 (use-package company-shell)
+(use-package shelldoc)
+(use-package shfmt)
 #+END_SRC
 
 *** LaTeX
@@ -731,28 +870,39 @@
 (use-package lsp-latex)
 
 (use-package auctex
-  :elpaca (auctex :pre-build (("./autogen.sh")
-			      ("./configure" "--without-texmf-dir" "--with-lispdir=.")
-			      ("make")))
-  :hook ((tex-mode . lsp-deferred)
-	 (TeX-mode . lsp-deferred))
+  :elpaca
+  (auctex :pre-build (("./autogen.sh")
+		      ("./configure" "--without-texmf-dir" "--with-lispdir=.")
+		      ("make")))
+  :after (lsp-mode)
+  :hook
+  (((tex-mode TeX-mode) . lsp-deferred)
+   (LaTeX-mode . TeX-source-correlate-mode))
+  :mode ("\\.tex\\'" . LaTeX-mode)
   :config
-  (add-to-list 'auto-mode-alist '("\\.tex\\'" . latex-mode))
-  (setq-default TeX-global-pdf-mode 1
+  (setq-default TeX-global-pdf-mode t
 		preview-scale-function 1.5)
-  (setq TeX-auto-save 1
-	TeX-parse-self t
-	default-truncate-lines t
-	TeX-save-query nil
-	TeX-source-correlate-mode t
-	TeX-source-correlate-method 'synctex
-	TeX-source-correlate-start-server nil
-	LaTeX-electric-left-right-brace t
+  (setq LaTeX-electric-left-right-brace t
+	TeX-auto-save t
 	TeX-electric-sub-and-superscript t
+	TeX-output-dir "build"
+	TeX-parse-self t
 	TeX-save-query nil
-	bibtex-dialect 'biblatex
+	TeX-save-query nil
+	TeX-source-correlate-method 'synctex
+	TeX-source-correlate-mode t
+	TeX-source-correlate-mode t
+	TeX-source-correlate-start-server nil
+	TeX-source-correlate-start-server t
 	bibtex-align-at-equal-sign t
-	bibtex-text-indentation 20))
+	bibtex-dialect 'biblatex
+	bibtex-text-indentation 20
+	default-truncate-lines t)
+  (add-to-list 'TeX-expand-list
+	       '("%sn" (lambda () server-name)))
+  (setcar (cdr (assoc 'output-pdf
+		      TeX-view-program-selection))
+	  "Zathura"))
 
 (use-package auctex-latexmk
   :init (setq auctex-latexmk-inherit-TeX-PDF-mode t)
@@ -761,14 +911,17 @@
 (use-package latex-preview-pane)
 (use-package company-auctex)
 (use-package company-reftex)
+(use-package company-bibtex)
 (use-package magic-latex-buffer)
+(use-package ebib)
 #+END_SRC
 
 *** Java
 #+BEGIN_SRC emacs-lisp
 (use-package lsp-java
-  :config
-  (setq lsp-java-configuration-runtimes '[(:name "JavaSE-17" :path "/usr/lib/jvm/java-17-openjdk" :default t)]))
+  :config (setq lsp-java-configuration-runtimes '[(:name "JavaSE-17"
+						   :path "/usr/lib/jvm/java-17-openjdk"
+						   :default t)]))
 #+END_SRC
 
 *** Groovy
@@ -778,11 +931,30 @@
 (use-package flycheck-gradle)
 #+END_SRC
 
+*** Haskell
+#+BEGIN_SRC emacs-lisp
+(use-package haskell-mode)
+(use-package flycheck-haskell)
+(use-package lsp-haskell)
+(use-package dante)
+(use-package hindent)
+#+END_SRC
+
 * Documents
 #+BEGIN_SRC emacs-lisp
 (use-package pdf-tools
+  :mode ("\\.pdf\\'" . pdf-view-mode)
+  :hook ((pdf-view-mode . pdf-tools-enable-minor-modes)))
+
+(use-package nov
+  :mode ("\\.epub\\'" . nov-mode)
+  :hook ((nov-mode . (lambda ()
+		       (face-remap-add-relative 'variable-pitch
+						:family font-name
+						:height 1.0))))
   :config
-  (add-to-list 'auto-mode-alist '("\\.pdf\\'" . pdf-view-mode)))
+  (setq nov-unzip-program (executable-find "bsdtar")
+	nov-unzip-args '("-xC" directory "-f" filename)))
 #+END_SRC
 
 * Project Tools
@@ -806,12 +978,12 @@
 
 (use-package ibuffer-projectile)
 (use-package ibuffer-git)
+
 (use-package git-gutter-fringe
-  :init
-  (global-git-gutter-mode +1))
+  :init (global-git-gutter-mode +1))
+
 (use-package diff-hl
-  :init
-  (global-diff-hl-mode +1))
+  :init (global-diff-hl-mode +1))
 #+END_SRC
 
 * Startup Dashboard

@@ -50,7 +50,6 @@ set {
     $ZATHURA "^org.pwmt.zathura$"
 
     # programs
-    $WAYBAR waybar -c $CONFIG_HOME/waybar/config-sway
     $EMACSSCRIPT $CONFIG_HOME/hypr/scripts/start_emacs.sh
 }
 
@@ -86,7 +85,6 @@ exec {
     # background programs
     systemctl --user import-environment $SESSION_VARS
     dbus-update-activation-environment --systemd $SESSION_VARS
-    # $WAYBAR
     pavucontrol
     swayidle -w
     udiskie -ant &
