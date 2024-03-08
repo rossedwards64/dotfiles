@@ -3,7 +3,11 @@
 {
   imports = [ ../modules/home-manager ];
 
-  xdg.enable = true;
+  xdg = {
+    enable = true;
+    mime.enable = true;
+    userDirs.enable = true;
+  };
 
   home = {
     pointerCursor = with pkgs; {

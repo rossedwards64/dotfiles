@@ -1,4 +1,4 @@
-{ ... }:
+{ config, ... }:
 
 {
   imports = [
@@ -9,6 +9,8 @@
     ./fonts.nix
     ./games.nix
     ./git.nix
+    ./gpg.nix
+    ./music.nix
     ./pass.nix
     ./programming.nix
     ./starship.nix
@@ -27,6 +29,8 @@
     fonts.enable = true;
     games.enable = true;
     git.enable = true;
+    gpg.enable = true;
+    music.enable = true;
     pass.enable = true;
     programming.enable = true;
     starship.enable = true;

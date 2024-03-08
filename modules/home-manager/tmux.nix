@@ -16,15 +16,15 @@ in {
           - project:
               layout: 5ad0,157x33,0,0{78x33,0,0,0,78x33,79,0[78x16,79,0,9,78x16,79,17,10]}
               panes:
-                  - clear
-                  - clear
-                  - clear
+                - clear
+                - clear
+                - clear
           - misc:
               panes:
-                  - clear
+                - clear
           - monitor:
               panes: 
-                  - btop
+                - btop
       '';
     };
 
@@ -73,8 +73,6 @@ in {
       ];
 
       extraConfig = ''
-        #### KEY BINDINGS
-        # Unbind keys for rebinding
         unbind C-b
         unbind r
         unbind v
@@ -113,7 +111,6 @@ in {
         bind -n C-j if-shell "$is_vim" "send-keys C-j"  "select-pane -D"
         bind -n C-\\ if-shell "$is_vim" "send-keys C-\\" "select-pane -l"
 
-        #### SETTINGS
         set -g display-time 4000
         set -g status-interval 1
         set -g mouse on
@@ -129,37 +126,24 @@ in {
         set-window-option -g automatic-rename on
         set-window-option -g mode-keys vi
 
-        #### COLOUR (Solarized dark)
-
-        # default statusbar colors
         set-option -g status-style fg=yellow,bg=black #yellow and base02
 
-        # default window title colors
         set-window-option -g window-status-style fg=brightblue,bg=default #base0 and default
-        #set-window-option -g window-status-style dim
 
-        # active window title colors
         set-window-option -g window-status-current-style fg=brightred,bg=default #orange and default
-        #set-window-option -g window-status-current-style bright
 
-        # pane border
         set-option -g pane-border-style fg=black #base02
         set-option -g pane-active-border-style fg=brightgreen #base01
 
-        # message text
         set-option -g message-style fg=brightred,bg=black #orange and base01
 
-        # pane number display
         set-option -g display-panes-active-colour blue #blue
         set-option -g display-panes-colour brightred #orange
 
-        # clock
         set-window-option -g clock-mode-colour green #green
 
-        # bell
         set-window-option -g window-status-bell-style fg=black,bg=red #base02, red
 
-        ### COLORS ###
         b_bg="#504945"
 
         seg_a="#a89984 #282828"

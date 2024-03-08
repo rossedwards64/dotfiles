@@ -16,5 +16,14 @@ in {
       passExtensions.pass-tomb
       passExtensions.pass-update
     ];
+
+    programs.password-store = with pkgs; {
+      enable = true;
+      package = pass-wayland;
+
+      settings = {
+        PASSWORD_STORE_DIR = "${config.xdg.dataHome}/pass";
+      };
+    };
   };
 }

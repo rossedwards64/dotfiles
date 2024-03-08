@@ -22,8 +22,8 @@ in {
       etc = {
         "zcfan.conf" = {
           text = ''
-            max_temp 65
-            med_temp 55
+            max_temp 70
+            med_temp 60
             low_temp 40
           '';
           mode = "644";

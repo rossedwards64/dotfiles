@@ -18,6 +18,17 @@ in {
         enableAutosuggestions = true;
         enableCompletion = true;
 
+        history = {
+          size = 10000;
+          save = 10000;
+          path = "$XDG_DATA_HOME/zsh/history";
+          share = true;
+          extended = true;
+          ignoreDups = true;
+          ignoreSpace = true;
+          ignoreAllDups = true;
+        };
+
         sessionVariables = {
           ALTERNATE_EDITOR = "nvim";
           ARCHFLAGS = "-arch x86_64";
@@ -27,11 +38,8 @@ in {
           EDITOR = "emacs";
           EMACSDIR = "$XDG_CONFIG_HOME/emacs";
           GDBHISTFILE = "$XDG_DATA_HOME/gdb/history";
-          GNUPGHOME = "$XDG_DATA_HOME/gnupg";
           GOPATH = "$XDG_DATA_HOME/go";
           GRADLE_USER_HOME = "$XDG_DATA_HOME/gradle";
-          GTK2_RC_FILES = "$XDG_CONFIG_HOME/gtk-2.0/gtkrc";
-          HISTCONTROL = "ignoreboth";
           KDEHOME = "$XDG_CONFIG_HOME/kde";
           LEIN_HOME = "$XDG_DATA_HOME/lein";
           MOZ_ENABLE_WAYLAND = 1;
@@ -49,6 +57,7 @@ in {
           XCURSOR_SIZE = 24;
           XINITRC = "$XDG_CONFIG_HOME/X11/xinitrc";
           STACK_XDG = 1;
+          ZSH_COMPDUMP = "\${ZSH}/cache/.zcompdump-\${HOST}";
         };
 
         initExtraFirst = ''
@@ -91,9 +100,9 @@ in {
           du = "dust -Hr";
           clear = "clear && stty sane";
           update-system =
-            "(cd $HOME/.dotfiles && sudo nixos-rebuild switch --flake .#)";
+            "(cd \${HOME}/.dotfiles && sudo nixos-rebuild switch --flake .#\${HOST})";
           update-home =
-            "(cd $HOME/.dotfiles && home-manager switch --flake .#)";
+            "(cd \${HOME}/.dotfiles && home-manager switch --impure --flake .#\${HOST})";
         };
 
         oh-my-zsh = {

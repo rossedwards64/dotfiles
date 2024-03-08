@@ -31,7 +31,7 @@ in {
 
         desktopManager = {
           # kde
-          plasma5.enable = true;
+          plasma6.enable = true;
 
           # gnome
           # gnome.enable = true;
@@ -51,6 +51,8 @@ in {
         pulse.enable = true;
       };
     };
+
+    security.rtkit.enable = true;
 
     xdg.portal = {
       enable = true;

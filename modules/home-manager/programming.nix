@@ -24,6 +24,7 @@ in {
       leiningen
       roswell
       sbcl
+      texlab
     ];
 
     xdg = {

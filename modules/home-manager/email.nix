@@ -20,7 +20,7 @@ in {
         outlook = {
           realName = "Ross Edwards";
           address = "redwards64@hotmail.com";
-          passwordCommand = "echo 'KT3Myj5XRaNgp?B@'";
+          passwordCommand = "pass email/hotmail/personal";
           flavor = "outlook.office365.com";
           msmtp.enable = true;
           primary = true;
@@ -46,7 +46,7 @@ in {
           };
 
           gpg = {
-            key = "";
+            key = "rossedwards";
             signByDefault = true;
           };
         };
@@ -54,7 +54,7 @@ in {
         gmail = {
           realName = "Ross Edwards";
           address = "redwards6469@gmail.com";
-          passwordCommand = "echo 'qgylfyeksqiucisd'";
+          passwordCommand = "pass email/google/app-password";
           flavor = "gmail.com";
           msmtp.enable = true;
           primary = false;
@@ -80,7 +80,7 @@ in {
           };
 
           gpg = {
-            key = "";
+            key = "rossedwards";
             signByDefault = true;
           };
         };

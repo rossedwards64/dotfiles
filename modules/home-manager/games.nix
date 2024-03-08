@@ -14,6 +14,8 @@ in {
       mupen64plus
       protontricks
       steam
+      steamPackages.steamcmd
+      steam-tui
       vkd3d-proton
       vulkan-tools
       zsnes2

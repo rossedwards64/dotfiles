@@ -5,7 +5,7 @@ in {
   options.modules.system = { enable = mkEnableOption "system"; };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = with pkgs; [ killall wget ];
+    environment.systemPackages = with pkgs; [ killall wget openssl ];
 
     time.timeZone = "Europe/London";
 
