@@ -103,6 +103,10 @@ in {
             "(cd \${HOME}/.dotfiles && sudo nixos-rebuild switch --flake .#\${HOST})";
           update-home =
             "(cd \${HOME}/.dotfiles && home-manager switch --impure --flake .#\${HOST})";
+          upgrade-system =
+            "(cd \${HOME}/.dotfiles && sudo nixos-rebuild switch --upgrade --flake .#\${HOST})";
+          upgrade-home =
+            "(cd \${HOME}/.dotfiles && home-manager switch --impure --upgrade --flake .#\${HOST})";
         };
 
         oh-my-zsh = {

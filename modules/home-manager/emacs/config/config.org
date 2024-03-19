@@ -1,5 +1,5 @@
 #+TITLE: Emacs Configuration
-#+PROPERTY: header-args :tangle ./init.el :comments both :padline
+#+PROPERTY: header-args :tangle ./init.el
 #+AUTO_TANGLE: t
 
 * Table of Contents :TOC:
@@ -25,7 +25,12 @@
 
 * Early Init
 #+BEGIN_SRC emacs-lisp :tangle ./early-init.el
-  ;;; early-init.el -*- lexical-binding: t; -*-
+;;; early-init.el -*- lexical-binding: t; -*-
+
+(when (string-equal system-type "android")
+  (let ((termux-path "/data/data/com.termux/files/usr/bin"))
+    (setenv "PATH" (concat (getenv "PATH") ":" termux-path))
+    (setq exec-path (append exec-path (list termux-path)))))
 
 (setenv "LSP_USE_PLISTS" "true")
 
@@ -33,7 +38,7 @@
 (defvar desktop-hostname "ross-desktop")
 (defvar laptop-hostname "ross-thinkpad")
 (defvar other-laptop-hostname "ross-thinkpad-x200")
-(defvar macbook-hostname "rossedwards")
+(defvar macbook-hostname "Rosss-MacBook-Pro.local")
 
 (defun ross/set-font (frame)
   "Apply FONT to FRAME."
@@ -105,8 +110,7 @@
 	     (alpha-background . ,(pcase (system-name)
 				    ((or (pred (string-equal desktop-hostname))
 					 (pred (string-equal laptop-hostname))) 95)
-				    ((or (pred (string-equal other-laptop-hostname))
-					 (pred (string-equal macbook-hostname)) 100))))))
+				    (_ 100)))))
     (add-to-list 'default-frame-alist frame-setting))
   
   (advice-add #'completing-read-multiple :filter-args
@@ -119,10 +123,16 @@
 		      (cdr args))))
 
   (fset 'yes-or-no-p 'y-or-n-p)
-  
-  ;; set some basic stuff like font and getting rid of toolbar
+
+  (when (string-equal system-type "android")
+    (let ((command "gnutls-cli %p %h"))
+     (setq tls-program '(command
+			 (concat command "--protocols ssl3")))))
+
   (setq auto-save-default nil
 	delete-auto-save-files t
+	dired-listing-switches "-lhAX --group-directories-first"
+	dired-switches-in-mode-line 'as-is
 	display-line-numbers-type 'relative
 	fill-indent-according-to-mode t
 	find-function-C-source-directory "~/Documents/programming/repos/emacs/src"
@@ -139,7 +149,7 @@
 	visible-bell t
         completion-cycle-threshold 3
         enable-recursive-minibuffers t
-	warning-minimum-level :error) ;; to make it shut up about obsolete functions in packages
+	warning-minimum-level :error)
 
   (toggle-text-mode-auto-fill)
   (blink-cursor-mode -1)
@@ -381,7 +391,6 @@
   :config
   (global-company-mode +1)
   (setq company-idle-delay (lambda () (if (company-in-string-or-comment) nil 0.5))
-	company-insertion-on-trigger t
 	company-minimum-prefix-length 1
 	company-selection-wrap-around t
 	company-tooltip-align-annotations t
@@ -578,12 +587,6 @@
 
 * File Manager
 #+BEGIN_SRC emacs-lisp
-(use-package dired
-  :elpaca nil
-  :init
-  (setq dired-listing-switches "-lhAX --group-directories-first"
-	dired-switches-in-mode-line 'as-is))
-
 (use-package nerd-icons-dired
   :hook ((dired-mode . nerd-icons-dired-mode)))
 
@@ -605,7 +608,7 @@
   (:map global-map
 	("C-c MM" . mu4e))
   :config
-  (setq mu4e-maildir "~/Mail"
+  (setq mu4e-maildir "~/.local/share/mail"
 	mu4e-user-mail-address-list '("redwards64@hotmail.com"
 				      "redwards6469@gmail.com")
 	mu4e-get-mail-command "mbsync --all"
@@ -613,6 +616,8 @@
 	mu4e-update-interval 3600
 	mu4e-notification-support t
 	mail-user-agent 'mu4e-user-agent)
+  (mu4e-alert-enable-notifications)
+  (mu4e-alert-enable-mode-line-display)
   :custom
   (read-mail-command 'mu4e))
 
@@ -703,7 +708,7 @@
 The `with-eval-after-load` block is a workaround for [[https://github.com/emacs-lsp/lsp-mode/issues/4332][this issue]].
 #+BEGIN_SRC emacs-lisp
 (use-package lsp-mode
-  :init (setq lsp-keymap-prefix "C-c c")
+  :init (setq lsp-keymap-prefix "C-c")
   :hook
   ((lsp-mode . lsp-enable-which-key-integration)
    (lsp-mode . yas-minor-mode)
@@ -864,7 +869,6 @@ The `with-eval-after-load` block is a workaround for [[https://github.com/emacs-
 #+BEGIN_SRC emacs-lisp
 (use-package nix-mode)
 (use-package nix-ts-mode)
-(use-package nixos-options)
 (use-package nixpkgs-fmt)
 (use-package nix-update)
 #+END_SRC

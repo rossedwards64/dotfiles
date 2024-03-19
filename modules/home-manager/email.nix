@@ -1,6 +1,12 @@
 { lib, config, pkgs, ... }:
 with lib;
-let cfg = config.modules.email;
+let
+  cfg = config.modules.email;
+  fullName = "Ross Edwards";
+  gpgConf = {
+    key = "rossedwards";
+    signByDefault = true;
+  };
 in {
   options.modules.email = { enable = mkEnableOption "email"; };
 
@@ -18,7 +24,7 @@ in {
       maildirBasePath = ".local/share/mail";
       accounts = {
         outlook = {
-          realName = "Ross Edwards";
+          realName = fullName;
           address = "redwards64@hotmail.com";
           passwordCommand = "pass email/hotmail/personal";
           flavor = "outlook.office365.com";
@@ -44,15 +50,11 @@ in {
               "[Outlook]/All Mail"
             ];
           };
-
-          gpg = {
-            key = "rossedwards";
-            signByDefault = true;
-          };
+          gpg = gpgConf;
         };
 
         gmail = {
-          realName = "Ross Edwards";
+          realName = fullName;
           address = "redwards6469@gmail.com";
           passwordCommand = "pass email/google/app-password";
           flavor = "gmail.com";
@@ -79,10 +81,7 @@ in {
             ];
           };
 
-          gpg = {
-            key = "rossedwards";
-            signByDefault = true;
-          };
+          gpg = gpgConf;
         };
       };
     };

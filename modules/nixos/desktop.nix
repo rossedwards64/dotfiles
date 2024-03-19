@@ -20,7 +20,7 @@ in {
 
         displayManager = {
           # kde
-          defaultSession = "plasmawayland";
+          defaultSession = "plasma";
           sddm.enable = true;
           sddm.wayland.enable = true;
 
