@@ -2,23 +2,23 @@
 
 {
   imports = [
-    ./alacritty.nix
-    ./desktop.nix
-    ./emacs/emacs.nix
-    ./email.nix
-    ./fonts.nix
-    ./games.nix
-    ./git.nix
-    ./gpg.nix
-    ./music.nix
-    ./pass.nix
-    ./programming.nix
-    ./starship.nix
-    ./system.nix
-    ./theme.nix
-    ./tmux.nix
-    ./topgrade.nix
-    ./zsh.nix
+    ./alacritty
+    ./desktop
+    ./emacs
+    ./email
+    ./fonts
+    ./games
+    ./git
+    ./gpg
+    ./music
+    ./pass
+    ./programming
+    ./starship
+    ./system
+    ./theme
+    ./tmux
+    ./topgrade
+    ./zsh
   ];
 
   config.modules = {

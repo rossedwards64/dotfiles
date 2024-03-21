@@ -1,18 +1,13 @@
-{ config, pkgs, ... }:
+{ config, lib, pkgs, specialArgs, ... }:
 
 {
   imports = [ ./hardware-configuration.nix ];
 
-  nix = {
-    package = pkgs.nixFlakes;
-    settings = {
-      auto-optimise-store = true;
-      experimental-features = [ "nix-command" "flakes" ];
-      allowed-users = [ "ross" ];
-    };
-  };
+  boot.loader.grub.device = "/dev/sda";
 
-  nixpkgs.config.allowUnfree = true;
+  modules.thinkpad.enable = true;
+
+  networking.hostName = "ross-thinkpad-x200";
 
   system.stateVersion = "23.11";
 }

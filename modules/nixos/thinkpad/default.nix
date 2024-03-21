@@ -1,17 +1,30 @@
 { lib, config, pkgs, ... }:
 with lib;
-let cfg = config.modules.services;
+let cfg = config.modules.thinkpad;
 in {
-  options.modules.services = { enable = mkEnableOption "services"; };
+  options.modules.thinkpad = { enable = mkEnableOption "thinkpad"; };
 
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [ tlp zcfan ];
 
-    services = {
-      openssh.enable = true;
-      flatpak.enable = true;
-      power-profiles-daemon.enable = false;
+    boot.extraModprobeConfig = ''
+      options thinkpad_acpi fan_control=1                       
+    '';
 
+    environment = {
+      etc = {
+        "zcfan.conf" = {
+          text = ''
+            max_temp 70
+            med_temp 60
+            low_temp 40
+          '';
+          mode = "644";
+        };
+      };
+    };
+
+    services = {
       tlp = {
         enable = true;
         settings = {

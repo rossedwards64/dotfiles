@@ -10,13 +10,8 @@ in {
     boot = {
       tmp.cleanOnBoot = true;
 
-      extraModprobeConfig = ''
-        options thinkpad_acpi fan_control=1                       
-      '';
-
       loader.grub = {
         enable = true;
-        device = "/dev/sda";
         useOSProber = true;
         font = "${pkgs.iosevka}/share/fonts/truetype/iosevka-regular.ttf";
 
