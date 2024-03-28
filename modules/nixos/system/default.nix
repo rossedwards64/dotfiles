@@ -6,11 +6,12 @@ in {
 
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
+      jdk17
       killall
-      wget
       openssl
-      openssl.out
       openssl.dev
+      openssl.out
+      wget
     ];
 
     time.timeZone = "Europe/London";
@@ -41,7 +42,6 @@ in {
         enable = true;
         driSupport = true;
         driSupport32Bit = true;
-        extraPackages = [ pkgs.intel-vaapi-driver ];
       };
     };
   };

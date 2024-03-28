@@ -20,10 +20,12 @@
       system = "x86_64-linux";
       lib = nixpkgs.lib // home-manager.lib;
       specialArgs = { inherit attrs outputs username; };
-      modules = {
+
+      defaultNixosModules = {
         boot.enable = true;
         desktop.enable = true;
         environment.enable = true;
+        games.enable = true;
         networking.enable = true;
         programming.enable = true;
         services.enable = true;
@@ -33,16 +35,43 @@
 
       systemModules = [
         ./modules/nixos
-        ({ config, pkgs, options, ... }: { inherit modules; })
+        ({ config, pkgs, options, ... }: {
+          nixpkgs.config.allowUnfree = true;
+          modules = defaultNixosModules;
+        })
+      ];
+
+      defaultHomeModules = {
+        alacritty.enable = true;
+        desktop.enable = true;
+        discord.enable = true;
+        emacs.enable = true;
+        email.enable = true;
+        fonts.enable = true;
+        git.enable = true;
+        gpg.enable = true;
+        music.enable = true;
+        pass.enable = true;
+        programming.enable = true;
+        starship.enable = true;
+        system.enable = true;
+        theme.enable = true;
+        tmux.enable = true;
+        topgrade.enable = true;
+        zsh.enable = true;
+      };
+
+      homeModules = [
+        ./home/home.nix
+        ({ config, pkgs, options, ... }: { modules = defaultHomeModules; })
       ];
 
       homeConfig = lib.homeManagerConfiguration {
-        modules = [ ./home/home.nix ];
+        modules = homeModules;
         pkgs = nixpkgs.legacyPackages.${system};
         extraSpecialArgs = specialArgs;
       };
     in {
-      nixpkgs.config.allowUnfree = true;
       nix = {
         registry.nixpkgs.flake = nixpkgs;
         package = nixpkgs.nixFlakes;

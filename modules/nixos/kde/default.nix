@@ -5,6 +5,13 @@ in {
   options.modules.kde = { enable = mkEnableOption "kde"; };
 
   config = mkIf cfg.enable {
+    environment.systemPackages = with pkgs; [
+      kdePackages.flatpak-kcm
+      kdePackages.kcmutils
+      kdePackages.plymouth-kcm
+      kdePackages.sddm-kcm
+    ];
+
     services = {
       xserver = {
         displayManager = {

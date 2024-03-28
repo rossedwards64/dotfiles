@@ -5,6 +5,7 @@
     ./boot
     ./desktop
     ./environment
+    ./games
     ./gnome
     ./kde
     ./networking

@@ -12,5 +12,7 @@
 
   networking.hostName = "ross-thinkpad-x200";
 
+  opengl.extraPackages = [ pkgs.intel-vaapi-driver ];
+
   system.stateVersion = "23.11";
 }

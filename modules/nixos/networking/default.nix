@@ -6,7 +6,6 @@ in {
 
   config = mkIf cfg.enable {
     networking = {
-      hostName = "ross-thinkpad-x200";
       useDHCP = false;
       networkmanager.enable = true;
     };
