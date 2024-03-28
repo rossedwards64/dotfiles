@@ -18,25 +18,6 @@ in {
       xserver = {
         enable = true;
 
-        displayManager = {
-          # kde
-          defaultSession = "plasma";
-          sddm.enable = true;
-          sddm.wayland.enable = true;
-
-          # gnome
-          # defaultSession = "gnome";
-          # gdm.enable = true;
-        };
-
-        desktopManager = {
-          # kde
-          plasma6.enable = true;
-
-          # gnome
-          # gnome.enable = true;
-        };
-
         xkb = {
           layout = "gb";
           variant = "";

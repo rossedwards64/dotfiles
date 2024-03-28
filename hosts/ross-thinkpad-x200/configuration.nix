@@ -5,7 +5,10 @@
 
   boot.loader.grub.device = "/dev/sda";
 
-  modules.thinkpad.enable = true;
+  modules = {
+    thinkpad.enable = true;
+    kde.enable = true;
+  };
 
   networking.hostName = "ross-thinkpad-x200";
 

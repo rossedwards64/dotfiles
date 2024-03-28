@@ -1,7 +1,7 @@
 { config, pkgs, lib, ... }:
 with lib;
 let
-  generic_fmt = "[[$symbol($version)]($style)]";
+  generic_fmt = "\[[$symbol($version)]($style)\]";
   cfg = config.modules.system;
 in {
   options.modules.starship = { enable = mkEnableOption "starship"; };

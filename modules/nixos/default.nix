@@ -5,6 +5,8 @@
     ./boot
     ./desktop
     ./environment
+    ./gnome
+    ./kde
     ./networking
     ./programming
     ./services
