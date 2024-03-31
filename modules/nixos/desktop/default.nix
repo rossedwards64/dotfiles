@@ -11,6 +11,7 @@ in {
       neovim
       wayland
       winetricks
+      wl-clipboard
       xwayland
     ];
 
@@ -19,7 +20,6 @@ in {
         enable = true;
 
         xkb = {
-          layout = "gb";
           variant = "";
           options = "ctrl:nocaps";
         };

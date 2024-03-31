@@ -39,7 +39,10 @@
 
   modules = { kde.enable = true; };
 
-  services.xserver.videoDrivers = [ "amdgpu" ];
+  services.xserver = {
+    xkb.layout = "us";
+    videoDrivers = [ "amdgpu" ];
+  };
 
   networking.hostName = "ross-desktop";
 

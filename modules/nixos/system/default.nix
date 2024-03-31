@@ -31,6 +31,10 @@ in {
       };
     };
 
+    security.polkit.enable = true;
+
+    programs.light.enable = true;
+
     console = { useXkbConfig = true; };
 
     sound.enable = true;

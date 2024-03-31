@@ -18,6 +18,7 @@
     ./theme
     ./tmux
     ./topgrade
+    ./window-manager
     ./zsh
   ];
 }

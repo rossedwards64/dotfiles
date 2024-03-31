@@ -9,7 +9,7 @@ in {
       clang-tools_17
       gdb
       jdk17
-      nixd
+      nil
       nixfmt
       nodejs_21
       shellcheck

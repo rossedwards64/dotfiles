@@ -10,9 +10,12 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    hyprland-nix.url = "github:spikespaz/hyprland-nix";
   };
 
-  outputs = { self, nixpkgs, home-manager, nixos-hardware, ... }@attrs:
+  outputs =
+    { self, nixpkgs, home-manager, nixos-hardware, hyprland-nix, ... }@attrs:
     let
       inherit (self) outputs;
 
@@ -42,6 +45,7 @@
       ];
 
       defaultHomeModules = {
+        hyprland.enable = true;
         alacritty.enable = true;
         desktop.enable = true;
         discord.enable = true;

@@ -10,9 +10,11 @@
     kde.enable = true;
   };
 
-  networking.hostName = "ross-thinkpad-x200";
-
   opengl.extraPackages = [ pkgs.intel-vaapi-driver ];
+
+  services.xserver.xkb.layout = "gb";
+
+  networking.hostName = "ross-thinkpad-x200";
 
   system.stateVersion = "23.11";
 }

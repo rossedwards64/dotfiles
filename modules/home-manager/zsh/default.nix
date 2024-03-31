@@ -99,14 +99,13 @@ in {
           find = "fd";
           du = "dust -Hr";
           clear = "clear && stty sane";
-          update-system =
-            "(cd \${HOME}/.dotfiles && sudo nixos-rebuild switch --flake .#\${HOST})";
+          update-system = "sudo nixos-rebuild switch --flake \${HOME}#\${HOST}";
           update-home =
-            "(cd \${HOME}/.dotfiles && home-manager switch --impure --flake .#\${HOST})";
+            "home-manager switch --impure --flake \${HOME}#\${HOST}";
           upgrade-system =
-            "(cd \${HOME}/.dotfiles && sudo nixos-rebuild switch --upgrade --flake .#\${HOST})";
+            "sudo nixos-rebuild switch --upgrade --flake \${HOME}#\${HOST}";
           upgrade-home =
-            "(cd \${HOME}/.dotfiles && home-manager switch --impure --upgrade --flake .#\${HOST})";
+            "home-manager switch --impure --upgrade --flake \${HOME}#\${HOST}";
         };
 
         oh-my-zsh = {
