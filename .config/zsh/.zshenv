@@ -41,6 +41,7 @@ export WAKATIME_HOME="$XDG_CONFIG_HOME/wakatime"
 export WINEPREFIX="$XDG_DATA_HOME/wineprefixes/default"
 export KDEHOME="$XDG_CONFIG_HOME/kde"
 export ROSWELL_HOME="$XDG_CONFIG_HOME/roswell"
+export PLATFORMIO_CORE_DIR="$XDG_DATA_HOME/platformio"
 
 # Startup files
 export GTK2_RC_FILES="$XDG_CONFIG_HOME/gtk-2.0/gtkrc"
