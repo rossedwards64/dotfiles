@@ -5,7 +5,11 @@ in {
   options.modules.boot = { enable = mkEnableOption "boot"; };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = with pkgs; [ iosevka wineWowPackages.wayland ];
+    environment.systemPackages = with pkgs; [
+      grub2_efi
+      iosevka
+      wineWowPackages.wayland
+    ];
 
     boot = {
       tmp.cleanOnBoot = true;

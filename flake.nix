@@ -45,7 +45,7 @@
       ];
 
       defaultHomeModules = {
-        hyprland.enable = true;
+        #hyprland.enable = false;
         alacritty.enable = true;
         desktop.enable = true;
         discord.enable = true;
@@ -92,11 +92,11 @@
           modules = [ ./hosts/ross-desktop/configuration.nix ] ++ systemModules;
         };
 
-        ross-thinkpad = lib.nixosSystem {
+        ross-thinkpad-x230 = lib.nixosSystem {
           inherit system specialArgs;
           modules = [
             nixos-hardware.nixosModules.lenovo-thinkpad-x230
-            ./hosts/ross-thinkpad/configuration.nix
+            ./hosts/ross-thinkpad-x230/configuration.nix
           ] ++ systemModules;
         };
 
@@ -109,9 +109,11 @@
         };
       };
 
+      home-manager.backupFileExtension = "backup";
+
       homeConfigurations = {
         ross-desktop = homeConfig;
-        ross-thinkpad = homeConfig;
+        ross-thinkpad-x230 = homeConfig;
         ross-thinkpad-x200 = homeConfig;
       };
     };

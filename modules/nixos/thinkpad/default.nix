@@ -53,7 +53,7 @@ in {
         description = "Zero-configuration fan control for ThinkPad.";
         serviceConfig = {
           ExecStart = "${pkgs.zcfan}/bin/zcfan";
-          Restart = "always";
+          Restart = "on-failure";
           RestartSec = "500ms";
           MemoryDenyWriteExecute = "yes";
           NoNewPrivileges = "yes";
@@ -61,6 +61,8 @@ in {
           RestrictAddressFamilies = "";
           RestrictRealtime = "yes";
           TimeoutStopSec = 2;
+          StartLimitBurst = 2;
+          StartLimitIntervalSec = 600;
         };
         wantedBy = [ "default.target" ];
       };

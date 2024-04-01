@@ -25,6 +25,7 @@ in {
       roswell
       sbcl
       texlab
+      tree-sitter
     ];
 
     xdg = {

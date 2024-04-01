@@ -10,9 +10,12 @@
     kde.enable = true;
   };
 
-  opengl.extraPackages = [ pkgs.intel-vaapi-driver ];
+  hardware.opengl.extraPackages = [ pkgs.intel-vaapi-driver ];
 
-  services.xserver.xkb.layout = "gb";
+  services = { 
+    xserver.xkb.layout = "gb"; 
+    tlp.settings.TPSMAPI_ENABLE = 1;
+  };
 
   networking.hostName = "ross-thinkpad-x200";
 

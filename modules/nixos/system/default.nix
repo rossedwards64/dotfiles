@@ -39,6 +39,8 @@ in {
 
     sound.enable = true;
 
+    services.xserver.xkb.options = "ctrl:nocaps";
+
     hardware = {
       pulseaudio.enable = false;
 

@@ -1,5 +1,1 @@
-{ config, ... }:
-
-{
-  imports = [ ./programs ./hyprland ./sway ];
-}
+{ config, ... }: { imports = [ ./wm-programs ./hyprland ./sway ]; }
