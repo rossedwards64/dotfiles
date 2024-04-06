@@ -8,7 +8,7 @@ in {
     users.users.ross = {
       isNormalUser = true;
       description = "Ross Edwards";
-      extraGroups = [ "networkmanager" "wheel" "video" ];
+      extraGroups = [ "networkmanager" "wheel" "video" "libvirtd" ];
       shell = pkgs.zsh;
       useDefaultShell = true;
     };

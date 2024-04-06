@@ -14,5 +14,6 @@
     ./system
     ./thinkpad
     ./user
+    ./qemu
   ];
 }

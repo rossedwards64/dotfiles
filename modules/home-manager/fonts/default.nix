@@ -7,6 +7,9 @@ in {
   config = mkIf cfg.enable {
     home.packages = with pkgs; [
       iosevka
+      noto-fonts
+      noto-fonts-cjk
+      noto-fonts-emoji
       (nerdfonts.override { fonts = [ "Iosevka" ]; })
     ];
   };

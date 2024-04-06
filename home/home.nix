@@ -11,6 +11,13 @@ in {
     userDirs.enable = true;
   };
 
+  dconf.settings = {
+    "org/virt-manager/virt-manager/connections" = {
+      autoconnect = [ "qemu:///system" ];
+      uris = [ "qemu:///system" ];
+    };
+  };
+
   home = {
     inherit username;
     homeDirectory = "/home/${username}";

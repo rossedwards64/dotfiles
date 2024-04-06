@@ -33,7 +33,10 @@ in {
 
     security.polkit.enable = true;
 
-    programs.light.enable = true;
+    programs = {
+      dconf.enable = true;
+      light.enable = true;
+    };
 
     console = { useXkbConfig = true; };
 

@@ -37,7 +37,10 @@
     fsType = "ext4";
   };
 
-  modules = { kde.enable = true; };
+  modules = {
+    kde.enable = true;
+    qemu.enable = true;
+  };
 
   services.xserver = {
     xkb.layout = "us";
