@@ -11,6 +11,7 @@ in {
       openssl
       openssl.dev
       openssl.out
+      stow
       wget
     ];
 
@@ -42,7 +43,10 @@ in {
 
     sound.enable = true;
 
-    services.xserver.xkb.options = "ctrl:nocaps";
+    services = {
+      blueman.enable = true;
+      xserver.xkb.options = "ctrl:nocaps";
+    };
 
     hardware = {
       pulseaudio.enable = false;
@@ -51,6 +55,11 @@ in {
         enable = true;
         driSupport = true;
         driSupport32Bit = true;
+      };
+
+      bluetooth = {
+        enable = true;
+        powerOnBoot = true;
       };
     };
   };

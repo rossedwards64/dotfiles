@@ -5,7 +5,11 @@ in {
   options.modules.gnome = { enable = mkEnableOption "gnome"; };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = with pkgs; [ gnome.gnome-software ];
+    environment.systemPackages = with pkgs; [
+      gnome.gnome-software
+      gnome.gnome-settings-daemon
+      gnomeExtensions.appindicator
+    ];
 
     services = {
       xserver = {

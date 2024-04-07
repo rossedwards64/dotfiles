@@ -10,10 +10,11 @@
     ./kde
     ./networking
     ./programming
+    ./qemu
     ./services
+    ./syncthing
     ./system
     ./thinkpad
     ./user
-    ./qemu
   ];
 }

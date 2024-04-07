@@ -7,7 +7,9 @@
     ./discord
     ./emacs
     ./email
+    ./firefox
     ./fonts
+    ./games
     ./git
     ./gpg
     ./music

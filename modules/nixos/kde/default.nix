@@ -6,19 +6,23 @@ in {
 
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs.kdePackages; [
-      kiten
+      bluez-qt
       discover
       kdeconnect-kde
       kdenlive
       kget
+      kio
+      kio-extras
+      kio-fuse
+      kiten
       kmag
       kteatime
       partitionmanager
       plasma-nm
       plasma-pa
+      plasma-workspace
       powerdevil
       tokodon
-      plasma-workspace
     ];
 
     services = {

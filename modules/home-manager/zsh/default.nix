@@ -42,7 +42,6 @@ in {
           GRADLE_USER_HOME = "$XDG_DATA_HOME/gradle";
           KDEHOME = "$XDG_CONFIG_HOME/kde";
           LEIN_HOME = "$XDG_DATA_HOME/lein";
-          MOZ_ENABLE_WAYLAND = 1;
           NPM_CONFIG_USERCONFIG = "$XDG_CONFIG_HOME/npm/npmrc";
           PASSWORD_STORE_DIR = "$XDG_DATA_HOME/pass";
           ROSWELL_HOME = "$XDG_CONFIG_HOME/roswell";

@@ -6,20 +6,18 @@ in {
 
   config = mkIf cfg.enable {
     home.packages = with pkgs; [
-      firefox
-      neovim
-      nyxt
-      syncthing
-      syncthingtray
+      ani-cli
       gimp
+      libreoffice
       mpv
       ncspot
-      vlc
-      ani-cli
-      libreoffice
-      texliveFull
-      zathura
+      neovim
+      nyxt
       pandoc
+      qbittorrent
+      texliveFull
+      vlc
+      zathura
     ];
   };
 }

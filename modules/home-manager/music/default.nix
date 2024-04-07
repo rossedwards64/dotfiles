@@ -5,10 +5,7 @@ in {
   options.modules.music = { enable = mkEnableOption "music"; };
 
   config = mkIf cfg.enable {
-    home.packages = with pkgs; [
-      mpd
-      ncspot
-    ];
+    home.packages = with pkgs; [ mpd ncspot spotify ];
 
     services.mpd = {
       enable = true;

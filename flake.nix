@@ -32,6 +32,7 @@
         networking.enable = true;
         programming.enable = true;
         services.enable = true;
+        syncthing.enable = true;
         system.enable = true;
         user.enable = true;
       };
@@ -49,9 +50,11 @@
         alacritty.enable = true;
         desktop.enable = true;
         discord.enable = true;
+        firefox.enable = true;
         emacs.enable = true;
         email.enable = true;
         fonts.enable = true;
+        games.enable = true;
         git.enable = true;
         gpg.enable = true;
         music.enable = true;
