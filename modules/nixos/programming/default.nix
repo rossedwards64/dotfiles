@@ -5,6 +5,8 @@ in {
   options.modules.programming = { enable = mkEnableOption "programming"; };
 
   config = mkIf cfg.enable {
+    services.udev.packages = with pkgs; [ platformio-core.udev openocd ];
+
     environment = {
       systemPackages = with pkgs; [
         autoconf
@@ -15,6 +17,8 @@ in {
         git
         gnumake
         libtool
+        platformio
+        platformio-core
         rustc
         rustup
       ];

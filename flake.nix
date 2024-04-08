@@ -12,10 +12,15 @@
     };
 
     hyprland-nix.url = "github:spikespaz/hyprland-nix";
+
+    nixos-cosmic = {
+      url = "github:lilyinstarlight/nixos-cosmic";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs =
-    { self, nixpkgs, home-manager, nixos-hardware, hyprland-nix, ... }@attrs:
+  outputs = { self, nixpkgs, home-manager, nixos-hardware, hyprland-nix
+    , nixos-cosmic, ... }@attrs:
     let
       inherit (self) outputs;
 
@@ -98,6 +103,13 @@
           inherit system specialArgs;
           modules = [
             nixos-hardware.nixosModules.lenovo-thinkpad-x230
+	    {
+              nix.settings = {
+	        substituters = [ "https://cosmic.cachix.org/" ];
+		trusted-public-keys = [ "cosmic.cachix.org-1:Dya9IyXD4xdBehWjrkPv6rtxpmMdRel02smYzA85dPE=" ];
+	      };
+	    }
+	    #nixos-cosmic.nixosModules.default
             ./hosts/ross-thinkpad-x230/configuration.nix
           ] ++ systemModules;
         };

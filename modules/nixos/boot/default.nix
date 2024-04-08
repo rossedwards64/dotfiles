@@ -30,7 +30,7 @@ in {
           GRUB_CMDLINE_LINUX=""
           GRUB_CMDLINE_LINUX_DEFAULT="loglevel=3 quiet acpi_enforce_resources=lax"
           GRUB_DEFAULT=0
-          GRUB_GFXMODE=1280x800,auto
+          GRUB_GFXMODE=1920x1080,auto
           GRUB_GFXPAYLOAD_LINUX=keep
           GRUB_TERMINAL_INPUT=console
           GRUB_TIMEOUT=5
