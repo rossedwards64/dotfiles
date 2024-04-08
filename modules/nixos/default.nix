@@ -11,7 +11,6 @@
     ./networking
     ./programming
     ./qemu
-    ./services
     ./syncthing
     ./system
     ./thinkpad

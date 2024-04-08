@@ -1,6 +1,10 @@
 { config, lib, pkgs, specialArgs, ... }:
-
-{
+let
+  folderConfig = {
+    enable = true;
+    devices = [ "ross-thinkpad-x230" "ross-thinkpad-x200" "ross-phone" ];
+  };
+in {
   imports = [ ./hardware-configuration.nix ];
 
   boot = {
@@ -42,9 +46,23 @@
     qemu.enable = true;
   };
 
-  services.xserver = {
-    xkb.layout = "us";
-    videoDrivers = [ "amdgpu" ];
+  services = {
+    xserver = {
+      xkb.layout = "us";
+      videoDrivers = [ "amdgpu" ];
+    };
+
+    syncthing = {
+      settings = {
+        folders = {
+          "Org Files" = folderConfig;
+          "Books" = folderConfig;
+          "Papers" = folderConfig;
+          "Manuals" = folderConfig;
+          "Pictures" = folderConfig;
+        };
+      };
+    };
   };
 
   networking.hostName = "ross-desktop";

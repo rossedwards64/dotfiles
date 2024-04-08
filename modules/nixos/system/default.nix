@@ -44,7 +44,10 @@ in {
     sound.enable = true;
 
     services = {
-      blueman.enable = true;
+      accounts-daemon.enable = true;
+      flatpak.enable = true;
+      openssh.enable = true;
+      power-profiles-daemon.enable = true;
       xserver.xkb.options = "ctrl:nocaps";
     };
 

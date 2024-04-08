@@ -31,7 +31,6 @@
         games.enable = true;
         networking.enable = true;
         programming.enable = true;
-        services.enable = true;
         syncthing.enable = true;
         system.enable = true;
         user.enable = true;

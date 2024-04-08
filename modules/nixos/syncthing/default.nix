@@ -19,7 +19,7 @@ in {
         devices = {
           "ross-desktop" = {
             id =
-              "KNPE2II-RGJAUOB-REVM22Y-LII77SV-DUIM6N5-RUX4ZO4-GDGVUCY-LXPGJQA";
+              "4NVAFSD-7XR3LOQ-IYYFCO6-7IJAW4H-EXZM5DL-GL5AHT3-CNKDYQW-QWIQ7AP";
             name = "Desktop";
             autoAcceptFolders = true;
           };

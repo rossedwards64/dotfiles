@@ -28,6 +28,7 @@ in {
   hardware.opengl.extraPackages = [ pkgs.intel-vaapi-driver ];
 
   services = {
+    blueman.enable = true;
     xserver.xkb.layout = "gb";
     tlp.settings.NATACPI_ENABLE = 1;
 

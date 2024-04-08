@@ -1,7 +1,7 @@
 { config, pkgs, lib, ... }:
 with lib;
 let
-  generic_fmt = "\[[$symbol($version)]($style)\]";
+  generic_fmt = "\\[[$symbol($version)]($style)\\]";
   cfg = config.modules.system;
 in {
   options.modules.starship = { enable = mkEnableOption "starship"; };
@@ -157,7 +157,7 @@ in {
 
         nim = {
           symbol = "";
-          format = "[[$symbol($version)]($style)]";
+          format = generic_fmt;
         };
 
         nix_shell = {
@@ -172,7 +172,7 @@ in {
 
         package = {
           symbol = " ";
-          format = "\\[[$symbol$version]($style)\\]";
+          format = generic_fmt;
         };
 
         python = {
