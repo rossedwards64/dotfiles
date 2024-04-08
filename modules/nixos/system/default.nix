@@ -45,9 +45,9 @@ in {
 
     services = {
       accounts-daemon.enable = true;
+      power-profiles-daemon.enable = false; # conflicts with TLP.
       flatpak.enable = true;
       openssh.enable = true;
-      power-profiles-daemon.enable = true;
       xserver.xkb.options = "ctrl:nocaps";
     };
 
