@@ -22,7 +22,6 @@ in {
       enable = true;
       package = pkgs.firefox.overrideAttrs
         (attrs: { meta.priority = pkgs.firefox.meta.priority + 1; });
-      nativeMessagingHosts = with pkgs; [ uget-integrator ];
 
       policies = {
         DisableTelemetry = true;
@@ -60,9 +59,9 @@ in {
           };
 
           extensions = with pkgs.nur.repos.rycee.firefox-addons; [
-            darkreader
             decentraleyes
             disable-javascript
+            h264ify
             istilldontcareaboutcookies
             redirector
             simple-translate
@@ -81,7 +80,7 @@ in {
                   template = "https://search.brave.com/search";
                   params = defaultEngineParams;
                 }];
-                definedAliases = [ "@b" ];
+                definedAliases = [ "@brave" ];
                 iconUpdateURL =
                   "https://cdn.search.brave.com/serp/v2/_app/immutable/assets/favicon.acxxetWH.ico";
               };
@@ -92,7 +91,7 @@ in {
                   template = "https://mynixos.com/search";
                   params = defaultEngineParams;
                 }];
-                definedAliases = [ "@np" ];
+                definedAliases = [ "@nixpkgs" ];
                 iconUpdateURL = "https://mynixos.com/favicon.ico";
               };
 
@@ -100,7 +99,7 @@ in {
                 inherit updateInterval;
                 urls =
                   [{ template = "https://wiki.nixos.org/wiki/{searchTerms}"; }];
-                definedAliases = [ "@nw" ];
+                definedAliases = [ "@nixwiki" ];
                 iconUpdateURL = "https://wiki.nixos.org/nixos.png";
               };
 

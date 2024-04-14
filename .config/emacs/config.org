@@ -243,7 +243,7 @@
 #+NAME: functions
 #+BEGIN_SRC emacs-lisp :tangle no
 (defun ross/open-config ()
-  "Switch to 'config.org'."
+  "Switch to \\='config.org\\='."
   (interactive)
   (switch-to-buffer (find-file-noselect
 		     (concat user-emacs-directory "config.org"))))
@@ -257,7 +257,7 @@
     (ross/set-theme theme)))
 
 (defun ross/set-theme-daemon (theme frame)
-  "Apply THEME to FRAME and clean up `after-make-frame-functions' hook."
+  "Apply THEME to FRAME and clean up \\=`after-make-frame-functions\\=' hook."
   (ross/set-theme theme frame)
   (remove-hook 'after-make-frame-functions #'ross/set-theme)
   (fmakunbound 'ross/set-theme))
@@ -271,11 +271,47 @@
 
 (with-eval-after-load "org"
   (defun ross/tangle-and-eval-config ()
-    "Tangles the code blocks from 'config.org' to 'init.el',
-     and re-evaluates 'init.el'."
+    "Tangles the code blocks from \\='config.org\\=' to \\='init.el\\=',
+     and re-evaluates \\='init.el\\='."
     (interactive)
     (org-babel-tangle-file (concat user-emacs-directory "config.org"))
-    (load (concat user-emacs-directory "init.el"))))
+    (load (concat user-emacs-directory "init.el")))
+
+  (defun ross/org-start-presentation ()
+    "Customizes Org-Mode faces for presentation mode."
+    (interactive)
+    (org-present-big)
+    (org-display-inline-images)
+    (org-present-hide-cursor)
+    (org-present-read-only)
+    (visual-fill-column-mode +1)
+    (visual-line-mode +1)
+    (setq header-line-format " ")
+    (setq-local face-remapping-alist '((default (:height 1.5) variable-pitch)
+				       (header-line (:height 4.0) variable-pitch)
+				       (org-document-title (:height 1.75) org-document-title)
+				       (org-code (:height 1.55) org-code)
+				       (org-verbatim (:height 1.55) org-verbatim)
+				       (org-block (:height 1.25) org-block)
+				       (org-block-begin-line (:height 0.7) org-block))))
+
+  (defun ross/org-presentation-prepare-slide ()
+    ""
+    (org-overview)
+    (org-show-entry)
+    (org-show-children))
+
+  (defun ross/org-end-presentation ()
+    "Resets Org-Mode presentation face customizations."
+    (interactive)
+    (org-present-small)
+    (org-remove-inline-images)
+    (org-present-show-cursor)
+    (org-present-read-write)
+    (visual-fill-column-mode -1)
+    (visual-line-mode -1)
+    (setq header-line-format nil)
+    (setq-local face-remapping-alist '((default variable-pitch default)))))
 
 (with-eval-after-load "cl-lib"
   (cl-defun ross/get-closest-pathname (&optional (file "Makefile"))
@@ -292,16 +328,7 @@
 			 if (file-exists-p (expand-file-name file d))
 			 return d
 			 if (equal d root)
-			 return nil))))
-
-  (defun ross/format-buffer-astyle ()
-    "Format all the files inside src using '.astylerc'"
-    (interactive)
-    (with-temp-buffer
-      (let ((astylerc (ross/get-closest-pathname ".astylerc")))
-	(shell-command (format "astyle %s/* --options=%s"
-			       (ross/get-closest-pathname "src") astylerc)
-		       t t)))))
+			 return nil)))))
 #+END_SRC
 
 * Org-Mode
@@ -312,8 +339,8 @@
 	org-src-window-setup 'other-window
 	org-directory "~/Documents/org"
 	org-agenda-files (cl-map 'list (lambda (path)
-				      (concat org-directory path))
-			      '("/agenda.org"))
+					 (concat org-directory path))
+				 '("/agenda.org"))
 	org-log-done 'time
 	org-plantuml-exec-path (executable-find "plantuml")
 	org-pretty-entities-include-sub-superscripts t
@@ -329,7 +356,8 @@
 	("C-c C-c" . #'org-edit-src-exit)
 	:map global-map
 	("C-c na" . #'org-agenda))
-  :hook ((org-mode . auto-complete-mode)))
+  :hook ((org-mode . auto-complete-mode)
+	 (org-mode . variable-pitch-mode)))
 
 (use-package org-roam
   :bind
@@ -355,6 +383,13 @@
 	org-alert-notification-title "---TODO REMINDER---"
 	org-alert-time-match-string "\\(?:SCHEDULED\\|DEADLINE\\):.*?<.*?\\([0-9]\\{2\\}:[0-9]\\{2\\}\\).*>")
   (org-alert-enable))
+
+(use-package org-present
+  :hook
+  ((org-present-mode . ross/org-start-presentation)
+   (org-present-mode-quit . ross/org-end-presentation))
+  :config (add-hook 'org-present-after-navigate-functions
+		    #'ross/org-presentation-prepare-slide))
 
 (use-package org-auto-tangle
   :config (org-auto-tangle-mode +1))
@@ -594,6 +629,11 @@
 
 (use-package solaire-mode
   :config (solaire-global-mode +1))
+
+(use-package visual-fill-column
+  :config
+  (setq visual-fill-column-width 100
+	visual-fill-column-center-text t))
 #+END_SRC
 
 * File Manager
@@ -654,11 +694,15 @@
 (use-package paredit
   :hook
   (((emacs-lisp-mode lisp-mode
-     lisp-interaction-mode scheme-mode)
-    . paredit-mode)))
+     lisp-interaction-mode scheme-mode) . paredit-mode)))
 
 (use-package smartparens
-  :config (smartparens-global-mode +1))
+  :config
+  (smartparens-global-mode +1)
+  (let ((modes '(lisp-mode lisp-interaction-mode
+		 emacs-lisp-mode scheme-mode clojure-mode)))
+    (dolist (delim '("'" "`"))
+      (sp-local-pair modes delim nil :actions :rem))))
 
 (use-package drag-stuff
   :hook ((prog-mode . drag-stuff-mode))
@@ -740,7 +784,8 @@ The `with-eval-after-load` block is a workaround for [[https://github.com/emacs-
 		     (dolist (mode auctex-mode-list)
 		       (setf (lsp--client-major-modes v)
 			     (cl-pushnew mode mode-list)))
-		     (add-to-list 'lsp-language-id-configuration '(`mode . "latex"))))))
+		     (add-to-list 'lsp-language-id-configuration
+				  '(`mode . "latex"))))))
 	     lsp-clients))
   
   (setq lsp-diagnostics-mode t
@@ -969,7 +1014,7 @@ The `with-eval-after-load` block is a workaround for [[https://github.com/emacs-
 #+BEGIN_SRC emacs-lisp
 (use-package lsp-java
   :config (setq lsp-java-configuration-runtimes '[(:name "JavaSE-17"
-						   :path "/usr/lib/jvm/java-17-openjdk"
+					           :path "/usr/lib/jvm/java-17-openjdk"
 						   :default t)]))
 #+END_SRC
 
