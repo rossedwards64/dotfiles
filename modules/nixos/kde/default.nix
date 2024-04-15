@@ -6,24 +6,18 @@ in {
 
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs.kdePackages; [
-      bluez-qt
-      discover
       kdeconnect-kde
       kdenlive
       kget
-      kio
-      kio-extras
-      kio-fuse
       kiten
       kmag
       kteatime
       partitionmanager
-      plasma-nm
-      plasma-pa
-      plasma-workspace
       powerdevil
       tokodon
     ];
+
+    environment = { plasma5.excludePackages = with pkgs; [ konsole xterm ]; };
 
     services = {
       xserver = {
@@ -33,8 +27,15 @@ in {
           sddm.wayland.enable = true;
         };
 
-        desktopManager = { plasma6.enable = true; };
+        desktopManager = {
+          plasma5 = {
+            enable = true;
+            runUsingSystemd = true;
+          };
+        };
       };
     };
+
+    xdg.portal = { extraPortals = with pkgs; [ xdg-desktop-portal-kde ]; };
   };
 }

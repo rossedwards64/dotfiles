@@ -5,13 +5,12 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     utils.url = "github:numtide/flake-utils";
+    hyprland-nix.url = "github:spikespaz/hyprland-nix";
 
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-    hyprland-nix.url = "github:spikespaz/hyprland-nix";
   };
 
   outputs =

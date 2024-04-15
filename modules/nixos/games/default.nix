@@ -19,6 +19,7 @@ in {
       itch
       lutris
       mangohud
+      minecraft
       mupen64plus
       openjk
       openmw
@@ -26,27 +27,47 @@ in {
       openrct2
       openttd
       protontricks
+      ryujinx
+      snes9x
+      space-station-14-launcher
       srb2
       srb2kart
       steam-tui
       steamPackages.steamcmd
       vkd3d-proton
       vulkan-tools
-      zsnes2
 
       (steam.override {
         extraPkgs = pkgs:
           with pkgs; [
-            xorg.libXcursor
-            xorg.libXi
-            xorg.libXinerama
-            xorg.libXScrnSaver
+            SDL
+            SDL2_image
+            fontconfig
+            freetype
+            glew110
+            keyutils
+            libdrm
+            libidn
+            libkrb5
+            libogg
             libpng
             libpulseaudio
             libvorbis
             stdenv.cc.cc.lib
-            libkrb5
-            keyutils
+            tbb
+            xorg.libX11
+            xorg.libXScrnSaver
+            xorg.libXcomposite
+            xorg.libXcursor
+            xorg.libXext
+            xorg.libXfixes
+            xorg.libXi
+            xorg.libXinerama
+            xorg.libXmu
+            xorg.libXrandr
+            xorg.libXt
+            xorg.libXtst
+            zlib
           ];
       })
     ];
@@ -56,6 +77,7 @@ in {
         enable = true;
         remotePlay.openFirewall = true;
         dedicatedServer.openFirewall = true;
+        localNetworkGameTransfers.openFirewall = true;
         gamescopeSession = {
           enable = true;
           args = [ "-w 1920" "-h 1080" "-f" ];

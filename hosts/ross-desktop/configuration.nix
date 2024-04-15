@@ -46,6 +46,14 @@ in {
     qemu.enable = true;
   };
 
+  environment.systemPackages = with pkgs; [
+    # cemu
+    ryujinx
+    pcsx2
+    rpcs3
+    xemu
+  ];
+
   services = {
     xserver = {
       xkb.layout = "us";

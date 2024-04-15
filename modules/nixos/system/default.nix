@@ -32,7 +32,10 @@ in {
       };
     };
 
-    security.polkit.enable = true;
+    security = {
+      polkit.enable = true;
+      rtkit.enable = true;
+    };
 
     programs = {
       dconf.enable = true;
@@ -48,7 +51,13 @@ in {
       power-profiles-daemon.enable = false; # conflicts with TLP.
       flatpak.enable = true;
       openssh.enable = true;
-      xserver.xkb.options = "ctrl:nocaps";
+
+      pipewire = {
+        enable = true;
+        alsa.enable = true;
+        alsa.support32Bit = true;
+        pulse.enable = true;
+      };
     };
 
     hardware = {
