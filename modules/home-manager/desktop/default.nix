@@ -8,6 +8,7 @@ in {
     home.packages = with pkgs; [
       ani-cli
       gimp
+      iosevka
       libreoffice
       mpv
       ncspot

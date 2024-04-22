@@ -8,6 +8,7 @@ in {
     home.packages = with pkgs; [
       clang-tools_17
       gdb
+      seer
       jdk17
       nil
       nixfmt

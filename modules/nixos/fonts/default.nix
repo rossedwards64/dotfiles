@@ -5,7 +5,7 @@ in {
   options.modules.fonts = { enable = mkEnableOption "fonts"; };
 
   config = mkIf cfg.enable {
-    home.packages = with pkgs; [
+    fonts.packages = with pkgs; [
       iosevka
       noto-fonts
       noto-fonts-cjk

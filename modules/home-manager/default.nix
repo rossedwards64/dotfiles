@@ -1,4 +1,4 @@
-{ config, ... }:
+{ ... }:
 
 {
   imports = [
@@ -8,7 +8,6 @@
     ./emacs
     ./email
     ./firefox
-    ./fonts
     ./games
     ./git
     ./gpg

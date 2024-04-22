@@ -114,6 +114,7 @@ in {
             "colored-man-pages"
             "command-not-found"
             "cp"
+            "direnv"
             "extract"
             "fd"
             "fzf"

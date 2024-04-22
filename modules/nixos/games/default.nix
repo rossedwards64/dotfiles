@@ -27,7 +27,6 @@ in {
       openrct2
       openttd
       protontricks
-      ryujinx
       snes9x
       space-station-14-launcher
       srb2

@@ -275,11 +275,11 @@
      and re-evaluates \\='init.el\\='."
     (interactive)
     (org-babel-tangle-file (concat user-emacs-directory "config.org"))
-    (load (concat user-emacs-directory "init.el")))
+    (load (concat user-emacs-directory "init.el"))))
 
+(with-eval-after-load "org-present"
   (defun ross/org-start-presentation ()
     "Customizes Org-Mode faces for presentation mode."
-    (interactive)
     (org-present-big)
     (org-display-inline-images)
     (org-present-hide-cursor)
@@ -295,15 +295,14 @@
 				       (org-block (:height 1.25) org-block)
 				       (org-block-begin-line (:height 0.7) org-block))))
 
-  (defun ross/org-presentation-prepare-slide ()
-    ""
+  (defun ross/org-presentation-prepare-slide (buffer-name heading)
+    "Prepares the next slide in the presentation."
     (org-overview)
     (org-show-entry)
     (org-show-children))
 
   (defun ross/org-end-presentation ()
     "Resets Org-Mode presentation face customizations."
-    (interactive)
     (org-present-small)
     (org-remove-inline-images)
     (org-present-show-cursor)
@@ -357,7 +356,27 @@
 	:map global-map
 	("C-c na" . #'org-agenda))
   :hook ((org-mode . auto-complete-mode)
-	 (org-mode . variable-pitch-mode)))
+	 (org-mode . variable-pitch-mode))
+  :config
+  (dolist (face '((org-level-1 . 1.2)
+		  (org-level-2 . 1.1)
+		  (org-level-3 . 1.05)
+		  (org-level-4 . 1.0)
+		  (org-level-5 . 1.1)
+		  (org-level-6 . 1.1)
+		  (org-level-7 . 1.1)
+		  (org-level-8 . 1.1)))
+    (set-face-attribute (car face) nil :font font-name :weight 'medium :height (cdr face)))
+
+  (set-face-attribute 'org-document-title nil :font font-name :weight 'bold :height 1.3)
+  (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
+  (set-face-attribute 'org-table nil :inherit 'fixed-pitch)
+  (set-face-attribute 'org-formula nil :inherit 'fixed-pitch)
+  (set-face-attribute 'org-code nil :inherit '(shadow fixed-pitch))
+  (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
+  (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
+  (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
+  (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch))
 
 (use-package org-roam
   :bind
@@ -385,6 +404,7 @@
   (org-alert-enable))
 
 (use-package org-present
+  :commands (org-present)
   :hook
   ((org-present-mode . ross/org-start-presentation)
    (org-present-mode-quit . ross/org-end-presentation))
@@ -693,16 +713,17 @@
 
 (use-package paredit
   :hook
-  (((emacs-lisp-mode lisp-mode
-     lisp-interaction-mode scheme-mode) . paredit-mode)))
+  (((emacs-lisp-mode lisp-mode lisp-interaction-mode
+		     scheme-mode clojure-mode)
+    . paredit-mode)))
 
 (use-package smartparens
   :config
   (smartparens-global-mode +1)
-  (let ((modes '(lisp-mode lisp-interaction-mode
-		 emacs-lisp-mode scheme-mode clojure-mode)))
-    (dolist (delim '("'" "`"))
-      (sp-local-pair modes delim nil :actions :rem))))
+  (sp-with-modes '(lisp-mode lisp-interaction-mode emacs-lisp-mode
+			     scheme-mode clojure-mode)
+    (sp-local-pair "'" nil :actions nil)
+    (sp-local-pair "`" nil :actions nil)))
 
 (use-package drag-stuff
   :hook ((prog-mode . drag-stuff-mode))
@@ -724,6 +745,10 @@
 	("C-c ma" . mc/mark-all-like-this)))
 
 (use-package iedit)
+
+(use-package yasnippet
+  :config (yas-global-mode +1))
+(use-package yasnippet-snippets)
 #+END_SRC
 
 * Programming
@@ -796,17 +821,12 @@ The `with-eval-after-load` block is a workaround for [[https://github.com/emacs-
 	lsp-enable-snippet t
 	lsp-enable-text-document-color t
 	lsp-headerline-breadcrumb-enable t
-	lsp-inlay-hint-enable nil
 	lsp-inlay-hint-enable t
 	lsp-modeline-code-actions-enable t
 	lsp-modeline-code-actions-segments '(icon count name)
-	lsp-rust-analyzer-binding-mode-hints t
 	lsp-rust-analyzer-closing-brace-hints t
 	lsp-rust-analyzer-display-chaining-hints t
-	lsp-rust-analyzer-display-lifetime-elision-hints-enable t
-	lsp-rust-analyzer-display-lifetime-elision-hints-use-parameter-names t
 	lsp-rust-analyzer-display-parameter-hints t
-	lsp-rust-analyzer-display-reborrow-hints t
 	lsp-rust-analyzer-lens-references-adt-enable t
 	lsp-rust-analyzer-lens-references-enum-variant-enable t
 	lsp-rust-analyzer-lens-references-method-enable t
@@ -1014,8 +1034,8 @@ The `with-eval-after-load` block is a workaround for [[https://github.com/emacs-
 #+BEGIN_SRC emacs-lisp
 (use-package lsp-java
   :config (setq lsp-java-configuration-runtimes '[(:name "JavaSE-17"
-					           :path "/usr/lib/jvm/java-17-openjdk"
-						   :default t)]))
+							 :path "/usr/lib/jvm/java-17-openjdk"
+							 :default t)]))
 #+END_SRC
 
 *** Groovy

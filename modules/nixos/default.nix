@@ -1,4 +1,4 @@
-{ config, ... }:
+{ ... }:
 
 {
   imports = [
@@ -15,5 +15,6 @@
     ./system
     ./thinkpad
     ./user
+    ./fonts
   ];
 }
