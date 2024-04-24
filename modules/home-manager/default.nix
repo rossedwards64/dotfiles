@@ -4,7 +4,6 @@
   imports = [
     ./alacritty
     ./desktop
-    ./discord
     ./emacs
     ./email
     ./firefox

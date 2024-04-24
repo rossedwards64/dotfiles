@@ -48,7 +48,6 @@
         #hyprland.enable = false;
         alacritty.enable = true;
         desktop.enable = true;
-        discord.enable = true;
         firefox.enable = true;
         emacs.enable = true;
         email.enable = true;
