@@ -15,14 +15,24 @@ let
 
   checkMuteScript = import ../scripts/check-mute.nix { inherit pkgs; };
   toggleSinkScript = import ../scripts/toggle-sink.nix { inherit pkgs; };
-  wobScript = import ./scripts/wob.nix { inherit pkgs; };
+  wobScript = import ../scripts/wob.nix { inherit pkgs; };
 
-  launcher = "$fuzzelscripts/launcher";
-  powermenu = "$fuzzelscripts/powermenu";
-  runner = "$fuzzelscripts/runner";
-  screenshot = "$fuzzelscripts/screenshot";
-  windows = "$fuzzelscripts/windows";
+  launcher =
+    import ../wm-programs/fuzzel/scripts/launcher.nix { inherit pkgs; };
+  powermenu =
+    import ../wm-programs/fuzzel/scripts/powermenu.nix { inherit pkgs; };
+  runner = import ../wm-programs/fuzzel/scripts/runner.nix { inherit pkgs; };
+  screenshot =
+    import ../wm-programs/fuzzel/scripts/screenshot.nix { inherit pkgs; };
+  windows = import ../wm-programs/fuzzel/scripts/windows.nix { inherit pkgs; };
+
   wobsock = "$XDG_RUNTIME_DIR/wob.sock";
+
+  classAndAppId = (appName: {
+    class = "${appName}";
+    app_id = "${appName}";
+  });
+
   any = ".*";
   discordRegexp = "^discord$";
   emacsRegexp = "^emacs(client)?$";
@@ -39,13 +49,13 @@ let
   spotifyRegexp = "^(dev.alextren.)?Spot(ify)?$";
   steamRegexp = "^steam$";
   steamGameRegexp = "^steam_app_[0-9]*$";
-  swayncRegexp = "^swaync(-client)?$";
   terminalRegexp = "^Alacritty$";
   vlcRegexp = "^vlc$";
   volumeRegexp = "^pavucontrol$";
   xwvbRegexp = "^xwaylandvideobridge$";
   yomihustleRegexp = "^youronlymoveishustle.*$";
   zathuraRegexp = "^org.pwmt.zathura$";
+
   colours = {
     rosewater = "#f5e0dc";
     flamingo = "#f2cdcd";
@@ -94,12 +104,12 @@ in {
 
           extraConfig = ''
             bindsym --locked {
-                XF86AudioRaiseVolume exec $WOBSCRIPT "-v" "-i5"
-                XF86AudioLowerVolume exec $WOBSCRIPT "-v" "-d5"
+                XF86AudioRaiseVolume exec ${wobScript} "-v" "-i5"
+                XF86AudioLowerVolume exec ${wobScript} "-v" "-d5"
                 XF86AudioMute exec ${pkgs.wireplumber}/bin/wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle && \
-                                ${checkMuteScript}/bin/check-mute "getspeaker"
+                                ${checkMuteScript} "getspeaker"
                 XF86AudioMicMute exec ${pkgs.wireplumber}/bin/wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle && \
-                                ${checkMuteScript}/bin/check-mute "getmic"
+                                ${checkMuteScript} "getmic"
                 XF86AudioPlay exec ${pkgs.playerctl}/bin/playerctl play-pause
                 XF86AudioNext exec ${pkgs.playerctl}/bin/playerctl next
                 XF86AudioPrev exec ${pkgs.playerctl}/bin/playerctl previous
@@ -126,6 +136,7 @@ in {
             workspaceAutoBackAndForth = true;
             workspaceLayout = "tabbed";
             workspaceOutputAssign = [ ];
+            bars = [ ];
 
             seat = {
               "seat0" = { xcursor_theme = "Catppuccin-Mocha-Dark-Cursors 24"; };
@@ -145,19 +156,32 @@ in {
             };
 
             assigns = {
-              "1: emacs" = [{ app_id = "${emacsRegexp}"; }];
-              "2: alacritty" = [{ app_id = "${terminalRegexp}"; }];
-              "3: browser" = [{ app_id = "${firefoxRegexp}"; }];
-              "4: discord" = [{ class = "${discordRegexp}"; }];
-              "5: spotify" = [{ app_id = "${spotifyRegexp}"; }];
-              "6: launchers" = [{ class = "${steamRegexp}"; }];
-              "7: steam game" = [{ class = "${steamGameRegexp}"; }];
-              "7: game" = [{
-                class =
-                  "^(factorio|youronlymoveishustle|dwarfort|gamescope).*$";
-                app_id =
-                  "^(factorio|youronlymoveishustle|dwarfort|gamescope).*$";
-              }];
+              "workspace 1" = [ (classAndAppId "${emacsRegexp}") ];
+              "workspace 2" = [ (classAndAppId "${terminalRegexp}") ];
+              "workspace 3" = [ (classAndAppId "${firefoxRegexp}") ];
+              "workspace 4" = [ (classAndAppId "${discordRegexp}") ];
+              "workspace 5" = [
+                (classAndAppId "${spotifyRegexp}")
+                (classAndAppId "${freetubeRegexp}")
+                (classAndAppId "${mpvRegexp}")
+                (classAndAppId "${vlcRegexp}")
+              ];
+              "workspace 6" = [
+                (classAndAppId "${steamRegexp}")
+                (classAndAppId "${epicGamesRegexp}")
+                (classAndAppId "${itchioRegexp}")
+                (classAndAppId "${lutrisRegexp}")
+                (classAndAppId "${minecraftRegexp}")
+              ];
+              "workspace 7" = [
+                (classAndAppId "${steamGameRegexp}")
+                (classAndAppId "${gameRegexp}")
+                (classAndAppId "${yomihustleRegexp}")
+                (classAndAppId "${factorioRegexp}")
+              ];
+              "workspace 8" = [ ];
+              "workspace 9" = [ (classAndAppId "${intellijRegexp}") ];
+              "workspace 10" = [ ];
             };
 
             output = {
@@ -384,10 +408,11 @@ in {
               "${modifier}+Up" = "focus up";
               "${modifier}+a" = "focus parent";
               "${modifier}+b" = "splith";
-              "${modifier}+d" = ''exec "pkill fuzzel || ${launcher}"'';
+              "${modifier}+c" = "exec ${toggleSinkScript}";
+              "${modifier}+d" = ''exec "pkill fuzzel || ${fuzzelBin}"'';
               "${modifier}+e" = "layout toggle split";
               "${modifier}+f" = "fullscreen";
-              "${modifier}+r" = ''exec "pkill fuzzel || ${fuzzelBin}"'';
+              "${modifier}+r" = ''exec "pkill fuzzel || ${launcher}"'';
               "${modifier}+s" = "layout stacking";
               "${modifier}+space" = "focus mode_toggle";
               "${modifier}+t" = "exec swaync-client -t -sw";

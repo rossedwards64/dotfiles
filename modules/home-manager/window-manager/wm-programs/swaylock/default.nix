@@ -2,7 +2,7 @@
 with lib;
 let
   cfg = config.modules.swaylock;
-  white = "000000";
+  white = "00000000";
   text = "11111b";
   colour = "cba6f7";
   verColour = "89b4fa";
@@ -12,10 +12,10 @@ in {
   options.modules.swaylock = { enable = mkEnableOption "swaylock"; };
 
   config = mkIf cfg.enable {
-    home.packages = with pkgs; [ swaylock ];
-
     programs.swaylock = {
       enable = true;
+      package = pkgs.swaylock-effects;
+
       settings = {
         font = "Iosevka";
         font-size = 36;

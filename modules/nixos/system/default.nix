@@ -6,11 +6,13 @@ in {
 
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
+      bc
       jdk
       killall
+      libnotify
       nh
-      nvd
       nix-output-monitor
+      nvd
       openssl
       openssl.dev
       openssl.out

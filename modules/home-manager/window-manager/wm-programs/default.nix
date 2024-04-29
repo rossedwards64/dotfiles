@@ -1,7 +1,20 @@
-{ ... }: {
+{ pkgs, ... }: {
   imports = [ ./dunst ./fuzzel ./swayidle ./swaylock ./waybar ./wob ];
+
+  home.packages = with pkgs; [ brightnessctl swaynotificationcenter ];
+
   programs = { imv.enable = true; };
-  services = { playerctld.enable = true; };
+  
+  services = {
+    udiskie = {
+      enable = true;
+      tray = "always";
+      notify = true;
+      automount = true;
+    };
+
+    playerctld.enable = true;
+  };
 
   modules = {
     dunst.enable = true;

@@ -1,7 +1,7 @@
 { pkgs }:
 
 pkgs.writeShellApplication {
-  name = "mail";
+  name = "runner";
   runtimeInputs = [ ];
 
   text = "";

@@ -1,6 +1,11 @@
 { lib, pkgs, config, ... }:
 with lib;
-let cfg = config.modules.dunst;
+let
+  cfg = config.modules.dunst;
+  defaultFrameColour = "#89b4fa";
+  background = "#1e1e2e";
+  foreground = "#cdd6fa";
+  criticalFrameColour = "#fab387";
 in {
   options.modules.dunst = { enable = mkEnableOption "dunst"; };
 
@@ -9,6 +14,12 @@ in {
 
     services.dunst = {
       enable = true;
+
+      iconTheme = {
+        name = "rose-pine-moon";
+        package = pkgs.rose-pine-icon-theme;
+        size = "32x32";
+      };
 
       settings = {
         global = {
@@ -32,16 +43,13 @@ in {
           horizontal_padding = 0;
           text_icon_padding = 0;
           frame_width = 3;
-          frame_color = "#1E66F5";
+          frame_color = defaultFrameColour;
           separator_color = "frame";
           sort = "yes";
           font = "Iosevka 10";
           line_height = 0;
           markup = "full";
-          format = ''
-            <b>%s</b>
-            %b
-            %p'';
+          format = "<b>%s</b>\\n%b\\n%p";
           alignment = "left";
           vertical_alignment = "center";
           show_age_threshold = 60;
@@ -53,8 +61,6 @@ in {
           icon_position = "left";
           min_icon_size = 0;
           max_icon_size = 32;
-          icon_path =
-            "${pkgs.rose-pine-icon-theme}/share/icons/rose-pine/16x16/status:${pkgs.rose-pine-icon-theme}/share/icons/rose-pine/16x16/devices";
           sticky_history = "yes";
           history_length = 20;
           browser-open = "xdg-open";
@@ -73,21 +79,18 @@ in {
         experimental = { per_monitor_dpi = false; };
 
         urgency_low = {
-          background = "#EFF1F5";
-          foreground = "#4C4F69";
+          inherit background foreground;
           timeout = 10;
         };
 
         urgency_normal = {
-          background = "#EFF1F5";
-          foreground = "#4C4F69";
+          inherit background foreground;
           timeout = 10;
         };
 
         urgency_critical = {
-          background = "#EFF1F5";
-          foreground = "#4C4F69";
-          frame_color = "#FE640B";
+          inherit background foreground;
+          frame_color = criticalFrameColour;
           timeout = 0;
         };
 

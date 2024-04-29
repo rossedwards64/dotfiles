@@ -2,7 +2,7 @@
 
 pkgs.writeShellApplication {
   name = "gpu-percent";
-  runtimeInputs = [ ];
+  runtimeInputs = with pkgs; [ coreutils ];
 
   text = ''
     gpu_dir=/sys/class/drm/card1/device

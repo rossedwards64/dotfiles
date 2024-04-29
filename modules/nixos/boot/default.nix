@@ -22,8 +22,8 @@ in {
         theme = pkgs.fetchFromGitHub ({
           owner = "catppuccin";
           repo = "grub";
-          rev = "803c5df0e83aba61668777bb96d90ab8f6847106";
-          sha256 = "sha256-/bSolCta8GCZ4lP0u5NVqYQ9Y3ZooYCNdTwORNvR7M0=";
+          rev = "88f6124757331fd3a37c8a69473021389b7663ad";
+          sha256 = "sha256-e8XFWebd/GyX44WQI06Cx6sOduCZc5z7/YhweVQGMGY=";
         }) + "/src/catppuccin-mocha-grub-theme";
 
         extraConfig = ''

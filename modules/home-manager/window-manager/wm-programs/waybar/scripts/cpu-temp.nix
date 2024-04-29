@@ -2,7 +2,7 @@
 
 pkgs.writeShellApplication {
   name = "cpu-temp";
-  runtimeInputs = [ ];
+  runtimeInputs = with pkgs; [ bc coreutils ];
 
   text = ''
     triple_digits=1000000

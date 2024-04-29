@@ -40,8 +40,8 @@ in {
   };
 
   modules = {
-    # kde.enable = true;
-    window-manager.enable = true;
+    kde.enable = true;
+    # window-manager.enable = true;
     qemu.enable = true;
   };
 

@@ -112,7 +112,7 @@
             ({ config, pkgs, options, ... }: {
               modules = lib.attrsets.mergeAttrsList [
                 defaultHomeModules
-                { sway.enable = true; }
+                { sway.enable = false; }
               ];
             })
           ];

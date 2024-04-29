@@ -8,12 +8,21 @@ let
 
   cpuTempScript = import ./scripts/cpu-temp.nix { inherit pkgs; };
   gpuTempScript = import ./scripts/gpu-temp.nix { inherit pkgs; };
-  gpuMemScript = import ./scripts/gpu-temp.nix { inherit pkgs; };
+  gpuMemScript = import ./scripts/gpu-mem.nix { inherit pkgs; };
   gpuPercentScript = import ./scripts/gpu-percent.nix { inherit pkgs; };
   powerScript = import ./scripts/power.nix { inherit pkgs; };
   spotifyScript = import ./scripts/spotify.nix { inherit pkgs; };
-  mailScript = import ./scripts/mail.nix { inherit pkgs; };
   weatherScript = import ./scripts/weather.nix { inherit pkgs; };
+
+  makeDisk = (disk: path: {
+    name = "disk#${disk}";
+    config = {
+      format = "󰋊 ${lib.toUpper disk}: {used} / {total}";
+      tooltip-format = "{used} / {total} used";
+      path = "${path}";
+      interval = 300;
+    };
+  });
 
   modules = {
     builtin = {
@@ -116,57 +125,42 @@ let
         };
       };
 
+      wireplumber = {
+        name = "wireplumber";
+        config = {
+          format = "{volume}% {icon}";
+          format-muted = "";
+          format-icons = {
+            headphone = "";
+            hands-free = "󰂯";
+            headset = "󰋎";
+            phone = "";
+            portable = "";
+            car = "";
+            default = [ "" "" ];
+          };
+          on-click = "{pkgs.helvum}/bin/helvum";
+        };
+      };
+
       disk = {
-        root = {
-          name = "disk#root";
-          config = {
-            format = "󰋊 ROOT: {used} / {total}";
-            tooltip-format = "{used} / {total} used";
-            path = "/";
-            interval = 300;
-          };
-        };
-
-        hdd = {
-          name = "disk#hdd";
-          config = {
-            format = "󰋊 HDD: {used} / {total}";
-            tooltip-format = "{used} / {total} used";
-            path = "/HDD";
-            interval = 300;
-          };
-        };
-
-        ssd = {
-          name = "disk#ssd";
-          config = {
-            format = "󰋊 SSD: {used} / {total}";
-            tooltip-format = "{used} / {total} used";
-            path = "/SSD";
-            interval = 300;
-          };
-        };
-
-        ssd2 = {
-          name = "disk#ssd2";
-          config = {
-            format = "󰋊 SSD2: {used} / {total}";
-            tooltip-format = "{used} / {total} used";
-            path = "/SSD2";
-            interval = 300;
-          };
-        };
+        root = makeDisk "root" "/";
+        hdd = makeDisk "hdd" "/HDD";
+        ssd = makeDisk "ssd" "/SSD";
+        ssd2 = makeDisk "ssd2" "/SSD2";
       };
 
       taskbar = {
         name = "wlr/taskbar";
         config = {
           format = "{icon} {name}";
-          icon-size = 24;
-          icon-theme = [ "rose-pine-moon" ];
+          icon-size = 32;
+          icon-theme =
+            [ "${pkgs.rose-pine-icon-theme}/share/icons/rose-pine-moon" ];
           tooltip = false;
           on-click = "activate";
           on-click-right = "close";
+          sort-by-app-id = true;
         };
       };
 
@@ -182,6 +176,17 @@ let
         mode = {
           name = "sway/mode";
           config = { format = ''<span style="italic">{}</span>''; };
+        };
+
+        scratchpad = {
+          name = "sway/scratchpad";
+          config = {
+            format = "{icon} {count}";
+            format-icons = [ "󱘔" "󱘒" ];
+            show-empty = true;
+            tooltip = true;
+            tooltip-format = "{app}: {title}";
+          };
         };
       };
 
@@ -280,47 +285,47 @@ let
       };
 
       cpuTemp = {
-        name = "custom/cpu_temp";
+        name = "custom/cpu-temp";
         config = {
-          exec = cpuTempScript;
+          exec = "${cpuTempScript}/bin/cpu-temp";
           format = " {}";
           interval = 1;
         };
       };
 
       gpuPercent = {
-        name = "custom/gpu_percent";
+        name = "custom/gpu-percent";
         config = {
-          exec = gpuPercentScript;
+          exec = "${gpuPercentScript}/bin/gpu-percent";
           format = "󰘚 GPU {}";
           interval = 1;
         };
       };
 
       gpuMem = {
-        name = "custom/gpu_mem";
+        name = "custom/gpu-mem";
         config = {
-          exec = gpuMemScript;
+          exec = "${gpuMemScript}/bin/gpu-mem";
           format = "{}";
           interval = 1;
         };
       };
 
       gpuTemp = {
-        name = "custom/gpu_temp";
+        name = "custom/gpu-temp";
         config = {
-          exec = gpuTempScript;
+          exec = "${gpuTempScript}/bin/gpu-temp";
           format = " {}";
           interval = 1;
         };
       };
 
-      powerOff = {
+      power = {
         name = "custom/power";
         config = {
           tooltip = false;
           format = "󰐥";
-          on-click = powerScript;
+          on-click = "${powerScript}/bin/power";
         };
       };
 
@@ -328,19 +333,9 @@ let
         name = "custom/weather";
         config = {
           return-type = "json";
-          exec = weatherScript;
+          exec = "${weatherScript}/bin/weather";
           interval = 300;
           on-click = "${pkgs.firefox}/bin/firefox https://wttr.in";
-        };
-      };
-
-      mail = {
-        name = "custom/mail";
-        config = {
-          tooltip = false;
-          format = "󰐥 ";
-          exec = mailScript;
-          interval = 120;
         };
       };
 
@@ -349,18 +344,53 @@ let
         config = {
           interval = 1;
           return-type = "json";
-          exec = spotifyScript;
-          exec-if = "pgrep spotify";
+          exec = "${spotifyScript}/bin/spotify";
+          exec-if =
+            "${pkgs.procps}/bin/pgrep spotify || ${pkgs.procps}/bin/pgrep spotify_player || ${pkgs.procps}/bin/pgrep spot || ${pkgs.procps}/bin/pgrep ncspot";
           escape = true;
         };
       };
     };
   };
+
+  allModules = with modules;
+    lib.mergeAttrsList
+    (builtins.map (module: { "${module.name}" = module.config; }) [
+      builtin.clock
+      builtin.cpu
+      builtin.disk.hdd
+      builtin.disk.root
+      builtin.disk.ssd
+      builtin.disk.ssd2
+      builtin.gamemode
+      builtin.memory
+      builtin.network.disconnected
+      builtin.network.ethernet
+      builtin.network.wifi
+      builtin.pulseaudio
+      builtin.sway.window
+      builtin.sway.mode
+      builtin.sway.scratchpad
+      builtin.temperature
+      builtin.tray
+      builtin.taskbar
+      builtin.idleInhibitor
+      builtin.wireplumber
+      custom.cpuTemp
+      custom.gpuMem
+      custom.gpuPercent
+      custom.gpuTemp
+      custom.launcher
+      custom.power
+      custom.separator
+      custom.spotify
+      custom.weather
+    ]);
 in {
   options.modules.waybar = { enable = mkEnableOption "waybar"; };
 
   config = mkIf cfg.enable {
-    home.packages = with pkgs; [ waybar ];
+    home.packages = with pkgs; [ waybar procps ];
 
     programs.waybar = with modules; {
       enable = true;
@@ -375,36 +405,27 @@ in {
           output = hdmi;
 
           modules-left = [
+            "${custom.launcher.name}"
             "${custom.separator.name}"
             "${builtin.memory.name}"
             "${builtin.cpu.name}"
+            "${custom.cpuTemp.name}"
+            "${custom.gpuPercent.name}"
+            "${custom.gpuMem.name}"
+            "${custom.gpuTemp.name}"
+            "${custom.separator.name}"
           ];
           modules-center = [ "${builtin.clock.name}" ];
           modules-right = [
+            "${custom.separator.name}"
             "${builtin.network.disconnected.name}"
-            "${builtin.network.ethernet.name}"
             "${builtin.network.wifi.name}"
+            "${builtin.network.ethernet.name}"
+            "${builtin.network.disconnected.name}"
+            "${custom.separator.name}"
+            "${custom.power.name}"
           ];
-
-          "${builtin.clock.name}" = builtin.clock.config;
-          "${builtin.cpu.name}" = builtin.cpu.config;
-          "${builtin.memory.name}" = builtin.memory.config;
-          "${builtin.network.disconnected.name}" =
-            builtin.network.disconnected.config;
-          "${builtin.network.ethernet.name}" = builtin.network.ethernet.config;
-          "${builtin.network.wifi.name}" = builtin.network.wifi.config;
-          "${builtin.pulseaudio.name}" = builtin.pulseaudio.config;
-          "${builtin.sway.window.name}" = builtin.sway.window.config;
-          "${builtin.temperature.name}" = builtin.temperature.config;
-          "${custom.cpuTemp.name}" = custom.cpuTemp.config;
-          "${custom.launcher.name}" = custom.launcher.config;
-          "${custom.separator.name}" = custom.separator.config;
-          "${custom.gpuTemp.name}" = custom.gpuTemp.config;
-          "${custom.gpuMem.name}" = custom.gpuMem.config;
-          "${custom.gpuPercent.name}" = custom.gpuPercent.config;
-          "${builtin.tray.name}" = builtin.tray.config;
-          "${builtin.gamemode.name}" = builtin.gamemode.config;
-        };
+        } // allModules;
 
         bottombar1 = {
           inherit height;
@@ -414,39 +435,16 @@ in {
           modules-left = [
             "${builtin.tray.name}"
             "${builtin.gamemode.name}"
-            #"${builtin.hyprland.language.name}"
             "${custom.separator.name}"
             "${builtin.backlight.name}"
-            "${builtin.pulseaudio.name}"
+            "${builtin.wireplumber.name}"
             "${builtin.idleInhibitor.name}"
             "${custom.separator.name}"
-            #"${builtin.hyprland.submap.name}"
           ];
           modules-center = [ "${builtin.taskbar.name}" ];
-          modules-centerdules-right = [
-            "${custom.separator.name}"
-            #"${builtin.hyprland.window.name}"
-          ];
-
-          "${builtin.clock.name}" = builtin.clock.config;
-          "${builtin.cpu.name}" = builtin.cpu.config;
-          "${builtin.memory.name}" = builtin.memory.config;
-          "${builtin.network.disconnected.name}" =
-            builtin.network.disconnected.config;
-          "${builtin.network.ethernet.name}" = builtin.network.ethernet.config;
-          "${builtin.network.wifi.name}" = builtin.network.wifi.config;
-          "${builtin.pulseaudio.name}" = builtin.pulseaudio.config;
-          "${builtin.sway.window.name}" = builtin.sway.window.config;
-          "${builtin.temperature.name}" = builtin.temperature.config;
-          "${custom.cpuTemp.name}" = custom.cpuTemp.config;
-          "${custom.launcher.name}" = custom.launcher.config;
-          "${custom.separator.name}" = custom.separator.config;
-          "${custom.gpuTemp.name}" = custom.gpuTemp.config;
-          "${custom.gpuMem.name}" = custom.gpuMem.config;
-          "${custom.gpuPercent.name}" = custom.gpuPercent.config;
-          "${builtin.tray.name}" = builtin.tray.config;
-          "${builtin.gamemode.name}" = builtin.gamemode.config;
-        };
+          modules-center-right =
+            [ "${custom.separator.name}" "${custom.separator.name}" ];
+        } // allModules;
 
         topbar2 = {
           inherit height;
@@ -454,6 +452,7 @@ in {
           position = "top";
           output = dp;
           modules-left = [
+            "${custom.launcher.name}"
             "${custom.separator.name}"
             "${builtin.disk.root.name}"
             "${builtin.disk.ssd.name}"
@@ -465,31 +464,11 @@ in {
           modules-right = [
             "${custom.separator.name}"
             "${custom.spotify.name}"
-            "${custom.mail.name}"
             "${custom.weather.name}"
             "${custom.separator.name}"
-            "${custom.powerOff.name}"
+            "${custom.power.name}"
           ];
-
-          "${builtin.clock.name}" = builtin.clock.config;
-          "${builtin.cpu.name}" = builtin.cpu.config;
-          "${builtin.memory.name}" = builtin.memory.config;
-          "${builtin.network.disconnected.name}" =
-            builtin.network.disconnected.config;
-          "${builtin.network.ethernet.name}" = builtin.network.ethernet.config;
-          "${builtin.network.wifi.name}" = builtin.network.wifi.config;
-          "${builtin.pulseaudio.name}" = builtin.pulseaudio.config;
-          "${builtin.sway.window.name}" = builtin.sway.window.config;
-          "${builtin.temperature.name}" = builtin.temperature.config;
-          "${custom.cpuTemp.name}" = custom.cpuTemp.config;
-          "${custom.launcher.name}" = custom.launcher.config;
-          "${custom.separator.name}" = custom.separator.config;
-          "${custom.gpuTemp.name}" = custom.gpuTemp.config;
-          "${custom.gpuMem.name}" = custom.gpuMem.config;
-          "${custom.gpuPercent.name}" = custom.gpuPercent.config;
-          "${builtin.tray.name}" = builtin.tray.config;
-          "${builtin.gamemode.name}" = builtin.gamemode.config;
-        };
+        } // allModules;
 
         bottombar2 = {
           inherit height;
@@ -497,47 +476,31 @@ in {
           position = "bottom";
           output = dp;
 
-          modules-left = [ ];
+          modules-left =
+            [ "${custom.separator.name}" "${custom.separator.name}" ];
           modules-center = [ "${builtin.taskbar.name}" ];
           modules-right = [
             "${custom.separator.name}"
-            #"${builtin.hyprland.window.name}"
+            "${builtin.sway.scratchpad.name}"
+            "${builtin.sway.window.name}"
+            "${custom.separator.name}"
           ];
-
-          "${builtin.clock.name}" = builtin.clock.config;
-          "${builtin.cpu.name}" = builtin.cpu.config;
-          "${builtin.memory.name}" = builtin.memory.config;
-          "${builtin.network.disconnected.name}" =
-            builtin.network.disconnected.config;
-          "${builtin.network.ethernet.name}" = builtin.network.ethernet.config;
-          "${builtin.network.wifi.name}" = builtin.network.wifi.config;
-          "${builtin.pulseaudio.name}" = builtin.pulseaudio.config;
-          "${builtin.sway.window.name}" = builtin.sway.window.config;
-          "${builtin.temperature.name}" = builtin.temperature.config;
-          "${custom.cpuTemp.name}" = custom.cpuTemp.config;
-          "${custom.launcher.name}" = custom.launcher.config;
-          "${custom.separator.name}" = custom.separator.config;
-          "${custom.gpuTemp.name}" = custom.gpuTemp.config;
-          "${custom.gpuMem.name}" = custom.gpuMem.config;
-          "${custom.gpuPercent.name}" = custom.gpuPercent.config;
-          "${builtin.tray.name}" = builtin.tray.config;
-          "${builtin.gamemode.name}" = builtin.gamemode.config;
-        };
+        } // allModules;
       };
 
       style = ''
-        @define-color base   #303446;
-        @define-color mantle #292c3c;
-        @define-color crust  #232634;
-        @define-color text     #c6d0f5;
-        @define-color subtext0 #a5adce;
-        @define-color subtext1 #b5bfe2;
-        @define-color surface0 #414559;
-        @define-color surface1 #51576d;
-        @define-color surface2 #626880;
-        @define-color overlay0 #737994;
-        @define-color overlay1 #838ba7;
-        @define-color overlay2 #949cbb;
+        @define-color base      #303446;
+        @define-color mantle    #292c3c;
+        @define-color crust     #232634;
+        @define-color text      #c6d0f5;
+        @define-color subtext0  #a5adce;
+        @define-color subtext1  #b5bfe2;
+        @define-color surface0  #414559;
+        @define-color surface1  #51576d;
+        @define-color surface2  #626880;
+        @define-color overlay0  #737994;
+        @define-color overlay1  #838ba7;
+        @define-color overlay2  #949cbb;
         @define-color blue      #8caaee;
         @define-color lavender  #babbf1;
         @define-color sapphire  #85c1dc;
@@ -618,8 +581,7 @@ in {
         #backlight,
         #clock,
         #cpu,
-        #custom-mail,
-        #custom-poweroff,
+        #custom-power,
         #custom-weather,
         #disk,
         #idle_inhibitor,
@@ -637,10 +599,10 @@ in {
         #window,
         #language,
         #submap,
-        #custom-cpu_temp,
-        #custom-gpu_temp,
-        #custom-gpu_percent,
-        #custom-gpu_mem,
+        #custom-cpu-temp,
+        #custom-gpu-temp,
+        #custom-gpu-percent,
+        #custom-gpu-mem,
         #custom-spotify,
         #custom-pacman {
             padding: 0 5px;
@@ -679,8 +641,8 @@ in {
             padding: 0 5px;
         }
 
-        #custom-poweroff {
-            margin: 0 5px 0 0;
+        #custom-power {
+            margin: 0 5px;
         }
       '';
     };

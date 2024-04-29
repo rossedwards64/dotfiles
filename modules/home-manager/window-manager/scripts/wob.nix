@@ -2,7 +2,7 @@
 
 pkgs.writeShellApplication {
   name = "wob";
-  runtimeInputs = with pkgs; [ wob brightnessctl wireplumber findutils ];
+  runtimeInputs = with pkgs; [ bc wob brightnessctl wireplumber findutils ];
 
   text = ''
     SYS=
@@ -41,7 +41,7 @@ pkgs.writeShellApplication {
                 WOBSOCK="''${OPTARG}"
                 ;;
             i)
-                [ -n "$VAL" ] && exit 1 || VAL=''${OPTARG}%+"
+                [ -n "$VAL" ] && exit 1 || VAL="''${OPTARG}%+"
                 ;;
             d)
                 [ -n "$VAL" ] && exit 1 || VAL="''${OPTARG}%-"
@@ -52,7 +52,7 @@ pkgs.writeShellApplication {
         esac
     done
 
-    if [[ "$ SYS" == "volume" ]]; then
+    if [[ "$SYS" == "volume" ]]; then
         set_volume
     elif [[ "$SYS" == "brightness" ]]; then
         set_brightness
