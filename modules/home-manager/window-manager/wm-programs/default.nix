@@ -1,19 +1,14 @@
-{ lib, config, ... }:
-with lib;
-let cfg = config.modules.wm-programs;
-in {
-  imports = [ ./dunst ./rofi ./swayidle ./swaylock ./waybar ./wob ];
+{ ... }: {
+  imports = [ ./dunst ./fuzzel ./swayidle ./swaylock ./waybar ./wob ];
+  programs = { imv.enable = true; };
+  services = { playerctld.enable = true; };
 
-  options.modules.wm-programs = { enable = mkEnableOption "wm-programs"; };
-
-  config = mkIf cfg.enable {
-    modules = {
-      dunst.enable = true;
-      rofi.enable = true;
-      swayidle.enable = true;
-      swaylock.enable = true;
-      waybar.enable = true;
-      wob.enable = true;
-    };
+  modules = {
+    dunst.enable = true;
+    fuzzel.enable = true;
+    swayidle.enable = true;
+    swaylock.enable = true;
+    waybar.enable = true;
+    wob.enable = true;
   };
 }

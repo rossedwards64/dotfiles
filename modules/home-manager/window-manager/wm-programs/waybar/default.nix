@@ -6,6 +6,15 @@ let
   hdmi = "HDMI-A-1";
   dp = "DP-1";
 
+  cpuTempScript = import ./scripts/cpu-temp.nix { inherit pkgs; };
+  gpuTempScript = import ./scripts/gpu-temp.nix { inherit pkgs; };
+  gpuMemScript = import ./scripts/gpu-temp.nix { inherit pkgs; };
+  gpuPercentScript = import ./scripts/gpu-percent.nix { inherit pkgs; };
+  powerScript = import ./scripts/power.nix { inherit pkgs; };
+  spotifyScript = import ./scripts/spotify.nix { inherit pkgs; };
+  mailScript = import ./scripts/mail.nix { inherit pkgs; };
+  weatherScript = import ./scripts/weather.nix { inherit pkgs; };
+
   modules = {
     builtin = {
       clock = {
@@ -154,6 +163,7 @@ let
         config = {
           format = "{icon} {name}";
           icon-size = 24;
+          icon-theme = [ "rose-pine-moon" ];
           tooltip = false;
           on-click = "activate";
           on-click-right = "close";
@@ -272,16 +282,7 @@ let
       cpuTemp = {
         name = "custom/cpu_temp";
         config = {
-          exec = pkgs.writeShellScript "cpu_temp" ''
-            temp=$(cat /sys/devices/pci0000:00/0000:00:18.3/hwmon/[[:print:]]*/temp1_input | bc)
-            triple_digits=1000000
-
-            if [[ "$temp" -ge "$triple_digits" ]]; then
-                echo "\${"temp::-2"}°C"
-            elif [[ "$temp" -lt "$triple_digits" ]]; then
-                echo "\${"temp::-3"}°C"
-            fi
-          '';
+          exec = cpuTempScript;
           format = " {}";
           interval = 1;
         };
@@ -290,11 +291,7 @@ let
       gpuPercent = {
         name = "custom/gpu_percent";
         config = {
-          exec = pkgs.writeShellScript "gpu_percent" ''
-            gpu_dir=/sys/class/drm/card1/device
-            gpu_percent=$(cat $gpu_dir/gpu_busy_percent)
-            echo "$gpu_percent%"
-          '';
+          exec = gpuPercentScript;
           format = "󰘚 GPU {}";
           interval = 1;
         };
@@ -303,16 +300,7 @@ let
       gpuMem = {
         name = "custom/gpu_mem";
         config = {
-          exec = pkgs.writeShellScript "gpu_mem" ''
-            gpu_dir=/sys/class/drm/card1/device
-            gpu_mem_total=$(cat $gpu_dir/mem_info_vram_total)
-            gpu_mem_used=$(cat $gpu_dir/mem_info_vram_used)
-
-            format_num() {
-                echo "$(numfmt --to=iec-i --format "%-8.2f" $1)B" | tr -d ' ' | sed 's/G/ G/g' | sed 's/M/ M/g'
-            }
-            echo "$(format_num $gpu_mem_used) / $(format_num $gpu_mem_total)"
-          '';
+          exec = gpuMemScript;
           format = "{}";
           interval = 1;
         };
@@ -321,27 +309,18 @@ let
       gpuTemp = {
         name = "custom/gpu_temp";
         config = {
-          exec = pkgs.writeShellScript "gpu_temp" ''
-            temp=$(cat /sys/class/drm/card1/device/hwmon/[[:print:]]*/temp1_input | bc)
-            triple_digits=100000
-
-            if [[ "$temp" -ge "$triple_digits" ]]; then
-                echo "\${"temp::-2"}°C"
-            elif [[ "$temp" -lt "$triple_digits" ]]; then
-                echo "\${"temp::-3"}°C"
-            fi
-          '';
+          exec = gpuTempScript;
           format = " {}";
           interval = 1;
         };
       };
 
       powerOff = {
-        name = "custom/poweroff";
+        name = "custom/power";
         config = {
           tooltip = false;
           format = "󰐥";
-          on-click = pkgs.writeShellScript "poweroff" "\n";
+          on-click = powerScript;
         };
       };
 
@@ -349,9 +328,9 @@ let
         name = "custom/weather";
         config = {
           return-type = "json";
-          exec = pkgs.writeShellScript "weather" "";
+          exec = weatherScript;
           interval = 300;
-          on-click = "firefox https://wttr.in";
+          on-click = "${pkgs.firefox}/bin/firefox https://wttr.in";
         };
       };
 
@@ -360,7 +339,7 @@ let
         config = {
           tooltip = false;
           format = "󰐥 ";
-          exec = pkgs.writeShellScript "poweroff" "";
+          exec = mailScript;
           interval = 120;
         };
       };
@@ -370,7 +349,7 @@ let
         config = {
           interval = 1;
           return-type = "json";
-          exec = pkgs.writeSHellScript "spotify" "";
+          exec = spotifyScript;
           exec-if = "pgrep spotify";
           escape = true;
         };
@@ -435,17 +414,19 @@ in {
           modules-left = [
             "${builtin.tray.name}"
             "${builtin.gamemode.name}"
-            "${builtin.hyprland.language.name}"
+            #"${builtin.hyprland.language.name}"
             "${custom.separator.name}"
             "${builtin.backlight.name}"
             "${builtin.pulseaudio.name}"
             "${builtin.idleInhibitor.name}"
             "${custom.separator.name}"
-            "${builtin.hyprland.submap.name}"
+            #"${builtin.hyprland.submap.name}"
           ];
           modules-center = [ "${builtin.taskbar.name}" ];
-          modules-right =
-            [ "${custom.separator.name}" "${builtin.hyprland.window.name}" ];
+          modules-centerdules-right = [
+            "${custom.separator.name}"
+            #"${builtin.hyprland.window.name}"
+          ];
 
           "${builtin.clock.name}" = builtin.clock.config;
           "${builtin.cpu.name}" = builtin.cpu.config;
@@ -518,8 +499,10 @@ in {
 
           modules-left = [ ];
           modules-center = [ "${builtin.taskbar.name}" ];
-          modules-right =
-            [ "${custom.separator.name}" "${builtin.hyprland.window.name}" ];
+          modules-right = [
+            "${custom.separator.name}"
+            #"${builtin.hyprland.window.name}"
+          ];
 
           "${builtin.clock.name}" = builtin.clock.config;
           "${builtin.cpu.name}" = builtin.cpu.config;

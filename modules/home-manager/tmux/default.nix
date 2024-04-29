@@ -5,7 +5,7 @@ in {
   options.modules.tmux = { enable = mkEnableOption "tmux"; };
 
   config = mkIf cfg.enable {
-    home.packages = with pkgs; [ tmux tmuxinator ];
+    home.packages = with pkgs; [ ];
 
     xdg.configFile = {
       "tmuxinator/default.yml".text = ''

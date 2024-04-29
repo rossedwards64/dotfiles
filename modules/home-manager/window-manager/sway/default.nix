@@ -2,52 +2,50 @@
 with lib;
 let
   cfg = config.modules.sway;
-  opacity = 0.9;
   font = "Iosevka NF";
   modifier = "Mod4";
   down = "j";
   right = "l";
   left = "h";
   up = "k";
-  session_vars = ''
-    DISPLAY WAYLAND_DISPLAY XDG_CURRENT_DESKTOP \
-                      XDG_SESSION_TYPE XDG_SESSION_DESKTOP SWAYSOCK'';
-  config_home = "$HOME/.config";
-  data_home = "$HOME/.local";
-  lockscript = "$data_home/bin/lock";
-  menu = "$rofiscripts/launcher";
-  mutescript = "$data_home/bin/check-mute";
-  powermenu = "$ROFISCRIPTS/powermenu";
-  rofiscripts = "$config_home/rofi/scripts";
-  runner = "$rofiscripts/runner";
-  screenshot = "$rofiscripts/screenshot";
-  windows = "$rofiscripts/windows";
-  wobscript = "$data_home/bin/wob";
+  wallpapers = "/home/ross/Pictures/wallpapers";
+
+  terminalBin = "${pkgs.alacritty}/bin/alacritty";
+  fuzzelBin = "${pkgs.fuzzel}/bin/fuzzel";
+
+  checkMuteScript = import ../scripts/check-mute.nix { inherit pkgs; };
+  toggleSinkScript = import ../scripts/toggle-sink.nix { inherit pkgs; };
+  wobScript = import ./scripts/wob.nix { inherit pkgs; };
+
+  launcher = "$fuzzelscripts/launcher";
+  powermenu = "$fuzzelscripts/powermenu";
+  runner = "$fuzzelscripts/runner";
+  screenshot = "$fuzzelscripts/screenshot";
+  windows = "$fuzzelscripts/windows";
   wobsock = "$XDG_RUNTIME_DIR/wob.sock";
   any = ".*";
-  discord = "^discord$";
-  emacs = "^emacs(client)?$";
-  epicgames = "^heroic$";
-  factorio = "^factorio$";
-  firefox = "^firefox$";
-  freetube = "^FreeTube$";
-  game = "^(factorio|youronlymoveishustle|dwarfort|gamescope).*$";
-  intellij = "^jetbrains-idea$";
-  itchio = "^itch$";
-  lutris = "^lutris$";
-  minecraft = "^com-atlauncher-App$";
-  mpv = "^mpv$";
-  spotify = "^(dev.alextren.)?Spot(ify)?$";
-  steam = "^steam$";
-  steam_game = "^steam_app_[0-9]*$";
-  swaync = "^swaync(-client)?$";
-  terminal = "^Alacritty$";
-  vlc = "^vlc$";
-  volume = "^pavucontrol$";
-  xdman = "^xdm-app$";
-  xwvb = "^xwaylandvideobridge$";
-  yomihustle = "^youronlymoveishustle.*$";
-  zathura = "^org.pwmt.zathura$";
+  discordRegexp = "^discord$";
+  emacsRegexp = "^emacs(client)?$";
+  epicGamesRegexp = "^heroic$";
+  factorioRegexp = "^factorio$";
+  firefoxRegexp = "^firefox$";
+  freetubeRegexp = "^FreeTube$";
+  gameRegexp = "^(factorio|youronlymoveishustle|dwarfort|gamescope).*$";
+  intellijRegexp = "^jetbrains-idea$";
+  itchioRegexp = "^itch$";
+  lutrisRegexp = "^lutris$";
+  minecraftRegexp = "^com-atlauncher-App$";
+  mpvRegexp = "^mpv$";
+  spotifyRegexp = "^(dev.alextren.)?Spot(ify)?$";
+  steamRegexp = "^steam$";
+  steamGameRegexp = "^steam_app_[0-9]*$";
+  swayncRegexp = "^swaync(-client)?$";
+  terminalRegexp = "^Alacritty$";
+  vlcRegexp = "^vlc$";
+  volumeRegexp = "^pavucontrol$";
+  xwvbRegexp = "^xwaylandvideobridge$";
+  yomihustleRegexp = "^youronlymoveishustle.*$";
+  zathuraRegexp = "^org.pwmt.zathura$";
   colours = {
     rosewater = "#f5e0dc";
     flamingo = "#f2cdcd";
@@ -79,13 +77,13 @@ in {
   options.modules.sway = { enable = mkEnableOption "sway"; };
 
   config = mkIf cfg.enable {
-    home.packages = with pkgs; [ sway ];
-
     wayland = {
       windowManager = {
         sway = {
           enable = true;
+          checkConfig = false;
           xwayland = true;
+          wrapperFeatures.gtk = true;
 
           systemd = {
             enable = true;
@@ -94,178 +92,43 @@ in {
 
           swaynag = { enable = true; };
 
-          extraConfigEarly = "";
-          extraConfig = "";
-          extraSessionCommands = "";
-          extraOptions = [ ];
+          extraConfig = ''
+            bindsym --locked {
+                XF86AudioRaiseVolume exec $WOBSCRIPT "-v" "-i5"
+                XF86AudioLowerVolume exec $WOBSCRIPT "-v" "-d5"
+                XF86AudioMute exec ${pkgs.wireplumber}/bin/wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle && \
+                                ${checkMuteScript}/bin/check-mute "getspeaker"
+                XF86AudioMicMute exec ${pkgs.wireplumber}/bin/wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle && \
+                                ${checkMuteScript}/bin/check-mute "getmic"
+                XF86AudioPlay exec ${pkgs.playerctl}/bin/playerctl play-pause
+                XF86AudioNext exec ${pkgs.playerctl}/bin/playerctl next
+                XF86AudioPrev exec ${pkgs.playerctl}/bin/playerctl previous
+                XF86MonBrightnessUp exec ${pkgs.brightnessctl}/bin/brightnessctl -inc 10
+                XF86MonBrightnessDown exec ${pkgs.brightnessctl}/bin/brightnessctl -dec 10
+            }
+
+            bindgesture {
+                pinch:inward+up move up
+                pinch:inward+down move down
+                pinch:inward+left move left
+                pinch:inward+right move right
+                swipe:right workspace prev
+                swipe:left workspace next
+            }
+          '';
 
           config = {
             inherit modifier down right left up;
             bindkeysToCode = false;
             defaultWorkspace = "workspace number 1";
-            menu = "";
-            terminal = "alacritty";
+            menu = "${pkgs.fuzzel}/bin/fuzzel";
+            terminal = "${terminalBin}";
             workspaceAutoBackAndForth = true;
             workspaceLayout = "tabbed";
-            workspaceOutputAssign = { };
-            assigns = {
-              "1: emacs" = [{ app_id = "^emacs(client)?$"; }];
-              "2: alacritty" = [{ app_id = "^Alacritty$"; }];
-              "3: browser" = [{ app_id = "^firefox$"; }];
-              "4: discord" = [{ class = "^discord$"; }];
-              "5: spotify" = [{ app_id = "^(dev.alextren.)?Spot(ify)?$"; }];
-              "6: launchers" = [{ class = "^steam$"; }];
-              "7: steam game" = [{ class = "^steam_app_[0-9]+$"; }];
-              "7: game" = [{
-                class =
-                  "^(factorio|youronlymoveishustle|dwarfort|gamescope).*$";
-                app_id =
-                  "^(factorio|youronlymoveishustle|dwarfort|gamescope).*$";
-              }];
-            };
+            workspaceOutputAssign = [ ];
 
-            output = {
-              LVDS-1 = {
-                scale = 1;
-                res = "1366x768";
-                bg = "/home/ross/Pictures/wallpapers/lordgenome.png fill";
-                pos = "288 1080";
-              };
-
-              DP-1 = {
-                scale = 1;
-                res = "1920x1080@144Hz";
-                pos = "0 0";
-                bg =
-                  "/home/ross/Pictures/wallpapers/Gurren Lagann/simon.jpg fill";
-              };
-
-              HDMI-A-1 = {
-                scale = 1;
-                res = "1920x1080@75Hz";
-                bg = "/home/ross/Pictures/wallpapers/gojo.png fill";
-                pos = "0 0";
-              };
-            };
-
-            window = {
-              border = 1;
-
-              commands = [
-                {
-                  criteria = {
-                    window_role = "pop-up";
-                    floating = true;
-                  };
-                }
-                {
-                  criteria = {
-                    window_role = "task_dialog";
-                    floating = true;
-                  };
-                }
-                {
-                  criteria = {
-                    title = "${any}";
-                    app_id = "${any}";
-                    instance = "${any}";
-                    class = "${any}";
-                    inhibit_idle = "fullscreen";
-                    title_format = "<b>%title</b> (%app_id%instance,%shell)";
-                  };
-                }
-                {
-                  criteria = {
-                    class = "${steam_game}";
-                    inhibit_idle = "fullscreen";
-                    fullscreen = true;
-                  };
-                }
-                {
-                  criteria = {
-                    app_id = "${volume}";
-                    floating = true;
-                  };
-                  command = "move to scratchpad";
-                }
-                {
-                  criteria = {
-                    app_id = "${xdman}";
-                    urgent = true;
-                  };
-                  command = "move to scratchpad";
-                }
-                {
-                  criteria = {
-                    app_id = "${xwvb}";
-                    floating = true;
-                  };
-                  command = "move to scratchpad";
-                }
-                {
-                  criteria = {
-                    app_id = "${zathura}";
-                    floating = true;
-                  };
-                  command = "move to scratchpad";
-                }
-              ];
-            };
-
-            floating = {
-              inherit modifier;
-              border = 1;
-              criteria = [ ];
-              titlebar = true;
-            };
-
-            focus = {
-              followMouse = true;
-              mouseWarping = true;
-              newWindow = "urgent";
-            };
-
-            #seat = {
-            #  "seat0" = { xcursor_theme = "Catppuccin-Mocha-Dark-Cursors 24"; };
-            #};
-
-            colors = {
-              background = "${background}";
-              focused = {
-                inherit (colours) background text;
-                border = "${pink}";
-                indicator = "${rosewater}";
-                childBorder = "${pink}";
-              };
-
-              focusedInactive = {
-                inherit (colours) background text;
-                border = "${mauve}";
-                indicator = "${rosewater}";
-                childBorder = "${mauve}";
-              };
-
-              unfocused = {
-                inherit (colours) background text;
-                border = "${mauve}";
-                indicator = "${rosewater}";
-                childBorder = "${mauve}";
-              };
-
-              urgent = {
-                inherit (colours) background;
-                border = "${peach}";
-                text = "${peach}";
-                indicator = "${overlay0}";
-                childBorder = "${peach}";
-              };
-
-              placeholder = {
-                inherit (colours) background text;
-                border = "${overlay0}";
-                indicator = "${overlay0}";
-                childBorder = "${overlay0}";
-              };
+            seat = {
+              "seat0" = { xcursor_theme = "Catppuccin-Mocha-Dark-Cursors 24"; };
             };
 
             fonts = {
@@ -279,6 +142,184 @@ in {
               outer = 5;
               smartBorders = "off";
               smartGaps = true;
+            };
+
+            assigns = {
+              "1: emacs" = [{ app_id = "${emacsRegexp}"; }];
+              "2: alacritty" = [{ app_id = "${terminalRegexp}"; }];
+              "3: browser" = [{ app_id = "${firefoxRegexp}"; }];
+              "4: discord" = [{ class = "${discordRegexp}"; }];
+              "5: spotify" = [{ app_id = "${spotifyRegexp}"; }];
+              "6: launchers" = [{ class = "${steamRegexp}"; }];
+              "7: steam game" = [{ class = "${steamGameRegexp}"; }];
+              "7: game" = [{
+                class =
+                  "^(factorio|youronlymoveishustle|dwarfort|gamescope).*$";
+                app_id =
+                  "^(factorio|youronlymoveishustle|dwarfort|gamescope).*$";
+              }];
+            };
+
+            output = {
+              LVDS-1 = {
+                scale = "1";
+                res = "1366x768";
+                bg = "${wallpapers}/Gurren Lagann/king_kittan.jpg fill";
+                pos = "288 1080";
+              };
+
+              DP-1 = {
+                scale = "1";
+                res = "1920x1080@144Hz";
+                pos = "0 0";
+                bg = "${wallpapers}/Gurren Lagann/simon.jpg fill";
+              };
+
+              HDMI-A-1 = {
+                scale = "1";
+                res = "1920x1080@75Hz";
+                bg = "${wallpapers}/Jujutsu Kaisen/vol4.jpg fill";
+                pos = "1920 190";
+              };
+            };
+
+            input = {
+              "type:keyboard" = { xkb_options = "ctrl:nocaps"; };
+
+              "12625:16387:ROYUAN_Akko_keyboard" = { xkb_layout = "us"; };
+
+              "2:7:SynPS/2_Synaptics_TouchPad" = {
+                dwt = "enabled";
+                tap = "enabled";
+                natural_scroll = "enabled";
+                middle_emulation = "enabled";
+              };
+            };
+
+            floating = {
+              inherit modifier;
+              border = 1;
+              criteria = [ ];
+              titlebar = true;
+            };
+
+            focus = {
+              followMouse = "always";
+              mouseWarping = false;
+              newWindow = "urgent";
+            };
+
+            window = {
+              border = 1;
+
+              commands = [
+                {
+                  criteria = { window_role = "pop-up"; };
+                  command = "floating enable";
+                }
+                {
+                  criteria = { window_role = "task_dialog"; };
+                  command = "floating enable";
+                }
+                {
+                  criteria = {
+                    title = "${any}";
+                    app_id = "${any}";
+                    instance = "${any}";
+                    class = "${any}";
+
+                  };
+                  command = ''
+                    {
+                      inhibit_idle fullscreen
+                      title_format "<b>%title</b> (%app_id%instance,%shell)"
+                    }
+                  '';
+                }
+                {
+                  criteria = { class = "${steamGameRegexp}"; };
+                  command = ''
+                    {
+                      inhibit_idle fullscreen
+                      fullscreen enable
+                    }
+                  '';
+                }
+                {
+                  criteria = { app_id = "${volumeRegexp}"; };
+                  command = ''
+                    {
+                      floating enable
+                      move to scratchpad
+                      resize set {
+                          width 800
+                          height 600
+                      }  
+                    }
+                  '';
+                }
+                {
+                  criteria = { app_id = "${xwvbRegexp}"; };
+                  command = ''
+                    {
+                      floating enable
+                      move to scratchpad
+                    }
+                  '';
+                }
+                {
+                  criteria = { app_id = "${zathuraRegexp}"; };
+                  command = ''
+                    {
+                      floating enable
+                      move to scratchpad
+                      resize set {
+                          width 800
+                          height 600
+                      }
+                    }
+                  '';
+                }
+              ];
+            };
+
+            colors = {
+              inherit (colours) background;
+              focused = {
+                inherit (colours) background text;
+                border = "${colours.pink}";
+                indicator = "${colours.rosewater}";
+                childBorder = "${colours.pink}";
+              };
+
+              focusedInactive = {
+                inherit (colours) background text;
+                border = "${colours.mauve}";
+                indicator = "${colours.rosewater}";
+                childBorder = "${colours.mauve}";
+              };
+
+              unfocused = {
+                inherit (colours) background text;
+                border = "${colours.mauve}";
+                indicator = "${colours.rosewater}";
+                childBorder = "${colours.mauve}";
+              };
+
+              urgent = {
+                inherit (colours) background;
+                border = "${colours.peach}";
+                text = "${colours.peach}";
+                indicator = "${colours.overlay0}";
+                childBorder = "${colours.peach}";
+              };
+
+              placeholder = {
+                inherit (colours) background text;
+                border = "${colours.overlay0}";
+                indicator = "${colours.overlay0}";
+                childBorder = "${colours.overlay0}";
+              };
             };
 
             keybindings = {
@@ -296,13 +337,11 @@ in {
               "${modifier}+7" = "workspace number 7";
               "${modifier}+8" = "workspace number 8";
               "${modifier}+9" = "workspace number 9";
-              "${modifier}+Ctrl+g" =
-                ''exec emacsclient --eval "(emacs-everywhere)"'';
               "${modifier}+Down" = "focus down";
-              "${modifier}+Escape" = ''exec "pkill rofi || ${powermenu}"'';
+              "${modifier}+Escape" = ''exec "pkill fuzzel || ${powermenu}"'';
               "${modifier}+Left" = "focus left";
               "${modifier}+Minus" = "scratchpad show";
-              "${modifier}+Return" = "exec alacritty";
+              "${modifier}+Return" = "exec ${terminalBin}";
               "${modifier}+Right" = "focus right";
               "${modifier}+Shift+${down}" = "move down";
               "${modifier}+Shift+${left}" = "move left";
@@ -340,16 +379,15 @@ in {
               "${modifier}+Shift+minus" = "move scratchpad";
               "${modifier}+Shift+q" = "kill";
               "${modifier}+Shift+r" = ''mode "resize"'';
-              "${modifier}+Shift+s" = "exec ${lock}";
               "${modifier}+Shift+space" = "floating toggle";
-              "${modifier}+Tab" = "pkill rofi || ${windows}";
+              "${modifier}+Tab" = "pkill fuzzel || ${windows}";
               "${modifier}+Up" = "focus up";
               "${modifier}+a" = "focus parent";
               "${modifier}+b" = "splith";
-              "${modifier}+d" = ''exec "pkill rofi || ${menu}"'';
+              "${modifier}+d" = ''exec "pkill fuzzel || ${launcher}"'';
               "${modifier}+e" = "layout toggle split";
               "${modifier}+f" = "fullscreen";
-              "${modifier}+r" = ''exec "pkill rofi || ${runner}"'';
+              "${modifier}+r" = ''exec "pkill fuzzel || ${fuzzelBin}"'';
               "${modifier}+s" = "layout stacking";
               "${modifier}+space" = "focus mode_toggle";
               "${modifier}+t" = "exec swaync-client -t -sw";
@@ -358,60 +396,48 @@ in {
               "Print" = "exec ${screenshot}";
             };
 
-            input = {
-              "type:keyboard" = {
-                xkb_layout = "gb";
-                xkb_options = "ctrl:nocaps";
-              };
-
-              "12625:16387:ROYUAN_Akko_keyboard" = { xkb_layout = "us"; };
-
-              "2:7:SynPS/2_Synaptics_TouchPad" = {
-                dwt = "enabled";
-                tap = "enabled";
-                natural_scroll = "enabled";
-                middle_emulation = "enabled";
-              };
-            };
-
-            startup = {
-              pavucontrol.command = "pavucontrol";
-              swayidle.command = "swayidle -w";
-              udiskie.command = "udiske -ant";
-              pasteimage.command =
-                "wl-paste --type image --watch cliphist store";
-              pastetext.command = "wl-paste --type text --watch cliphist store";
-              autotiling.command = "autotiling -w 1 2 3 4 5 6 7 8 9 10";
-              emacs.command = "emacsclient -c -a=''";
-              alacritty.command = "alacritty";
-              zathura.command = "zathura";
-              discord.command = "discord";
-              steam.command = "steam";
-              spotify.command = "flatpak run com.Spotify.Client";
-              lutris.command = "lutris";
-              obs.command = "obs --minimize-to-tray";
-
-              rofi = {
-                command = "pkill rofi";
+            startup = [
+              { command = "${pkgs.pavucontrol}/bin/pavucontrol"; }
+              { command = "${pkgs.swayidle}/bin/swayidle -w"; }
+              { command = "${pkgs.udiskie} -ant"; }
+              {
+                command =
+                  "${pkgs.wl-clipboard}/bin/wl-paste --type image --watch cliphist store";
+              }
+              {
+                command =
+                  "${pkgs.wl-clipboard}/bin/wl-paste --type text --watch cliphist store";
+              }
+              {
+                command =
+                  "${pkgs.autotiling}/bin/autotiling -w 1 2 3 4 5 6 7 8 9 10";
+              }
+              { command = "${pkgs.emacs}/bin/emacsclient -c -a=''"; }
+              { command = "${terminalBin}"; }
+              { command = "${pkgs.zathura}/bin/zathura"; }
+              { command = "${pkgs.discord}/bin/discord"; }
+              { command = "${pkgs.steam}/bin/steam"; }
+              { command = "${pkgs.spotify}/bin/spotify"; }
+              { command = "${pkgs.lutris}/bin/lutris"; }
+              { command = "${pkgs.obs-studio}/bin/obs --minimize-to-tray"; }
+              {
+                command = "pkill ${fuzzelBin}";
                 always = true;
-              };
-
-              waybar = {
+              }
+              {
                 command = "systemctl --user restart waybar";
                 always = true;
-              };
-
-              wobsock = {
+              }
+              {
                 command =
                   "rm -f ${wobsock} && mkfifo ${wobsock} && tail -f ${wobsock} | wob";
                 always = true;
-              };
-
-              swaync = {
+              }
+              {
                 command = "swaync-client -R -rs -sw";
                 always = true;
-              };
-            };
+              }
+            ];
           };
         };
       };

@@ -16,7 +16,7 @@ in {
       gamescope
       glxinfo
       heroic
-      itch
+      # itch # dependency is currently broken
       lutris
       mangohud
       minecraft

@@ -15,7 +15,7 @@ in {
 
       zsh = {
         enable = true;
-        enableAutosuggestions = true;
+        autosuggestion.enable = true;
         enableCompletion = true;
 
         history = {
@@ -30,6 +30,7 @@ in {
         };
 
         sessionVariables = {
+          FLAKE = "$HOME/.dotfiles";
           ALTERNATE_EDITOR = "nvim";
           ARCHFLAGS = "-arch x86_64";
           BROWSER = "firefox";
@@ -69,13 +70,15 @@ in {
                export GREEN="$(tput setaf 2)"\n
                export BLUE="$(tput setaf 4)"\n
                export NORM="$(tput sgr0)"\n
-          fi'';
+          fi
+        '';
 
         initExtraBeforeCompInit = ''
           zstyle ':completion:*' completer _expand _complete _ignored _approximate
-                zstyle ':completion:*' cache-path $XDG_CACHE_HOME/zsh/zcompcache
-                zstyle :compinstall filename "$XDG_CONFIG_HOME/.zshrc"
-                fpath+=$XDG_CONFIG_HOME/.zfunc'';
+          zstyle ':completion:*' cache-path $XDG_CACHE_HOME/zsh/zcompcache
+          zstyle :compinstall filename "$XDG_CONFIG_HOME/.zshrc"
+          fpath+=$XDG_CONFIG_HOME/.zfunc
+        '';
 
         completionInit = ''
           autoload -Uz compinit
@@ -98,19 +101,19 @@ in {
           find = "fd";
           du = "dust -Hr";
           clear = "clear && stty sane";
-          update-system = "sudo nixos-rebuild switch --flake \${HOME}#\${HOST}";
-          update-home =
-            "home-manager switch --impure --flake \${HOME}#\${HOST}";
-          upgrade-system =
-            "sudo nixos-rebuild switch --upgrade --flake \${HOME}#\${HOST}";
-          upgrade-home =
-            "home-manager switch --impure --upgrade --flake \${HOME}#\${HOST}";
+          update-home = "nh home switch --nom -c $HOST -- --impure";
+          upgrade-home = "nh home switch --nom --update -c $HOST -- --impure";
+          update-system = "nh os switch --nom -- --impure";
+          upgrade-system = "nh os switch --nom --update -- --impure";
+          nix-shell = "nix-shell --command zsh";
         };
 
         oh-my-zsh = {
           enable = true;
           extraConfig = "zstyle ':omz:update' mode auto";
           plugins = [
+            "alias-finder"
+            "aliases"
             "colored-man-pages"
             "command-not-found"
             "cp"

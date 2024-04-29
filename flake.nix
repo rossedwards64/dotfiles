@@ -21,7 +21,9 @@
       username = "ross";
       system = "x86_64-linux";
       lib = nixpkgs.lib // home-manager.lib;
+      pkgs = nixpkgs.legacyPackages.${system};
       specialArgs = { inherit attrs outputs username; };
+      extraSpecialArgs = specialArgs;
 
       defaultNixosModules = {
         boot.enable = true;
@@ -45,7 +47,6 @@
       ];
 
       defaultHomeModules = {
-        #hyprland.enable = false;
         alacritty.enable = true;
         desktop.enable = true;
         firefox.enable = true;
@@ -65,23 +66,14 @@
         zsh.enable = true;
       };
 
-      homeModules = [
-        ./home/home.nix
-        ({ config, pkgs, options, ... }: { modules = defaultHomeModules; })
-      ];
-
-      homeConfig = lib.homeManagerConfiguration {
-        modules = homeModules;
-        pkgs = nixpkgs.legacyPackages.${system};
-        extraSpecialArgs = specialArgs;
-      };
+      homeModules = [ ./home/home.nix ];
     in {
       nix = {
         registry.nixpkgs.flake = nixpkgs;
         package = nixpkgs.nixFlakes;
         settings = {
           auto-optimise-store = true;
-          experimental-features = [ "nix-command" "flakes" ];
+          experimental-features = [ "nix-command" "flakes" "store" ];
           allowed-users = [ username ];
         };
       };
@@ -112,9 +104,37 @@
       home-manager.backupFileExtension = "backup";
 
       homeConfigurations = {
-        ross-desktop = homeConfig;
-        ross-thinkpad-x230 = homeConfig;
-        ross-thinkpad-x200 = homeConfig;
+        ross-desktop = lib.homeManagerConfiguration {
+          inherit pkgs;
+          inherit extraSpecialArgs;
+
+          modules = homeModules ++ [
+            ({ config, pkgs, options, ... }: {
+              modules = lib.attrsets.mergeAttrsList [
+                defaultHomeModules
+                { sway.enable = true; }
+              ];
+            })
+          ];
+        };
+
+        ross-thinkpad-x230 = lib.homeManagerConfiguration {
+          inherit pkgs;
+          inherit extraSpecialArgs;
+
+          modules = homeModules ++ [
+            ({ config, pkgs, options, ... }: { modules = defaultHomeModules; })
+          ];
+        };
+
+        ross-thinkpad-x200 = lib.homeManagerConfiguration {
+          inherit pkgs;
+          inherit extraSpecialArgs;
+
+          modules = homeModules ++ [
+            ({ config, pkgs, options, ... }: { modules = defaultHomeModules; })
+          ];
+        };
       };
     };
 }

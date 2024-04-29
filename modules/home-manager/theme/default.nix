@@ -39,7 +39,7 @@ in {
 
     qt = with pkgs; {
       enable = true;
-      platformTheme = "kde";
+      platformTheme.name = "kde";
       style.package = catppuccin-kde;
     };
   };

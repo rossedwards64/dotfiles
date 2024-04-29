@@ -293,6 +293,7 @@
 				       (org-code (:height 1.55) org-code)
 				       (org-verbatim (:height 1.55) org-verbatim)
 				       (org-block (:height 1.25) org-block)
+				       (org-block (:height 1.25) org-inline-src-block)
 				       (org-block-begin-line (:height 0.7) org-block))))
 
   (defun ross/org-presentation-prepare-slide (buffer-name heading)
@@ -347,7 +348,8 @@
 	org-startup-with-inline-images t
 	org-support-shift-select t
 	org-src-window-setup 'current-window
-	org-roam-directory (concat org-directory "/roam"))
+	org-roam-directory (concat org-directory "/roam")
+	org-hide-emphasis-markers t)
   :bind
   (:map help-map
 	("r" . #'ross/tangle-and-eval-config)
@@ -652,7 +654,7 @@
 
 (use-package visual-fill-column
   :config
-  (setq visual-fill-column-width 100
+  (setq visual-fill-column-width 110
 	visual-fill-column-center-text t))
 #+END_SRC
 

@@ -9,8 +9,6 @@ in {
       flatpak
       gnome.gnome-software
       neovim
-      obs-studio
-      obs-studio-plugins.wlrobs
       wayland
       winetricks
       wl-clipboard

@@ -16,5 +16,6 @@
     ./thinkpad
     ./user
     ./fonts
+    ./window-manager
   ];
 }

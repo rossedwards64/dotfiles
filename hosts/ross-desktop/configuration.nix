@@ -19,8 +19,6 @@ in {
         device = "nodev";
       };
     };
-
-    initrd.kernelModules = [ "amdgpu" ];
   };
 
   fileSystems."/HDD" = {
@@ -42,7 +40,8 @@ in {
   };
 
   modules = {
-    kde.enable = true;
+    # kde.enable = true;
+    window-manager.enable = true;
     qemu.enable = true;
   };
 
@@ -57,7 +56,7 @@ in {
   services = {
     xserver = {
       xkb.layout = "us";
-      videoDrivers = [ "amdgpu" ];
+      videoDrivers = [ "modesetting" ];
     };
 
     syncthing = {
@@ -70,6 +69,21 @@ in {
           "Pictures" = folderConfig;
         };
       };
+    };
+  };
+
+  hardware = {
+    opengl = {
+      extraPackages = with pkgs; [
+        vulkan-loader
+        vulkan-validation-layers
+        vulkan-extension-layer
+      ];
+    };
+
+    fancontrol = {
+      enable = true;
+      config = "";
     };
   };
 

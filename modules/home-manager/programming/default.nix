@@ -12,7 +12,6 @@ in {
       jdk17
       nil
       nixfmt
-      nodejs_21
       shellcheck
       SDL2
       (with lispPackages; quicklisp)

@@ -1,7 +1,6 @@
 { config, lib, pkgs, ... }:
 with lib;
 let
-  unstable = import <unstable> { };
   cfg = config.modules.alacritty;
 
   title = "Alacritty";
@@ -18,7 +17,7 @@ in {
   options.modules.alacritty = { enable = mkEnableOption "alacritty"; };
 
   config = mkIf cfg.enable {
-    home.packages = with pkgs; [ (with unstable; alacritty) ];
+    home.packages = with pkgs; [ alacritty ];
 
     xdg.configFile."alacritty/alacritty.toml".source =
       ((pkgs.formats.toml { }).generate "alacritty-config" {

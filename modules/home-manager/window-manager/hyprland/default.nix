@@ -57,8 +57,6 @@ in {
   options.modules.hyprland = { enable = mkEnableOption "hyprland"; };
 
   config = mkIf cfg.enable {
-    home.packages = with pkgs; [ ];
-
     wayland = {
       windowManager = {
         hyprland = {

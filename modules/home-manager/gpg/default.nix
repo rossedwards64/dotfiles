@@ -1,7 +1,6 @@
-{ lib, config, pkg, ... }:
+{ lib, config, pkgs, ... }:
 with lib;
-let
-  cfg = config.modules.gpg;  
+let cfg = config.modules.gpg;
 in {
   options.modules.gpg = { enable = mkEnableOption "gpg"; };
 
@@ -13,7 +12,7 @@ in {
 
     services.gpg-agent = {
       enable = true;
-      pinentryFlavor = "qt";
+      pinentryPackage = pkgs.pinentry-qt;
     };
   };
 }
