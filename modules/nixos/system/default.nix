@@ -59,10 +59,24 @@ in {
 
       pipewire = {
         enable = true;
-        alsa.enable = true;
-        alsa.support32Bit = true;
+        audio.enable = true;
         pulse.enable = true;
         wireplumber.enable = true;
+
+        alsa = {
+          enable = true;
+          support32Bit = true;
+        };
+
+        extraConfig = {
+          pipewire = {
+            "92-low-latency" = {
+              context.properties = {
+                default = { clock = { min-quantum = 1024; }; };
+              };
+            };
+          };
+        };
       };
     };
 

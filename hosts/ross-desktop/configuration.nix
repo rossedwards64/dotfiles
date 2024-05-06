@@ -41,7 +41,7 @@ in {
 
   modules = {
     kde.enable = true;
-    # window-manager.enable = true;
+    window-manager.enable = false;
     qemu.enable = true;
   };
 
@@ -85,6 +85,13 @@ in {
       enable = true;
       config = "";
     };
+
+    cpu.amd.updateMicrocode = true;
+  };
+
+  powerManagement = {
+    enable = true;
+    cpuFreqGovernor = "performance";
   };
 
   networking.hostName = "ross-desktop";

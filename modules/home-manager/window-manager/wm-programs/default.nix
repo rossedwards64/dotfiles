@@ -1,10 +1,11 @@
-{ pkgs, ... }: {
+{ lib, config, pkgs, ... }:
+with lib; {
   imports = [ ./dunst ./fuzzel ./swayidle ./swaylock ./waybar ./wob ];
 
   home.packages = with pkgs; [ brightnessctl swaynotificationcenter ];
 
   programs = { imv.enable = true; };
-  
+
   services = {
     udiskie = {
       enable = true;

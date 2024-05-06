@@ -5,12 +5,6 @@ in {
   options.modules.boot = { enable = mkEnableOption "boot"; };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = with pkgs; [
-      grub2_efi
-      iosevka
-      wineWowPackages.wayland
-    ];
-
     boot = {
       tmp.cleanOnBoot = true;
 
@@ -32,7 +26,7 @@ in {
           GRUB_DEFAULT=0
           GRUB_GFXMODE=1920x1080,auto
           GRUB_GFXPAYLOAD_LINUX=keep
-          GRUB_TERMINAL_INPUT=console
+          GRUB_TERMINAL_INPUT="console"
           GRUB_TIMEOUT=5
           GRUB_TIMEOUT_STYLE=menu
         '';

@@ -5,10 +5,30 @@ in {
   options.modules.emacs = { enable = mkEnableOption "emacs"; };
 
   config = mkIf cfg.enable {
-    home.packages = with pkgs; [ emacs29-pgtk auctex ];
+    home.packages = with pkgs; [
+      (aspellWithDicts (dicts: with dicts; [ en en-computers en-science ]))
+    ];
 
     programs.emacs = {
-      extraPackages = with pkgs; epkgs: [ mu mu.mu4e epkgs.mu4e ];
+      enable = true;
+      package = pkgs.emacs29-pgtk;
+      extraPackages = with pkgs; epkgs: [
+        auctex
+	emacs-all-the-icons-fonts
+	mu
+	mu.mu4e
+	epkgs.mu4e
+      ];
+    };
+
+    services.emacs = {
+      enable = true;
+      package = pkgs.emacs29-pgtk;
+      startWithUserSession = true;
+      client = {
+        enable = true;
+        arguments = [ "-c" "-a=''" ];
+      };
     };
 
     xdg.configFile = {
@@ -16,7 +36,7 @@ in {
         enable = false;
         source = ./config/early-init.el;
       };
-      
+
       "emacs/init.el" = {
         enable = false;
         source = ./config/init.el;

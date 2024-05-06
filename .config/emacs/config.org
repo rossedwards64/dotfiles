@@ -227,15 +227,16 @@
   :config
   (ross/set-theme-maybe-daemon 'everblush))
 
+(use-package catppuccin-theme)
 (use-package ef-themes)
-(use-package standard-themes)
+(use-package exotica-theme)
+(use-package gruber-darker-theme)
 (use-package kanagawa-theme)
 (use-package kuronami-theme)
-(use-package catppuccin-theme)
+(use-package modus-themes)
+(use-package standard-themes)
 (use-package timu-caribbean-theme)
 (use-package timu-macos-theme)
-(use-package gruber-darker-theme)
-(use-package exotica-theme)
 (use-package toxi-theme)
 #+END_SRC
 
@@ -656,6 +657,8 @@
   :config
   (setq visual-fill-column-width 110
 	visual-fill-column-center-text t))
+
+(use-package darkroom)
 #+END_SRC
 
 * File Manager
@@ -759,6 +762,16 @@
 (use-package yasnippet
   :config (yas-global-mode +1))
 (use-package yasnippet-snippets)
+
+(use-package flyspell
+  :elpaca nil
+  :hook
+  (((LaTeX-mode org-mode) . flyspell-mode)
+   (prog-mode . flyspell-prog-mode)))
+
+(use-package writegood-mode
+  :hook
+  (((LaTeX-mode org-mode) . writegood-mode)))
 #+END_SRC
 
 * Programming
