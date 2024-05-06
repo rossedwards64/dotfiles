@@ -9,8 +9,6 @@ in {
   };
 
   config = mkIf cfg.enable {
-    programs.sway.enable = true;
-
     services = {
       udisks2.enable = true;
 

@@ -39,12 +39,6 @@ in {
     fsType = "ext4";
   };
 
-  modules = {
-    kde.enable = true;
-    window-manager.enable = false;
-    qemu.enable = true;
-  };
-
   environment.systemPackages = with pkgs; [
     # cemu
     ryujinx

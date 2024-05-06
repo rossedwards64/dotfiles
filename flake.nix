@@ -25,6 +25,7 @@
 
       username = "ross";
       system = "x86_64-linux";
+      windowManager = "sway";
       lib = nixpkgs.lib // home-manager.lib;
       pkgs = nixpkgs.legacyPackages.${system};
       specialArgs = { inherit attrs outputs username; };
@@ -51,6 +52,8 @@
         })
       ];
 
+      enableWindowManagerProgram = (wm: { window-manager.enable = true; });
+
       defaultHomeModules = {
         alacritty.enable = true;
         desktop.enable = true;
@@ -71,6 +74,11 @@
         zsh.enable = true;
       };
 
+      enableWindowManagerConfig = (wm: {
+        ${wm}.enable = true;
+        wm-programs.enable = true;
+      });
+
       homeModules = [ ./home/home.nix ];
     in {
       nix = {
@@ -86,7 +94,15 @@
       nixosConfigurations = {
         ross-desktop = lib.nixosSystem {
           inherit system specialArgs;
-          modules = [ ./hosts/ross-desktop/configuration.nix ] ++ systemModules;
+          modules = [
+            ./hosts/ross-desktop/configuration.nix
+            {
+              modules = {
+                kde.enable = true;
+                qemu.enable = true;
+              };
+            }
+          ] ++ systemModules;
         };
 
         ross-thinkpad-x230 = lib.nixosSystem {
@@ -94,6 +110,11 @@
           modules = [
             nixos-hardware.nixosModules.lenovo-thinkpad-x230
             ./hosts/ross-thinkpad-x230/configuration.nix
+            {
+              modules = {
+                thinkpad.enable = true;
+              } // (enableWindowManagerProgram windowManager);
+            }
           ] ++ systemModules;
         };
 
@@ -102,6 +123,12 @@
           modules = [
             nixos-hardware.nixosModules.lenovo-thinkpad-x200s
             ./hosts/ross-thinkpad-x200/configuration.nix
+            {
+              modules = {
+                thinkpad.enable = true;
+                kde.enable = true;
+              };
+            }
           ] ++ systemModules;
         };
       };
@@ -110,36 +137,35 @@
 
       homeConfigurations = {
         ross-desktop = lib.homeManagerConfiguration {
-          inherit pkgs;
-          inherit extraSpecialArgs;
+          inherit pkgs extraSpecialArgs;
 
           modules = homeModules ++ [
             ({ config, pkgs, options, ... }: {
-              modules = lib.attrsets.mergeAttrsList [
-                defaultHomeModules
-                { sway.enable = false; }
-              ];
+              modules = lib.attrsets.mergeAttrsList [ defaultHomeModules ];
             })
           ];
         };
 
         ross-thinkpad-x230 = lib.homeManagerConfiguration {
-          inherit pkgs;
-          inherit extraSpecialArgs;
+          inherit pkgs extraSpecialArgs;
 
           modules = homeModules ++ [
             ({ config, pkgs, options, ... }: {
-              modules = defaultHomeModules // { sway.enable = true; };
+              modules = lib.attrsets.mergeAttrsList [
+                defaultHomeModules
+                (enableWindowManagerConfig windowManager)
+              ];
             })
           ];
         };
 
         ross-thinkpad-x200 = lib.homeManagerConfiguration {
-          inherit pkgs;
-          inherit extraSpecialArgs;
+          inherit pkgs extraSpecialArgs;
 
           modules = homeModules ++ [
-            ({ config, pkgs, options, ... }: { modules = defaultHomeModules; })
+            ({ config, pkgs, options, ... }: {
+              modules = lib.attrsets.mergeAttrsList [ defaultHomeModules ];
+            })
           ];
         };
       };

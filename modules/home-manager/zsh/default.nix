@@ -90,13 +90,12 @@ in {
           ls = "${pkgs.eza}/bin/eza --icons --color=always";
           la = "${pkgs.eza}/bin/eza --icons --color=always -ah";
           l = "${pkgs.eza}/bin/eza --icons --color=always -lah";
-          cd = "${pkgs.zoxide}/bin/z";
+          cd = "z";
           cat = "${pkgs.bat}/bin/bat";
           grep = "${pkgs.ripgrep}/bin/rg";
           find = "${pkgs.fd}/bin/fd";
           du = "${pkgs.dust}/bin/dust -Hr";
-          clear =
-            "${pkgs.coreutils}/bin/clear && ${pkgs.coreutils}/bin/stty sane";
+          clear = "clear && ${pkgs.coreutils}/bin/stty sane";
           update-home =
             "${pkgs.nh}/bin/nh home switch --nom -c $HOST -- --impure";
           upgrade-home =

@@ -5,15 +5,10 @@
 
   boot.loader.grub.device = "/dev/sda";
 
-  modules = {
-    thinkpad.enable = true;
-    kde.enable = true;
-  };
-
   hardware.opengl.extraPackages = [ pkgs.intel-vaapi-driver ];
 
-  services = { 
-    xserver.xkb.layout = "gb"; 
+  services = {
+    xserver.xkb.layout = "gb";
     tlp.settings.TPSMAPI_ENABLE = 1;
   };
 
