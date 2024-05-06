@@ -2,7 +2,7 @@
 with lib;
 let cfg = config.modules.wm-programs;
 in {
-  imports = [ ./dunst ./fuzzel ./swayidle ./swaylock ./swaync ./waybar ./wob ];
+  imports = [ ./fuzzel ./swayidle ./swaylock ./swaync ./waybar ./wob ];
 
   options.modules.wm-programs = { enable = mkEnableOption "wm-programs"; };
 
@@ -23,7 +23,6 @@ in {
     };
 
     modules = {
-      dunst.enable = true;
       fuzzel.enable = true;
       swayidle.enable = true;
       swaylock.enable = true;
