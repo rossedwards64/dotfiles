@@ -5,19 +5,11 @@ in {
   options.modules.music = { enable = mkEnableOption "music"; };
 
   config = mkIf cfg.enable {
-    home.packages = with pkgs; [ mpd ncspot spotify spotify-player ];
+    programs = { spotify-player = { enable = true; }; };
 
     services.mpd = {
       enable = true;
       dataDir = "${config.xdg.dataHome}/mpd";
-    };
-
-    programs.ncspot = {
-      enable = true;
-
-      settings = {
-
-      };
     };
   };
 }

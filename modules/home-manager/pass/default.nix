@@ -1,13 +1,14 @@
 { lib, config, pkgs, ... }:
 with lib;
-let cfg = config.modules.pass;
+let
+  cfg = config.modules.pass;
+  xdg = config.xdg;
 in {
   options.modules.pass = { enable = mkEnableOption "pass"; };
 
   config = mkIf cfg.enable {
     home.packages = with pkgs; [
       pass-git-helper
-      pass-wayland
       passExtensions.pass-audit
       passExtensions.pass-checkup
       passExtensions.pass-genphrase
@@ -17,13 +18,11 @@ in {
       passExtensions.pass-update
     ];
 
-    programs.password-store = with pkgs; {
+    programs.password-store = {
       enable = true;
-      package = pass-wayland;
+      package = pkgs.pass-wayland;
 
-      settings = {
-        PASSWORD_STORE_DIR = "${config.xdg.dataHome}/pass";
-      };
+      settings = { PASSWORD_STORE_DIR = "${xdg.dataHome}/pass"; };
     };
   };
 }

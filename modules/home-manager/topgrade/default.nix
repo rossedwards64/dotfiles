@@ -1,16 +1,13 @@
 { config, lib, pkgs, ... }:
 with lib;
 let cfg = config.modules.topgrade;
-in
-{
+in {
   options.modules.topgrade = { enable = mkEnableOption "topgrade"; };
 
   config = mkIf cfg.enable {
-    home.packages = with pkgs; [ topgrade ];
-
     programs.topgrade = {
       enable = true;
-      
+
       settings = {
         misc = {
           assume_yes = true;
@@ -31,7 +28,7 @@ in
           sudo_command = "sudo";
           tmux_arguments = "-S /var/tmux.sock";
         };
-        
+
         git = {
           max_concurrency = 5;
           repos = [ "~/Documents/programming/repos/*" ];
@@ -48,7 +45,8 @@ in
           nix_arguments = "--flake";
           nix_env_arguments = "--prebuilt-only";
           show_arch_news = true;
-          yay_arguments = "--nodevel --answerclean None --removemake --topdown --cleanafter";
+          yay_arguments =
+            "--nodevel --answerclean None --removemake --topdown --cleanafter";
         };
 
         python = {

@@ -7,8 +7,6 @@ in {
   options.modules.starship = { enable = mkEnableOption "starship"; };
 
   config = mkIf cfg.enable {
-    home.packages = with pkgs; [ starship ];
-
     programs.starship = {
       enable = true;
       enableZshIntegration = true;

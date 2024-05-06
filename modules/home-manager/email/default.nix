@@ -2,6 +2,7 @@
 with lib;
 let
   cfg = config.modules.email;
+  xdg = config.xdg;
   fullName = "Ross Edwards";
   gpgConf = {
     key = "rossedwards";
@@ -11,22 +12,20 @@ in {
   options.modules.email = { enable = mkEnableOption "email"; };
 
   config = mkIf cfg.enable {
-    home.packages = with pkgs; [ mu mu.mu4e isync msmtp ];
-
     programs = {
       mu.enable = true;
       msmtp.enable = true;
       mbsync.enable = true;
-
     };
 
     accounts.email = {
-      maildirBasePath = ".local/share/mail";
+      maildirBasePath = "${xdg.dataHome}/mail";
       accounts = {
         outlook = {
           realName = fullName;
           address = "redwards64@hotmail.com";
-          passwordCommand = "pass email/hotmail/personal";
+          passwordCommand =
+            "${pkgs.pass-wayland}/bin/pass email/hotmail/personal";
           flavor = "outlook.office365.com";
           msmtp.enable = true;
           primary = true;
@@ -56,7 +55,8 @@ in {
         gmail = {
           realName = fullName;
           address = "redwards6469@gmail.com";
-          passwordCommand = "pass email/google/app-password";
+          passwordCommand =
+            "${pkgs.pass-wayland}/bin/pass email/google/app-password";
           flavor = "gmail.com";
           msmtp.enable = true;
           primary = false;

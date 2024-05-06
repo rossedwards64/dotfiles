@@ -8,10 +8,7 @@ let
   right = "l";
   left = "h";
   up = "k";
-  wallpapers = "/home/ross/Pictures/wallpapers";
-
-  terminalBin = "${pkgs.alacritty}/bin/alacritty";
-  fuzzelBin = "${pkgs.fuzzel}/bin/fuzzel";
+  wallpapersDir = "/home/ross/Pictures/wallpapers";
 
   checkMuteScript = import ../scripts/check-mute.nix { inherit pkgs; };
   toggleSinkScript = import ../scripts/toggle-sink.nix { inherit pkgs; };
@@ -131,7 +128,7 @@ in {
             bindkeysToCode = false;
             defaultWorkspace = "workspace number 1";
             menu = "${pkgs.fuzzel}/bin/fuzzel";
-            terminal = "${terminalBin}";
+            terminal = "${pkgs.alacritty}/bin/alacritty";
             workspaceAutoBackAndForth = true;
             workspaceLayout = "tabbed";
             workspaceOutputAssign = [ ];
@@ -188,7 +185,7 @@ in {
               LVDS-1 = {
                 scale = "1";
                 res = "1366x768";
-                bg = "${wallpapers}/Gurren Lagann/king_kittan.jpg fill";
+                bg = "${wallpapersDir}/Gurren Lagann/king_kittan.jpg fill";
                 pos = "288 1080";
               };
 
@@ -196,13 +193,13 @@ in {
                 scale = "1";
                 res = "1920x1080@144Hz";
                 pos = "0 0";
-                bg = "${wallpapers}/Gurren Lagann/simon.jpg fill";
+                bg = "${wallpapersDir}/Gurren Lagann/simon.jpg fill";
               };
 
               HDMI-A-1 = {
                 scale = "1";
                 res = "1920x1080@75Hz";
-                bg = "${wallpapers}/Jujutsu Kaisen/vol4.jpg fill";
+                bg = "${wallpapersDir}/Jujutsu Kaisen/vol4.jpg fill";
                 pos = "1920 190";
               };
             };
@@ -369,7 +366,7 @@ in {
                 ''exec "${pkgs.procps}/bin/pkill fuzzel || ${powermenu}"'';
               "${modifier}+Left" = "focus left";
               "${modifier}+Minus" = "scratchpad show";
-              "${modifier}+Return" = "exec ${terminalBin}";
+              "${modifier}+Return" = "exec ${pkgs.alacritty}/bin/alacritty";
               "${modifier}+Right" = "focus right";
               "${modifier}+Shift+${down}" = "move down";
               "${modifier}+Shift+${left}" = "move left";
@@ -415,8 +412,8 @@ in {
               "${modifier}+a" = "focus parent";
               "${modifier}+b" = "splith";
               "${modifier}+c" = "exec ${toggleSinkScript}";
-              "${modifier}+d" =
-                ''exec "${pkgs.procps}/bin/pkill fuzzel || ${fuzzelBin}"'';
+              "${modifier}+d" = ''
+                exec "${pkgs.procps}/bin/pkill fuzzel || ${pkgs.fuzzel}/bin/fuzzel"'';
               "${modifier}+e" = "layout toggle split";
               "${modifier}+f" = "fullscreen";
               "${modifier}+r" =
@@ -446,13 +443,9 @@ in {
                   "${pkgs.autotiling}/bin/autotiling -w 1 2 3 4 5 6 7 8 9 10";
               }
               { command = "${pkgs.emacs}/bin/emacsclient -c -a=''"; }
-              { command = "${terminalBin}"; }
+              { command = "${pkgs.alacritty}/bin/alacritty"; }
               { command = "${pkgs.zathura}/bin/zathura"; }
-              { command = "${pkgs.discord}/bin/discord"; }
-              { command = "${pkgs.steam}/bin/steam"; }
-              { command = "${pkgs.spotify}/bin/spotify"; }
               { command = "${pkgs.lutris}/bin/lutris"; }
-              { command = "${pkgs.obs-studio}/bin/obs --minimize-to-tray"; }
               {
                 command = "${pkgs.procps}/bin/pkill fuzzel";
                 always = true;
@@ -464,6 +457,10 @@ in {
               {
                 command =
                   "rm -f ${wobsock} && mkfifo ${wobsock} && tail -f ${wobsock} | wob";
+                always = true;
+              }
+              {
+                command = "systemctl --user restart swaync";
                 always = true;
               }
               {

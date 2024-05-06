@@ -1,12 +1,12 @@
 { lib, config, pkgs, ... }:
 with lib;
-let cfg = config.modules.tmux;
+let
+  cfg = config.modules.tmux;
+  xdg = config.xdg;
 in {
   options.modules.tmux = { enable = mkEnableOption "tmux"; };
 
   config = mkIf cfg.enable {
-    home.packages = with pkgs; [ ];
-
     xdg.configFile = {
       "tmuxinator/default.yml".text = ''
         name: default
@@ -22,9 +22,12 @@ in {
           - misc:
               panes:
                 - clear
+          - spotify:
+              panes:
+                - ${pkgs.spotify-player}/bin/spotify_player
           - monitor:
               panes: 
-                - btop
+                - ${pkgs.btop}/bin/btop
       '';
     };
 
@@ -87,8 +90,7 @@ in {
 
         bind n command-prompt "rename-window '%%'"
         bind w new-window -c "#{path_current_path}"
-        bind r source-file ~/.config/tmux/tmux.conf \; display "Reloaded ~/.config/tmux/tmux.conf"
-        bind s source-file ~/.config/tmux/tmux-startup \; display "Applied layout"
+        bind r source-file ${xdg.configHome}/tmux/tmux.conf \; display "Reloaded ${xdg.configHome}/tmux/tmux.conf"
         bind v split-window -h -c "#{pane_current_path}"
         bind h split-window -v -c "#{pane_current_path}"
         bind -nr S-left previous-window
