@@ -5,7 +5,12 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     utils.url = "github:numtide/flake-utils";
-    hyprland-nix.url = "github:spikespaz/hyprland-nix";
+
+    hyprland.url = "github:hyprwm/Hyprland";
+    hyprland-plugins = {
+      url = "github:hyprwm/hyprland-plugins";
+      inputs.hyprland.follows = "hyprland";
+    };
 
     home-manager = {
       url = "github:nix-community/home-manager";
@@ -13,8 +18,8 @@
     };
   };
 
-  outputs =
-    { self, nixpkgs, home-manager, nixos-hardware, hyprland-nix, ... }@attrs:
+  outputs = { self, nixpkgs, home-manager, nixos-hardware, hyprland
+    , hyprland-plugins, ... }@attrs:
     let
       inherit (self) outputs;
 
@@ -123,7 +128,9 @@
           inherit extraSpecialArgs;
 
           modules = homeModules ++ [
-            ({ config, pkgs, options, ... }: { modules = defaultHomeModules; })
+            ({ config, pkgs, options, ... }: {
+              modules = defaultHomeModules // { sway.enable = true; };
+            })
           ];
         };
 

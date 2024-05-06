@@ -12,6 +12,7 @@ in {
       du-dust
       eza
       fd
+      ffmpeg
       fzf
       nix-health
       nix-info

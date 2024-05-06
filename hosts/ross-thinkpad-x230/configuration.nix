@@ -13,6 +13,7 @@ in {
         canTouchEfiVariables = true;
         efiSysMountPoint = "/boot";
       };
+
       grub = {
         efiSupport = true;
         device = "nodev";
@@ -22,7 +23,8 @@ in {
 
   modules = {
     thinkpad.enable = true;
-    kde.enable = true;
+    # kde.enable = true;
+    window-manager.enable = true;
   };
 
   hardware.opengl.extraPackages = [ pkgs.intel-vaapi-driver ];

@@ -1,18 +1,13 @@
 { lib, config, pkgs, ... }:
 with lib;
-let cfg = config.modules.zsh;
+let
+  cfg = config.modules.zsh;
+  xdg = config.xdg;
 in {
   options.modules.zsh = { enable = mkEnableOption "zsh"; };
 
   config = mkIf cfg.enable {
-    home.packages = with pkgs; [ zoxide oh-my-zsh ];
-
     programs = {
-      zoxide = {
-        enable = true;
-        enableZshIntegration = true;
-      };
-
       zsh = {
         enable = true;
         autosuggestion.enable = true;
@@ -21,7 +16,7 @@ in {
         history = {
           size = 10000;
           save = 10000;
-          path = "$XDG_DATA_HOME/zsh/history";
+          path = "${xdg.dataHome}/zsh/history";
           share = true;
           extended = true;
           ignoreDups = true;
@@ -31,53 +26,53 @@ in {
 
         sessionVariables = {
           FLAKE = "$HOME/.dotfiles";
-          ALTERNATE_EDITOR = "nvim";
+          ALTERNATE_EDITOR = "${pkgs.neovim}/bin/nvim";
           ARCHFLAGS = "-arch x86_64";
-          BROWSER = "firefox";
-          CARGO_HOME = "$XDG_DATA_HOME/cargo";
+          BROWSER = "${pkgs.firefox}/bin/firefox";
+          CARGO_HOME = "${xdg.dataHome}/cargo";
           CMAKE_GENERATOR = "Ninja";
-          EDITOR = "emacs";
-          EMACSDIR = "$XDG_CONFIG_HOME/emacs";
-          GDBHISTFILE = "$XDG_DATA_HOME/gdb/history";
-          GOPATH = "$XDG_DATA_HOME/go";
-          GRADLE_USER_HOME = "$XDG_DATA_HOME/gradle";
-          KDEHOME = "$XDG_CONFIG_HOME/kde";
-          LEIN_HOME = "$XDG_DATA_HOME/lein";
-          NPM_CONFIG_USERCONFIG = "$XDG_CONFIG_HOME/npm/npmrc";
-          PASSWORD_STORE_DIR = "$XDG_DATA_HOME/pass";
-          ROSWELL_HOME = "$XDG_CONFIG_HOME/roswell";
-          RUSTUP_HOME = "$XDG_DATA_HOME/rustup";
-          TEXMFCONFIG = "$XDG_CONFIG_HOME/texlive/texmf-config";
-          TEXMFHOME = "$XDG_DATA_HOME/texlive/texmf";
-          TEXMFVAR = "$XDG_STATE_HOME/texlive/texmf-var";
-          VISUAL = "emacsclient -c -a emacs";
-          WAKATIME_HOME = "$XDG_CONFIG_HOME/wakatime";
-          WGETRC = "$XDG_CONFIG_HOME/wget/wgetrc";
-          WINEPREFIX = "$XDG_DATA_HOME/wineprefixes/default";
+          EDITOR = "${pkgs.emacs}/bin/emacs";
+          EMACSDIR = "${xdg.configHome}/emacs";
+          GDBHISTFILE = "${xdg.dataHome}/gdb/history";
+          GOPATH = "${xdg.dataHome}/go";
+          GRADLE_USER_HOME = "${xdg.dataHome}/gradle";
+          KDEHOME = "${xdg.configHome}/kde";
+          LEIN_HOME = "${xdg.dataHome}/lein";
+          NPM_CONFIG_USERCONFIG = "${xdg.configHome}/npm/npmrc";
+          PASSWORD_STORE_DIR = "${xdg.dataHome}/pass";
+          ROSWELL_HOME = "${xdg.configHome}/roswell";
+          RUSTUP_HOME = "${xdg.dataHome}/rustup";
+          TEXMFCONFIG = "${xdg.configHome}/texlive/texmf-config";
+          TEXMFHOME = "${xdg.dataHome}/texlive/texmf";
+          TEXMFVAR = "${xdg.stateHome}/texlive/texmf-var";
+          VISUAL = "${pkgs.emacs}/bin/emacsclient -c -a emacs";
+          WAKATIME_HOME = "${xdg.configHome}/wakatime";
+          WINEPREFIX = "${xdg.dataHome}/wineprefixes/default";
           XCURSOR_SIZE = 24;
-          XINITRC = "$XDG_CONFIG_HOME/X11/xinitrc";
+          XINITRC = "${xdg.configHome}/X11/xinitrc";
           STACK_XDG = 1;
           ZSH_COMPDUMP = "\${ZSH}/cache/.zcompdump-\${HOST}";
+          PLATFORMIO_CORE_DIR = "${xdg.configHome}/platformio";
         };
 
         initExtraFirst = ''
           if [[ -n "$TERM" ]] && [[ "$TERM" != "dumb" ]]; then
-               export BOLD="$(tput bold)"\n
-               export MAGENTA="$(tput setaf 5)"\n
-               export RED="$(tput setaf 1)"\n
-               export CYAN="$(tput setaf 6)"\n
-               export RMYELLOW="$(tput setaf 3)"\n
-               export GREEN="$(tput setaf 2)"\n
-               export BLUE="$(tput setaf 4)"\n
-               export NORM="$(tput sgr0)"\n
+               export BOLD="$(${pkgs.ncurses}/bin/tput bold)"\n
+               export MAGENTA="$(${pkgs.ncurses}/bin/tput setaf 5)"\n
+               export RED="$(${pkgs.ncurses}/bin/tput setaf 1)"\n
+               export CYAN="$(${pkgs.ncurses}/bin/tput setaf 6)"\n
+               export RMYELLOW="$(${pkgs.ncurses}/bin/tput setaf 3)"\n
+               export GREEN="$(${pkgs.ncurses}/bin/tput setaf 2)"\n
+               export BLUE="$(${pkgs.ncurses}/bin/tput setaf 4)"\n
+               export NORM="$(${pkgs.ncurses}/bin/tput sgr0)"\n
           fi
         '';
 
         initExtraBeforeCompInit = ''
           zstyle ':completion:*' completer _expand _complete _ignored _approximate
-          zstyle ':completion:*' cache-path $XDG_CACHE_HOME/zsh/zcompcache
-          zstyle :compinstall filename "$XDG_CONFIG_HOME/.zshrc"
-          fpath+=$XDG_CONFIG_HOME/.zfunc
+          zstyle ':completion:*' cache-path ${xdg.cacheHome}/zsh/zcompcache
+          zstyle :compinstall filename "${xdg.configHome}/.zshrc"
+          fpath+=${xdg.configHome}/.zfunc
         '';
 
         completionInit = ''
@@ -88,23 +83,27 @@ in {
         dotDir = ".config/zsh";
 
         shellAliases = {
-          vim = "nvim";
-          mv = "mv -iv";
-          cp = "cp -iv";
-          rm = "rm -iv";
-          ls = "eza --icons --color=always";
-          la = "eza --icons --color=always -ah";
-          l = "eza --icons --color=always -lah";
-          cd = "z";
-          cat = "bat";
-          grep = "rg";
-          find = "fd";
-          du = "dust -Hr";
-          clear = "clear && stty sane";
-          update-home = "nh home switch --nom -c $HOST -- --impure";
-          upgrade-home = "nh home switch --nom --update -c $HOST -- --impure";
-          update-system = "nh os switch --nom -- --impure";
-          upgrade-system = "nh os switch --nom --update -- --impure";
+          vim = "${pkgs.neovim}/bin/nvim";
+          mv = "${pkgs.coreutils}/bin/mv -iv";
+          cp = "${pkgs.coreutils}/bin/cp -iv";
+          rm = "${pkgs.coreutils}/bin/rm -iv";
+          ls = "${pkgs.eza}/bin/eza --icons --color=always";
+          la = "${pkgs.eza}/bin/eza --icons --color=always -ah";
+          l = "${pkgs.eza}/bin/eza --icons --color=always -lah";
+          cd = "${pkgs.zoxide}/bin/z";
+          cat = "${pkgs.bat}/bin/bat";
+          grep = "${pkgs.ripgrep}/bin/rg";
+          find = "${pkgs.fd}/bin/fd";
+          du = "${pkgs.dust}/bin/dust -Hr";
+          clear =
+            "${pkgs.coreutils}/bin/clear && ${pkgs.coreutils}/bin/stty sane";
+          update-home =
+            "${pkgs.nh}/bin/nh home switch --nom -c $HOST -- --impure";
+          upgrade-home =
+            "${pkgs.nh}/bin/nh home switch --nom --update -c $HOST -- --impure";
+          update-system = "${pkgs.nh}/bin/nh os switch --nom -- --impure";
+          upgrade-system =
+            "${pkgs.nh}/bin/nh os switch --nom --update -- --impure";
           nix-shell = "nix-shell --command zsh";
         };
 
@@ -140,7 +139,37 @@ in {
 
         syntaxHighlighting = { enable = true; };
 
-        initExtra = "eval $(zoxide init zsh)";
+        initExtra = "eval $(${pkgs.zoxide}/bin/zoxide init zsh)";
+      };
+
+      zoxide = {
+        enable = true;
+        enableZshIntegration = true;
+      };
+
+      fzf = {
+        enable = true;
+        enableZshIntegration = true;
+      };
+
+      eza = {
+        enable = true;
+        enableZshIntegration = true;
+      };
+
+      direnv = {
+        enable = true;
+        enableZshIntegration = true;
+      };
+
+      broot = {
+        enable = true;
+        enableZshIntegration = true;
+      };
+
+      starship = {
+        enable = true;
+        enableZshIntegration = true;
       };
     };
   };

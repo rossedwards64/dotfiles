@@ -9,6 +9,7 @@ in {
       flatpak
       gnome.gnome-software
       neovim
+      rose-pine-icon-theme
       wayland
       winetricks
       wl-clipboard

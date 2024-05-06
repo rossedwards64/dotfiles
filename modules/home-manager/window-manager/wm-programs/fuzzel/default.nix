@@ -5,8 +5,6 @@ in {
   options.modules.fuzzel = { enable = mkEnableOption "fuzzel"; };
 
   config = mkIf cfg.enable {
-    home.packages = with pkgs; [ fuzzel ];
-
     programs.fuzzel = {
       enable = true;
 

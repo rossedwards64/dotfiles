@@ -81,7 +81,6 @@ in {
               "hyprpaper"
               "wl-paste --type text --watch cliphist store"
               "wl-paste --type image --watch cliphist store"
-              "udiskie -ant &"
               "obs --minimize-to-tray"
               "pavucontrol"
               "emacsclient -c -a=''"

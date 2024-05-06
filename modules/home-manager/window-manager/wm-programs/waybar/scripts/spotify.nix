@@ -2,7 +2,7 @@
 
 pkgs.writeShellApplication {
   name = "spotify";
-  runtimeInputs = with pkgs; [ gnugrep playerctl ];
+  runtimeInputs = with pkgs; [ coreutils gnugrep playerctl ];
 
   text = ''
     icon=""

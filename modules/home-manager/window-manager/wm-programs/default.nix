@@ -1,7 +1,5 @@
-{ lib, config, pkgs, ... }:
-with lib; {
-  imports = [ ./dunst ./fuzzel ./swayidle ./swaylock ./waybar ./wob ];
-
+{ pkgs, ... }: {
+  imports = [ ./dunst ./fuzzel ./swayidle ./swaylock ./swaync ./waybar ./wob ];
   home.packages = with pkgs; [ brightnessctl swaynotificationcenter ];
 
   programs = { imv.enable = true; };
@@ -22,6 +20,7 @@ with lib; {
     fuzzel.enable = true;
     swayidle.enable = true;
     swaylock.enable = true;
+    swaync.enable = true;
     waybar.enable = true;
     wob.enable = true;
   };

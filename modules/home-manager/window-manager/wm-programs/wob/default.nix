@@ -9,8 +9,6 @@ in {
   options.modules.wob = { enable = mkEnableOption "wob"; };
 
   config = mkIf cfg.enable {
-    home.packages = with pkgs; [ wob ];
-
     services.wob = {
       enable = true;
 

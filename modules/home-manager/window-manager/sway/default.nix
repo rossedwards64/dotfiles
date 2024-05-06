@@ -37,10 +37,8 @@ let
   discordRegexp = "^discord$";
   emacsRegexp = "^emacs(client)?$";
   epicGamesRegexp = "^heroic$";
-  factorioRegexp = "^factorio$";
   firefoxRegexp = "^firefox$";
   freetubeRegexp = "^FreeTube$";
-  gameRegexp = "^(factorio|youronlymoveishustle|dwarfort|gamescope).*$";
   intellijRegexp = "^jetbrains-idea$";
   itchioRegexp = "^itch$";
   lutrisRegexp = "^lutris$";
@@ -53,8 +51,9 @@ let
   vlcRegexp = "^vlc$";
   volumeRegexp = "^pavucontrol$";
   xwvbRegexp = "^xwaylandvideobridge$";
-  yomihustleRegexp = "^youronlymoveishustle.*$";
   zathuraRegexp = "^org.pwmt.zathura$";
+
+  gameRegexp = "^(factorio|youronlymoveishustle|dwarfort|gamescope).*$";
 
   colours = {
     rosewater = "#f5e0dc";
@@ -156,31 +155,32 @@ in {
             };
 
             assigns = {
-              "workspace 1" = [ (classAndAppId "${emacsRegexp}") ];
-              "workspace 2" = [ (classAndAppId "${terminalRegexp}") ];
-              "workspace 3" = [ (classAndAppId "${firefoxRegexp}") ];
-              "workspace 4" = [ (classAndAppId "${discordRegexp}") ];
+              "workspace 1" = [{ app_id = "${emacsRegexp}"; }];
+              "workspace 2" = [{ app_id = "${terminalRegexp}"; }];
+              "workspace 3" = [{ app_id = "${firefoxRegexp}"; }];
+              "workspace 4" = [{ class = "${discordRegexp}"; }];
               "workspace 5" = [
-                (classAndAppId "${spotifyRegexp}")
-                (classAndAppId "${freetubeRegexp}")
-                (classAndAppId "${mpvRegexp}")
-                (classAndAppId "${vlcRegexp}")
+                { app_id = "${spotifyRegexp}"; }
+                { class = "${freetubeRegexp}"; }
+                { app_id = "${mpvRegexp}"; }
+                { class = "${vlcRegexp}"; }
               ];
               "workspace 6" = [
-                (classAndAppId "${steamRegexp}")
-                (classAndAppId "${epicGamesRegexp}")
-                (classAndAppId "${itchioRegexp}")
-                (classAndAppId "${lutrisRegexp}")
-                (classAndAppId "${minecraftRegexp}")
+                { class = "${steamRegexp}"; }
+                { class = "${epicGamesRegexp}"; }
+                { class = "${itchioRegexp}"; }
+                { app_id = "${lutrisRegexp}"; }
+                { class = "${minecraftRegexp}"; }
               ];
               "workspace 7" = [
-                (classAndAppId "${steamGameRegexp}")
-                (classAndAppId "${gameRegexp}")
-                (classAndAppId "${yomihustleRegexp}")
-                (classAndAppId "${factorioRegexp}")
+                { class = "${steamGameRegexp}"; }
+                {
+                  class = "${gameRegexp}";
+                  app_id = "${gameRegexp}";
+                }
               ];
               "workspace 8" = [ ];
-              "workspace 9" = [ (classAndAppId "${intellijRegexp}") ];
+              "workspace 9" = [{ class = "${intellijRegexp}"; }];
               "workspace 10" = [ ];
             };
 
@@ -208,7 +208,10 @@ in {
             };
 
             input = {
-              "type:keyboard" = { xkb_options = "ctrl:nocaps"; };
+              "type:keyboard" = {
+                xkb_layout = "gb";
+                xkb_options = "ctrl:nocaps";
+              };
 
               "12625:16387:ROYUAN_Akko_keyboard" = { xkb_layout = "us"; };
 
@@ -362,7 +365,8 @@ in {
               "${modifier}+8" = "workspace number 8";
               "${modifier}+9" = "workspace number 9";
               "${modifier}+Down" = "focus down";
-              "${modifier}+Escape" = ''exec "pkill fuzzel || ${powermenu}"'';
+              "${modifier}+Escape" =
+                ''exec "${pkgs.procps}/bin/pkill fuzzel || ${powermenu}"'';
               "${modifier}+Left" = "focus left";
               "${modifier}+Minus" = "scratchpad show";
               "${modifier}+Return" = "exec ${terminalBin}";
@@ -399,23 +403,28 @@ in {
               "${modifier}+Shift+Up" = "move up";
               "${modifier}+Shift+b" = "border toggle";
               "${modifier}+Shift+c" = "reload";
-              "${modifier}+Shift+g" = ''exec emacsclient -c -a=""'';
+              "${modifier}+Shift+g" =
+                ''exec ${pkgs.emacs}/bin/emacsclient -c -a=""'';
               "${modifier}+Shift+minus" = "move scratchpad";
               "${modifier}+Shift+q" = "kill";
               "${modifier}+Shift+r" = ''mode "resize"'';
               "${modifier}+Shift+space" = "floating toggle";
-              "${modifier}+Tab" = "pkill fuzzel || ${windows}";
+              "${modifier}+Tab" =
+                "${pkgs.procps}/bin/pkill fuzzel || ${windows}";
               "${modifier}+Up" = "focus up";
               "${modifier}+a" = "focus parent";
               "${modifier}+b" = "splith";
               "${modifier}+c" = "exec ${toggleSinkScript}";
-              "${modifier}+d" = ''exec "pkill fuzzel || ${fuzzelBin}"'';
+              "${modifier}+d" =
+                ''exec "${pkgs.procps}/bin/pkill fuzzel || ${fuzzelBin}"'';
               "${modifier}+e" = "layout toggle split";
               "${modifier}+f" = "fullscreen";
-              "${modifier}+r" = ''exec "pkill fuzzel || ${launcher}"'';
+              "${modifier}+r" =
+                ''exec "${pkgs.procps}/bin/pkill fuzzel || ${launcher}"'';
               "${modifier}+s" = "layout stacking";
               "${modifier}+space" = "focus mode_toggle";
-              "${modifier}+t" = "exec swaync-client -t -sw";
+              "${modifier}+t" =
+                "exec ${pkgs.swaynotificationcenter}/bin/swaync-client -t -sw";
               "${modifier}+v" = "splitv";
               "${modifier}+w" = "layout tabbed";
               "Print" = "exec ${screenshot}";
@@ -424,7 +433,6 @@ in {
             startup = [
               { command = "${pkgs.pavucontrol}/bin/pavucontrol"; }
               { command = "${pkgs.swayidle}/bin/swayidle -w"; }
-              { command = "${pkgs.udiskie} -ant"; }
               {
                 command =
                   "${pkgs.wl-clipboard}/bin/wl-paste --type image --watch cliphist store";
@@ -446,7 +454,7 @@ in {
               { command = "${pkgs.lutris}/bin/lutris"; }
               { command = "${pkgs.obs-studio}/bin/obs --minimize-to-tray"; }
               {
-                command = "pkill ${fuzzelBin}";
+                command = "${pkgs.procps}/bin/pkill fuzzel";
                 always = true;
               }
               {
@@ -459,7 +467,8 @@ in {
                 always = true;
               }
               {
-                command = "swaync-client -R -rs -sw";
+                command =
+                  "${pkgs.swaynotificationcenter}/bin/swaync-client -R -rs -sw";
                 always = true;
               }
             ];

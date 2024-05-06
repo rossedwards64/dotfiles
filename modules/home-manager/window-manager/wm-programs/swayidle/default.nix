@@ -5,15 +5,13 @@ in {
   options.modules.swayidle = { enable = mkEnableOption "swayidle"; };
 
   config = mkIf cfg.enable {
-    home.packages = with pkgs; [ swayidle ];
-
     services.swayidle = {
       enable = true;
 
       events = [
         {
           event = "before-sleep";
-          command = "${pkgs.swaylock}/bin/swaylock -fF";
+          command = "${pkgs.swaylock-effects}/bin/swaylock -fF";
         }
         {
           event = "after-resume";
@@ -24,7 +22,7 @@ in {
       timeouts = [
         {
           timeout = 300;
-          command = "${pkgs.swaylock}/bin/swaylock -fF";
+          command = "${pkgs.swaylock-effects}/bin/swaylock -fF";
         }
         {
           timeout = 600;

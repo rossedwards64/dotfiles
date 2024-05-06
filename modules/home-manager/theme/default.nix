@@ -5,20 +5,10 @@ in {
   options.modules.theme = { enable = mkEnableOption "theme"; };
 
   config = mkIf cfg.enable {
-    home.packages = with pkgs; [
-      catppuccin
-      catppuccin-cursors
-      catppuccin-gtk
-      catppuccin-kde
-      catppuccin-sddm-corners
-      rose-pine-icon-theme
-    ];
+    home.packages = with pkgs; [ catppuccin ];
 
     gtk = with pkgs; {
       enable = true;
-
-      gtk2.configLocation = "${config.xdg.configHome}/gtk-2.0/gtkrc";
-
       font.name = "Iosevka NF";
 
       theme = {
@@ -28,7 +18,7 @@ in {
 
       iconTheme = {
         package = rose-pine-icon-theme;
-        name = "oomox-rose-pine-moon";
+        name = "rose-pine-moon";
       };
 
       cursorTheme = {

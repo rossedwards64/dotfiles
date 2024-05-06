@@ -11,15 +11,37 @@ in {
   config = mkIf cfg.enable {
     programs.sway.enable = true;
 
-    services.greetd = {
-      enable = true;
+    services = {
+      udisks2.enable = true;
 
-      settings = {
-        default_session = {
-          command =
-            "${pkgs.greetd.tuigreet}/bin/tuigreet --cmd ${wm} -t -g 'WELCOME TO WORM LINUX' --asterisks";
-          user = "ross";
+      greetd = {
+        enable = true;
+
+        settings = {
+          default_session = {
+            command = ''
+              ${pkgs.greetd.tuigreet}/bin/tuigreet --cmd ${wm} -t -g \
+               'WELCOME TO WORM LINUX' --asterisks
+            '';
+            user = "ross";
+          };
         };
+      };
+
+      actkbd = {
+        enable = true;
+        bindings = [
+          {
+            keys = [ 224 ];
+            events = [ "key" ];
+            command = "${pkgs.brightnessctl}/bin/brightnessctl set 5%-";
+          }
+          {
+            keys = [ 225 ];
+            events = [ "key" ];
+            command = "${pkgs.brightnessctl}/bin/brightnessctl set 5%+";
+          }
+        ];
       };
     };
   };

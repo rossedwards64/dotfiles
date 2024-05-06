@@ -49,7 +49,10 @@ in {
 
     console = { useXkbConfig = true; };
 
-    sound.enable = true;
+    sound = {
+      enable = true;
+      mediaKeys.enable = true;
+    };
 
     services = {
       accounts-daemon.enable = true;

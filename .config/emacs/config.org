@@ -350,7 +350,14 @@
 	org-support-shift-select t
 	org-src-window-setup 'current-window
 	org-roam-directory (concat org-directory "/roam")
-	org-hide-emphasis-markers t)
+	org-hide-emphasis-markers t
+	org-todo-keywords '((sequence
+			     "TODO(t)"
+			     "PROG(p!)"
+			     "BLOCKED(b@/!)"
+			     "|"
+			     "DONE(d!)"
+			     "STOPPED(s@/!)")))
   :bind
   (:map help-map
 	("r" . #'ross/tangle-and-eval-config)
