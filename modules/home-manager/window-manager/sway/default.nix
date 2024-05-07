@@ -100,17 +100,17 @@ in {
 
           extraConfig = ''
             bindsym --locked {
-                XF86AudioRaiseVolume exec ${wobScript} "-v" "-i5"
-                XF86AudioLowerVolume exec ${wobScript} "-v" "-d5"
+                XF86AudioRaiseVolume exec ${wobScript}/bin/wob "-v" "-i5"
+                XF86AudioLowerVolume exec ${wobScript}/bin/wob "-v" "-d5"
                 XF86AudioMute exec ${pkgs.wireplumber}/bin/wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle && \
-                                ${checkMuteScript} "getspeaker"
+                                ${checkMuteScript}/bin/check-mute "getspeaker"
                 XF86AudioMicMute exec ${pkgs.wireplumber}/bin/wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle && \
-                                ${checkMuteScript} "getmic"
+                                ${checkMuteScript}/bin/check-mute "getmic"
                 XF86AudioPlay exec ${pkgs.playerctl}/bin/playerctl play-pause
                 XF86AudioNext exec ${pkgs.playerctl}/bin/playerctl next
                 XF86AudioPrev exec ${pkgs.playerctl}/bin/playerctl previous
-                XF86MonBrightnessUp exec ${pkgs.brightnessctl}/bin/brightnessctl -inc 10
-                XF86MonBrightnessDown exec ${pkgs.brightnessctl}/bin/brightnessctl -dec 10
+                XF86MonBrightnessUp exec ${wobScript}/bin/wob "-b" "-i5"
+                XF86MonBrightnessDown exec ${wobScript}/bin/wob "-b" "-d5"
             }
 
             bindgesture {
@@ -362,8 +362,8 @@ in {
               "${modifier}+8" = "workspace number 8";
               "${modifier}+9" = "workspace number 9";
               "${modifier}+Down" = "focus down";
-              "${modifier}+Escape" =
-                ''exec "${pkgs.procps}/bin/pkill fuzzel || ${powermenu}"'';
+              "${modifier}+Escape" = ''
+                exec "${pkgs.procps}/bin/pkill fuzzel || ${powermenu}/bin/powermenu"'';
               "${modifier}+Left" = "focus left";
               "${modifier}+Minus" = "scratchpad show";
               "${modifier}+Return" = "exec ${pkgs.alacritty}/bin/alacritty";
@@ -407,17 +407,17 @@ in {
               "${modifier}+Shift+r" = ''mode "resize"'';
               "${modifier}+Shift+space" = "floating toggle";
               "${modifier}+Tab" =
-                "${pkgs.procps}/bin/pkill fuzzel || ${windows}";
+                "${pkgs.procps}/bin/pkill fuzzel || ${windows}/bin/windows";
               "${modifier}+Up" = "focus up";
               "${modifier}+a" = "focus parent";
               "${modifier}+b" = "splith";
-              "${modifier}+c" = "exec ${toggleSinkScript}";
+              "${modifier}+c" = "exec ${toggleSinkScript}/bin/toggle-sink";
               "${modifier}+d" = ''
                 exec "${pkgs.procps}/bin/pkill fuzzel || ${pkgs.fuzzel}/bin/fuzzel"'';
               "${modifier}+e" = "layout toggle split";
               "${modifier}+f" = "fullscreen";
-              "${modifier}+r" =
-                ''exec "${pkgs.procps}/bin/pkill fuzzel || ${launcher}"'';
+              "${modifier}+r" = ''
+                exec "${pkgs.procps}/bin/pkill fuzzel || ${launcher}/bin/launcher"'';
               "${modifier}+s" = "layout stacking";
               "${modifier}+space" = "focus mode_toggle";
               "${modifier}+t" =
@@ -455,8 +455,7 @@ in {
                 always = true;
               }
               {
-                command =
-                  "rm -f ${wobsock} && mkfifo ${wobsock} && tail -f ${wobsock} | wob";
+                command = "systemctl --user restart wob";
                 always = true;
               }
               {

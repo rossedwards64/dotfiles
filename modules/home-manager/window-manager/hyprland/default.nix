@@ -7,56 +7,113 @@ let
   font = "Iosevka NF";
   monitor1 = "DP-1";
   monitor2 = "HDMI-A-1";
-  text_color = "0xffffffff";
-  wobscript = "${home}/.local/bin/wob";
-  screenshot = "${home}/.config/rofi/scripts/screenshot";
-  menu = "${home}/.config/rofi/scripts/launcher";
-  runner = "${home}/.config/rofi/scripts/runner";
-  powermenu = "${home}/.config/rofi/scripts/powermenu";
-  clipboard = "${home}/.config/rofi/scripts/clipboard.sh";
+  laptop = "LVDS-1";
+  wallpapersDir = "/home/ross/Pictures/wallpapers";
+
+  checkMuteScript = import ../scripts/check-mute.nix { inherit pkgs; };
+  toggleSinkScript = import ../scripts/toggle-sink.nix { inherit pkgs; };
+  wobScript = import ../scripts/wob.nix { inherit pkgs; };
+
+  launcher =
+    import ../wm-programs/fuzzel/scripts/launcher.nix { inherit pkgs; };
+  powermenu =
+    import ../wm-programs/fuzzel/scripts/powermenu.nix { inherit pkgs; };
+  runner = import ../wm-programs/fuzzel/scripts/runner.nix { inherit pkgs; };
+  screenshot =
+    import ../wm-programs/fuzzel/scripts/screenshot.nix { inherit pkgs; };
+  windows = import ../wm-programs/fuzzel/scripts/windows.nix { inherit pkgs; };
+
   reload = ''hyprctl reload && notify-send "Reloaded Hyprland"'';
   gameTabs = ''hyprctl --batch "workspace 7 ; togglegroup"'';
   wobsock = "$XDG_RUNTIME_DIR/wob.sock";
+
   any = "^(.*)$";
-  steamGame = "^(steam_app_[0-9]*)$";
-  discord = "^(discord)$";
-  emacs = "^(emacs(client)?)$";
-  epicGames = "^(heroic)$";
-  firefox = "^(firefox)$";
-  freetube = "^(FreeTube)$";
-  intellij = "^(jetbrains-idea)$";
-  itchio = "^(itch)$";
-  lutris = "^(lutris)$";
-  minecraft = "^(com-atlauncher-App)$";
-  mpv = "^(mpv)$";
-  spotify = "^(Spotify)$";
-  steam = "^(steam)$";
-  terminal = "^(Alacritty)$";
-  vlc = "^(vlc)$";
-  xwvb = "^(xwaylandvideobridge)$";
-  xdman = "^(xdm-app)$";
-  game = "^(factorio|youronlymoveishustle|dwarfort|gamescope)$";
-  virtManager = "^(virt-manager)$";
-  zathura = "^(org.pwmt.zathura)$";
-  volume = "^(pavucontrol)$";
-  activeCol = "rgb(64727d)";
-  inactiveCol = "rgb(212b30)";
-  activeGroup = "rgb(1794d2)";
-  inactiveGroup = "${inactiveCol}";
-  groupActiveCol = "0x66ffff00";
-  groupInactiveCol = "0x66777700";
-  groupLockedActiveCol = "0x66ff5500";
-  groupLockedInactiveCol = "0x66775500";
-  groupCols = {
-    active = groupActiveCol;
-    inactive = groupInactiveCol;
-    locked_active = groupLockedActiveCol;
-    locked_inactive = groupLockedInactiveCol;
-  };
+  steamGameRegexp = "^(steam_app_[0-9]*)$";
+  discordRegexp = "^(discord)$";
+  emacsRegexp = "^(emacs(client)?)$";
+  epicGamesRegexp = "^(heroic)$";
+  firefoxRegexp = "^(firefox)$";
+  freetubeRegexp = "^(FreeTube)$";
+  intellijRegexp = "^(jetbrains-idea)$";
+  itchioRegexp = "^(itch)$";
+  lutrisRegexp = "^(lutris)$";
+  minecraftRegexp = "^(com-atlauncher-App)$";
+  mpvRegexp = "^(mpv)$";
+  spotifyRegexp = "^(Spotify)$";
+  steamRegexp = "^(steam)$";
+  terminalRegexp = "^(Alacritty)$";
+  vlcRegexp = "^(vlc)$";
+  xwvbRegexp = "^(xwaylandvideobridge)$";
+  xdmanRegexp = "^(xdm-app)$";
+  gameRegexp = "^(factorio|youronlymoveishustle|dwarfort|gamescope)$";
+  virtManagerRegexp = "^(virt-manager)$";
+  zathuraRegexp = "^(org.pwmt.zathura)$";
+  volumeRegexp = "^(pavucontrol)$";
+
+  setRule = rule: regexp: "${rule},class:${regexp}";
+
+  noComposite = builtins.concatMap (regexp: [
+    (setRule "noblur" regexp)
+    (setRule "opaque" regexp)
+    (setRule "center" regexp)
+    (setRule "fullscreen" regexp)
+    (setRule "idleinhibit always" regexp)
+    (setRule "group new" regexp)
+  ]) [ steamGameRegexp gameRegexp ];
+
+  noBlurAndOpaque = builtins.concatMap
+    (regexp: [ (setRule "noblur" regexp) (setRule "opaque" regexp) ]) [
+      firefoxRegexp
+      freetubeRegexp
+      mpvRegexp
+      vlcRegexp
+      discordRegexp
+    ];
+
+  workspaceAssigns = builtins.map (assignment:
+    ((num: regexp: "workspace ${toString num} silent,class:${regexp}")
+      (head assignment) (lists.last assignment))) [
+        [ 1 emacsRegexp ]
+        [ 2 terminalRegexp ]
+        [ 3 firefoxRegexp ]
+        [ 4 discordRegexp ]
+        [ 5 spotifyRegexp ]
+        [ 6 steamRegexp ]
+        [ 6 lutrisRegexp ]
+        [ 6 minecraftRegexp ]
+        [ 6 itchioRegexp ]
+        [ 6 epicGamesRegexp ]
+        [ 7 steamGameRegexp ]
+        [ 8 virtManagerRegexp ]
+        [ 9 intellijRegexp ]
+        [ "special" volumeRegexp ]
+        [ "special" zathuraRegexp ]
+      ];
+
+  monitorAssigns = builtins.map (assignment:
+    ((monitor: regexp: "monitor ${monitor},class:${regexp}") (head assignment)
+      (lists.last assignment))) [
+        [ monitor1 steamGameRegexp ]
+        [ monitor1 gameRegexp ]
+      ];
+
+  pink = "rgb(f5c2e7)";
+  mauve = "rgb(cba6f7)";
+  text = "rgb(cdd6f4)";
+  baseAlpha = "rgba(1e1e2e0f)";
 in {
   options.modules.hyprland = { enable = mkEnableOption "hyprland"; };
 
   config = mkIf cfg.enable {
+    xdg.configFile."hypr/hyprpaper.conf".text = ''
+      preload = ${wallpapersDir}/Gurren Lagann/simon.jpg
+      preload = ${wallpapersDir}/Jujutsu Kaisen/yuji.png
+      preload = ${wallpapersDir}/Gurren Lagann/king_kittan.jpg
+      wallpaper = ${monitor1},${wallpapersDir}/Gurren Lagann/simon.jpg
+      wallpaper = ${monitor2},${wallpapersDir}/Jujutsu Kaisen/yuji.jpg
+      wallpaper = ${laptop},${wallpapersDir}/Gurren Lagann/king_kittan.jpg
+    '';
+
     wayland = {
       windowManager = {
         hyprland = {
@@ -64,7 +121,6 @@ in {
           plugins = [ ];
 
           settings = {
-
             env = [
               "XCURSOR,24"
               "XDG_CURRENT_DESKTOP,Hyprland"
@@ -75,25 +131,24 @@ in {
             monitor = [
               "${monitor1},1920x1080@144,0x0,1"
               "${monitor2},1920x1080@75,1920x190,1"
+              "${laptop},1366x768@60,0x0,1"
             ];
 
             exec-once = [
-              "hyprpaper"
-              "wl-paste --type text --watch cliphist store"
-              "wl-paste --type image --watch cliphist store"
-              "obs --minimize-to-tray"
-              "pavucontrol"
-              "emacsclient -c -a=''"
-              "alacritty"
-              "firefox"
-              "flatpak run com.discordapp.Discord"
-              "flatpak run com.spotify.Client"
-              "steam"
-              "flatpak run io.freetube.FreeTube"
-              # "virt-manager"
+              "${pkgs.swayidle}/bin/swayidle -w"
+              "${pkgs.hyprpaper}/bin/hyprpaper"
+              "${pkgs.wl-clipboard}/bin/wl-paste --type text --watch cliphist store"
+              "${pkgs.wl-clipboard}/bin/wl-paste --type image --watch cliphist store"
+              "${pkgs.pavucontrol}/bin/pavucontrol"
+              "${pkgs.emacs}/bin/emacsclient -c -a=''"
+              "${pkgs.alacritty}/bin/alacritty"
+              "${pkgs.firefox}/bin/firefox"
             ];
 
-            exec = [ "systemctl --user restart waybar" ];
+            exec = [
+              "systemctl --user restart waybar"
+              "systemctl --user restart wob"
+            ];
 
             general = {
               gaps_in = 5;
@@ -104,8 +159,8 @@ in {
               hover_icon_on_border = true;
               extend_border_grab_area = 5;
               border_size = 2;
-              "col.active_border" = activeCol;
-              "col.inactive_border" = inactiveCol;
+              "col.active_border" = pink;
+              "col.inactive_border" = mauve;
             };
 
             input = {
@@ -138,8 +193,7 @@ in {
               inactive_opacity = 0.8;
               fullscreen_opacity = 1.0;
               shadow_range = 10;
-              shadow_range_power = 3;
-              "col.shadow" = "0x990f0f0f";
+              "col.shadow" = baseAlpha;
             };
 
             binds = {
@@ -151,7 +205,7 @@ in {
               pseudotile = true;
               preserve_split = true;
               force_split = true;
-              use_active_for_split = true;
+              use_active_for_splits = true;
             };
 
             master = {
@@ -165,23 +219,24 @@ in {
 
             group = {
               groupbar = {
+                font_family = font;
                 font_size = 10;
                 gradients = false;
                 render_titles = true;
                 scrolling = true;
-                text_color = "0xffffffff";
-                "col.active" = groupCols.active;
-                "col.inactive" = groupCols.inactive;
-                "col.locked_active" = groupCols.locked_active;
-                "col.locked_inactive" = groupCols.locked_inactive;
+                text_color = text;
+                "col.active" = pink;
+                "col.inactive" = mauve;
+                "col.locked_active" = mauve;
+                "col.locked_inactive" = mauve;
               };
 
               insert_after_current = true;
               focus_removed_window = true;
-              "col.active" = groupCols.active;
-              "col.inactive" = groupCols.inactive;
-              "col.locked_active" = groupCols.locked_active;
-              "col.locked_inactive" = groupCols.locked_inactive;
+              "col.border_active" = pink;
+              "col.border_inactive" = mauve;
+              "col.border_locked_active" = mauve;
+              "col.border_locked_inactive" = mauve;
             };
 
             misc = {
@@ -217,112 +272,50 @@ in {
               ];
             };
 
-            windowrulev2 = [
-              "noblur,class:${firefox}"
-              "opaque,class:${firefox}"
-              "noblur,class:${freetube}"
-              "opaque,class:${freetube}"
-              "noblur,class:${mpv}"
-              "opaque,class:${mpv}"
-              "noblur,class:${vlc}"
-              "opaque,class:${vlc}"
-              "noblur,class:${discord}"
-              "opaque,class:${discord}"
-              "opacity 0.0 override 0.0 override override,class:${xwvb}"
-              "noanim,class:${xwvb}"
-              "nofocus,class:${xwvb}"
-              "noinitialfocus,class:${xwvb}"
-              "workspace 1 silent,class:${emacs}"
-              "workspace 2 silent,class:${terminal}"
-              "workspace 3 silent,class:${firefox}"
-              "workspace 4 silent,class:${discord}"
-              "workspace 5 silent,class:${spotify}"
-              "workspace 6 silent,class:${steam}"
-              "workspace 6 silent,class:${lutris}"
-              "workspace 6 silent,class:${minecraft}"
-              "workspace 6 silent,class:${itchio}"
-              "workspace 6 silent,class:${epicGames}"
-              "workspace 8 silent,class:${virtManager}"
-              "workspace 9 silent,class:${intellij}"
-              "workspace special silent,class:${xwvb}"
-              "workspace special silent,class:${volume}"
-              "workspace special silent,class:${xdman}"
-              "workspace special silent,class:${zathura}"
-              "group new,class:${firefox}"
-              "group new,class:${steam}"
-              "workspace 7,class:${steamGame}"
-              "monitor ${monitor1},class:${steamGame}"
-              "noblur,class:${steamGame}"
-              "opaque,class:${steamGame}"
-              "center,class:${steamGame}"
-              "fullscreen,class:${steamGame}"
-              "idleinhibit always,class:${steamGame}"
-              "workspace 7,class:${game}"
-              "monitor ${monitor1},class:${game}"
-              "noblur,class:${game}"
-              "opaque,class:${game}"
-              "center,class:${game}"
-              "fullscreen,class:${game}"
-              "idleinhibit always,class:${game}"
-            ];
+            windowrulev2 = [ "group new,class:${firefoxRegexp}" ] ++ noComposite
+              ++ noBlurAndOpaque ++ workspaceAssigns ++ monitorAssigns;
 
             workspace = [ "7,monitor:${monitor1}" ];
 
-            layerrule = [ "blur,rofi" ];
+            layerrule = [ "blur,fuzzel" ];
 
             bind = [
-              "${mod},RETURN,exec,alacritty"
-              ''${mod}SHIFT,e,exec,emacsclient -c -a=""''
+              "${mod},RETURN,exec,${pkgs.alacritty}/bin/alacritty"
+              ''${mod}SHIFT,e,exec,${pkgs.emacs}/bin/emacsclient -c -a=""''
               "${mod}SHIFT,c,exec,${reload}"
               "${mod},f,fullscreen"
               "${mod}SHIFT,q,killactive,"
               "${mod}SHIFT,m,exit,"
               "${mod},y,togglefloating,"
               "${mod},p,pseudo,"
-              "${mod},v,exec,${clipboard}"
-              "${mod},t,exec,swaync-client -t"
+              "${mod},t,exec,${pkgs.swaynotificationcenter}/bin/swaync-client -t"
               "${mod}SHIFT,b,pin"
               ",Print,exec,${screenshot}"
               ''SHIFT,Print,exec,${screenshot} "${home}/Pictures/screenshots"''
-              ''${mod},C,exec,"${home}/.local/bin/toggle_sink"''
+              ''${mod},C,exec,"${toggleSinkScript}/bin/toggle-sink"''
               "${mod}SHIFT,o,movecurrentworkspacetomonitor,${monitor2}"
               "${mod}SHIFT,p,movecurrentworkspacetomonitor,${monitor1}"
               "${mod},minus,togglespecialworkspace"
-              "${mod},1,workspace,1"
-              "${mod},2,workspace,2"
-              "${mod},3,workspace,3"
-              "${mod},4,workspace,4"
-              "${mod},5,workspace,5"
-              "${mod},6,workspace,6"
-              "${mod},7,workspace,7"
-              "${mod},8,workspace,8"
-              "${mod},9,workspace,9"
-              "${mod},0,workspace,10"
               "${mod}SHIFT,minus,movetoworkspace,special"
-              "${mod}SHIFT,1,movetoworkspace,1"
-              "${mod}SHIFT,2,movetoworkspace,2"
-              "${mod}SHIFT,3,movetoworkspace,3"
-              "${mod}SHIFT,4,movetoworkspace,4"
-              "${mod}SHIFT,5,movetoworkspace,5"
-              "${mod}SHIFT,6,movetoworkspace,6"
-              "${mod}SHIFT,7,movetoworkspace,7"
-              "${mod}SHIFT,9,movetoworkspace,9"
-              "${mod}SHIFT,8,movetoworkspace,8"
-              "${mod}SHIFT,0,movetoworkspace,10"
               "${mod},mouse_down,workspace,e+1"
               "${mod},mouse_up,workspace,e-1"
               "${mod},g,togglegroup"
               "${mod}SHIFT,g,changegroupactive,f"
               "${mod}SHIFT,f,changegroupactive,g"
-            ];
+            ] ++ builtins.concatMap (num:
+              let workspaceNum = "${toString num}";
+              in [
+                "${mod},${workspaceNum},workspace,${workspaceNum}"
+                "${mod}SHIFT,${workspaceNum},movetoworkspace,${workspaceNum}"
+              ]) (lists.range 1 9);
 
             bindm =
               [ "${mod},mouse:272,movewindow" "${mod},mouse:273,resizewindow" ];
 
             bindr = [
-              "${mod},d,exec,pkill rofi || ${menu}"
-              "${mod},r,exec,pkill rofi || ${runner}"
-              "${mod},ESCAPE,exec,pkill rofi || ${powermenu}"
+              "${mod},d,exec,${pkgs.procps}/bin/pkill fuzzel || ${pkgs.fuzzel}/bin/fuzzel"
+              "${mod},r,exec,${pkgs.procps}/bin/pkill fuzzel || ${runner}/bin/runner"
+              "${mod},ESCAPE,exec,${pkgs.procps}/bin/pkill fuzzel || ${powermenu}/bin/powermenu"
             ];
 
             binde = [
@@ -350,21 +343,21 @@ in {
 
             bindl = [
               ''
-                ,XF86AudioMute,exec,wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle && "${home}/.local/bin/check_mute" "-s"''
+                ,XF86AudioMute,exec,${pkgs.wireplumber}/bin/wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle && "${checkMuteScript}/bin/check-mute" "-s"''
               ''
-                ,XF86AudioMicMute,exec,wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle && "${home}/.local/bin/check_mute" "-m"''
+                ,XF86AudioMicMute,exec,${pkgs.wireplumber}/bin/wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle && "${checkMuteScript}/bin/check-mute" "-m"''
 
             ];
 
             bindel = [
-              ",XF86MonBrightnessUp,exec,brightnessctl set 5%+"
-              ",XF86MonBrightnessDown,exec,brightnessctl set 5%-"
-              '',XF86AudioRaiseVolume,exec,${wobscript} "-v" "-i5"''
-              '',XF86AudioLowerVolume,exec,${wobscript} "-v" "-d5"''
-              ",XF86AudioNext,exec,playerctl next"
-              ",XF86AudioPrev,exec,playerctl previous"
-              ",XF86AudioPlay,exec,playerctl play-pause"
-              ",XF86AudioStop,exec,playerctl stop"
+              '',XF86MonBrightnessUp,exec,${wobScript}/bin/wob "-b" "-i5"''
+              '',XF86MonBrightnessDown,exec,${wobScript}/bin/wob "-b" "-d5"''
+              '',XF86AudioRaiseVolume,exec,${wobScript}/bin/wob "-v" "-i5"''
+              '',XF86AudioLowerVolume,exec,${wobScript}/bin/wob "-v" "-d5"''
+              ",XF86AudioNext,exec,${pkgs.playerctl}/bin/playerctl next"
+              ",XF86AudioPrev,exec,${pkgs.playerctl}/bin/playerctl previous"
+              ",XF86AudioPlay,exec,${pkgs.playerctl}/bin/playerctl play-pause"
+              ",XF86AudioStop,exec,${pkgs.playerctl}/bin/playerctl stop"
             ];
           };
         };

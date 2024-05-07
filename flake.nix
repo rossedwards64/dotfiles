@@ -22,10 +22,8 @@
     , hyprland-plugins, ... }@attrs:
     let
       inherit (self) outputs;
-
       username = "ross";
       system = "x86_64-linux";
-      windowManager = "sway";
       lib = nixpkgs.lib // home-manager.lib;
       pkgs = nixpkgs.legacyPackages.${system};
       specialArgs = { inherit attrs outputs username; };
@@ -113,7 +111,7 @@
             {
               modules = {
                 thinkpad.enable = true;
-              } // (enableWindowManagerProgram windowManager);
+              } // (enableWindowManagerProgram "hyprland");
             }
           ] ++ systemModules;
         };
@@ -126,8 +124,7 @@
             {
               modules = {
                 thinkpad.enable = true;
-                kde.enable = true;
-              };
+              } // (enableWindowManagerProgram "sway");
             }
           ] ++ systemModules;
         };
@@ -153,7 +150,7 @@
             ({ config, pkgs, options, ... }: {
               modules = lib.attrsets.mergeAttrsList [
                 defaultHomeModules
-                (enableWindowManagerConfig windowManager)
+                (enableWindowManagerConfig "hyprland")
               ];
             })
           ];
@@ -164,7 +161,10 @@
 
           modules = homeModules ++ [
             ({ config, pkgs, options, ... }: {
-              modules = lib.attrsets.mergeAttrsList [ defaultHomeModules ];
+              modules = lib.attrsets.mergeAttrsList [
+                defaultHomeModules
+                (enableWindowManagerConfig "sway")
+              ];
             })
           ];
         };

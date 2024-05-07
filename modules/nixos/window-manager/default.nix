@@ -1,8 +1,6 @@
 { lib, config, pkgs, ... }:
 with lib;
-let
-  cfg = config.modules.window-manager;
-  wm = "${pkgs.sway}/bin/sway";
+let cfg = config.modules.window-manager;
 in {
   options.modules.window-manager = {
     enable = mkEnableOption "window-manager";
@@ -18,28 +16,12 @@ in {
         settings = {
           default_session = {
             command = ''
-              ${pkgs.greetd.tuigreet}/bin/tuigreet --cmd ${wm} -t -g \
+              ${pkgs.greetd.tuigreet}/bin/tuigreet --cmd ${pkgs.hyprland}/bin/Hyprland -t -g \
                'WELCOME TO WORM LINUX' --asterisks
             '';
             user = "ross";
           };
         };
-      };
-
-      actkbd = {
-        enable = true;
-        bindings = [
-          {
-            keys = [ 224 ];
-            events = [ "key" ];
-            command = "${pkgs.brightnessctl}/bin/brightnessctl set 5%-";
-          }
-          {
-            keys = [ 225 ];
-            events = [ "key" ];
-            command = "${pkgs.brightnessctl}/bin/brightnessctl set 5%+";
-          }
-        ];
       };
     };
 

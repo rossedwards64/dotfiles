@@ -11,6 +11,7 @@ in {
   config = mkIf cfg.enable {
     services.wob = {
       enable = true;
+      systemd = true;
 
       settings = {
         "" = {
