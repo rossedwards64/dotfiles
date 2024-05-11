@@ -16,7 +16,7 @@ in {
         settings = {
           default_session = {
             command = ''
-              ${pkgs.greetd.tuigreet}/bin/tuigreet --cmd ${pkgs.hyprland}/bin/Hyprland -t -g \
+              ${pkgs.greetd.tuigreet}/bin/tuigreet --cmd ${pkgs.sway}/bin/sway -t -g \
                'WELCOME TO WORM LINUX' --asterisks
             '';
             user = "ross";
@@ -30,5 +30,10 @@ in {
         auth include login
       '';
     };
+
+    environment.etc."greetd/environments".text = ''
+      ${pkgs.sway}/bin/sway
+      ${pkgs.hyprland}/bin/Hyprland
+    '';
   };
 }

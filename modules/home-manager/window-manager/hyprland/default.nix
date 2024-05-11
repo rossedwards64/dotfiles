@@ -8,20 +8,22 @@ let
   monitor1 = "DP-1";
   monitor2 = "HDMI-A-1";
   laptop = "LVDS-1";
-  wallpapersDir = "/home/ross/Pictures/wallpapers";
+  wallpapersDir = "${home}/Pictures/wallpapers";
 
   checkMuteScript = import ../scripts/check-mute.nix { inherit pkgs; };
   toggleSinkScript = import ../scripts/toggle-sink.nix { inherit pkgs; };
   wobScript = import ../scripts/wob.nix { inherit pkgs; };
 
-  launcher =
+  launcherScript =
     import ../wm-programs/fuzzel/scripts/launcher.nix { inherit pkgs; };
-  powermenu =
+  powermenuScript =
     import ../wm-programs/fuzzel/scripts/powermenu.nix { inherit pkgs; };
-  runner = import ../wm-programs/fuzzel/scripts/runner.nix { inherit pkgs; };
-  screenshot =
+  runnerScript =
+    import ../wm-programs/fuzzel/scripts/runner.nix { inherit pkgs; };
+  screenshotScript =
     import ../wm-programs/fuzzel/scripts/screenshot.nix { inherit pkgs; };
-  windows = import ../wm-programs/fuzzel/scripts/windows.nix { inherit pkgs; };
+  windowsScript =
+    import ../wm-programs/fuzzel/scripts/windows.nix { inherit pkgs; };
 
   reload = ''hyprctl reload && notify-send "Reloaded Hyprland"'';
   gameTabs = ''hyprctl --batch "workspace 7 ; togglegroup"'';
@@ -290,8 +292,7 @@ in {
               "${mod},p,pseudo,"
               "${mod},t,exec,${pkgs.swaynotificationcenter}/bin/swaync-client -t"
               "${mod}SHIFT,b,pin"
-              ",Print,exec,${screenshot}"
-              ''SHIFT,Print,exec,${screenshot} "${home}/Pictures/screenshots"''
+              ",Print,exec,${screenshotScript}/bin/screenshot"
               ''${mod},C,exec,"${toggleSinkScript}/bin/toggle-sink"''
               "${mod}SHIFT,o,movecurrentworkspacetomonitor,${monitor2}"
               "${mod}SHIFT,p,movecurrentworkspacetomonitor,${monitor1}"
@@ -314,8 +315,8 @@ in {
 
             bindr = [
               "${mod},d,exec,${pkgs.procps}/bin/pkill fuzzel || ${pkgs.fuzzel}/bin/fuzzel"
-              "${mod},r,exec,${pkgs.procps}/bin/pkill fuzzel || ${runner}/bin/runner"
-              "${mod},ESCAPE,exec,${pkgs.procps}/bin/pkill fuzzel || ${powermenu}/bin/powermenu"
+              "${mod},r,exec,${pkgs.procps}/bin/pkill fuzzel || ${runnerScript}/bin/runner"
+              "${mod},ESCAPE,exec,${pkgs.procps}/bin/pkill fuzzel || ${powermenuScript}/bin/powermenu"
             ];
 
             binde = [

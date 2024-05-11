@@ -7,30 +7,30 @@ in {
   config = mkIf cfg.enable {
     home.packages = with pkgs; [ catppuccin ];
 
-    gtk = with pkgs; {
+    gtk = {
       enable = true;
       font.name = "Iosevka NF";
 
       theme = {
-        package = catppuccin-gtk;
+        package = pkgs.catppuccin-gtk;
         name = "Catppuccin-Dark";
       };
 
       iconTheme = {
-        package = rose-pine-icon-theme;
+        package = pkgs.rose-pine-icon-theme;
         name = "rose-pine-moon";
       };
 
       cursorTheme = {
-        package = catppuccin-cursors.mochaDark;
+        package = pkgs.catppuccin-cursors.mochaDark;
         name = "Catppuccin-Mocha-Dark-Cursors";
       };
     };
 
-    qt = with pkgs; {
+    qt = {
       enable = true;
       platformTheme.name = "kde";
-      style.package = catppuccin-kde;
+      style.package = pkgs.catppuccin-kde;
     };
   };
 }

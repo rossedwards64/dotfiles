@@ -14,14 +14,16 @@ let
   toggleSinkScript = import ../scripts/toggle-sink.nix { inherit pkgs; };
   wobScript = import ../scripts/wob.nix { inherit pkgs; };
 
-  launcher =
+  launcherScript =
     import ../wm-programs/fuzzel/scripts/launcher.nix { inherit pkgs; };
-  powermenu =
+  powermenuScript =
     import ../wm-programs/fuzzel/scripts/powermenu.nix { inherit pkgs; };
-  runner = import ../wm-programs/fuzzel/scripts/runner.nix { inherit pkgs; };
-  screenshot =
+  runnerScript =
+    import ../wm-programs/fuzzel/scripts/runner.nix { inherit pkgs; };
+  screenshotScript =
     import ../wm-programs/fuzzel/scripts/screenshot.nix { inherit pkgs; };
-  windows = import ../wm-programs/fuzzel/scripts/windows.nix { inherit pkgs; };
+  windowsScript =
+    import ../wm-programs/fuzzel/scripts/windows.nix { inherit pkgs; };
 
   wobsock = "$XDG_RUNTIME_DIR/wob.sock";
 
@@ -363,7 +365,7 @@ in {
               "${modifier}+9" = "workspace number 9";
               "${modifier}+Down" = "focus down";
               "${modifier}+Escape" = ''
-                exec "${pkgs.procps}/bin/pkill fuzzel || ${powermenu}/bin/powermenu"'';
+                exec "${pkgs.procps}/bin/pkill fuzzel || ${powermenuScript}/bin/powermenu"'';
               "${modifier}+Left" = "focus left";
               "${modifier}+Minus" = "scratchpad show";
               "${modifier}+Return" = "exec ${pkgs.alacritty}/bin/alacritty";
@@ -407,7 +409,7 @@ in {
               "${modifier}+Shift+r" = ''mode "resize"'';
               "${modifier}+Shift+space" = "floating toggle";
               "${modifier}+Tab" =
-                "${pkgs.procps}/bin/pkill fuzzel || ${windows}/bin/windows";
+                "${pkgs.procps}/bin/pkill fuzzel || ${windowsScript}/bin/windows";
               "${modifier}+Up" = "focus up";
               "${modifier}+a" = "focus parent";
               "${modifier}+b" = "splith";
@@ -417,14 +419,14 @@ in {
               "${modifier}+e" = "layout toggle split";
               "${modifier}+f" = "fullscreen";
               "${modifier}+r" = ''
-                exec "${pkgs.procps}/bin/pkill fuzzel || ${launcher}/bin/launcher"'';
+                exec "${pkgs.procps}/bin/pkill fuzzel || ${launcherScript}/bin/launcher"'';
               "${modifier}+s" = "layout stacking";
               "${modifier}+space" = "focus mode_toggle";
               "${modifier}+t" =
                 "exec ${pkgs.swaynotificationcenter}/bin/swaync-client -t -sw";
               "${modifier}+v" = "splitv";
               "${modifier}+w" = "layout tabbed";
-              "Print" = "exec ${screenshot}";
+              "Print" = "exec ${screenshotScript}/bin/screenshot";
             };
 
             startup = [

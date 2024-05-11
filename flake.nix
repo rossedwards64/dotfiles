@@ -50,8 +50,6 @@
         })
       ];
 
-      enableWindowManagerProgram = (wm: { window-manager.enable = true; });
-
       defaultHomeModules = {
         alacritty.enable = true;
         desktop.enable = true;
@@ -111,7 +109,8 @@
             {
               modules = {
                 thinkpad.enable = true;
-              } // (enableWindowManagerProgram "hyprland");
+                window-manager.enable = true;
+              };
             }
           ] ++ systemModules;
         };
@@ -124,7 +123,8 @@
             {
               modules = {
                 thinkpad.enable = true;
-              } // (enableWindowManagerProgram "sway");
+                window-manager.enable = true;
+              };
             }
           ] ++ systemModules;
         };
@@ -150,7 +150,7 @@
             ({ config, pkgs, options, ... }: {
               modules = lib.attrsets.mergeAttrsList [
                 defaultHomeModules
-                (enableWindowManagerConfig "hyprland")
+                (enableWindowManagerConfig "sway")
               ];
             })
           ];
