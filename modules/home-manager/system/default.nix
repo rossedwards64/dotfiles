@@ -28,6 +28,17 @@ in {
     ];
 
     programs = {
+      git = {
+        enable = true;
+        userEmail = "redwards64@hotmail.com";
+        userName = "Ross Edwards";
+      };
+
+      gpg = {
+        enable = true;
+        homedir = "${xdg.dataHome}/gnupg";
+      };
+
       direnv = {
         enable = true;
         enableZshIntegration = true;
@@ -46,6 +57,11 @@ in {
           updates = { auto_update = true; };
         };
       };
+    };
+
+    services.gpg-agent = {
+      enable = true;
+      pinentryPackage = pkgs.pinentry-qt;
     };
   };
 }

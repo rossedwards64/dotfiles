@@ -29,48 +29,65 @@
       specialArgs = { inherit attrs outputs username; };
       extraSpecialArgs = specialArgs;
 
-      defaultNixosModules = {
-        boot.enable = true;
-        desktop.enable = true;
-        environment.enable = true;
-        fonts.enable = true;
-        games.enable = true;
-        networking.enable = true;
-        programming.enable = true;
-        syncthing.enable = true;
-        system.enable = true;
-        user.enable = true;
-      };
-
       systemModules = [
         ./modules/nixos
         ({ config, pkgs, options, ... }: {
           nixpkgs.config.allowUnfree = true;
-          modules = defaultNixosModules;
+          modules = {
+            boot.enable = true;
+            desktop.enable = true;
+            environment.enable = true;
+            fonts.enable = true;
+            games.enable = true;
+            networking.enable = true;
+            programming.enable = true;
+            syncthing.enable = true;
+            system.enable = true;
+            user.enable = true;
+          };
         })
       ];
 
-      defaultHomeModules = {
-        alacritty.enable = true;
-        desktop.enable = true;
-        firefox.enable = true;
-        emacs.enable = true;
-        email.enable = true;
-        games.enable = true;
-        git.enable = true;
-        gpg.enable = true;
-        music.enable = true;
-        pass.enable = true;
-        programming.enable = true;
-        starship.enable = true;
-        system.enable = true;
-        theme.enable = true;
-        tmux.enable = true;
-        topgrade.enable = true;
-        zsh.enable = true;
-      };
+      makeSystem = hostname: extraModules:
+        lib.nixosSystem {
+          inherit system specialArgs;
+          modules = systemModules ++ [ ./hosts/${hostname}/configuration.nix ]
+            ++ extraModules;
+        };
 
-      homeModules = [ ./home/home.nix ];
+      homeModules = [
+        ./home/home.nix
+        {
+          alacritty.enable = true;
+          desktop.enable = true;
+          firefox.enable = true;
+          emacs.enable = true;
+          email.enable = true;
+          games.enable = true;
+          git.enable = true;
+          gpg.enable = true;
+          music.enable = true;
+          pass.enable = true;
+          programming.enable = true;
+          starship.enable = true;
+          system.enable = true;
+          theme.enable = true;
+          tmux.enable = true;
+          topgrade.enable = true;
+          zsh.enable = true;
+        }
+      ];
+
+      makeHome = extraModules:
+        lib.homeManagerConfiguration {
+          inherit pkgs extraSpecialArgs;
+
+          modules = homeModules ++ [
+            ({ config, pkgs, options, ... }: {
+              modules = homeModules // extraModules;
+            })
+          ];
+        };
     in {
       nix = {
         registry.nixpkgs.flake = nixpkgs;
@@ -83,81 +100,41 @@
       };
 
       nixosConfigurations = {
-        ross-desktop = lib.nixosSystem {
-          inherit system specialArgs;
-          modules = [
-            ./hosts/ross-desktop/configuration.nix
-            {
-              modules = {
-                # kde.enable = true;
-                qemu.enable = true;
-                window-manager.enable = true;
-              };
-            }
-          ] ++ systemModules;
-        };
+        ross-desktop = makeSystem "ross-desktop" [{
+          modules = {
+            # kde.enable = true;
+            qemu.enable = true;
+            window-manager.enable = true;
+          };
+        }];
 
-        ross-thinkpad-x230 = lib.nixosSystem {
-          inherit system specialArgs;
-          modules = [
-            nixos-hardware.nixosModules.lenovo-thinkpad-x230
-            ./hosts/ross-thinkpad-x230/configuration.nix
-            {
-              modules = {
-                thinkpad.enable = true;
-                window-manager.enable = true;
-              };
-            }
-          ] ++ systemModules;
-        };
+        ross-thinkpad-x230 = makeSystem "ross-thinkpad-x230" [
+          nixos-hardware.nixosModules.lenovo-thinkpad-x230
+          {
+            modules = {
+              thinkpad.enable = true;
+              window-manager.enable = true;
+            };
+          }
+        ];
 
-        ross-thinkpad-x200 = lib.nixosSystem {
-          inherit system specialArgs;
-          modules = [
-            nixos-hardware.nixosModules.lenovo-thinkpad-x200s
-            ./hosts/ross-thinkpad-x200/configuration.nix
-            {
-              modules = {
-                thinkpad.enable = true;
-                window-manager.enable = true;
-              };
-            }
-          ] ++ systemModules;
-        };
+        ross-thinkpad-x200 = makeSystem "ross-thinkpad-x200" [
+          nixos-hardware.nixosModules.lenovo-thinkpad-x200s
+          {
+            modules = {
+              thinkpad.enable = true;
+              window-manager.enable = true;
+            };
+          }
+        ];
       };
 
       home-manager.backupFileExtension = "backup";
 
       homeConfigurations = {
-        ross-desktop = lib.homeManagerConfiguration {
-          inherit pkgs extraSpecialArgs;
-
-          modules = homeModules ++ [
-            ({ config, pkgs, options, ... }: {
-              modules = defaultHomeModules // { window-manager.enable = true; };
-            })
-          ];
-        };
-
-        ross-thinkpad-x230 = lib.homeManagerConfiguration {
-          inherit pkgs extraSpecialArgs;
-
-          modules = homeModules ++ [
-            ({ config, pkgs, options, ... }: {
-              modules = defaultHomeModules // { window-manager.enable = true; };
-            })
-          ];
-        };
-
-        ross-thinkpad-x200 = lib.homeManagerConfiguration {
-          inherit pkgs extraSpecialArgs;
-
-          modules = homeModules ++ [
-            ({ config, pkgs, options, ... }: {
-              modules = defaultHomeModules // { window-manager.enable = true; };
-            })
-          ];
-        };
+        ross-desktop = makeHome { window-manager.enable = true; };
+        ross-thinkpad-x230 = makeHome { window-manager.enable = true; };
+        ross-thinkpad-x200 = makeHome { window-manager.enable = true; };
       };
     };
 }
