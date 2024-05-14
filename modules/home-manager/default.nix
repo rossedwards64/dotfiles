@@ -8,8 +8,6 @@
     ./email
     ./firefox
     ./games
-    ./git
-    ./gpg
     ./music
     ./pass
     ./programming

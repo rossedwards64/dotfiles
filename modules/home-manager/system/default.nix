@@ -1,6 +1,8 @@
 { lib, config, pkgs, ... }:
 with lib;
-let cfg = config.modules.system;
+let
+  cfg = config.modules.system;
+  xdg = config.xdg;
 in {
   options.modules.system = { enable = mkEnableOption "system"; };
 

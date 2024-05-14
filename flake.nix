@@ -29,62 +29,54 @@
       specialArgs = { inherit attrs outputs username; };
       extraSpecialArgs = specialArgs;
 
-      systemModules = [
-        ./modules/nixos
-        ({ config, pkgs, options, ... }: {
-          nixpkgs.config.allowUnfree = true;
-          modules = {
-            boot.enable = true;
-            desktop.enable = true;
-            environment.enable = true;
-            fonts.enable = true;
-            games.enable = true;
-            networking.enable = true;
-            programming.enable = true;
-            syncthing.enable = true;
-            system.enable = true;
-            user.enable = true;
-          };
-        })
-      ];
-
       makeSystem = hostname: extraModules:
         lib.nixosSystem {
           inherit system specialArgs;
-          modules = systemModules ++ [ ./hosts/${hostname}/configuration.nix ]
-            ++ extraModules;
+          modules = [
+            ./modules/nixos
+            ./hosts/${hostname}/configuration.nix
+            ({ config, pkgs, options, ... }: {
+              nixpkgs.config.allowUnfree = true;
+              modules = {
+                boot.enable = true;
+                desktop.enable = true;
+                environment.enable = true;
+                fonts.enable = true;
+                games.enable = true;
+                networking.enable = true;
+                programming.enable = true;
+                syncthing.enable = true;
+                system.enable = true;
+                user.enable = true;
+              };
+            })
+          ] ++ extraModules;
         };
-
-      homeModules = [
-        ./home/home.nix
-        {
-          alacritty.enable = true;
-          desktop.enable = true;
-          firefox.enable = true;
-          emacs.enable = true;
-          email.enable = true;
-          games.enable = true;
-          git.enable = true;
-          gpg.enable = true;
-          music.enable = true;
-          pass.enable = true;
-          programming.enable = true;
-          starship.enable = true;
-          system.enable = true;
-          theme.enable = true;
-          tmux.enable = true;
-          topgrade.enable = true;
-          zsh.enable = true;
-        }
-      ];
 
       makeHome = extraModules:
         lib.homeManagerConfiguration {
           inherit pkgs extraSpecialArgs;
 
-          modules = homeModules ++ [
+          modules = [
+            ./home/home.nix
             ({ config, pkgs, options, ... }: {
-              modules = homeModules // extraModules;
+              modules = {
+                alacritty.enable = true;
+                desktop.enable = true;
+                firefox.enable = true;
+                emacs.enable = true;
+                email.enable = true;
+                games.enable = true;
+                music.enable = true;
+                pass.enable = true;
+                programming.enable = true;
+                starship.enable = true;
+                system.enable = true;
+                theme.enable = true;
+                tmux.enable = true;
+                topgrade.enable = true;
+                zsh.enable = true;
+              } // extraModules;
             })
           ];
         };
