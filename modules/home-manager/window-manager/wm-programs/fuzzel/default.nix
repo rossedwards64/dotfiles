@@ -10,7 +10,7 @@ in {
 
       settings = {
         main = {
-          font = "Iosevka NF:size=12";
+          font = "Iosevka NF:size=16";
           icon-theme = "rose-pine-moon";
           terminal = "${pkgs.alacritty}/bin/alacritty";
           anchor = "center";

@@ -15,11 +15,11 @@ in {
 
         settings = {
           default_session = {
+            user = "ross";
             command = ''
               ${pkgs.greetd.tuigreet}/bin/tuigreet --cmd ${pkgs.sway}/bin/sway -t -g \
-               'WELCOME TO WORM LINUX' --asterisks
+                  'WELCOME TO WORM LINUX' --asterisks
             '';
-            user = "ross";
           };
         };
       };

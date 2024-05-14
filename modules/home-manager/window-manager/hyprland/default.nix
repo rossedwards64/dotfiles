@@ -3,19 +3,16 @@ with lib;
 let
   cfg = config.modules.hyprland;
   mod = "SUPER";
-  home = "/home/ross";
   font = "Iosevka NF";
   monitor1 = "DP-1";
   monitor2 = "HDMI-A-1";
   laptop = "LVDS-1";
-  wallpapersDir = "${home}/Pictures/wallpapers";
+  wallpapersDir = "/home/ross/Pictures/wallpapers";
 
   checkMuteScript = import ../scripts/check-mute.nix { inherit pkgs; };
   toggleSinkScript = import ../scripts/toggle-sink.nix { inherit pkgs; };
   wobScript = import ../scripts/wob.nix { inherit pkgs; };
 
-  launcherScript =
-    import ../wm-programs/fuzzel/scripts/launcher.nix { inherit pkgs; };
   powermenuScript =
     import ../wm-programs/fuzzel/scripts/powermenu.nix { inherit pkgs; };
   runnerScript =
@@ -27,11 +24,10 @@ let
 
   reload = ''hyprctl reload && notify-send "Reloaded Hyprland"'';
   gameTabs = ''hyprctl --batch "workspace 7 ; togglegroup"'';
-  wobsock = "$XDG_RUNTIME_DIR/wob.sock";
 
   any = "^(.*)$";
   steamGameRegexp = "^(steam_app_[0-9]*)$";
-  discordRegexp = "^(discord)$";
+  discordRegexp = "^(ArmCord)$";
   emacsRegexp = "^(emacs(client)?)$";
   epicGamesRegexp = "^(heroic)$";
   firefoxRegexp = "^(firefox)$";
@@ -45,8 +41,6 @@ let
   steamRegexp = "^(steam)$";
   terminalRegexp = "^(Alacritty)$";
   vlcRegexp = "^(vlc)$";
-  xwvbRegexp = "^(xwaylandvideobridge)$";
-  xdmanRegexp = "^(xdm-app)$";
   gameRegexp = "^(factorio|youronlymoveishustle|dwarfort|gamescope)$";
   virtManagerRegexp = "^(virt-manager)$";
   zathuraRegexp = "^(org.pwmt.zathura)$";
@@ -86,6 +80,7 @@ let
         [ 6 itchioRegexp ]
         [ 6 epicGamesRegexp ]
         [ 7 steamGameRegexp ]
+        [ 7 gameRegexp ]
         [ 8 virtManagerRegexp ]
         [ 9 intellijRegexp ]
         [ "special" volumeRegexp ]
@@ -93,11 +88,11 @@ let
       ];
 
   monitorAssigns = builtins.map (assignment:
-    ((monitor: regexp: "monitor ${monitor},class:${regexp}") (head assignment)
-      (lists.last assignment))) [
-        [ monitor1 steamGameRegexp ]
-        [ monitor1 gameRegexp ]
-      ];
+    (monitor: regexp: "monitor ${monitor},class:${regexp}") (head assignment)
+    (lists.last assignment)) [
+      [ monitor1 steamGameRegexp ]
+      [ monitor1 gameRegexp ]
+    ];
 
   pink = "rgb(f5c2e7)";
   mauve = "rgb(cba6f7)";
@@ -112,7 +107,7 @@ in {
       preload = ${wallpapersDir}/Jujutsu Kaisen/yuji.png
       preload = ${wallpapersDir}/Gurren Lagann/king_kittan.jpg
       wallpaper = ${monitor1},${wallpapersDir}/Gurren Lagann/simon.jpg
-      wallpaper = ${monitor2},${wallpapersDir}/Jujutsu Kaisen/yuji.jpg
+      wallpaper = ${monitor2},${wallpapersDir}/Jujutsu Kaisen/yuji.png
       wallpaper = ${laptop},${wallpapersDir}/Gurren Lagann/king_kittan.jpg
     '';
 
@@ -145,6 +140,8 @@ in {
               "${pkgs.emacs}/bin/emacsclient -c -a=''"
               "${pkgs.alacritty}/bin/alacritty"
               "${pkgs.firefox}/bin/firefox"
+              "${pkgs.lutris}/bin/lutris"
+              "${pkgs.steam}/bin/steam"
             ];
 
             exec = [
@@ -174,6 +171,11 @@ in {
               kb_rules = "";
               follow_mouse = true;
               sensitivity = 0;
+            };
+
+            device = {
+              name = "royuan-akko-keyboard";
+              kb_options = "ctrl:nocaps,altwin:swap_lalt_lwin";
             };
 
             decoration = {
@@ -242,7 +244,6 @@ in {
             };
 
             misc = {
-              vfr = false;
               vrr = 1;
               mouse_move_enables_dpms = true;
               key_press_enables_dpms = true;
@@ -252,6 +253,8 @@ in {
               no_direct_scanout = false;
               cursor_zoom_factor = 1;
               force_default_wallpaper = 0;
+              disable_hyprland_logo = true;
+              disable_splash_rendering = true;
             };
 
             animations = {
@@ -308,7 +311,7 @@ in {
               in [
                 "${mod},${workspaceNum},workspace,${workspaceNum}"
                 "${mod}SHIFT,${workspaceNum},movetoworkspace,${workspaceNum}"
-              ]) (lists.range 1 9);
+              ]) (lists.range 0 9);
 
             bindm =
               [ "${mod},mouse:272,movewindow" "${mod},mouse:273,resizewindow" ];

@@ -77,7 +77,13 @@ in {
 
     fancontrol = {
       enable = true;
-      config = "";
+      config = ''
+        INTERVAL = 5
+        FCTEMPS  = hwmon4/pwm1=hwmon3/temp1_input
+        FCFANS   = hwmon4/pwm1=hwmon/fan1_input
+        MINTEMP  = hwmon5/pwm1=45
+        MAXTEMP  = hwmon5/pwm1=65
+      '';
     };
 
     cpu.amd.updateMicrocode = true;

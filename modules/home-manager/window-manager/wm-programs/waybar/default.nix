@@ -415,7 +415,7 @@ let
         name = "custom/weather";
         config = {
           return-type = "json";
-          exec = "${weatherScript}/bin/weather";
+          exec = "sh ${weatherScript}/bin/weather";
           interval = 300;
           on-click = "${pkgs.firefox}/bin/firefox https://wttr.in";
         };

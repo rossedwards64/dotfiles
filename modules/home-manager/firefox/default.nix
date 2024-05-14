@@ -56,6 +56,8 @@ in {
             "browser.contentblocking.category" = "strict";
             "browser.newtabpage.pinned" = braveSearchURL;
             "browser.bookmarks.showMobileBookmarks" = true;
+            "extensions.activeThemeID" =
+              "{f5525f34-4102-4f6e-8478-3cf23cfeff7a}";
           };
 
           extensions = with pkgs.nur.repos.rycee.firefox-addons; [

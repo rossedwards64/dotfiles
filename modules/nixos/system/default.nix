@@ -49,11 +49,6 @@ in {
 
     console = { useXkbConfig = true; };
 
-    sound = {
-      enable = true;
-      mediaKeys.enable = true;
-    };
-
     services = {
       accounts-daemon.enable = true;
       power-profiles-daemon.enable = false; # conflicts with TLP.
@@ -65,27 +60,10 @@ in {
         audio.enable = true;
         pulse.enable = true;
         wireplumber.enable = true;
-
-        alsa = {
-          enable = true;
-          support32Bit = true;
-        };
-
-        extraConfig = {
-          pipewire = {
-            "92-low-latency" = {
-              context.properties = {
-                default = { clock = { min-quantum = 1024; }; };
-              };
-            };
-          };
-        };
       };
     };
 
     hardware = {
-      pulseaudio.enable = false;
-
       opengl = {
         enable = true;
         driSupport = true;

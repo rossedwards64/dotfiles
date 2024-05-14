@@ -3,7 +3,7 @@ with lib;
 let
   cfg = config.modules.sway;
   font = "Iosevka NF";
-  modifier = "Mod4";
+  mod = "Mod4";
   down = "j";
   right = "l";
   left = "h";
@@ -25,15 +25,19 @@ let
   windowsScript =
     import ../wm-programs/fuzzel/scripts/windows.nix { inherit pkgs; };
 
-  wobsock = "$XDG_RUNTIME_DIR/wob.sock";
-
-  classAndAppId = (appName: {
-    class = "${appName}";
-    app_id = "${appName}";
-  });
+  addToScratchpad = (width: height: ''
+    {
+        floating enable
+        move to scratchpad
+        resize set {
+            width ${toString width}
+            height ${toString height}
+        }
+    }
+  '');
 
   any = ".*";
-  discordRegexp = "^discord$";
+  discordRegexp = "^ArmCord$";
   emacsRegexp = "^emacs(client)?$";
   epicGamesRegexp = "^heroic$";
   firefoxRegexp = "^firefox$";
@@ -49,7 +53,6 @@ let
   terminalRegexp = "^Alacritty$";
   vlcRegexp = "^vlc$";
   volumeRegexp = "^pavucontrol$";
-  xwvbRegexp = "^xwaylandvideobridge$";
   zathuraRegexp = "^org.pwmt.zathura$";
 
   gameRegexp = "^(factorio|youronlymoveishustle|dwarfort|gamescope).*$";
@@ -126,7 +129,8 @@ in {
           '';
 
           config = {
-            inherit modifier down right left up;
+            inherit down right left up;
+            modifier = mod;
             bindkeysToCode = false;
             defaultWorkspace = "workspace number 1";
             menu = "${pkgs.fuzzel}/bin/fuzzel";
@@ -212,7 +216,10 @@ in {
                 xkb_options = "ctrl:nocaps";
               };
 
-              "12625:16387:ROYUAN_Akko_keyboard" = { xkb_layout = "us"; };
+              "12625:16387:ROYUAN_Akko_keyboard" = {
+                xkb_layout = "us";
+                xkb_options = "ctrl:nocaps,altwin:swap_lalt_lwin";
+              };
 
               "2:7:SynPS/2_Synaptics_TouchPad" = {
                 dwt = "enabled";
@@ -223,7 +230,7 @@ in {
             };
 
             floating = {
-              inherit modifier;
+              modifier = mod;
               border = 1;
               criteria = [ ];
               titlebar = true;
@@ -273,38 +280,11 @@ in {
                 }
                 {
                   criteria = { app_id = "${volumeRegexp}"; };
-                  command = ''
-                    {
-                      floating enable
-                      move to scratchpad
-                      resize set {
-                          width 800
-                          height 600
-                      }  
-                    }
-                  '';
-                }
-                {
-                  criteria = { app_id = "${xwvbRegexp}"; };
-                  command = ''
-                    {
-                      floating enable
-                      move to scratchpad
-                    }
-                  '';
+                  command = addToScratchpad 800 600;
                 }
                 {
                   criteria = { app_id = "${zathuraRegexp}"; };
-                  command = ''
-                    {
-                      floating enable
-                      move to scratchpad
-                      resize set {
-                          width 800
-                          height 600
-                      }
-                    }
-                  '';
+                  command = addToScratchpad 800 600;
                 }
               ];
             };
@@ -349,85 +329,61 @@ in {
             };
 
             keybindings = {
-              "${modifier}+${down}" = "focus down";
-              "${modifier}+${left}" = "focus left";
-              "${modifier}+${right}" = "focus right";
-              "${modifier}+${up}" = "focus up";
-              "${modifier}+0" = "workspace number 10";
-              "${modifier}+1" = "workspace number 1";
-              "${modifier}+2" = "workspace number 2";
-              "${modifier}+3" = "workspace number 3";
-              "${modifier}+4" = "workspace number 4";
-              "${modifier}+5" = "workspace number 5";
-              "${modifier}+6" = "workspace number 6";
-              "${modifier}+7" = "workspace number 7";
-              "${modifier}+8" = "workspace number 8";
-              "${modifier}+9" = "workspace number 9";
-              "${modifier}+Down" = "focus down";
-              "${modifier}+Escape" = ''
+              "${mod}+${down}" = "focus down";
+              "${mod}+${left}" = "focus left";
+              "${mod}+${right}" = "focus right";
+              "${mod}+${up}" = "focus up";
+              "${mod}+Down" = "focus down";
+              "${mod}+Escape" = ''
                 exec "${pkgs.procps}/bin/pkill fuzzel || ${powermenuScript}/bin/powermenu"'';
-              "${modifier}+Left" = "focus left";
-              "${modifier}+Minus" = "scratchpad show";
-              "${modifier}+Return" = "exec ${pkgs.alacritty}/bin/alacritty";
-              "${modifier}+Right" = "focus right";
-              "${modifier}+Shift+${down}" = "move down";
-              "${modifier}+Shift+${left}" = "move left";
-              "${modifier}+Shift+${right}" = "move right";
-              "${modifier}+Shift+${up}" = "move up";
-              "${modifier}+Shift+0" =
-                "move container to workspace number 10, workspace number 10";
-              "${modifier}+Shift+1" =
-                "move container to workspace number 1, workspace number 1";
-              "${modifier}+Shift+2" =
-                "move container to workspace number 2, workspace number 2";
-              "${modifier}+Shift+3" =
-                "move container to workspace number 3, workspace number 3";
-              "${modifier}+Shift+4" =
-                "move container to workspace number 4, workspace number 4";
-              "${modifier}+Shift+5" =
-                "move container to workspace number 5, workspace number 5";
-              "${modifier}+Shift+6" =
-                "move container to workspace number 6, workspace number 6";
-              "${modifier}+Shift+7" =
-                "move container to workspace number 7, workspace number 7";
-              "${modifier}+Shift+8" =
-                "move container to workspace number 8, workspace number 8";
-              "${modifier}+Shift+9" =
-                "move container to workspace number 9, workspace number 9";
-              "${modifier}+Shift+o" = "move workspace to output HDMI-A-1";
-              "${modifier}+Shift+p" = "move workspace to output LVDS-1";
-              "${modifier}+Shift+Down" = "move down";
-              "${modifier}+Shift+Left" = "move left";
-              "${modifier}+Shift+Right" = "move right";
-              "${modifier}+Shift+Up" = "move up";
-              "${modifier}+Shift+b" = "border toggle";
-              "${modifier}+Shift+c" = "reload";
-              "${modifier}+Shift+g" =
+              "${mod}+Left" = "focus left";
+              "${mod}+Minus" = "scratchpad show";
+              "${mod}+Return" = "exec ${pkgs.alacritty}/bin/alacritty";
+              "${mod}+Right" = "focus right";
+              "${mod}+Shift+${down}" = "move down";
+              "${mod}+Shift+${left}" = "move left";
+              "${mod}+Shift+${right}" = "move right";
+              "${mod}+Shift+${up}" = "move up";
+              "${mod}+Shift+o" = "move workspace to output HDMI-A-1";
+              "${mod}+Shift+p" = "move workspace to output DP-1 ";
+              "${mod}+Shift+Down" = "move down";
+              "${mod}+Shift+Left" = "move left";
+              "${mod}+Shift+Right" = "move right";
+              "${mod}+Shift+Up" = "move up";
+              "${mod}+Shift+b" = "border toggle";
+              "${mod}+Shift+c" = "reload";
+              "${mod}+Shift+g" =
                 ''exec ${pkgs.emacs}/bin/emacsclient -c -a=""'';
-              "${modifier}+Shift+minus" = "move scratchpad";
-              "${modifier}+Shift+q" = "kill";
-              "${modifier}+Shift+r" = ''mode "resize"'';
-              "${modifier}+Shift+space" = "floating toggle";
-              "${modifier}+Tab" =
+              "${mod}+Shift+minus" = "move scratchpad";
+              "${mod}+Shift+q" = "kill";
+              "${mod}+Shift+r" = ''mode "resize"'';
+              "${mod}+Shift+space" = "floating toggle";
+              "${mod}+Tab" =
                 "${pkgs.procps}/bin/pkill fuzzel || ${windowsScript}/bin/windows";
-              "${modifier}+Up" = "focus up";
-              "${modifier}+a" = "focus parent";
-              "${modifier}+b" = "splith";
-              "${modifier}+c" = "exec ${toggleSinkScript}/bin/toggle-sink";
-              "${modifier}+d" = ''
+              "${mod}+Up" = "focus up";
+              "${mod}+a" = "focus parent";
+              "${mod}+b" = "splith";
+              "${mod}+c" = "exec ${toggleSinkScript}/bin/toggle-sink";
+              "${mod}+d" = ''
                 exec "${pkgs.procps}/bin/pkill fuzzel || ${pkgs.fuzzel}/bin/fuzzel"'';
-              "${modifier}+e" = "layout toggle split";
-              "${modifier}+f" = "fullscreen";
-              "${modifier}+r" = ''
+              "${mod}+e" = "layout toggle split";
+              "${mod}+f" = "fullscreen";
+              "${mod}+r" = ''
                 exec "${pkgs.procps}/bin/pkill fuzzel || ${launcherScript}/bin/launcher"'';
-              "${modifier}+s" = "layout stacking";
-              "${modifier}+space" = "focus mode_toggle";
-              "${modifier}+t" =
+              "${mod}+s" = "layout stacking";
+              "${mod}+space" = "focus mode_toggle";
+              "${mod}+t" =
                 "exec ${pkgs.swaynotificationcenter}/bin/swaync-client -t -sw";
-              "${modifier}+v" = "splitv";
-              "${modifier}+w" = "layout tabbed";
+              "${mod}+v" = "splitv";
+              "${mod}+w" = "layout tabbed";
               "Print" = "exec ${screenshotScript}/bin/screenshot";
-            };
+            } // (attrsets.mergeAttrsList (builtins.map (num: {
+              "${mod}+${toString num}" = "workspace number ${toString num}";
+              "${mod}+Shift+${toString num}" =
+                "move container to workspace number ${
+                  toString num
+                }, workspace number ${toString num}";
+            }) (lists.range 0 9)));
 
             startup = [
               { command = "${pkgs.pavucontrol}/bin/pavucontrol"; }

@@ -70,11 +70,6 @@
         zsh.enable = true;
       };
 
-      enableWindowManagerConfig = (wm: {
-        ${wm}.enable = true;
-        wm-programs.enable = true;
-      });
-
       homeModules = [ ./home/home.nix ];
     in {
       nix = {
@@ -82,7 +77,7 @@
         package = nixpkgs.nixFlakes;
         settings = {
           auto-optimise-store = true;
-          experimental-features = [ "nix-command" "flakes" "store" ];
+          experimental-features = [ "nix-command" "flakes" ];
           allowed-users = [ username ];
         };
       };
@@ -94,8 +89,9 @@
             ./hosts/ross-desktop/configuration.nix
             {
               modules = {
-                kde.enable = true;
+                # kde.enable = true;
                 qemu.enable = true;
+                window-manager.enable = true;
               };
             }
           ] ++ systemModules;
@@ -138,7 +134,7 @@
 
           modules = homeModules ++ [
             ({ config, pkgs, options, ... }: {
-              modules = lib.attrsets.mergeAttrsList [ defaultHomeModules ];
+              modules = defaultHomeModules // { window-manager.enable = true; };
             })
           ];
         };
@@ -148,10 +144,7 @@
 
           modules = homeModules ++ [
             ({ config, pkgs, options, ... }: {
-              modules = lib.attrsets.mergeAttrsList [
-                defaultHomeModules
-                (enableWindowManagerConfig "sway")
-              ];
+              modules = defaultHomeModules // { window-manager.enable = true; };
             })
           ];
         };
@@ -161,10 +154,7 @@
 
           modules = homeModules ++ [
             ({ config, pkgs, options, ... }: {
-              modules = lib.attrsets.mergeAttrsList [
-                defaultHomeModules
-                (enableWindowManagerConfig "sway")
-              ];
+              modules = defaultHomeModules // { window-manager.enable = true; };
             })
           ];
         };
