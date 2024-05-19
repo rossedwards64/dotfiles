@@ -14,12 +14,8 @@ let
   toggleSinkScript = import ../scripts/toggle-sink.nix { inherit pkgs; };
   wobScript = import ../scripts/wob.nix { inherit pkgs; };
 
-  launcherScript =
-    import ../wm-programs/fuzzel/scripts/launcher.nix { inherit pkgs; };
   powermenuScript =
     import ../wm-programs/fuzzel/scripts/powermenu.nix { inherit pkgs; };
-  runnerScript =
-    import ../wm-programs/fuzzel/scripts/runner.nix { inherit pkgs; };
   screenshotScript =
     import ../wm-programs/fuzzel/scripts/screenshot.nix { inherit pkgs; };
   windowsScript =
@@ -368,8 +364,6 @@ in {
                 exec "${pkgs.procps}/bin/pkill fuzzel || ${pkgs.fuzzel}/bin/fuzzel"'';
               "${mod}+e" = "layout toggle split";
               "${mod}+f" = "fullscreen";
-              "${mod}+r" = ''
-                exec "${pkgs.procps}/bin/pkill fuzzel || ${launcherScript}/bin/launcher"'';
               "${mod}+s" = "layout stacking";
               "${mod}+space" = "focus mode_toggle";
               "${mod}+t" =

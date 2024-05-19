@@ -10,7 +10,6 @@ in {
     environment = {
       systemPackages = with pkgs; [
         autoconf
-        cargo
         clang
         cmake
         gcc
@@ -19,8 +18,6 @@ in {
         libtool
         platformio
         platformio-core
-        rustc
-        rustup
       ];
 
       etc = {

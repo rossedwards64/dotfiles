@@ -13,10 +13,10 @@ let
   gpuTempScript = import ./scripts/gpu-temp.nix { inherit pkgs; };
   gpuMemScript = import ./scripts/gpu-mem.nix { inherit pkgs; };
   gpuPercentScript = import ./scripts/gpu-percent.nix { inherit pkgs; };
-  powerScript = import ./scripts/power.nix { inherit pkgs; };
   spotifyScript = import ./scripts/spotify.nix { inherit pkgs; };
   weatherScript = import ./scripts/weather.nix { inherit pkgs; };
   fanSpeedScript = import ./scripts/fan-speed.nix { inherit pkgs; };
+  powerScript = import ../fuzzel/scripts/powermenu.nix { inherit pkgs; };
 
   makeDisk = (disk: path: {
     name = "disk#${disk}";
@@ -407,7 +407,7 @@ let
         config = {
           tooltip = false;
           format = "󰐥";
-          on-click = "${powerScript}/bin/power";
+          on-click = "${powerScript}/bin/powermenu";
         };
       };
 
