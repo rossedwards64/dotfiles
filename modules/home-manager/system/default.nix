@@ -61,9 +61,13 @@ in {
       };
     };
 
-    services.gpg-agent = {
-      enable = true;
-      pinentryPackage = pkgs.pinentry-qt;
+    services = {
+      gpg-agent = {
+        enable = true;
+        pinentryPackage = pkgs.pinentry-qt;
+      };
+
+      lorri.enable = true;
     };
   };
 }

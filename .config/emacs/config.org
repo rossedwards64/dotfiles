@@ -813,6 +813,9 @@
 
 (use-package apheleia
   :config (apheleia-global-mode +1))
+
+(use-package direnv
+  :config (direnv-mode +1))
 #+END_SRC
 
 ** Language Servers
@@ -989,7 +992,7 @@ The `with-eval-after-load` block is a workaround for [[https://github.com/emacs-
 (use-package nix-mode)
 (use-package nix-ts-mode)
 (use-package nixpkgs-fmt)
-(use-package nix-update)
+(use-package nix-buffer)
 #+END_SRC
 
 *** Embedded
