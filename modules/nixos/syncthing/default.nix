@@ -30,7 +30,8 @@ in {
             autoAcceptFolders = true;
           };
           "ross-thinkpad-x200" = {
-            id = "";
+            id =
+              "C2YUE77-ZYJ4OZY-OPA3VU5-VGG5BL3-WDVGY5N-RRPIEF4-5Q3EEY6-TTLJ5AY";
             name = "Thinkpad-X200";
             autoAcceptFolders = true;
           };
