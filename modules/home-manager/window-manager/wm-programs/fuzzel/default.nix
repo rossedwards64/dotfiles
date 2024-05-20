@@ -10,7 +10,7 @@ in {
 
       settings = {
         main = {
-          font = "Iosevka NF:size=16";
+          font = mkForce "Iosevka NF:size=16";
           icon-theme = "rose-pine-moon";
           terminal = "${pkgs.alacritty}/bin/alacritty";
           anchor = "center";
@@ -20,17 +20,6 @@ in {
         border = {
           width = 3;
           radius = 20;
-        };
-
-        # catppuccin mocha colours
-        colors = {
-          background = "1e1e2edd";
-          text = "cdd6f4ff";
-          match = "f38ba8ff";
-          selection = "575b70ff";
-          selection-match = "f38ba8ff";
-          selection-text = "cdd6f4ff";
-          border = "b4befeff";
         };
       };
     };

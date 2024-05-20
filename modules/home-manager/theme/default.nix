@@ -11,11 +11,6 @@ in {
       enable = true;
       font.name = "Iosevka NF";
 
-      theme = {
-        package = pkgs.catppuccin-gtk;
-        name = "Catppuccin-Dark";
-      };
-
       iconTheme = {
         package = pkgs.rose-pine-icon-theme;
         name = "rose-pine-moon";

@@ -15,8 +15,6 @@ let
 
   powermenuScript =
     import ../wm-programs/fuzzel/scripts/powermenu.nix { inherit pkgs; };
-  runnerScript =
-    import ../wm-programs/fuzzel/scripts/runner.nix { inherit pkgs; };
   screenshotScript =
     import ../wm-programs/fuzzel/scripts/screenshot.nix { inherit pkgs; };
   windowsScript =
@@ -93,11 +91,6 @@ let
       [ monitor1 steamGameRegexp ]
       [ monitor1 gameRegexp ]
     ];
-
-  pink = "rgb(f5c2e7)";
-  mauve = "rgb(cba6f7)";
-  text = "rgb(cdd6f4)";
-  baseAlpha = "rgba(1e1e2e0f)";
 in {
   options.modules.hyprland = { enable = mkEnableOption "hyprland"; };
 
@@ -158,8 +151,6 @@ in {
               hover_icon_on_border = true;
               extend_border_grab_area = 5;
               border_size = 2;
-              "col.active_border" = pink;
-              "col.inactive_border" = mauve;
             };
 
             input = {
@@ -197,7 +188,6 @@ in {
               inactive_opacity = 0.8;
               fullscreen_opacity = 1.0;
               shadow_range = 10;
-              "col.shadow" = baseAlpha;
             };
 
             binds = {
@@ -228,19 +218,10 @@ in {
                 gradients = false;
                 render_titles = true;
                 scrolling = true;
-                text_color = text;
-                "col.active" = pink;
-                "col.inactive" = mauve;
-                "col.locked_active" = mauve;
-                "col.locked_inactive" = mauve;
               };
 
               insert_after_current = true;
               focus_removed_window = true;
-              "col.border_active" = pink;
-              "col.border_inactive" = mauve;
-              "col.border_locked_active" = mauve;
-              "col.border_locked_inactive" = mauve;
             };
 
             misc = {
@@ -318,7 +299,6 @@ in {
 
             bindr = [
               "${mod},d,exec,${pkgs.procps}/bin/pkill fuzzel || ${pkgs.fuzzel}/bin/fuzzel"
-              "${mod},r,exec,${pkgs.procps}/bin/pkill fuzzel || ${runnerScript}/bin/runner"
               "${mod},ESCAPE,exec,${pkgs.procps}/bin/pkill fuzzel || ${powermenuScript}/bin/powermenu"
             ];
 

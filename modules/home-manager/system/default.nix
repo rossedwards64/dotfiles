@@ -23,7 +23,6 @@ in {
       ripgrep
       rlwrap
       rsync
-      tealdeer
       tokei
       topgrade
       unzip
@@ -39,12 +38,6 @@ in {
       gpg = {
         enable = true;
         homedir = "${xdg.dataHome}/gnupg";
-      };
-
-      direnv = {
-        enable = true;
-        enableZshIntegration = true;
-        nix-direnv.enable = true;
       };
 
       tealdeer = {
@@ -66,8 +59,6 @@ in {
         enable = true;
         pinentryPackage = pkgs.pinentry-qt;
       };
-
-      lorri.enable = true;
     };
   };
 }

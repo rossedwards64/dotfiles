@@ -11,14 +11,6 @@ in {
       loader.grub = {
         enable = true;
         useOSProber = true;
-        font = "${pkgs.iosevka}/share/fonts/truetype/iosevka-regular.ttf";
-
-        theme = pkgs.fetchFromGitHub ({
-          owner = "catppuccin";
-          repo = "grub";
-          rev = "88f6124757331fd3a37c8a69473021389b7663ad";
-          sha256 = "sha256-e8XFWebd/GyX44WQI06Cx6sOduCZc5z7/YhweVQGMGY=";
-        }) + "/src/catppuccin-mocha-grub-theme";
 
         extraConfig = ''
           GRUB_CMDLINE_LINUX=""

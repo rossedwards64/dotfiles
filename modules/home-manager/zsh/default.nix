@@ -31,6 +31,7 @@ in {
           BROWSER = "${pkgs.firefox}/bin/firefox";
           CARGO_HOME = "${xdg.dataHome}/cargo";
           CMAKE_GENERATOR = "Ninja";
+          DIRENV_ALLOW_NIX = "1";
           EDITOR = "${pkgs.emacs}/bin/emacs";
           EMACSDIR = "${xdg.configHome}/emacs";
           GDBHISTFILE = "${xdg.dataHome}/gdb/history";
@@ -159,6 +160,7 @@ in {
       direnv = {
         enable = true;
         enableZshIntegration = true;
+        nix-direnv.enable = true;
       };
 
       broot = {

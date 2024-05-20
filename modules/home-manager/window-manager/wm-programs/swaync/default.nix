@@ -11,7 +11,7 @@ in {
         * {
           all: unset;
           font-size: 14px;
-          font-family: "Iosevka";
+          font-family: "Iosevka NF";
           transition: 200ms;
         }
 

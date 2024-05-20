@@ -17,6 +17,8 @@ in {
   options.modules.alacritty = { enable = mkEnableOption "alacritty"; };
 
   config = mkIf cfg.enable {
+    home.packages = [ pkgs.alacritty ];
+
     xdg.configFile."alacritty/alacritty.toml".source =
       ((pkgs.formats.toml { }).generate "alacritty-config" {
         ipc_socket = true;
