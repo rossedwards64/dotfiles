@@ -58,14 +58,14 @@ in {
 
         initExtraFirst = ''
           if [[ -n "$TERM" ]] && [[ "$TERM" != "dumb" ]]; then
-               export BOLD="$(${pkgs.ncurses}/bin/tput bold)"\n
-               export MAGENTA="$(${pkgs.ncurses}/bin/tput setaf 5)"\n
-               export RED="$(${pkgs.ncurses}/bin/tput setaf 1)"\n
-               export CYAN="$(${pkgs.ncurses}/bin/tput setaf 6)"\n
-               export RMYELLOW="$(${pkgs.ncurses}/bin/tput setaf 3)"\n
-               export GREEN="$(${pkgs.ncurses}/bin/tput setaf 2)"\n
-               export BLUE="$(${pkgs.ncurses}/bin/tput setaf 4)"\n
-               export NORM="$(${pkgs.ncurses}/bin/tput sgr0)"\n
+               export BOLD="$(${pkgs.ncurses}/bin/tput bold)"
+               export MAGENTA="$(${pkgs.ncurses}/bin/tput setaf 5)"
+               export RED="$(${pkgs.ncurses}/bin/tput setaf 1)"
+               export CYAN="$(${pkgs.ncurses}/bin/tput setaf 6)"
+               export RMYELLOW="$(${pkgs.ncurses}/bin/tput setaf 3)"
+               export GREEN="$(${pkgs.ncurses}/bin/tput setaf 2)"
+               export BLUE="$(${pkgs.ncurses}/bin/tput setaf 4)"
+               export NORM="$(${pkgs.ncurses}/bin/tput sgr0)"
           fi
         '';
 
