@@ -17,10 +17,10 @@ in {
   options.modules.alacritty = { enable = mkEnableOption "alacritty"; };
 
   config = mkIf cfg.enable {
-    home.packages = [ pkgs.alacritty ];
 
-    xdg.configFile."alacritty/alacritty.toml".source =
-      ((pkgs.formats.toml { }).generate "alacritty-config" {
+    programs.alacritty = {
+      enable = true;
+      settings = {
         ipc_socket = true;
         live_config_reload = true;
 
@@ -95,7 +95,6 @@ in {
 
         font = {
           builtin_box_drawing = true;
-          size = 12.0;
 
           normal = {
             family = term_font;
@@ -132,18 +131,16 @@ in {
           alphabet = "jfkdls;ahgurieowpq";
 
           enabled = [{
-            command = "xdg-open";
+            command = "${pkgs.xdg-utils}/bin/xdg-open";
+            hyperlinks = true;
             post_processing = true;
-            regex = ''
-              (ipfs:|ipns:|magnet:|mailto:|gemini:|gopher:|https:|http:|news:|file:|git:|ssh:|ftp:)[^u0000-u001Fu007F-<>"\s{-}\^⟨⟩`]+'';
+            persist = true;
             binding = {
               key = "U";
               mods = "Control|Shift";
             };
-            mouse = {
-              enabled = true;
-              mods = "None";
-            };
+            regex = ''
+              (ipfs:|ipns:|magnet:|mailto:|gemini://|gopher://|https://|http://|news:|file:|git://|ssh:|ftp://)[^u0000-u001Fu007F-u009F<>"\\s{-}\\^⟨⟩`]+'';
           }];
         };
 
@@ -559,6 +556,7 @@ in {
             mods = "Control";
           }
         ];
-      });
+      };
+    };
   };
 }

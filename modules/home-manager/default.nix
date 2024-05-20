@@ -10,7 +10,6 @@
     ./games
     ./music
     ./pass
-    ./programming
     ./starship
     ./system
     ./theme

@@ -9,7 +9,6 @@
     ./gnome
     ./kde
     ./networking
-    ./programming
     ./qemu
     ./syncthing
     ./system

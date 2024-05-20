@@ -223,11 +223,11 @@
 	 :main "everblush-theme.el")
   :init
   (add-to-list 'custom-theme-load-path
-	       (concat elpaca-builds-directory "everblush-theme"))
-  :config
-  (ross/set-theme-maybe-daemon 'everblush))
+	       (concat elpaca-builds-directory "everblush-theme")))
 
-(use-package catppuccin-theme)
+(use-package catppuccin-theme
+  :config (ross/set-theme-maybe-daemon 'catppuccin))
+
 (use-package ef-themes)
 (use-package exotica-theme)
 (use-package gruber-darker-theme)

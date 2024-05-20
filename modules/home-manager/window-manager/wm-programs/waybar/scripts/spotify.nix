@@ -6,7 +6,7 @@ pkgs.writeShellApplication {
 
   text = ''
     icon=""
-    player="$(playerctl -l | grep -E "(spotify|ncspot|spot)" | head -n1)"
+    player="$(playerctl -l | grep -E "(spotify|ncspot|Spot|spotify_player)" | head -n1)"
     class="$(playerctl metadata --player="''${player}" --format '{{lc(status)}}')"
     info="$(playerctl metadata --player="''${player}" --format '{{artist}} - {{title}}')"
     pos="$(playerctl metadata --player="''${player}" --format '{{duration(position)}}|{{duration(mpris:length)}}')"

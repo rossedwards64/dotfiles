@@ -18,8 +18,6 @@ in {
         notify = true;
         automount = true;
       };
-
-      playerctld.enable = true;
     };
 
     modules = {

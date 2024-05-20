@@ -5,17 +5,19 @@ in {
   options.modules.music = { enable = mkEnableOption "music"; };
 
   config = mkIf cfg.enable {
-    programs = { spotify-player = { enable = true; }; };
+    home.packages = with pkgs; [ spot ];
+    programs = { spotify-player.enable = true; };
 
-    services.mpd = {
-      enable = true;
-      dataDir = "${config.xdg.dataHome}/mpd";
+    services = {
+      mpd = {
+        enable = true;
+        dataDir = "${config.xdg.dataHome}/mpd";
+      };
+      playerctld.enable = true;
     };
 
     xdg.configFile."spotify-player/app.toml".source =
       (pkgs.formats.toml { }).generate "spotify-config" {
-        client_id = "3e25e05c0ce24362941cf077951f65db";
-
         themes = [
           {
             name = "Catppuccin-mocha";

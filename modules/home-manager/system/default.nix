@@ -16,8 +16,10 @@ in {
       fd
       ffmpeg
       fzf
+      nil
       nix-health
       nix-info
+      nixfmt
       p7zip
       rar
       ripgrep
@@ -25,6 +27,7 @@ in {
       rsync
       tokei
       topgrade
+      tree-sitter
       unzip
     ];
 

@@ -9,19 +9,20 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    utils.url = "github:numtide/flake-utils";
+    flake-utils.url = "github:numtide/flake-utils";
 
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
 
     stylix.url = "github:danth/stylix";
   };
 
-  outputs = { self, stylix, home-manager, nixos-hardware, nixpkgs, ... }@inputs:
+  outputs = { self, ... }@inputs:
     let
       inherit (self) outputs;
       username = "ross";
       system = "x86_64-linux";
-      lib = nixpkgs.lib // home-manager.lib;
+      nixpkgs = inputs.nixpkgs;
+      lib = nixpkgs.lib // inputs.home-manager.lib;
       pkgs = nixpkgs.legacyPackages.${system};
       specialArgs = { inherit inputs outputs username; };
       extraSpecialArgs = specialArgs;
@@ -83,7 +84,6 @@
                 fonts.enable = true;
                 games.enable = true;
                 networking.enable = true;
-                programming.enable = true;
                 syncthing.enable = true;
                 system.enable = true;
                 user.enable = true;
@@ -109,7 +109,6 @@
                 games.enable = true;
                 music.enable = true;
                 pass.enable = true;
-                programming.enable = true;
                 starship.enable = true;
                 system.enable = true;
                 theme.enable = true;
@@ -145,7 +144,7 @@
         }];
 
         ross-thinkpad-x230 = makeSystem "ross-thinkpad-x230" [
-          nixos-hardware.nixosModules.lenovo-thinkpad-x230
+          inputs.nixos-hardware.nixosModules.lenovo-thinkpad-x230
           {
             modules = {
               thinkpad.enable = true;
@@ -158,7 +157,7 @@
         ];
 
         ross-thinkpad-x200 = makeSystem "ross-thinkpad-x200" [
-          nixos-hardware.nixosModules.lenovo-thinkpad-x200s
+          inputs.nixos-hardware.nixosModules.lenovo-thinkpad-x200s
           {
             modules = {
               thinkpad.enable = true;
@@ -171,8 +170,6 @@
         ];
       };
 
-      home-manager.backupFileExtension = "backup";
-
       homeConfigurations = lib.attrsets.mergeAttrsList
         (builtins.map (host: { ${host} = makeHome { }; }) [
           "${username}@ross-desktop"
@@ -180,5 +177,18 @@
           "${username}@ross-thinkpad-x200"
         ]);
 
-    };
+    } // inputs.flake-utils.lib.eachDefaultSystem (system:
+      let pkgs = nixpkgs.legacyPackages.${system};
+      in {
+        devShells = lib.attrsets.mergeAttrsList (builtins.map
+          (lang: { ${lang} = import ./dev-shells/${lang} { inherit pkgs; }; }) [
+            "c-cpp"
+            "clojure"
+            "common-lisp"
+            "embedded"
+            "java"
+            "rust"
+            "scheme"
+          ]);
+      });
 }

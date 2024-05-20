@@ -1,8 +1,6 @@
 { lib, config, pkgs, ... }:
 with lib;
-let
-  unstable = import <unstable> { };
-  cfg = config.modules.qemu;
+let cfg = config.modules.qemu;
 in {
   options.modules.qemu = { enable = mkEnableOption "qemu"; };
 
@@ -31,12 +29,13 @@ in {
           swtpm.enable = true;
           ovmf = {
             enable = true;
-            packages = [
-              (unstable.OVMF.override {
-                secureBoot = true;
-                tpmSupport = true;
-              }).fd
-            ];
+            packages = with pkgs;
+              [
+                (OVMF.override {
+                  secureBoot = true;
+                  tpmSupport = true;
+                }).fd
+              ];
           };
         };
       };
