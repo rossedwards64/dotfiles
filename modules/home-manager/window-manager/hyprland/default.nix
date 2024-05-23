@@ -101,7 +101,7 @@ in {
       preload = ${wallpapersDir}/Gurren Lagann/king_kittan.jpg
       wallpaper = ${monitor1},${wallpapersDir}/Gurren Lagann/simon.jpg
       wallpaper = ${monitor2},${wallpapersDir}/Jujutsu Kaisen/yuji.png
-      wallpaper = ${laptop},${wallpapersDir}/Gurren Lagann/king_kittan.jpg
+      wallpaper = ${laptop},${wallpapersDir}/Gurren Lagann/lordgenome.jpeg
     '';
 
     wayland = {

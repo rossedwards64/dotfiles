@@ -14,11 +14,11 @@ pkgs.writeShellApplication {
   text = ''
     uptime="$(${pkgs.procps}/bin/uptime -p | sed -e 's/up //g')"
 
-    shutdown=" Shutdown"
-    reboot=" Restart"
-    lock=" Lock"
-    suspend=" Sleep"
-    logout=" Logout"
+    shutdown="󰐥 Shutdown"
+    reboot="󰜉 Restart"
+    lock="󰌾 Lock"
+    suspend="󰒲 Sleep"
+    logout="󰩈 Logout"
 
     rdialog() {
         fuzzel -l1 -p "Are you sure?: " --dmenu
@@ -52,7 +52,6 @@ pkgs.writeShellApplication {
             ans=$(rdialog &)
             if [[ $ans == "yes" ]] || [[ $ans == "YES" ]] || [[ $ans == "y" ]]; then
                 playerctl pause
-                swaylock
                 systemctl suspend
             elif [[ $ans == "no" ]] || [[ $ans == "NO" ]] || [[ $ans == "n" ]]; then
                 exit

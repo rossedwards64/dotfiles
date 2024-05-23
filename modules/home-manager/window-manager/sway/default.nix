@@ -32,6 +32,14 @@ let
     }
   '');
 
+  focusOnGameCommand = ''
+    {
+      inhibit_idle fullscreen
+      fullscreen enable
+      focus
+    }
+  '';
+
   any = ".*";
   discordRegexp = "^ArmCord$";
   emacsRegexp = "^emacs(client)?$";
@@ -50,7 +58,6 @@ let
   vlcRegexp = "^vlc$";
   volumeRegexp = "^pavucontrol$";
   zathuraRegexp = "^org.pwmt.zathura$";
-
   gameRegexp = "^(factorio|youronlymoveishustle|dwarfort|gamescope).*$";
 in {
   options.modules.sway = { enable = mkEnableOption "sway"; };
@@ -159,7 +166,7 @@ in {
               LVDS-1 = {
                 scale = "1";
                 res = "1366x768";
-                bg = "${wallpapersDir}/Gurren Lagann/king_kittan.jpg fill";
+                bg = "${wallpapersDir}/Gurren Lagann/lordgenome.jpeg fill";
                 pos = "288 1080";
               };
 
@@ -237,23 +244,34 @@ in {
                     }
                   '';
                 }
-                {
-                  criteria = { class = "${steamGameRegexp}"; };
-                  command = ''
+
+                (attrsets.mergeAttrsList (builtins.concatMap (class: [
+                  {
+                    criteria = { class = "${class}"; };
+                    command = focusOnGameCommand;
+                  }
+                  {
+                    criteria = { app_id = "${class}"; };
+                    command = focusOnGameCommand;
+                  }
+                ]) [ "${steamGameRegexp}" "${gameRegexp}" ]))
+
+                (attrsets.mergeAttrsList (builtins.map
+                  ({ class, width, height }: {
+                    criteria = { class = "${class}"; };
+                    command = addToScratchpad width height;
+                  }) [
                     {
-                      inhibit_idle fullscreen
-                      fullscreen enable
+                      class = "${volumeRegexp}";
+                      width = 800;
+                      height = 600;
                     }
-                  '';
-                }
-                {
-                  criteria = { app_id = "${volumeRegexp}"; };
-                  command = addToScratchpad 800 600;
-                }
-                {
-                  criteria = { app_id = "${zathuraRegexp}"; };
-                  command = addToScratchpad 800 600;
-                }
+                    {
+                      class = "${zathuraRegexp}";
+                      width = 800;
+                      height = 600;
+                    }
+                  ]))
               ];
             };
 
