@@ -26,7 +26,7 @@ pkgs.writeShellApplication {
 
     options="$lock\n$suspend\n$logout\n$reboot\n$shutdown"
     lines="$(echo -e "$options" | awk 'END{print NR}')"
-    chosen="$(echo -e "$options" | fuzzel -p "UPTIME: $uptime" --dmenu -l "$lines" -w 35)"
+    chosen="$(echo -e "$options" | fuzzel --password="" -p "UPTIME: $uptime" --dmenu -l "$lines" -w 40)"
 
     case $chosen in
         "$shutdown")

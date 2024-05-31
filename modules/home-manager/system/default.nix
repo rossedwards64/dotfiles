@@ -63,5 +63,19 @@ in {
         pinentryPackage = pkgs.pinentry-qt;
       };
     };
+
+    xdg = {
+      enable = true;
+      configFile = {
+        "sbcl/init.lisp".text = ''
+          #-quicklisp
+          (let ((quicklisp-init (merge-pathnames
+                                  "quicklisp/setup.lisp"
+                                  (uiop:xdg-data-pathname))))
+            (when (probe-file quicklisp-init)
+              (load quicklisp-init)))
+        '';
+      };
+    };
   };
 }

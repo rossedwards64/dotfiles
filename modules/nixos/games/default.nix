@@ -12,6 +12,8 @@ in {
       dxvk_2
       fceux
       flycast
+      fallout-ce
+      fallout2-ce
       gamemode
       gamescope
       glxinfo

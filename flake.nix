@@ -90,6 +90,17 @@
           ] ++ extraModules;
         };
 
+      makeThinkpad = hostname: extraModules:
+        makeSystem hostname ([{
+          modules = {
+            thinkpad.enable = true;
+            window-manager.enable = true;
+          };
+          stylix.fonts.sizes = {
+            inherit (smallFontSizes) applications desktop terminal popups;
+          };
+        }] ++ extraModules);
+
       makeHome = extraModules:
         lib.homeManagerConfiguration {
           inherit pkgs extraSpecialArgs;
@@ -141,31 +152,11 @@
           };
         }];
 
-        ross-thinkpad-x230 = makeSystem "ross-thinkpad-x230" [
-          inputs.nixos-hardware.nixosModules.lenovo-thinkpad-x230
-          {
-            modules = {
-              thinkpad.enable = true;
-              window-manager.enable = true;
-            };
-            stylix.fonts.sizes = {
-              inherit (smallFontSizes) applications desktop terminal popups;
-            };
-          }
-        ];
+        ross-thinkpad-x230 = makeThinkpad "ross-thinkpad-x230"
+          [ inputs.nixos-hardware.nixosModules.lenovo-thinkpad-x230 ];
 
-        ross-thinkpad-x200 = makeSystem "ross-thinkpad-x200" [
-          inputs.nixos-hardware.nixosModules.lenovo-thinkpad-x200s
-          {
-            modules = {
-              thinkpad.enable = true;
-              window-manager.enable = true;
-            };
-            stylix.fonts.sizes = {
-              inherit (smallFontSizes) applications desktop terminal popups;
-            };
-          }
-        ];
+        ross-thinkpad-x200 = makeThinkpad "ross-thinkpad-x200"
+          [ inputs.nixos-hardware.nixosModules.lenovo-thinkpad-x200s ];
       };
 
       homeConfigurations = lib.attrsets.mergeAttrsList

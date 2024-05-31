@@ -5,20 +5,20 @@ in {
   options.modules.emacs = { enable = mkEnableOption "emacs"; };
 
   config = mkIf cfg.enable {
-    home.packages = with pkgs; [
-      (aspellWithDicts (dicts: with dicts; [ en en-computers en-science ]))
-    ];
+    home.packages = with pkgs;
+      [ (aspellWithDicts (dicts: with dicts; [ en en-computers en-science ])) ];
 
     programs.emacs = {
       enable = true;
       package = pkgs.emacs29-pgtk;
-      extraPackages = with pkgs; epkgs: [
-        auctex
-	emacs-all-the-icons-fonts
-	mu
-	mu.mu4e
-	epkgs.mu4e
-      ];
+      extraPackages = with pkgs;
+        epkgs: [
+          auctex
+          emacs-all-the-icons-fonts
+          mu
+          mu.mu4e
+          epkgs.mu4e
+        ];
     };
 
     services.emacs = {
