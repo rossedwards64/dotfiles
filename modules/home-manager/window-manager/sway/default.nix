@@ -46,19 +46,21 @@ let
   epicGamesRegexp = "^heroic$";
   firefoxRegexp = "^firefox$";
   freetubeRegexp = "^FreeTube$";
+  gameConquerorRegexp = "^GameConqueror.py$";
+  gameRegexp = "^(factorio|youronlymoveishustle|dwarfort|gamescope).*$";
   intellijRegexp = "^jetbrains-idea$";
   itchioRegexp = "^itch$";
   lutrisRegexp = "^lutris$";
   minecraftRegexp = "^com-atlauncher-App$";
   mpvRegexp = "^mpv$";
+  qBitTorrentRegexp = "^org.qbittorrent.qBittorrent$";
   spotifyRegexp = "^(dev.alextren.)?Spot(ify)?$";
-  steamRegexp = "^steam$";
   steamGameRegexp = "^steam_app_[0-9]*$";
+  steamRegexp = "^steam$";
   terminalRegexp = "^Alacritty$";
   vlcRegexp = "^vlc$";
   volumeRegexp = "^pavucontrol$";
   zathuraRegexp = "^org.pwmt.zathura$";
-  gameRegexp = "^(factorio|youronlymoveishustle|dwarfort|gamescope).*$";
 in {
   options.modules.sway = { enable = mkEnableOption "sway"; };
 
@@ -133,32 +135,31 @@ in {
             };
 
             assigns = {
-              "workspace 1" = [{ app_id = "${emacsRegexp}"; }];
-              "workspace 2" = [{ app_id = "${terminalRegexp}"; }];
-              "workspace 3" = [{ app_id = "${firefoxRegexp}"; }];
-              "workspace 4" = [{ class = "${discordRegexp}"; }];
+              "workspace 1" = [{ app_id = emacsRegexp; }];
+              "workspace 2" = [{ app_id = terminalRegexp; }];
+              "workspace 3" = [{ app_id = firefoxRegexp; }];
+              "workspace 4" = [{ class = discordRegexp; }];
               "workspace 5" = [
-                { app_id = "${spotifyRegexp}"; }
-                { class = "${freetubeRegexp}"; }
-                { app_id = "${mpvRegexp}"; }
-                { class = "${vlcRegexp}"; }
+                { app_id = spotifyRegexp; }
+                { class = freetubeRegexp; }
+                { app_id = mpvRegexp; }
+                { class = vlcRegexp; }
               ];
               "workspace 6" = [
-                { class = "${steamRegexp}"; }
-                { class = "${epicGamesRegexp}"; }
-                { class = "${itchioRegexp}"; }
-                { app_id = "${lutrisRegexp}"; }
-                { class = "${minecraftRegexp}"; }
+                { class = steamRegexp; }
+                { class = epicGamesRegexp; }
+                { class = itchioRegexp; }
+                { app_id = lutrisRegexp; }
+                { class = minecraftRegexp; }
+                { app_id = gameConquerorRegexp; }
               ];
               "workspace 7" = [
-                { class = "${steamGameRegexp}"; }
-                {
-                  class = "${gameRegexp}";
-                  app_id = "${gameRegexp}";
-                }
+                { class = steamGameRegexp; }
+                { class = gameRegexp; }
+                { app_id = gameRegexp; }
               ];
               "workspace 8" = [ ];
-              "workspace 9" = [{ class = "${intellijRegexp}"; }];
+              "workspace 9" = [{ class = intellijRegexp; }];
               "workspace 10" = [ ];
             };
 
@@ -231,10 +232,10 @@ in {
                 }
                 {
                   criteria = {
-                    title = "${any}";
-                    app_id = "${any}";
-                    instance = "${any}";
-                    class = "${any}";
+                    title = any;
+                    app_id = any;
+                    instance = any;
+                    class = any;
 
                   };
                   command = ''
@@ -247,27 +248,32 @@ in {
 
                 (attrsets.mergeAttrsList (builtins.concatMap (class: [
                   {
-                    criteria = { class = "${class}"; };
+                    criteria = { class = class; };
                     command = focusOnGameCommand;
                   }
                   {
-                    criteria = { app_id = "${class}"; };
+                    criteria = { app_id = class; };
                     command = focusOnGameCommand;
                   }
-                ]) [ "${steamGameRegexp}" "${gameRegexp}" ]))
+                ]) [ steamGameRegexp gameRegexp ]))
 
                 (attrsets.mergeAttrsList (builtins.map
                   ({ class, width, height }: {
-                    criteria = { class = "${class}"; };
+                    criteria = { class = class; };
                     command = addToScratchpad width height;
                   }) [
                     {
-                      class = "${volumeRegexp}";
+                      class = volumeRegexp;
                       width = 800;
                       height = 600;
                     }
                     {
-                      class = "${zathuraRegexp}";
+                      class = zathuraRegexp;
+                      width = 800;
+                      height = 600;
+                    }
+                    {
+                      class = qBitTorrentRegexp;
                       width = 800;
                       height = 600;
                     }
@@ -345,10 +351,13 @@ in {
                 command =
                   "${pkgs.autotiling}/bin/autotiling -w 1 2 3 4 5 6 7 8 9 10";
               }
-              { command = "${pkgs.emacs}/bin/emacsclient -c -a=''"; }
               { command = "${pkgs.alacritty}/bin/alacritty"; }
-              { command = "${pkgs.zathura}/bin/zathura"; }
+              { command = "${pkgs.emacs}/bin/emacs"; }
+              { command = "${pkgs.firefox}/bin/firefox"; }
               { command = "${pkgs.lutris}/bin/lutris"; }
+              { command = "${pkgs.qbittorrent}/bin/qbittorrent"; }
+              { command = "${pkgs.spot}/bin/spot"; }
+              { command = "${pkgs.zathura}/bin/zathura"; }
               {
                 command = "${pkgs.procps}/bin/pkill fuzzel";
                 always = true;

@@ -40,10 +40,11 @@ in {
   };
 
   environment.systemPackages = with pkgs; [
-    # cemu
-    ryujinx
+    cemu
+    dolphin-emu
     pcsx2
     rpcs3
+    ryujinx
     xemu
   ];
 

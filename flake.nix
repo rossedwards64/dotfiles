@@ -10,9 +10,7 @@
     };
 
     flake-utils.url = "github:numtide/flake-utils";
-
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
-
     stylix.url = "github:danth/stylix";
   };
 
@@ -116,9 +114,9 @@
                 topgrade.enable = true;
                 window-manager.enable = true;
                 zsh.enable = true;
-              } // extraModules;
+              };
             })
-          ];
+          ] ++ extraModules;
         };
     in {
       nix = {
@@ -171,7 +169,7 @@
       };
 
       homeConfigurations = lib.attrsets.mergeAttrsList
-        (builtins.map (host: { ${host} = makeHome { }; }) [
+        (builtins.map (host: { ${host} = makeHome [ ]; }) [
           "${username}@ross-desktop"
           "${username}@ross-thinkpad-x230"
           "${username}@ross-thinkpad-x200"

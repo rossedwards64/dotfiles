@@ -25,7 +25,6 @@ in {
         };
 
         sessionVariables = {
-          FLAKE = "$HOME/.dotfiles";
           ALTERNATE_EDITOR = "${pkgs.neovim}/bin/nvim";
           ARCHFLAGS = "-arch x86_64";
           BROWSER = "${pkgs.firefox}/bin/firefox";
@@ -34,15 +33,17 @@ in {
           DIRENV_ALLOW_NIX = "1";
           EDITOR = "${pkgs.emacs}/bin/emacs";
           EMACSDIR = "${xdg.configHome}/emacs";
+          FLAKE = "$HOME/.dotfiles";
           GDBHISTFILE = "${xdg.dataHome}/gdb/history";
           GOPATH = "${xdg.dataHome}/go";
           GRADLE_USER_HOME = "${xdg.dataHome}/gradle";
           KDEHOME = "${xdg.configHome}/kde";
           LEIN_HOME = "${xdg.dataHome}/lein";
-          NPM_CONFIG_USERCONFIG = "${xdg.configHome}/npm/npmrc";
           PASSWORD_STORE_DIR = "${xdg.dataHome}/pass";
+          PLATFORMIO_CORE_DIR = "${xdg.configHome}/platformio";
           ROSWELL_HOME = "${xdg.configHome}/roswell";
           RUSTUP_HOME = "${xdg.dataHome}/rustup";
+          STACK_XDG = 1;
           TEXMFCONFIG = "${xdg.configHome}/texlive/texmf-config";
           TEXMFHOME = "${xdg.dataHome}/texlive/texmf";
           TEXMFVAR = "${xdg.stateHome}/texlive/texmf-var";
@@ -50,10 +51,7 @@ in {
           WAKATIME_HOME = "${xdg.configHome}/wakatime";
           WINEPREFIX = "${xdg.dataHome}/wineprefixes/default";
           XCURSOR_SIZE = 24;
-          XINITRC = "${xdg.configHome}/X11/xinitrc";
-          STACK_XDG = 1;
           ZSH_COMPDUMP = "\${ZSH}/cache/.zcompdump-\${HOST}";
-          PLATFORMIO_CORE_DIR = "${xdg.configHome}/platformio";
         };
 
         initExtraFirst = ''
