@@ -6,6 +6,7 @@ in {
 
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
+      dolphin
       flatpak
       gnome.gnome-software
       neovim

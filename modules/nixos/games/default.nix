@@ -6,12 +6,10 @@ in {
 
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
-      atlauncher
       devilutionx
       duckstation
       dxvk_2
       fceux
-      flycast
       fallout-ce
       fallout2-ce
       gamemode

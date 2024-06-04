@@ -86,6 +86,23 @@ in {
       };
     };
 
+    xdg = {
+      icons.enable = true;
+      menus.enable = true;
+      sounds.enable = true;
+      autostart.enable = true;
+
+      portal = {
+        enable = true;
+        wlr.enable = true;
+        extraPortals = with pkgs; [
+          xdg-desktop-portal-gnome
+          xdg-desktop-portal-gtk
+          xdg-desktop-portal-hyprland
+        ];
+      };
+    };
+
     hardware = {
       opengl = {
         enable = true;
