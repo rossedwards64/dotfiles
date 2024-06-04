@@ -8,12 +8,8 @@ in {
 
   config = mkIf cfg.enable {
     home.packages = with pkgs; [
-      bat
-      broot
       btop
       du-dust
-      eza
-      fd
       ffmpeg
       fzf
       nil
@@ -43,6 +39,16 @@ in {
         homedir = "${xdg.dataHome}/gnupg";
       };
 
+      bat = {
+        enable = true;
+        extraPackages = with pkgs.bat-extras; [
+          batdiff
+          batman
+          batgrep
+          batwatch
+        ];
+      };
+
       tealdeer = {
         enable = true;
 
@@ -54,6 +60,11 @@ in {
 
           updates = { auto_update = true; };
         };
+      };
+
+      fd = {
+        enable = true;
+        hidden = true;
       };
     };
 
