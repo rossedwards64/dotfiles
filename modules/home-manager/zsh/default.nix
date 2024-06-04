@@ -52,6 +52,7 @@ in {
           WINEPREFIX = "${xdg.dataHome}/wineprefixes/default";
           XCURSOR_SIZE = 24;
           ZSH_COMPDUMP = "\${ZSH}/cache/.zcompdump-\${HOST}";
+          SDL_VIDEODRIVER = "wayland,x11";
         };
 
         initExtraFirst = ''

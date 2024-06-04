@@ -72,11 +72,11 @@ in {
     console = { useXkbConfig = true; };
 
     services = {
-      udev.packages = with pkgs; [ platformio-core.udev openocd ];
       accounts-daemon.enable = true;
-      power-profiles-daemon.enable = false; # conflicts with TLP.
       flatpak.enable = true;
       openssh.enable = true;
+      power-profiles-daemon.enable = false; # conflicts with TLP.
+      udev.packages = with pkgs; [ platformio-core.udev openocd ];
 
       pipewire = {
         enable = true;

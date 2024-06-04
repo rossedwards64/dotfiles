@@ -58,6 +58,8 @@ in {
     };
 
     services = {
+      gnome-keyring.enable = true;
+
       gpg-agent = {
         enable = true;
         pinentryPackage = pkgs.pinentry-qt;
