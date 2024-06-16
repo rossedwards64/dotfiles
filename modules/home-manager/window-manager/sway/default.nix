@@ -245,40 +245,36 @@ in {
                     }
                   '';
                 }
-
-                (attrsets.mergeAttrsList (builtins.concatMap (class: [
+              ] ++ (builtins.concatMap (class: [
+                {
+                  criteria = { class = class; };
+                  command = focusOnGameCommand;
+                }
+                {
+                  criteria = { app_id = class; };
+                  command = focusOnGameCommand;
+                }
+              ]) [ steamGameRegexp gameRegexp ]) ++ (builtins.map
+                ({ class, width, height }: {
+                  criteria = { class = class; };
+                  command = addToScratchpad width height;
+                }) [
                   {
-                    criteria = { class = class; };
-                    command = focusOnGameCommand;
+                    class = volumeRegexp;
+                    width = 800;
+                    height = 600;
                   }
                   {
-                    criteria = { app_id = class; };
-                    command = focusOnGameCommand;
+                    class = zathuraRegexp;
+                    width = 800;
+                    height = 600;
                   }
-                ]) [ steamGameRegexp gameRegexp ]))
-
-                (attrsets.mergeAttrsList (builtins.map
-                  ({ class, width, height }: {
-                    criteria = { class = class; };
-                    command = addToScratchpad width height;
-                  }) [
-                    {
-                      class = volumeRegexp;
-                      width = 800;
-                      height = 600;
-                    }
-                    {
-                      class = zathuraRegexp;
-                      width = 800;
-                      height = 600;
-                    }
-                    {
-                      class = qBitTorrentRegexp;
-                      width = 800;
-                      height = 600;
-                    }
-                  ]))
-              ];
+                  {
+                    class = qBitTorrentRegexp;
+                    width = 800;
+                    height = 600;
+                  }
+                ]);
             };
 
             keybindings = {

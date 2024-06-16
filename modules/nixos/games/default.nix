@@ -19,7 +19,6 @@ in {
       # itch # dependency is currently broken
       lutris
       mangohud
-      minecraft
       mupen64plus
       openjk
       openmw
