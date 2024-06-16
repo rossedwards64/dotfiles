@@ -43,7 +43,6 @@ in {
     atlauncher
     cemu
     dolphin-emu
-    flycast
     pcsx2
     rpcs3
     ryujinx

@@ -23,6 +23,15 @@ in {
     enable = true;
     mime.enable = true;
     userDirs.enable = true;
+
+    mimeApps = {
+      enable = true;
+      defaultApplications = {
+        "application/pdf" = [ "zathura.desktop" ];
+        "video/mp4" = [ "mpv.desktop" ];
+        "image/png" = [ "imv.desktop" ];
+      };
+    };
   };
 
   dconf.settings = {

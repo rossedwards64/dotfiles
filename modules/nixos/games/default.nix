@@ -9,9 +9,10 @@ in {
       devilutionx
       duckstation
       dxvk_2
-      fceux
       fallout-ce
       fallout2-ce
+      fceux
+      flycast
       gamemode
       gamescope
       glxinfo

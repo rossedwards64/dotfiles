@@ -9,6 +9,7 @@ in {
       ani-cli
       armcord
       gimp
+      imv
       iosevka
       libreoffice
       mpv
