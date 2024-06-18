@@ -110,5 +110,3 @@ else
         eval "$(starship init zsh)"
     fi
 fi
-
-source /home/ross/.config/broot/launcher/bash/br
