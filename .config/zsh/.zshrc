@@ -44,8 +44,6 @@ setopt HIST_IGNORE_DUPS
 setopt HIST_FIND_NO_DUPS
 setopt HIST_REDUCE_BLANKS
 
-alias zshconfig="emacsclient --create-frame --alternate-editor='' ~/.config/zsh/.zshrc"
-alias ohmyzsh="emacsclient --create-frame --alternate-editor='' ~/.local/share/oh-my-zsh"
 alias vim="nvim"
 alias mv="mv -iv"
 alias cp="cp -iv"
@@ -60,10 +58,8 @@ alias grep="rg"
 alias find="fd"
 alias du="dust -Hr"
 alias stow="stow -v"
-alias reset-zsh="source ~/.config/zsh/.zshrc"
 alias clear="clear && stty sane"
 alias cleanup="sudo pacman -Rns $(pacman -Qtdq)"
-alias wget="wget --hsts-file=$XDG_DATA_HOME/wget-hsts"
 alias pkgsearch="yay -Slq | \
                     fzf --preview 'yay -Si {}' \
                         --layout=reverse \

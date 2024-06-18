@@ -36,8 +36,9 @@
 
 (defvar font-name "Iosevka NF")
 (defvar desktop-hostname "ross-desktop")
-(defvar laptop-hostname "ross-thinkpad")
+(defvar laptop-hostname "ross-thinkpad-x230")
 (defvar other-laptop-hostname "ross-thinkpad-x200")
+(defvar other-other-laptop-hostname "ross-thinkpad-x61t")
 (defvar macbook-hostname "Rosss-MacBook-Pro.local")
 
 (defun ross/set-font (frame)
@@ -45,7 +46,8 @@
   (when (display-graphic-p frame)
     (let ((font-height (pcase (system-name)
 			 ((or (pred (string-equal laptop-hostname))
-			      (pred (string-equal other-laptop-hostname))) 120)
+			      (pred (string-equal other-laptop-hostname))
+			      (pred (string-equal other-other-laptop-hostname))) 120)
 			 ((pred (string-equal desktop-hostname)) 150)
 			 ((pred (string-equal macbook-hostname)) 180))))
       (dolist (mode '(default fixed-pitch variable-pitch))
@@ -66,7 +68,7 @@
 
 * General
 #+BEGIN_SRC emacs-lisp :noweb strip-export
-;;; init.el -*- lexical-binding: t; -*-
+  ;;; init.el -*- lexical-binding: t; -*-
 
 <<functions>>
 
@@ -80,9 +82,20 @@
 <<themes>>
 
 (use-package all-the-icons
-  :if (display-graphic-p))
+  :if (display-graphic-p)
+  :config
+  (let ((fonts-dir ".local/share/fonts")
+	(font-files '("all-the-icons.ttf" "file-icons.ttf"
+		      "fontawesome.ttf" "material-design-icons.ttf"
+		      "octicons.ttf" "weathericons.ttf")))
+    (mapc (lambda (file)
+	    (unless (file-exists-p (concat (getenv "HOME") "/" fonts-dir "/" file))
+	      (all-the-icons-install-fonts))) font-files)))
 
-(use-package nerd-icons)
+(use-package nerd-icons
+  :config
+  (unless (file-exists-p (concat (getenv "HOME") "/.local/share/fonts/NFM.ttf"))
+    (nerd-icons-install-fonts)))
 
 <<dashboard>>
 
@@ -126,8 +139,8 @@
 
   (when (string-equal system-type "android")
     (let ((command "gnutls-cli %p %h"))
-     (setq tls-program '(command
-			 (concat command "--protocols ssl3")))))
+      (setq tls-program '(command
+			  (concat command "--protocols ssl3")))))
 
   (setq auto-save-default nil
 	delete-auto-save-files t
@@ -144,11 +157,11 @@
 	require-final-newline t
 	tab-always-indent 'complete
 	tab-width 4
-	treesit-extra-load-path '("/usr/local/include/tree_sitter/lib")
+	treesit-extra-load-path '((concat elpaca-builds-directory "/tree-sitter-langs/bin"))
 	vc-follow-symlinks t
 	visible-bell t
-        completion-cycle-threshold 3
-        enable-recursive-minibuffers t
+	completion-cycle-threshold 3
+	enable-recursive-minibuffers t
 	warning-minimum-level :error)
 
   (toggle-text-mode-auto-fill)
@@ -166,8 +179,7 @@
 
 (use-package exec-path-from-shell
   :config
-  (when (memq window-system '(mac ns pgtk x))
-    (exec-path-from-shell-initialize)))
+  (exec-path-from-shell-initialize))
 
 (use-package vterm)
 (use-package pass)
@@ -213,19 +225,20 @@
 	 :main "everblush-theme.el")
   :init
   (add-to-list 'custom-theme-load-path
-	       (concat elpaca-builds-directory "everblush-theme"))
-  :config
-  (ross/set-theme-maybe-daemon 'everblush))
+	       (concat elpaca-builds-directory "everblush-theme")))
+
+(use-package catppuccin-theme
+  :config (ross/set-theme-maybe-daemon 'catppuccin))
 
 (use-package ef-themes)
-(use-package standard-themes)
-(use-package kanagawa-theme)
+(use-package exotica-theme)
+(use-package gruber-darker-theme)
+;;(use-package kanagawa-theme)
 (use-package kuronami-theme)
-(use-package catppuccin-theme)
+(use-package modus-themes)
+(use-package standard-themes)
 (use-package timu-caribbean-theme)
 (use-package timu-macos-theme)
-(use-package gruber-darker-theme)
-(use-package exotica-theme)
 (use-package toxi-theme)
 #+END_SRC
 
@@ -233,7 +246,7 @@
 #+NAME: functions
 #+BEGIN_SRC emacs-lisp :tangle no
 (defun ross/open-config ()
-  "Switch to 'config.org'."
+  "Switch to \\='config.org\\='."
   (interactive)
   (switch-to-buffer (find-file-noselect
 		     (concat user-emacs-directory "config.org"))))
@@ -247,7 +260,7 @@
     (ross/set-theme theme)))
 
 (defun ross/set-theme-daemon (theme frame)
-  "Apply THEME to FRAME and clean up `after-make-frame-functions' hook."
+  "Apply THEME to FRAME and clean up \\=`after-make-frame-functions\\=' hook."
   (ross/set-theme theme frame)
   (remove-hook 'after-make-frame-functions #'ross/set-theme)
   (fmakunbound 'ross/set-theme))
@@ -261,19 +274,55 @@
 
 (with-eval-after-load "org"
   (defun ross/tangle-and-eval-config ()
-    "Tangles the code blocks from 'config.org' to 'init.el',
-     and re-evaluates 'init.el'."
+    "Tangles the code blocks from \\='config.org\\=' to \\='init.el\\=',
+       and re-evaluates \\='init.el\\='."
     (interactive)
     (org-babel-tangle-file (concat user-emacs-directory "config.org"))
     (load (concat user-emacs-directory "init.el"))))
 
+(with-eval-after-load "org-present"
+  (defun ross/org-start-presentation ()
+    "Customizes Org-Mode faces for presentation mode."
+    (org-present-big)
+    (org-display-inline-images)
+    (org-present-hide-cursor)
+    (org-present-read-only)
+    (visual-fill-column-mode +1)
+    (visual-line-mode +1)
+    (setq header-line-format " ")
+    (setq-local face-remapping-alist '((default (:height 1.5) variable-pitch)
+				       (header-line (:height 4.0) variable-pitch)
+				       (org-document-title (:height 1.75) org-document-title)
+				       (org-code (:height 1.55) org-code)
+				       (org-verbatim (:height 1.55) org-verbatim)
+				       (org-block (:height 1.25) org-block)
+				       (org-block (:height 1.25) org-inline-src-block)
+				       (org-block-begin-line (:height 0.7) org-block))))
+
+  (defun ross/org-presentation-prepare-slide (buffer-name heading)
+    "Prepares the next slide in the presentation."
+    (org-overview)
+    (org-show-entry)
+    (org-show-children))
+
+  (defun ross/org-end-presentation ()
+    "Resets Org-Mode presentation face customizations."
+    (org-present-small)
+    (org-remove-inline-images)
+    (org-present-show-cursor)
+    (org-present-read-write)
+    (visual-fill-column-mode -1)
+    (visual-line-mode -1)
+    (setq header-line-format nil)
+    (setq-local face-remapping-alist '((default variable-pitch default)))))
+
 (with-eval-after-load "cl-lib"
   (cl-defun ross/get-closest-pathname (&optional (file "Makefile"))
     "Determine the pathname of the first instance of FILE starting from the
-       current directory towards root.
-       This may not do the correct thing in the presence of links.
-       If it does not find FILE, then it shall return the name of FILE in the
-       current directory, suitable for creation."
+	 current directory towards root.
+	 This may not do the correct thing in the presence of links.
+	 If it does not find FILE, then it shall return the name of FILE in the
+	 current directory, suitable for creation."
     (let ((root (expand-file-name "/")))
       (expand-file-name file
 			(cl-loop
@@ -282,16 +331,7 @@
 			 if (file-exists-p (expand-file-name file d))
 			 return d
 			 if (equal d root)
-			 return nil))))
-
-  (defun ross/format-buffer-astyle ()
-    "Format all the files inside src using '.astylerc'"
-    (interactive)
-    (with-temp-buffer
-      (let ((astylerc (ross/get-closest-pathname ".astylerc")))
-	(shell-command (format "astyle %s/* --options=%s"
-			       (ross/get-closest-pathname "src") astylerc)
-		       t t)))))
+			 return nil)))))
 #+END_SRC
 
 * Org-Mode
@@ -302,8 +342,8 @@
 	org-src-window-setup 'other-window
 	org-directory "~/Documents/org"
 	org-agenda-files (cl-map 'list (lambda (path)
-				      (concat org-directory path))
-			      '("/agenda.org"))
+					 (concat org-directory path))
+				 '("/agenda.org"))
 	org-log-done 'time
 	org-plantuml-exec-path (executable-find "plantuml")
 	org-pretty-entities-include-sub-superscripts t
@@ -311,7 +351,15 @@
 	org-startup-with-inline-images t
 	org-support-shift-select t
 	org-src-window-setup 'current-window
-	org-roam-directory (concat org-directory "/roam"))
+	org-roam-directory (concat org-directory "/roam")
+	org-hide-emphasis-markers t
+	org-todo-keywords '((sequence
+			     "TODO(t)"
+			     "PROG(p!)"
+			     "BLOCKED(b@/!)"
+			     "|"
+			     "DONE(d!)"
+			     "STOPPED(s@/!)")))
   :bind
   (:map help-map
 	("r" . #'ross/tangle-and-eval-config)
@@ -319,7 +367,28 @@
 	("C-c C-c" . #'org-edit-src-exit)
 	:map global-map
 	("C-c na" . #'org-agenda))
-  :hook ((org-mode . auto-complete-mode)))
+  :hook ((org-mode . auto-complete-mode)
+	 (org-mode . variable-pitch-mode))
+  :config
+  (dolist (face '((org-level-1 . 1.2)
+		  (org-level-2 . 1.1)
+		  (org-level-3 . 1.05)
+		  (org-level-4 . 1.0)
+		  (org-level-5 . 1.1)
+		  (org-level-6 . 1.1)
+		  (org-level-7 . 1.1)
+		  (org-level-8 . 1.1)))
+    (set-face-attribute (car face) nil :font font-name :weight 'medium :height (cdr face)))
+
+  (set-face-attribute 'org-document-title nil :font font-name :weight 'bold :height 1.3)
+  (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
+  (set-face-attribute 'org-table nil :inherit 'fixed-pitch)
+  (set-face-attribute 'org-formula nil :inherit 'fixed-pitch)
+  (set-face-attribute 'org-code nil :inherit '(shadow fixed-pitch))
+  (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
+  (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
+  (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
+  (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch))
 
 (use-package org-roam
   :bind
@@ -345,6 +414,14 @@
 	org-alert-notification-title "---TODO REMINDER---"
 	org-alert-time-match-string "\\(?:SCHEDULED\\|DEADLINE\\):.*?<.*?\\([0-9]\\{2\\}:[0-9]\\{2\\}\\).*>")
   (org-alert-enable))
+
+(use-package org-present
+  :commands (org-present)
+  :hook
+  ((org-present-mode . ross/org-start-presentation)
+   (org-present-mode-quit . ross/org-end-presentation))
+  :config (add-hook 'org-present-after-navigate-functions
+		    #'ross/org-presentation-prepare-slide))
 
 (use-package org-auto-tangle
   :config (org-auto-tangle-mode +1))
@@ -381,7 +458,7 @@
 	doom-modeline-indent-info t)
   (doom-modeline-def-modeline 'main
     '(bar modals matches buffer-info remote-host buffer-position selection-info)
-    '(misc-info minor-modes checker input-method buffer-encoding major-mode process vcs " ")))
+    '(misc-info minor-modes input-method buffer-encoding major-mode process vcs " ")))
 
 (use-package anzu
   :init
@@ -565,18 +642,18 @@
   (ligature-set-ligatures 't '("www"))
   (ligature-set-ligatures 'eww-mode '("ff" "fi" "ffi"))
   (ligature-set-ligatures 'prog-mode '("|||>" "<|||" "<==>" "<!--" "####" "~~>" "***" "||=" "||>"
-                                       ":::" "::=" "=:=" "===" "==>" "=!=" "=>>" "=<<" "=/=" "!=="
-                                       "!!." ">=>" ">>=" ">>>" ">>-" ">->" "->>" "-->" "---" "-<<"
-                                       "<~~" "<~>" "<*>" "<||" "<|>" "<$>" "<==" "<=>" "<=<" "<->"
-                                       "<--" "<-<" "<<=" "<<-" "<<<" "<+>" "</>" "###" "#_(" "..<"
-                                       "..." "+++" "/==" "///" "_|_" "www" "&&" "^=" "~~" "~@" "~="
-                                       "~>" "~-" "**" "*>" "*/" "||" "|}" "|]" "|=" "|>" "|-" "{|"
-                                       "[|" "]#" "::" ":=" ":>" ":<" "$>" "==" "=>" "!=" "!!" ">:"
-                                       ">=" ">>" ">-" "-~" "-|" "->" "--" "-<" "<~" "<*" "<|" "<:"
-                                       "<$" "<=" "<>" "<-" "<<" "<+" "</" "#{" "#[" "#:" "#=" "#!"
-                                       "##" "#(" "#?" "#_" "%%" ".=" ".-" ".." ".?" "+>" "++" "?:"
-                                       "?=" "?." "??" ";;" "/*" "/=" "/>" "//" "__" "~~" "(*" "*)"
-                                       "\\\\" "://"))
+				       ":::" "::=" "=:=" "===" "==>" "=!=" "=>>" "=<<" "=/=" "!=="
+				       "!!." ">=>" ">>=" ">>>" ">>-" ">->" "->>" "-->" "---" "-<<"
+				       "<~~" "<~>" "<*>" "<||" "<|>" "<$>" "<==" "<=>" "<=<" "<->"
+				       "<--" "<-<" "<<=" "<<-" "<<<" "<+>" "</>" "###" "#_(" "..<"
+				       "..." "+++" "/==" "///" "_|_" "www" "&&" "^=" "~~" "~@" "~="
+				       "~>" "~-" "**" "*>" "*/" "||" "|}" "|]" "|=" "|>" "|-" "{|"
+				       "[|" "]#" "::" ":=" ":>" ":<" "$>" "==" "=>" "!=" "!!" ">:"
+				       ">=" ">>" ">-" "-~" "-|" "->" "--" "-<" "<~" "<*" "<|" "<:"
+				       "<$" "<=" "<>" "<-" "<<" "<+" "</" "#{" "#[" "#:" "#=" "#!"
+				       "##" "#(" "#?" "#_" "%%" ".=" ".-" ".." ".?" "+>" "++" "?:"
+				       "?=" "?." "??" ";;" "/*" "/=" "/>" "//" "__" "~~" "(*" "*)"
+				       "\\\\" "://"))
   (global-ligature-mode +1))
 
 (use-package golden-ratio
@@ -584,6 +661,13 @@
 
 (use-package solaire-mode
   :config (solaire-global-mode +1))
+
+(use-package visual-fill-column
+  :config
+  (setq visual-fill-column-width 110
+	visual-fill-column-center-text t))
+
+(use-package darkroom)
 #+END_SRC
 
 * File Manager
@@ -609,8 +693,9 @@
   (:map global-map
 	("C-c MM" . mu4e))
   :config
-  (setq mu4e-maildir "~/Mail"
-	mu4e-user-mail-address-list '("redwards64@hotmail.com"
+  (setq user-mail-address "redwards64@hotmail.com"
+	mu4e-maildir "~/.local/share/mail"
+	mu4e-user-mail-address-list '(user-mail-address
 				      "redwards6469@gmail.com")
 	mu4e-get-mail-command "mbsync --all"
 	mu4e-change-filenames-when-moving t
@@ -642,12 +727,24 @@
 
 (use-package paredit
   :hook
-  (((emacs-lisp-mode lisp-mode
-     lisp-interaction-mode scheme-mode)
+  (((emacs-lisp-mode
+     lisp-mode
+     lisp-interaction-mode
+     scheme-mode
+     clojure-mode)
     . paredit-mode)))
 
 (use-package smartparens
-  :config (smartparens-global-mode +1))
+  :config
+  (smartparens-global-mode +1)
+  (sp-with-modes '(emacs-lisp-mode
+		   lisp-mode
+		   lisp-interaction-mode
+		   sly-mrepl-mode
+		   scheme-mode
+		   clojure-mode)
+    (sp-local-pair "'" nil :actions nil)
+    (sp-local-pair "`" nil :actions nil)))
 
 (use-package drag-stuff
   :hook ((prog-mode . drag-stuff-mode))
@@ -669,6 +766,20 @@
 	("C-c ma" . mc/mark-all-like-this)))
 
 (use-package iedit)
+
+(use-package yasnippet
+  :config (yas-global-mode +1))
+(use-package yasnippet-snippets)
+
+(use-package flyspell
+  :elpaca nil
+  :hook
+  (((LaTeX-mode org-mode) . flyspell-mode)
+   (prog-mode . flyspell-prog-mode)))
+
+(use-package writegood-mode
+  :hook
+  (((LaTeX-mode org-mode) . writegood-mode)))
 #+END_SRC
 
 * Programming
@@ -683,15 +794,13 @@
 (use-package tree-sitter
   :hook ((tree-sitter-after-on . tree-sitter-hl-mode))
   :config
-  (setq major-mode-remap-alist '((bash-mode . bash-ts-mode)
-				 (c++-mode . c++-ts-mode)
+  (setq major-mode-remap-alist '((c++-mode . c++-ts-mode)
 				 (c-mode . c-ts-mode)
 				 (c-or-c++-mode . c-or-c++-ts-mode)
 				 (css-mode . css-ts-mode)
 				 (js-mode . js-ts-mode)
 				 (json-mode . json-ts-mode)
 				 (python-mode . python-ts-mode)
-				 (sh-mode . bash-ts-mode)
 				 (yaml-mode . yaml-ts-mode))))
 
 (use-package tree-sitter-langs)
@@ -703,6 +812,9 @@
 
 (use-package apheleia
   :config (apheleia-global-mode +1))
+
+(use-package direnv
+  :config (direnv-mode +1))
 #+END_SRC
 
 ** Language Servers
@@ -729,7 +841,8 @@ The `with-eval-after-load` block is a workaround for [[https://github.com/emacs-
 		     (dolist (mode auctex-mode-list)
 		       (setf (lsp--client-major-modes v)
 			     (cl-pushnew mode mode-list)))
-		     (add-to-list 'lsp-language-id-configuration '(`mode . "latex"))))))
+		     (add-to-list 'lsp-language-id-configuration
+				  '(`mode . "latex"))))))
 	     lsp-clients))
   
   (setq lsp-diagnostics-mode t
@@ -740,17 +853,12 @@ The `with-eval-after-load` block is a workaround for [[https://github.com/emacs-
 	lsp-enable-snippet t
 	lsp-enable-text-document-color t
 	lsp-headerline-breadcrumb-enable t
-	lsp-inlay-hint-enable nil
 	lsp-inlay-hint-enable t
 	lsp-modeline-code-actions-enable t
 	lsp-modeline-code-actions-segments '(icon count name)
-	lsp-rust-analyzer-binding-mode-hints t
 	lsp-rust-analyzer-closing-brace-hints t
 	lsp-rust-analyzer-display-chaining-hints t
-	lsp-rust-analyzer-display-lifetime-elision-hints-enable t
-	lsp-rust-analyzer-display-lifetime-elision-hints-use-parameter-names t
 	lsp-rust-analyzer-display-parameter-hints t
-	lsp-rust-analyzer-display-reborrow-hints t
 	lsp-rust-analyzer-lens-references-adt-enable t
 	lsp-rust-analyzer-lens-references-enum-variant-enable t
 	lsp-rust-analyzer-lens-references-method-enable t
@@ -790,7 +898,7 @@ The `with-eval-after-load` block is a workaround for [[https://github.com/emacs-
 		    gdb-many-windows t
 		    compile-command (format "make -C %s -k"
 					    (substring (ross/get-closest-pathname)
-	       					       0 -8))
+						       0 -8))
 		    +format-with "clang-format"))))
   :config (setq c-basic-offset 4))
 
@@ -824,7 +932,7 @@ The `with-eval-after-load` block is a workaround for [[https://github.com/emacs-
 **** General
 #+BEGIN_SRC emacs-lisp
 (use-package lisp-extra-font-lock
-  :config (lisp-extra-font-lock-global-mode +1))
+    :config (lisp-extra-font-lock-global-mode +1))
 #+END_SRC
 
 **** Clojure
@@ -866,12 +974,24 @@ The `with-eval-after-load` block is a workaround for [[https://github.com/emacs-
   :config (global-morlock-mode +1))
 #+END_SRC
 
+**** Scheme
+#+BEGIN_SRC emacs-lisp
+(use-package geiser-guile)
+
+(use-package ac-geiser
+  :hook
+  (((geiser-mode geiser-repl-mode) . ac-geiser-setup))
+  :config
+  (eval-after-load "auto-complete"
+    '(add-to-list 'ac-modes 'geiser-repl-mode)))
+#+END_SRC
+
 *** Nix
 #+BEGIN_SRC emacs-lisp
 (use-package nix-mode)
 (use-package nix-ts-mode)
 (use-package nixpkgs-fmt)
-(use-package nix-update)
+(use-package nix-buffer)
 #+END_SRC
 
 *** Embedded
@@ -946,8 +1066,8 @@ The `with-eval-after-load` block is a workaround for [[https://github.com/emacs-
 #+BEGIN_SRC emacs-lisp
 (use-package lsp-java
   :config (setq lsp-java-configuration-runtimes '[(:name "JavaSE-17"
-						   :path "/usr/lib/jvm/java-17-openjdk"
-						   :default t)]))
+							 :path "/usr/lib/jvm/java-17-openjdk"
+							 :default t)]))
 #+END_SRC
 
 *** Groovy

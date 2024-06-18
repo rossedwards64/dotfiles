@@ -183,7 +183,7 @@
     "wlr/taskbar": {
       "format": "{icon}",
       "icon-size": 24,
-      "icon-theme": ["rose-pine-moon-icons"],
+      "icon-theme": ["Papirus-Dark"],
       "tooltip": "true",
       "on-click": "activate",
       "on-click-right": "close",

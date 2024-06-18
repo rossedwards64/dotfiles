@@ -23,7 +23,7 @@ export TERM="alacritty"
 export ARCHFLAGS="-arch x86_64"
 export GTK_THEME="Catppuccin-Mocha-Standard-Green-Dark"
 export XCURSOR_SIZE=24
-#export SDL_VIDEODRIVER="wayland"
+export SDL_VIDEODRIVER="wayland"
 export MOZ_ENABLE_WAYLAND=1
 export CMAKE_GENERATOR="Ninja"
 export XAUTHORITY="$XDG_RUNTIME_DIR/Xauthority"
@@ -46,8 +46,6 @@ export PLATFORMIO_CORE_DIR="$XDG_DATA_HOME/platformio"
 # Startup files
 export GTK2_RC_FILES="$XDG_CONFIG_HOME/gtk-2.0/gtkrc"
 export NPM_CONFIG_USERCONFIG="$XDG_CONFIG_HOME/npm/npmrc"
-export WGETRC="$XDG_CONFIG_HOME/wget/wgetrc"
-export XINITRC="$XDG_CONFIG_HOME/X11/xinitrc"
 
 # History files
 export HISTFILE="$XDG_DATA_HOME/zsh/history"
@@ -71,5 +69,6 @@ export TEXMFCONFIG="$XDG_CONFIG_HOME/texlive/texmf-config"
 
 # Workarounds
 export PROTON_USE_WINED3D=1
+export LIBGL_ALWAYS_SOFTWARE=1
 export MESA_GL_VERSION_OVERRIDE=4.6
 export MESA_GLSL_VERSION_OVERRIDE=460

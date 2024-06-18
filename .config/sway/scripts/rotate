@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+transform="$(swaymsg -t get_outputs | jq -r '.[] | select(.focused) | .transform')"
+pen="$(swaymsg -t get_inputs | jq -r '.[] | select(.type == "tablet_tool") | .identifier')"
+wallpapers="$HOME/Pictures/wallpapers"
+
+if [[ "$transform" = "normal" ]]; then
+    swaymsg -- output - transform 270
+    swaymsg -- input "$pen" map_to_region 0 0 768 1024
+    swaymsg -- input "$pen" calibration_matrix 0 "-1" 1 1 0 0
+    swaymsg -- output - bg "$wallpapers/Evangelion/vert_landscape.jpg" stretch
+    
+elif [[ "$transform" = "270" ]]; then
+    swaymsg -- output - transform 0
+    swaymsg -- input "$pen" map_to_region 0 0 1024 768
+    swaymsg -- input "$pen" calibration_matrix 1 0 0 0 1 0
+    swaymsg -- output - bg "$wallpapers/Gurren Lagann/lordgenome.jpeg" fill
+fi

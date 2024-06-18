@@ -13,29 +13,26 @@ set {
     $CONFIG_HOME $HOME/.config
     $DATA_HOME $HOME/.local
     $LOCKSCRIPT $DATA_HOME/bin/lock
-    $MENU $ROFISCRIPTS/launcher
+    $MENU $FUZZELSCRIPTS/launcher
     $MUTESCRIPT $DATA_HOME/bin/check-mute
-    $POWERMENU $ROFISCRIPTS/powermenu
-    $ROFISCRIPTS $CONFIG_HOME/rofi/scripts
-    $RUNNER $ROFISCRIPTS/runner
-    $SCREENSHOT $ROFISCRIPTS/screenshot
-    $WINDOWS $ROFISCRIPTS/windows
+    $POWERMENU $FUZZELSCRIPTS/powermenu
+    $FUZZELSCRIPTS $CONFIG_HOME/fuzzel/scripts
+    $RUNNER $FUZZELSCRIPTS/runner
+    $SCREENSHOT $FUZZELSCRIPTS/screenshot
+    $WINDOWS $FUZZELSCRIPTS/windows
     $WOBSCRIPT $DATA_HOME/bin/wob
     $WOBSOCK $XDG_RUNTIME_DIR/wob.sock
 
     # window regexes
     $ANY ".*"
-    $DISCORD "^discord$"
     $EMACS "^emacs(client)?$"
     $EPICGAMES "^heroic$"
     $FACTORIO "^factorio$"
     $FIREFOX "^firefox$"
     $FREETUBE "^FreeTube$"
     $GAME "^(factorio|youronlymoveishustle|dwarfort|gamescope).*$"
-    $INTELLIJ "^jetbrains-idea$"
     $ITCHIO "^itch$"
     $LUTRIS "^lutris$"
-    $MINECRAFT "^com-atlauncher-App$"
     $MPV "^mpv$"
     $SPOTIFY "^(dev\.alextren\.)?Spot(ify)?$"
     $STEAM "^steam$"
@@ -44,13 +41,8 @@ set {
     $TERMINAL "^Alacritty$"
     $VLC "^vlc$"
     $VOLUME "^pavucontrol$"
-    $XDMAN "^xdm-app$"
-    $XWVB "^xwaylandvideobridge$"
     $YOMIHUSTLE "^youronlymoveishustle.*$"
     $ZATHURA "^org.pwmt.zathura$"
-
-    # programs
-    $EMACSSCRIPT $CONFIG_HOME/hypr/scripts/start_emacs.sh
 }
 
 default_border normal 1
@@ -69,15 +61,8 @@ xwayland enable
 
 output LVDS-1 {
     scale 1
-    res 1366x768
-    bg /home/ross/Pictures/wallpapers/lordgenome.png fill
-    pos 288 1080
-}
-
-output HDMI-A-1 {
-    scale 1
-    res 1920x1080
-    bg /home/ross/Pictures/wallpapers/gojo.png fill
+    res 1024x768
+    bg /home/ross/Pictures/wallpapers/Gurren Lagann/lordgenome.jpeg fill
     pos 0 0
 }
 
@@ -93,24 +78,15 @@ exec {
     autotiling -w 1 2 3 4 5 6 7 8 9 10
 
     # regular programs
-    $EMACSSCRIPT
+    emacs
     alacritty
     firefox
-    xdman-beta
     zathura
-    #flatpak run com.discordapp.Discord
-    #flatpak run com.jetbrains.IntelliJ-IDEA-Ultimate
-    #flatpak run com.sindresorhus.Caprine
-    #flatpak run com.valvesoftware.Steam
-    #flatpak run dev.alextren.Spot
-    #flatpak run io.free.FreeTube
-    #lutris
-    #obs --minimize-to-tray
 }
 
 exec_always {
-    pkill rofi
-    # pkill waybar && $WAYBAR
+    pkill fuzzel
+    systemctl --user start sway-session.target
     systemctl --user restart waybar
     rm -f $WOBSOCK && mkfifo $WOBSOCK && tail -f $WOBSOCK | wob
     swaync-client -R -rs -sw
@@ -119,17 +95,6 @@ exec_always {
 input "type:keyboard" {
       xkb_layout gb
       xkb_options ctrl:nocaps
-}
-
-input "12625:16387:ROYUAN_Akko_keyboard" {
-      xkb_layout us
-}
-
-input "2:7:SynPS/2_Synaptics_TouchPad" {
-    dwt enabled
-    tap enabled
-    natural_scroll enabled
-    middle_emulation enabled
 }
 
 seat {
@@ -141,13 +106,13 @@ assign {
     [app_id=$TERMINAL] workspace 2
     [app_id=$FIREFOX] workspace 3
     [class=$DISCORD] workspace 4
-    [app_id=$LUTRIS] workspace 6
     [app_id=$SPOTIFY] workspace 5
+    [app_id=$ZATHURA] workspace 5
+    [app_id=$LUTRIS] workspace 6
     [class=$STEAM] workspace 6
     [class=$STEAM_GAME] workspace 7
     [app_id=$GAME class=$GAME] workspace 7
-    [class=$INTELLIJ] workspace 9
-}
+ }
 
 for_window {
     [window_role="pop-up"] floating enable
@@ -165,30 +130,6 @@ for_window {
     }
 
     [app_id=$VOLUME] {
-        floating enable
-        move to scratchpad
-        resize set {
-            width 800
-            height 600
-        }
-    }
-
-    [app_id=$XDMAN] {
-        floating enable
-        move to scratchpad
-        urgent enable
-        resize set {
-            width 800
-            height 600
-        }
-    }
-
-    [app_id=$XWVB] {
-        floating enable
-        move to scratchpad
-    }
-
-    [app_id=$ZATHURA] {
         floating enable
         move to scratchpad
         resize set {
@@ -218,9 +159,9 @@ bindsym {
     $MOD+7 workspace number 7
     $MOD+8 workspace number 8
     $MOD+9 workspace number 9
-    $MOD+Ctrl+g exec emacsclient --eval "(emacs-everywhere)"
+    $MOD+Ctrl+g exec emacs
     $MOD+Down focus down
-    $MOD+Escape exec "pkill rofi || $POWERMENU"
+    $MOD+Escape exec "pkill fuzzel || $POWERMENU"
     $MOD+Left focus left
     $MOD+Minus scratchpad show
     $MOD+Return exec alacritty
@@ -239,8 +180,6 @@ bindsym {
     $MOD+Shift+7 move container to workspace number 7, workspace number 7
     $MOD+Shift+8 move container to workspace number 8, workspace number 8
     $MOD+Shift+9 move container to workspace number 9, workspace number 9
-    $MOD+Shift+o move workspace to output HDMI-A-1
-    $MOD+Shift+p move workspace to output LVDS-1
     $MOD+Shift+Down move down
     $MOD+Shift+Left move left
     $MOD+Shift+Right move right
@@ -253,14 +192,14 @@ bindsym {
     $MOD+Shift+r mode "resize"
     $MOD+Shift+s exec $LOCK
     $MOD+Shift+space floating toggle
-    $MOD+Tab "pkill rofi || $WINDOWS"
+    $MOD+Tab "pkill fuzzel || $WINDOWS"
     $MOD+Up focus up
     $MOD+a focus parent
     $MOD+b splith
-    $MOD+d exec "pkill rofi || $MENU"
+    $MOD+d exec "pkill fuzzel || fuzzel"
     $MOD+e layout toggle split
     $MOD+f fullscreen
-    $MOD+r exec "pkill rofi || $RUNNER"
+    $MOD+r exec "pkill fuzzel || $RUNNER"
     $MOD+s layout stacking
     $MOD+space focus mode_toggle
     $MOD+t exec swaync-client -t -sw
@@ -281,6 +220,7 @@ bindsym --locked {
     XF86AudioPrev exec playerctl previous
     XF86MonBrightnessUp exec xbacklight -inc 10
     XF86MonBrightnessDown exec xbacklight -dec 10
+    XF86RotateWindows exec $HOME/.config/sway/scripts/rotate
 }
 
 bindgesture {

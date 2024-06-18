@@ -1,7 +1,0 @@
-#!/usr/bin/env sh
-
-rofi \
-    -modes window \
-    -show window \
-    -scroll-method 0 \
-    -theme "$HOME/.config/rofi/config/windows.rasi"

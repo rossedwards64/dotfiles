@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-
-set -xe
-
-gamescope -W 1366 -H 768 -f -- $1

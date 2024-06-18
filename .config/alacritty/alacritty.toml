@@ -525,7 +525,7 @@ multiplier = 3
 semantic_escape_chars = ",│`|:\"' ()[]{}<>\t"
 
 [shell]
-args = ["-l", "-c", "$HOME/.config/tmux/start-tmux.sh"]
+#args = ["-l", "-c", "tmux"]
 program = "/bin/zsh"
 
 [window]

@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-rofi \
-	-modes run \
-	-show run \
-	-scroll-method 0 \
-	-terminal alacritty \
-	-theme "$HOME"/.config/rofi/config/runner.rasi
