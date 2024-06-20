@@ -27,6 +27,13 @@
 #+BEGIN_SRC emacs-lisp :tangle ./early-init.el
 ;;; early-init.el -*- lexical-binding: t; -*-
 
+(defvar config:file-name-handler-alist-cache file-name-handler-alist)
+
+(setq gc-cons-threshold most-positive-fixnum
+      gc-cons-percentage 0.6
+      package-enable-at-startup nil
+      file-name-handler-alist nil)
+
 (when (string-equal system-type "android")
   (let ((termux-path "/data/data/com.termux/files/usr/bin"))
     (setenv "PATH" (concat (getenv "PATH") ":" termux-path))
@@ -60,8 +67,6 @@
 	(set-frame-font font-name-and-size nil t)))))
 
 (add-hook 'after-make-frame-functions (lambda (frame) (ross/set-font frame)))
-
-(setq package-enable-at-startup nil)
 #+END_SRC
 
 * General
@@ -88,7 +93,8 @@
 		      "octicons.ttf" "weathericons.ttf")))
     (mapc (lambda (file)
 	    (unless (file-exists-p (concat (getenv "HOME") "/" fonts-dir "/" file))
-	      (all-the-icons-install-fonts))) font-files)))
+	      (all-the-icons-install-fonts)))
+	  font-files)))
 
 (use-package nerd-icons
   :config
@@ -101,11 +107,19 @@
   :elpaca nil
   :hook
   ((emacs-startup . (lambda ()
+		      (setq gc-cons-threshold (* 1024 1024 16)
+			    gc-cons-percentage 0.1
+			    file-name-handler-alist config:file-name-handler-alist-cache)
 		      (message "Emacs loaded in %s with %d garbage collections."
 			       (format "%.2f seconds"
 				       (float-time
 					(time-subtract after-init-time before-init-time)))
 			       gcs-done)))
+   (minibuffer-setup . (lambda ()
+			 (setq gc-cons-threshold most-positive-fixnum)))
+   (minibuffer-exit . (lambda ()
+			(run-at-time 1 nil (lambda ()
+					     (setq gc-cons-threshold (* 1024 1024 16))))))
    (prog-mode . which-function-mode)
    (prog-mode . display-line-numbers-mode)
    ((prog-mode ielm-mode) . eldoc-mode)
@@ -120,7 +134,8 @@
 	   `((fullscreen . maximized)
 	     (alpha-background . ,(pcase (system-name)
 				    ((or (pred (string-equal desktop-hostname))
-					 (pred (string-equal laptop-hostname))) 95)
+					 (pred (string-equal laptop-hostname)))
+95)
 				    (_ 100)))))
     (add-to-list 'default-frame-alist frame-setting))
   
@@ -227,7 +242,6 @@
 
 (use-package catppuccin-theme
   :config (ross/set-theme-maybe-daemon 'catppuccin))
-
 (use-package ef-themes)
 (use-package exotica-theme)
 (use-package gruber-darker-theme)
@@ -1185,14 +1199,14 @@ Same as the [[*Startup Dashboard][startup dashboard config]]. This is the bootst
 for Elpaca, obtained from [[https://github.com/progfolio/elpaca#installer][the Elpaca Github repository]].
 #+NAME: package-manager
 #+BEGIN_SRC emacs-lisp :tangle no
-(defvar elpaca-installer-version 0.6)
+(defvar elpaca-installer-version 0.7)
 (defvar elpaca-directory (expand-file-name "elpaca/" user-emacs-directory))
 (defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
 (defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
 (defvar elpaca-order '(elpaca :repo "https://github.com/progfolio/elpaca.git"
-			      :ref nil
-			      :files (:defaults "elpaca-test.el" (:exclude "extensions"))
-			      :build (:not elpaca--activate-package)))
+                              :ref nil :depth 1
+                              :files (:defaults "elpaca-test.el" (:exclude "extensions"))
+                              :build (:not elpaca--activate-package)))
 (let* ((repo  (expand-file-name "elpaca/" elpaca-repos-directory))
        (build (expand-file-name "elpaca/" elpaca-builds-directory))
        (order (cdr elpaca-order))
@@ -1202,18 +1216,20 @@ for Elpaca, obtained from [[https://github.com/progfolio/elpaca#installer][the E
     (make-directory repo t)
     (when (< emacs-major-version 28) (require 'subr-x))
     (condition-case-unless-debug err
-	(if-let ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
-		 ((zerop (call-process "git" nil buffer t "clone"
-				       (plist-get order :repo) repo)))
-		 ((zerop (call-process "git" nil buffer t "checkout"
-				       (or (plist-get order :ref) "--"))))
-		 (emacs (concat invocation-directory invocation-name))
-		 ((zerop (call-process emacs nil buffer nil "-Q" "-L" "." "--batch"
-				       "--eval" "(byte-recompile-directory \".\" 0 'force)")))
-		 ((require 'elpaca))
-		 ((elpaca-generate-autoloads "elpaca" repo)))
-	    (progn (message "%s" (buffer-string)) (kill-buffer buffer))
-	  (error "%s" (with-current-buffer buffer (buffer-string))))
+        (if-let ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
+                 ((zerop (apply #'call-process `("git" nil ,buffer t "clone"
+                                                 ,@(when-let ((depth (plist-get order :depth)))
+                                                     (list (format "--depth=%d" depth) "--no-single-branch"))
+                                                 ,(plist-get order :repo) ,repo))))
+                 ((zerop (call-process "git" nil buffer t "checkout"
+                                       (or (plist-get order :ref) "--"))))
+                 (emacs (concat invocation-directory invocation-name))
+                 ((zerop (call-process emacs nil buffer nil "-Q" "-L" "." "--batch"
+                                       "--eval" "(byte-recompile-directory \".\" 0 'force)")))
+                 ((require 'elpaca))
+                 ((elpaca-generate-autoloads "elpaca" repo)))
+            (progn (message "%s" (buffer-string)) (kill-buffer buffer))
+          (error "%s" (with-current-buffer buffer (buffer-string))))
       ((error) (warn "%s" err) (delete-directory repo 'recursive))))
   (unless (require 'elpaca-autoloads nil t)
     (require 'elpaca)
@@ -1224,7 +1240,7 @@ for Elpaca, obtained from [[https://github.com/progfolio/elpaca#installer][the E
 
 (elpaca elpaca-use-package
   (elpaca-use-package-mode)
-  (setq elpaca-use-package-by-default t ;; use-package will use elpaca by default
+  (setq elpaca-use-package-by-default t
 	use-package-always-ensure t))
 
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
