@@ -8,6 +8,7 @@ in {
     environment.systemPackages = with pkgs; [
       devilutionx
       duckstation
+      dwarf-fortress
       dxvk_2
       fallout-ce
       fallout2-ce
