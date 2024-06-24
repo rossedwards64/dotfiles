@@ -12,6 +12,7 @@ in {
       du-dust
       ffmpeg
       fzf
+      gcr
       nil
       nix-health
       nix-info
@@ -69,10 +70,14 @@ in {
     };
 
     services = {
-      gnome-keyring.enable = true;
+      gnome-keyring = {
+        enable = true;
+        components = [ "pkcs11" "secrets" "ssh" ];
+      };
 
       gpg-agent = {
         enable = true;
+	enableZshIntegration = true;
         pinentryPackage = pkgs.pinentry-qt;
       };
     };

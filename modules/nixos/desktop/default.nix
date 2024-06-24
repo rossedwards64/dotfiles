@@ -16,7 +16,6 @@ in {
       wl-clipboard
       xwayland
     ];
-
     services = {
       xserver = {
         enable = true;

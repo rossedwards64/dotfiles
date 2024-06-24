@@ -42,19 +42,14 @@
 (setenv "LSP_USE_PLISTS" "true")
 
 (defvar font-name "Iosevka NF")
-(defvar desktop-hostname "ross-desktop")
-(defvar laptop-hostname "ross-thinkpad-x230")
-(defvar other-laptop-hostname "ross-thinkpad-x200")
 (defvar macbook-hostname "Rosss-MacBook-Pro.local")
 
 (defun ross/set-font (frame)
   "Apply FONT to FRAME."
   (when (display-graphic-p frame)
     (let ((font-height (pcase (system-name)
-			 ((or (pred (string-equal laptop-hostname))
-			      (pred (string-equal other-laptop-hostname))) 120)
-			 ((pred (string-equal desktop-hostname)) 150)
-			 ((pred (string-equal macbook-hostname)) 180))))
+			 ((pred (string-equal macbook-hostname)) 180)
+			 (_ 120))))
       (dolist (mode '(default fixed-pitch variable-pitch))
 	(set-face-attribute mode nil
 			    :family font-name
@@ -133,10 +128,8 @@
   (dolist (frame-setting
 	   `((fullscreen . maximized)
 	     (alpha-background . ,(pcase (system-name)
-				    ((or (pred (string-equal desktop-hostname))
-					 (pred (string-equal laptop-hostname)))
-95)
-				    (_ 100)))))
+				    ((pred (string-equal macbook-hostname)) 100)
+				    (_ 95)))))
     (add-to-list 'default-frame-alist frame-setting))
   
   (advice-add #'completing-read-multiple :filter-args
@@ -156,7 +149,7 @@
 			  (concat command "--protocols ssl3")))))
 
   (setq auto-save-default nil
-	delete-auto-save-files t
+	confirm-kill-emacs #'yes-or-no-p
 	dired-listing-switches "-lhAX --group-directories-first"
 	dired-switches-in-mode-line 'as-is
 	display-line-numbers-type 'relative
@@ -173,9 +166,10 @@
 	treesit-extra-load-path '((concat elpaca-builds-directory "/tree-sitter-langs/bin"))
 	vc-follow-symlinks t
 	visible-bell t
+	warning-minimum-level :error
         completion-cycle-threshold 3
         enable-recursive-minibuffers t
-	warning-minimum-level :error)
+	delete-auto-save-files t)
 
   (toggle-text-mode-auto-fill)
   (blink-cursor-mode -1)
@@ -1079,9 +1073,13 @@ The `with-eval-after-load` block is a workaround for [[https://github.com/emacs-
 *** Java
 #+BEGIN_SRC emacs-lisp
 (use-package lsp-java
-  :config (setq lsp-java-configuration-runtimes '[(:name "JavaSE-17"
-							 :path "/usr/lib/jvm/java-17-openjdk"
-							 :default t)]))
+  :config (setq lsp-java-configuration-runtimes
+		'[(:name
+		   "JavaSE-17"
+		   :path
+		   "/usr/lib/jvm/java-17-openjdk"
+		   :default
+		   t)]))
 #+END_SRC
 
 *** Groovy
@@ -1176,7 +1174,7 @@ have to scroll past it every time I read or edit my config.
 	dashboard-projects-backend 'projectile
 	dashboard-items '((projects . 3)
 			  (agenda . 3))
-	dashboard-footer-icon (all-the-icons-fileicon "gentoo"
+	dashboard-footer-icon (all-the-icons-fileicon "nix"
 						      :height 1.1
 						      :v-adjust -0.05
 						      :face 'font-lock-keyword-face)

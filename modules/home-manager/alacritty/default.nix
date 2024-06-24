@@ -32,8 +32,8 @@ in {
         selection.semantic_escape_chars = '',│`|:"' ()[]{}<>	'';
 
         shell = {
-          args = [ "-l" "-c" "tmuxinator default" ];
-          program = "/home/ross/.nix-profile/bin/zsh";
+          args = [ "-l" "-c" "${pkgs.tmuxinator}/bin/tmuxinator default" ];
+          program = "${pkgs.zsh}/bin/zsh";
         };
 
         window = {
@@ -41,7 +41,7 @@ in {
           decorations_theme_variant = "None";
           dynamic_padding = true;
           dynamic_title = true;
-          opacity = 1.0;
+          opacity = mkDefault 0.95;
 
           class = {
             general = title;

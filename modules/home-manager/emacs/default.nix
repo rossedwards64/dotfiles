@@ -1,6 +1,7 @@
 { lib, config, pkgs, ... }:
 with lib;
 let cfg = config.modules.emacs;
+  emacsPkg = pkgs.emacs29-pgtk;
 in {
   options.modules.emacs = { enable = mkEnableOption "emacs"; };
 
@@ -10,7 +11,7 @@ in {
 
     programs.emacs = {
       enable = true;
-      package = pkgs.emacs29-pgtk;
+      package = emacsPkg;
       extraPackages = with pkgs;
         epkgs: [
           auctex
@@ -23,7 +24,7 @@ in {
 
     services.emacs = {
       enable = true;
-      package = pkgs.emacs29-pgtk;
+      package = emacsPkg;
       startWithUserSession = true;
       client = {
         enable = true;

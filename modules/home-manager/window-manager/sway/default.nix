@@ -333,6 +333,10 @@ in {
             }) (lists.range 0 9)));
 
             startup = [
+              {
+                command =
+                  "${pkgs.gnome.gnome-keyring}/bin/gnome-keyring-daemon --start --foreground --components=pkcs11,secrets,ssh";
+              }
               { command = "${pkgs.pavucontrol}/bin/pavucontrol"; }
               { command = "${pkgs.swayidle}/bin/swayidle -w"; }
               {

@@ -2,13 +2,17 @@
 with lib;
 let
   cfg = config.modules.firefox;
-  braveSearch = "Brave";
-  braveSearchURL = "https://search.brave.com";
+  defaultEngine = rec {
+    name = "LibreY";
+    url = "https://librey.devol.it";
+    icon = "${url}/favicon.ico";
+    params = [{
+      name = "q";
+      value = "{searchTerms}";
+    }];
+    alias = "@librey";
+  };
   updateInterval = 24 * 60 * 60 * 1000;
-  defaultEngineParams = [{
-    name = "q";
-    value = "{searchTerms}";
-  }];
 in {
   options.modules.firefox = { enable = mkEnableOption "firefox"; };
 
@@ -27,7 +31,7 @@ in {
         DisableTelemetry = true;
         DisableFirefoxStudies = true;
         DisablePocket = true;
-        DisplayBookmarksToolbar = "never";
+        DisplayBookmarksToolbar = "always";
         DisplayMenuBar = "default-off";
 
         EnableTrackingProtection = {
@@ -37,7 +41,17 @@ in {
           Fingerprinting = true;
         };
 
+        FirefoxHome = {
+          Pocket = false;
+          Snippets = false;
+        };
+
         SearchBar = "separate";
+
+        UserMessaging = {
+          ExtensionRecommendations = false;
+          SkipOnboarding = true;
+        };
       };
 
       profiles = {
@@ -46,15 +60,15 @@ in {
           name = "Ross";
           isDefault = true;
           settings = {
-            "browser.startup.homepage" = braveSearchURL;
-            "browser.search.defaultenginename" = braveSearch;
-            "browser.search.order.1" = braveSearch;
+            "browser.startup.homepage" = defaultEngine.url;
+            "browser.search.defaultenginename" = defaultEngine.name;
+            "browser.search.order.1" = defaultEngine.name;
             "privacy.trackingprotection.enabled" = true;
             "privacy.trackingprotection.socialtracking.enabled" = true;
             "extensions.getAddons.showPane" = false;
             "browser.bookmarks.restore_default_bookmarks" = false;
             "browser.contentblocking.category" = "strict";
-            "browser.newtabpage.pinned" = braveSearchURL;
+            "browser.newtabpage.pinned" = defaultEngine.url;
             "browser.bookmarks.showMobileBookmarks" = true;
             "extensions.activeThemeID" =
               "{f5525f34-4102-4f6e-8478-3cf23cfeff7a}";
@@ -73,25 +87,23 @@ in {
 
           search = {
             force = true;
-            default = braveSearch;
-
+            default = defaultEngine.name;
             engines = {
-              "${braveSearch}" = {
+              "${defaultEngine.name}" = {
                 inherit updateInterval;
                 urls = [{
-                  template = "https://search.brave.com/search";
-                  params = defaultEngineParams;
+                  template = "${defaultEngine.url}/search.php?q={searchTerms}";
+                  params = defaultEngine.params;
                 }];
-                definedAliases = [ "@brave" ];
-                iconUpdateURL =
-                  "https://cdn.search.brave.com/serp/v2/_app/immutable/assets/favicon.acxxetWH.ico";
+                definedAliases = [ defaultEngine.alias ];
+                iconUpdateURL = defaultEngine.icon;
               };
 
               "MyNixOS" = {
                 inherit updateInterval;
                 urls = [{
                   template = "https://mynixos.com/search";
-                  params = defaultEngineParams;
+                  params = defaultEngine.params;
                 }];
                 definedAliases = [ "@nixpkgs" ];
                 iconUpdateURL = "https://mynixos.com/favicon.ico";
@@ -105,9 +117,49 @@ in {
                 iconUpdateURL = "https://wiki.nixos.org/nixos.png";
               };
 
+              "Marginalia" = {
+                inherit updateInterval;
+                urls = [{
+                  template =
+                    "https://search.marginalia.nu/search?query={searchTerms}";
+                }];
+                definedAliases = [ "@marginalia" ];
+                iconUpdateURL = "https://search.marginalia.nu/favicon.ico";
+              };
+
+              "Arch Linux" = {
+                inherit updateInterval;
+                urls = [{
+                  template = "https://wiki.archlinux.org/title/{searchTerms}";
+                }];
+                definedAliases = [ "@archlinux" ];
+                iconUpdateURL =
+                  "https://https://wiki.archlinux.org/favicon.ico";
+              };
+
+              "Gentoo" = {
+                inherit updateInterval;
+                urls = [{
+                  template = "https://wiki.gentoo.org/wiki/{searchTerms}";
+                }];
+                definedAliases = [ "@gentoo" ];
+                iconUpdateURL = "https://wiki.gentoo.org/favicon.ico";
+              };
+
+              "Dwarf Fortress" = {
+                inherit updateInterval;
+                urls = [{
+                  template =
+                    "https://dwarffortresswiki.org/index.php/{searchTerms}";
+                }];
+                definedAliases = [ "@dwarffortress" ];
+                iconUpdateURL = "https://dwarffortresswiki.org/favicon.ico";
+              };
+
               "Amazon.com".metaData.hidden = true;
               "BBC".metaData.hidden = true;
               "Bing".metaData.hidden = true;
+              "DuckDuckGo".metaData.hidden = true;
               "Facebook".metaData.hidden = true;
               "Google".metaData.hidden = true;
               "YouTube".metaData.hidden = true;
