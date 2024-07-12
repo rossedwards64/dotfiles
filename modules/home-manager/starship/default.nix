@@ -175,7 +175,7 @@ in {
 
         python = {
           symbol = " ";
-          format = "[[$symbol$pyenv_prefix($version)(($virtualenv))]($style)]";
+          format = "\\[[$symbol$pyenv_prefix($version)(($virtualenv))]($style)\\]";
         };
 
         spack = {

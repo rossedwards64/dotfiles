@@ -17,6 +17,7 @@ in {
       gamemode
       gamescope
       glxinfo
+      gzdoom
       heroic
       # itch # dependency is currently broken
       lutris

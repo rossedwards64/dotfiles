@@ -12,12 +12,12 @@ in {
     programs.emacs = {
       enable = true;
       package = emacsPkg;
-      extraPackages = with pkgs;
+      extraPackages =
         epkgs: [
-          auctex
-          emacs-all-the-icons-fonts
-          mu
-          mu.mu4e
+          pkgs.auctex
+          pkgs.emacs-all-the-icons-fonts
+          pkgs.mu
+          pkgs.mu.mu4e
           epkgs.mu4e
         ];
     };

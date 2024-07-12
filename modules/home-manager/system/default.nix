@@ -71,7 +71,7 @@ in {
 
     services = {
       gnome-keyring = {
-        enable = true;
+        enable = false; # failing because package was moved from pkgs.gnome.gnome-keyring to pkgs.gnome-keyring
         components = [ "pkcs11" "secrets" "ssh" ];
       };
 

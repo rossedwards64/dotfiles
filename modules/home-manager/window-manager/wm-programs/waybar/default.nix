@@ -62,7 +62,7 @@ let
       };
 
       cpuNoLabel = {
-        name = "cpu";
+        name = "cpuNoLabel";
         config = {
           format = "󰘚 {usage}% {avg_frequency}GHz";
           tooltip = false;
@@ -79,7 +79,7 @@ let
       };
 
       memoryNoLabel = {
-        name = "memory";
+        name = "memoryNoLabel";
         config = {
           format = " {used:0.1f}G / {total:0.1f}G";
           tooltip-format = "{used:0.1f}G / {total:0.1f}G used";

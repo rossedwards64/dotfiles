@@ -8,6 +8,8 @@ in {
   imports = [ ./hardware-configuration.nix ];
 
   boot = {
+    extraModulePackages = [ config.boot.kernelPackages.gcadapter-oc-kmod ];
+    kernelModules = [ "gcadapter_oc" ];
     loader = {
       efi = {
         canTouchEfiVariables = true;
@@ -66,6 +68,8 @@ in {
         };
       };
     };
+
+    udev.packages = [ pkgs.dolphinEmu ];
   };
 
   hardware = {
