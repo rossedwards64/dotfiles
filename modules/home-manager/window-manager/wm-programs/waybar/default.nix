@@ -39,7 +39,7 @@ let
   });
 
   modules = {
-    builtin = {
+    builtin = rec {
       clock = {
         name = "clock";
         config = {
@@ -61,14 +61,9 @@ let
         };
       };
 
-      cpuNoLabel = {
-        name = "cpuNoLabel";
-        config = {
-          format = "󰘚 {usage}% {avg_frequency}GHz";
-          tooltip = false;
-          interval = 1;
-        };
-      };
+      cpuNoLabel = (attrsets.overrideExisting cpu {
+        config.format = "󰘚 {usage}% {avg_frequency}GHz";
+      });
 
       memory = {
         name = "memory";
@@ -78,13 +73,9 @@ let
         };
       };
 
-      memoryNoLabel = {
-        name = "memoryNoLabel";
-        config = {
-          format = " {used:0.1f}G / {total:0.1f}G";
-          tooltip-format = "{used:0.1f}G / {total:0.1f}G used";
-        };
-      };
+      memoryNoLabel = (attrsets.overrideExisting memory {
+        config.format = " {used:0.1f}G / {total:0.1f}G";
+      });
 
       temperature = {
         name = "temperature";
@@ -478,7 +469,6 @@ let
       builtin.battery
       builtin.clock
       builtin.cpu
-      builtin.cpuNoLabel
       builtin.disk.hdd
       builtin.disk.root
       builtin.disk.ssd
@@ -487,6 +477,40 @@ let
       builtin.gamemode
       builtin.idleInhibitor
       builtin.memory
+      builtin.network.disconnected
+      builtin.network.ethernet
+      builtin.network.wifi
+      builtin.pulseaudio
+      builtin.sway.mode
+      builtin.sway.scratchpad
+      builtin.sway.window
+      builtin.taskbar
+      builtin.temperature
+      builtin.tray
+      builtin.wireplumber
+      custom.cpuTemp
+      custom.fanSpeed
+      custom.gpuMem
+      custom.gpuPercent
+      custom.gpuTemp
+      custom.launcher
+      custom.notification
+      custom.power
+      custom.separator
+      custom.spotify
+      custom.weather
+    ]);
+
+  allModulesNoLabels = with modules;
+    lib.mergeAttrsList
+    (builtins.map (module: { "${module.name}" = module.config; }) [
+      builtin.backlight
+      builtin.battery
+      builtin.clock
+      builtin.cpuNoLabel
+      builtin.diskNoLabel.root
+      builtin.gamemode
+      builtin.idleInhibitor
       builtin.memoryNoLabel
       builtin.network.disconnected
       builtin.network.ethernet
@@ -512,11 +536,22 @@ let
       custom.weather
     ]);
 
-  makeBar = (position: output: modules-left: modules-center: modules-right:
-    {
-      inherit height layer position output modules-left modules-center
-        modules-right;
-    } // allModules);
+  makeBar =
+    (moduleSet: position: output: modules-left: modules-center: modules-right:
+      {
+        inherit height layer position output modules-left modules-center
+          modules-right;
+      } // moduleSet);
+
+  makeBarWithLabels =
+    (position: output: modules-left: modules-center: modules-right:
+      makeBar allModules position output modules-left modules-center
+      modules-right);
+
+  makeBarNoLabels =
+    (position: output: modules-left: modules-center: modules-right:
+      makeBar allModulesNoLabels position output modules-left modules-center
+      modules-right);
 in {
   options.modules.waybar = { enable = mkEnableOption "waybar"; };
 
@@ -529,7 +564,7 @@ in {
       systemd.enable = true;
 
       settings = {
-        topbar-hdmi = (makeBar "top" hdmi [
+        topbar-hdmi = (makeBarWithLabels "top" hdmi [
           "${custom.launcher.name}"
           "${custom.separator.name}"
           "${builtin.memory.name}"
@@ -548,7 +583,7 @@ in {
           "${custom.separator.name}"
           "${custom.power.name}"
         ]);
-        bottombar-hdmi = (makeBar "bottom" hdmi [
+        bottombar-hdmi = (makeBarWithLabels "bottom" hdmi [
           "${builtin.tray.name}"
           "${builtin.gamemode.name}"
           "${custom.separator.name}"
@@ -561,7 +596,7 @@ in {
           "${custom.separator.name}"
         ]);
 
-        topbar-dp = (makeBar "top" dp [
+        topbar-dp = (makeBarWithLabels "top" dp [
           "${custom.launcher.name}"
           "${custom.separator.name}"
           "${builtin.disk.root.name}"
@@ -577,7 +612,7 @@ in {
           "${custom.power.name}"
         ]);
 
-        bottombar-dp = (makeBar "bottom" dp [
+        bottombar-dp = (makeBarWithLabels "bottom" dp [
           "${custom.separator.name}"
           "${custom.separator.name}"
         ] [ "${builtin.taskbar.name}" ] [
@@ -587,7 +622,7 @@ in {
           "${custom.separator.name}"
         ]);
 
-        topbar-laptop = (makeBar "top" laptopScreen [
+        topbar-laptop = (makeBarNoLabels "top" laptopScreen [
           "${custom.launcher.name}"
           "${custom.separator.name}"
           "${builtin.diskNoLabel.root.name}"
@@ -608,7 +643,7 @@ in {
           "${custom.power.name}"
         ]);
 
-        bottombar-laptop = (makeBar "bottom" laptopScreen [
+        bottombar-laptop = (makeBarNoLabels "bottom" laptopScreen [
           "${builtin.tray.name}"
           "${builtin.gamemode.name}"
           "${custom.separator.name}"

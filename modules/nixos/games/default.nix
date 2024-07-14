@@ -13,7 +13,6 @@ in {
       fallout-ce
       fallout2-ce
       fceux
-      flycast
       gamemode
       gamescope
       glxinfo

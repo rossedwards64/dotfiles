@@ -71,13 +71,13 @@ in {
 
     services = {
       gnome-keyring = {
-        enable = false; # failing because package was moved from pkgs.gnome.gnome-keyring to pkgs.gnome-keyring
+        enable = true;
         components = [ "pkcs11" "secrets" "ssh" ];
       };
 
       gpg-agent = {
         enable = true;
-	enableZshIntegration = true;
+        enableZshIntegration = true;
         pinentryPackage = pkgs.pinentry-qt;
       };
     };

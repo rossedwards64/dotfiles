@@ -1,6 +1,7 @@
 { lib, config, pkgs, ... }:
 with lib;
-let cfg = config.modules.emacs;
+let
+  cfg = config.modules.emacs;
   emacsPkg = pkgs.emacs29-pgtk;
 in {
   options.modules.emacs = { enable = mkEnableOption "emacs"; };
@@ -12,22 +13,21 @@ in {
     programs.emacs = {
       enable = true;
       package = emacsPkg;
-      extraPackages =
-        epkgs: [
-          pkgs.auctex
-          pkgs.emacs-all-the-icons-fonts
-          pkgs.mu
-          pkgs.mu.mu4e
-          epkgs.mu4e
-        ];
+      extraPackages = epkgs: [
+        pkgs.auctex
+        pkgs.emacs-all-the-icons-fonts
+        pkgs.mu
+        pkgs.mu.mu4e
+        epkgs.mu4e
+      ];
     };
 
     services.emacs = {
-      enable = true;
+      enable = false;
       package = emacsPkg;
-      startWithUserSession = true;
+      startWithUserSession = false;
       client = {
-        enable = true;
+        enable = false;
         arguments = [ "-c" "-a=''" ];
       };
     };

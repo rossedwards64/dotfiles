@@ -707,7 +707,8 @@
 	mu4e-change-filenames-when-moving t
 	mu4e-update-interval 3600
 	mu4e-notification-support t
-	mail-user-agent 'mu4e-user-agent)
+	mail-user-agent 'mu4e-user-agent
+	message-mail-user-agent t)
   (mu4e-alert-enable-notifications)
   (mu4e-alert-enable-mode-line-display)
   :custom

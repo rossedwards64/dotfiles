@@ -76,6 +76,7 @@ in {
           systemd = {
             enable = true;
             xdgAutostart = true;
+            variables = [ "--all" ];
           };
 
           swaynag = { enable = true; };
@@ -131,7 +132,7 @@ in {
               inner = 5;
               outer = 5;
               smartBorders = "off";
-              smartGaps = true;
+              smartGaps = false;
             };
 
             assigns = {
@@ -255,22 +256,22 @@ in {
                   command = focusOnGameCommand;
                 }
               ]) [ steamGameRegexp gameRegexp ]) ++ (builtins.map
-                ({ class, width, height }: {
-                  criteria = { class = class; };
+                ({ app_id, width, height }: {
+                  criteria = { inherit app_id; };
                   command = addToScratchpad width height;
                 }) [
                   {
-                    class = volumeRegexp;
+                    app_id = volumeRegexp;
                     width = 800;
                     height = 600;
                   }
                   {
-                    class = zathuraRegexp;
+                    app_id = zathuraRegexp;
                     width = 800;
                     height = 600;
                   }
                   {
-                    class = qBitTorrentRegexp;
+                    app_id = qBitTorrentRegexp;
                     width = 800;
                     height = 600;
                   }
@@ -363,15 +364,15 @@ in {
                 always = true;
               }
               {
-                command = "systemctl --user restart waybar";
+                command = "${pkgs.systemd}/bin/systemctl --user restart waybar";
                 always = true;
               }
               {
-                command = "systemctl --user restart wob";
+                command = "${pkgs.systemd}/bin/systemctl --user restart wob";
                 always = true;
               }
               {
-                command = "systemctl --user restart swaync";
+                command = "${pkgs.systemd}/bin/systemctl --user restart swaync";
                 always = true;
               }
               {

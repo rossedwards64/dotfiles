@@ -133,8 +133,7 @@ in {
                   template = "https://wiki.archlinux.org/title/{searchTerms}";
                 }];
                 definedAliases = [ "@archlinux" ];
-                iconUpdateURL =
-                  "https://https://wiki.archlinux.org/favicon.ico";
+                iconUpdateURL = "https://wiki.archlinux.org/favicon.ico";
               };
 
               "Gentoo" = {
@@ -154,6 +153,15 @@ in {
                 }];
                 definedAliases = [ "@dwarffortress" ];
                 iconUpdateURL = "https://dwarffortresswiki.org/favicon.ico";
+              };
+
+              "ProtonDB" = {
+                inherit updateInterval;
+                urls = [{
+                  template = "https://protondb.com/search?q={searchTerms}";
+                }];
+                definedAliases = [ "@protondb" ];
+                iconUpdateURL = "https://protondb.com/favicon.ico";
               };
 
               "Amazon.com".metaData.hidden = true;

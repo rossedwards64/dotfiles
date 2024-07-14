@@ -76,7 +76,11 @@ in {
       flatpak.enable = true;
       openssh.enable = true;
       power-profiles-daemon.enable = false; # conflicts with TLP.
-      udev.packages = with pkgs; [ android-udev-rules platformio-core.udev openocd ];
+      udev.packages = with pkgs; [
+        android-udev-rules
+        platformio-core.udev
+        openocd
+      ];
 
       pipewire = {
         enable = true;
@@ -104,11 +108,7 @@ in {
     };
 
     hardware = {
-      opengl = {
-        enable = true;
-        driSupport = true;
-        driSupport32Bit = true;
-      };
+      opengl.enable = true;
 
       bluetooth = {
         enable = true;
