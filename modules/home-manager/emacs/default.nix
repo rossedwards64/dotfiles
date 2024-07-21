@@ -23,11 +23,11 @@ in {
     };
 
     services.emacs = {
-      enable = false;
+      enable = true;
       package = emacsPkg;
       startWithUserSession = false;
       client = {
-        enable = false;
+        enable = true;
         arguments = [ "-c" "-a=''" ];
       };
     };

@@ -1,8 +1,6 @@
 { config, lib, pkgs, specialArgs, ... }:
 let inherit (specialArgs) username;
 in {
-  imports = [ ../modules/home-manager ];
-
   programs.home-manager.enable = true;
 
   home = {
@@ -23,6 +21,7 @@ in {
     enable = true;
     mime.enable = true;
     userDirs.enable = true;
+    systemDirs.data = [ "/home/${username}/.local/share/applications" ];
 
     mimeApps = {
       enable = true;

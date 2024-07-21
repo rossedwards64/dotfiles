@@ -130,7 +130,7 @@ in {
               "${pkgs.wl-clipboard}/bin/wl-paste --type text --watch cliphist store"
               "${pkgs.wl-clipboard}/bin/wl-paste --type image --watch cliphist store"
               "${pkgs.pavucontrol}/bin/pavucontrol"
-              "${pkgs.emacs}/bin/emacsclient -c -a=''"
+              "${pkgs.emacs29-pgtk}/bin/emacsclient -c -a=''"
               "${pkgs.alacritty}/bin/alacritty"
               "${pkgs.firefox}/bin/firefox"
               "${pkgs.lutris}/bin/lutris"

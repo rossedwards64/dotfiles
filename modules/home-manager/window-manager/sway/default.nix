@@ -302,11 +302,11 @@ in {
               "${mod}+Shift+Up" = "move up";
               "${mod}+Shift+b" = "border toggle";
               "${mod}+Shift+c" = "reload";
-              "${mod}+Shift+g" =
-                ''exec ${pkgs.emacs}/bin/emacsclient -c -a=""'';
+              "${mod}+Shift+g" = "exec ${pkgs.emacs29-pgtk}/bin/emacsclient -c -a=''";
               "${mod}+Shift+minus" = "move scratchpad";
               "${mod}+Shift+q" = "kill";
               "${mod}+Shift+r" = ''mode "resize"'';
+              "${mod}+r" = ''mode "default"'';
               "${mod}+Shift+space" = "floating toggle";
               "${mod}+Tab" =
                 "${pkgs.procps}/bin/pkill fuzzel || ${windowsScript}/bin/windows";
@@ -353,7 +353,7 @@ in {
                   "${pkgs.autotiling}/bin/autotiling -w 1 2 3 4 5 6 7 8 9 10";
               }
               { command = "${pkgs.alacritty}/bin/alacritty"; }
-              { command = "${pkgs.emacs}/bin/emacs"; }
+              { command = "${pkgs.emacs29-pgtk}/bin/emacsclient -c -a=''"; }
               { command = "${pkgs.firefox}/bin/firefox"; }
               { command = "${pkgs.lutris}/bin/lutris"; }
               { command = "${pkgs.qbittorrent}/bin/qbittorrent"; }

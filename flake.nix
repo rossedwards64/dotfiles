@@ -107,6 +107,7 @@
         lib.homeManagerConfiguration {
           inherit pkgs extraSpecialArgs;
           modules = [
+	    ./modules/home-manager
             ./home/home.nix
             inputs.stylix.homeManagerModules.stylix
             { inherit stylix; }
