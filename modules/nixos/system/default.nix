@@ -11,7 +11,6 @@ in {
         jdk
         killall
         libnotify
-        nh
         nix-output-monitor
         nvd
         openssl
@@ -67,6 +66,14 @@ in {
     programs = {
       dconf.enable = true;
       light.enable = true;
+
+      nh = {
+        enable = true;
+        clean = {
+          enable = true;
+          extraArgs = "--keep-since 3d --keep 2";
+        };
+      };
     };
 
     console = { useXkbConfig = true; };

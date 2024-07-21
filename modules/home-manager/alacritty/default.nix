@@ -41,7 +41,7 @@ in {
           decorations_theme_variant = "None";
           dynamic_padding = true;
           dynamic_title = true;
-          opacity = mkDefault 0.95;
+          opacity = mkForce 0.95;
 
           class = {
             general = title;
