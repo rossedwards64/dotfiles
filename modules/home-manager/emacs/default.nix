@@ -2,7 +2,14 @@
 with lib;
 let
   cfg = config.modules.emacs;
-  emacsPkg = pkgs.emacs29-pgtk;
+  package = pkgs.emacs29-pgtk;
+  extraPackages = epkgs: [
+    pkgs.auctex
+    pkgs.emacs-all-the-icons-fonts
+    pkgs.mu
+    pkgs.mu.mu4e
+    epkgs.mu4e
+  ];
 in {
   options.modules.emacs = { enable = mkEnableOption "emacs"; };
 
@@ -11,23 +18,14 @@ in {
       [ (aspellWithDicts (dicts: with dicts; [ en en-computers en-science ])) ];
 
     programs.emacs = {
+      inherit package extraPackages;
       enable = true;
-      package = emacsPkg;
-      extraPackages = epkgs: [
-        pkgs.auctex
-        pkgs.emacs-all-the-icons-fonts
-        pkgs.mu
-        pkgs.mu.mu4e
-        epkgs.mu4e
-      ];
     };
 
     services.emacs = {
+      inherit package;
       enable = true;
-      package = emacsPkg;
-      defaultEditor = true;
-      startWithUserSession = false;
-      socketActivation.enable = true;
+      startWithUserSession = "graphical";
       client = {
         enable = true;
         arguments = [ "-c" "-a=''" ];

@@ -47,7 +47,8 @@
 
 (defun ross/set-font (frame)
   "Apply FONT to FRAME."
-  (when (display-graphic-p frame)
+  (when (and (find-font (font-spec :name font-name))
+	     (display-graphic-p frame))
     (let ((font-height (pcase (system-name)
 			 ((pred (string-equal macbook-hostname)) 180)
 			 (_ 120))))
@@ -94,8 +95,9 @@
 
 (use-package nerd-icons
   :config
-  (unless (file-exists-p (concat (getenv "HOME") "/.local/share/fonts/NFM.ttf"))
-    (nerd-icons-install-fonts)))
+  (let ((fonts-dir ".local/share/fonts"))
+      (unless (file-exists-p (concat (getenv "HOME") "/" fonts-dir "/NFM.ttf"))
+	(nerd-icons-install-fonts))))
 
 <<dashboard>>
 
@@ -163,6 +165,11 @@
 	make-backup-files nil
 	read-process-output-max (* 1024 1024)
 	require-final-newline t
+	savehist-additional-variables '(kill-ring
+					search-ring
+					regexp-search-ring
+					projectile-project-command-history
+					counsel-M-x-history)
 	tab-always-indent 'complete
 	tab-width 4
 	treesit-extra-load-path '((concat elpaca-builds-directory "/tree-sitter-langs/bin"))
@@ -192,6 +199,10 @@
 
 (use-package vterm)
 (use-package pass)
+
+(use-package smex
+  :defines smex-save-file
+  :config (smex-initialize))
 #+END_SRC
 
 * Themes
@@ -518,7 +529,9 @@
   (dolist (mode '(doc-view-mode pdf-view-mode))
     (add-to-list 'dabbrev-ignored-buffer-modes mode)))
 
-(use-package counsel)
+(use-package counsel
+  :bind
+  (("M-x" . counsel-M-x)))
 
 (use-package consult
   :bind
