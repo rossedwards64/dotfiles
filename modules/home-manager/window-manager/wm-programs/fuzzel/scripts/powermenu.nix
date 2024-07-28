@@ -8,7 +8,8 @@ pkgs.writeShellApplication {
     gawk
     playerctl
     procps
-    swaylock
+    swaylock-effects
+    systemd
   ];
 
   text = ''

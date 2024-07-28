@@ -20,6 +20,7 @@
 - [[#documents][Documents]]
 - [[#project-tools][Project Tools]]
 - [[#lemmy][Lemmy]]
+- [[#finance][Finance]]
 - [[#startup-dashboard][Startup Dashboard]]
 - [[#package-manager][Package Manager]]
 
@@ -964,7 +965,8 @@ The `with-eval-after-load` block is a workaround for [[https://github.com/emacs-
 **** Common Lisp
 #+BEGIN_SRC emacs-lisp
 (use-package sly
-  :config (setq inferior-lisp-program "ros -L sbcl -Q run"))
+  :config
+  (setq inferior-lisp-program "sbcl"))
 #+END_SRC
 
 **** Emacs Lisp
@@ -1153,6 +1155,13 @@ The `with-eval-after-load` block is a workaround for [[https://github.com/emacs-
   (setq lem-current-user "DrGamerPhD"
 	lem-instance-url "https://programming.dev"))
 #+END_SRC
+
+* Finance
+#+begin_src emacs-lisp
+(use-package ledger-mode)
+
+(use-package flymake-hledger)
+#+end_src
 
 * Startup Dashboard
 This is a massive configuration block that won't be updated very

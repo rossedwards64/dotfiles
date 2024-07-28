@@ -40,7 +40,7 @@ in {
       (steam.override {
         extraPkgs = pkgs:
           with pkgs; [
-	    inconsolata
+            inconsolata
             SDL
             SDL2_image
             fontconfig

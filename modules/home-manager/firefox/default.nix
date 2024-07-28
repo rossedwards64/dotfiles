@@ -3,14 +3,14 @@ with lib;
 let
   cfg = config.modules.firefox;
   defaultEngine = rec {
-    name = "LibreY";
-    url = "https://librey.devol.it";
+    name = "SearXNG";
+    url = "https://sx.zorby.top/";
     icon = "${url}/favicon.ico";
     params = [{
       name = "q";
       value = "{searchTerms}";
     }];
-    alias = "@librey";
+    alias = "@searxng";
   };
   updateInterval = 24 * 60 * 60 * 1000;
 in {
@@ -92,14 +92,14 @@ in {
               "${defaultEngine.name}" = {
                 inherit updateInterval;
                 urls = [{
-                  template = "${defaultEngine.url}/search.php?q={searchTerms}";
+                  template = "${defaultEngine.url}";
                   params = defaultEngine.params;
                 }];
                 definedAliases = [ defaultEngine.alias ];
                 iconUpdateURL = defaultEngine.icon;
               };
 
-              "MyNixOS" = {
+              MyNixOS = {
                 inherit updateInterval;
                 urls = [{
                   template = "https://mynixos.com/search";
@@ -117,11 +117,14 @@ in {
                 iconUpdateURL = "https://wiki.nixos.org/nixos.png";
               };
 
-              "Marginalia" = {
+              Marginalia = {
                 inherit updateInterval;
                 urls = [{
-                  template =
-                    "https://search.marginalia.nu/search?query={searchTerms}";
+                  template = "https://search.marginalia.nu/search";
+                  params = [{
+                    name = "query";
+                    value = "{searchTerms}";
+                  }];
                 }];
                 definedAliases = [ "@marginalia" ];
                 iconUpdateURL = "https://search.marginalia.nu/favicon.ico";
@@ -136,7 +139,7 @@ in {
                 iconUpdateURL = "https://wiki.archlinux.org/favicon.ico";
               };
 
-              "Gentoo" = {
+              Gentoo = {
                 inherit updateInterval;
                 urls = [{
                   template = "https://wiki.gentoo.org/wiki/{searchTerms}";
@@ -155,23 +158,24 @@ in {
                 iconUpdateURL = "https://dwarffortresswiki.org/favicon.ico";
               };
 
-              "ProtonDB" = {
+              ProtonDB = {
                 inherit updateInterval;
                 urls = [{
-                  template = "https://protondb.com/search?q={searchTerms}";
+                  template = "https://protondb.com/search";
+                  params = defaultEngine.params;
                 }];
                 definedAliases = [ "@protondb" ];
                 iconUpdateURL = "https://protondb.com/favicon.ico";
               };
 
-              "Amazon.com".metaData.hidden = true;
-              "BBC".metaData.hidden = true;
-              "Bing".metaData.hidden = true;
-              "DuckDuckGo".metaData.hidden = true;
-              "Facebook".metaData.hidden = true;
-              "Google".metaData.hidden = true;
-              "YouTube".metaData.hidden = true;
-              "eBay".metaData.hidden = true;
+              Amazon.com.metaData.hidden = true;
+              BBC.metaData.hidden = true;
+              Bing.metaData.hidden = true;
+              DuckDuckGo.metaData.hidden = true;
+              Facebook.metaData.hidden = true;
+              Google.metaData.hidden = true;
+              YouTube.metaData.hidden = true;
+              eBay.metaData.hidden = true;
             };
           };
         };

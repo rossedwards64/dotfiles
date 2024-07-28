@@ -25,7 +25,9 @@ in {
     services.emacs = {
       enable = true;
       package = emacsPkg;
+      defaultEditor = true;
       startWithUserSession = false;
+      socketActivation.enable = true;
       client = {
         enable = true;
         arguments = [ "-c" "-a=''" ];
