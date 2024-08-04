@@ -48,6 +48,7 @@ in {
               "[Outlook]/Starred"
               "[Outlook]/All Mail"
             ];
+            extraConfig.account.AuthMechs = "LOGIN";
           };
           gpg = gpgConf;
         };
