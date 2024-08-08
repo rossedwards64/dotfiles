@@ -38,11 +38,14 @@ in {
           GOPATH = "${xdg.dataHome}/go";
           GRADLE_USER_HOME = "${xdg.dataHome}/gradle";
           KDEHOME = "${xdg.configHome}/kde";
+          LEDGER_FILE =
+            "$HOME/Documents/finance/$(${pkgs.coreutils}/bin/date -I | cut -d'-' -f1).journal";
           LEIN_HOME = "${xdg.dataHome}/lein";
           PASSWORD_STORE_DIR = "${xdg.dataHome}/pass";
           PLATFORMIO_CORE_DIR = "${xdg.configHome}/platformio";
           ROSWELL_HOME = "${xdg.configHome}/roswell";
           RUSTUP_HOME = "${xdg.dataHome}/rustup";
+          SDL_VIDEODRIVER = "wayland,x11";
           STACK_XDG = 1;
           TEXMFCONFIG = "${xdg.configHome}/texlive/texmf-config";
           TEXMFHOME = "${xdg.dataHome}/texlive/texmf";
@@ -52,7 +55,6 @@ in {
           WINEPREFIX = "${xdg.dataHome}/wineprefixes/default";
           XCURSOR_SIZE = 24;
           ZSH_COMPDUMP = "\${ZSH}/cache/.zcompdump-\${HOST}";
-          SDL_VIDEODRIVER = "wayland,x11";
         };
 
         initExtraFirst = ''

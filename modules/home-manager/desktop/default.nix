@@ -10,6 +10,7 @@ in {
       armcord
       gimp
       hledger
+      hledger
       imv
       iosevka
       libreoffice
