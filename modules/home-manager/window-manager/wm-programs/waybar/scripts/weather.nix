@@ -6,7 +6,7 @@ pkgs.writeShellApplication {
 
   text = ''
     text="Weather: $(curl -s "https://wttr.in/?format=1")"
-    tooltip="$(curl -s "https://wttr.in/0QT" |
+    tooltip="$(curl -s "https://wttr.in/?0QT" |
         sed 's/\\/\\\\/g' |
         sed ':a;N;$!ba;s/\n/\\n/g' |
         sed 's/"/\\"/g')"
