@@ -1,4 +1,9 @@
-{ lib, config, pkgs, ... }:
+{
+  lib,
+  config,
+  pkgs,
+  ...
+}:
 with lib;
 let
   cfg = config.modules.sway;
@@ -14,23 +19,22 @@ let
   toggleSinkScript = import ../scripts/toggle-sink.nix { inherit pkgs; };
   wobScript = import ../scripts/wob.nix { inherit pkgs; };
 
-  powermenuScript =
-    import ../wm-programs/fuzzel/scripts/powermenu.nix { inherit pkgs; };
-  screenshotScript =
-    import ../wm-programs/fuzzel/scripts/screenshot.nix { inherit pkgs; };
-  windowsScript =
-    import ../wm-programs/fuzzel/scripts/windows.nix { inherit pkgs; };
+  powermenuScript = import ../wm-programs/fuzzel/scripts/powermenu.nix { inherit pkgs; };
+  screenshotScript = import ../wm-programs/fuzzel/scripts/screenshot.nix { inherit pkgs; };
+  windowsScript = import ../wm-programs/fuzzel/scripts/windows.nix { inherit pkgs; };
 
-  addToScratchpad = (width: height: ''
-    {
-        floating enable
-        move to scratchpad
-        resize set {
-            width ${toString width}
-            height ${toString height}
-        }
-    }
-  '');
+  addToScratchpad = (
+    width: height: ''
+      {
+          floating enable
+          move to scratchpad
+          resize set {
+              width ${toString width}
+              height ${toString height}
+          }
+      }
+    ''
+  );
 
   focusOnGameCommand = ''
     {
@@ -61,8 +65,11 @@ let
   vlcRegexp = "^vlc$";
   volumeRegexp = "^pavucontrol$";
   zathuraRegexp = "^org.pwmt.zathura$";
-in {
-  options.modules.sway = { enable = mkEnableOption "sway"; };
+in
+{
+  options.modules.sway = {
+    enable = mkEnableOption "sway";
+  };
 
   config = mkIf cfg.enable {
     wayland = {
@@ -79,7 +86,9 @@ in {
             variables = [ "--all" ];
           };
 
-          swaynag = { enable = true; };
+          swaynag = {
+            enable = true;
+          };
 
           extraConfig = ''
             bindsym --locked {
@@ -107,7 +116,12 @@ in {
           '';
 
           config = {
-            inherit down right left up;
+            inherit
+              down
+              right
+              left
+              up
+              ;
             modifier = mod;
             bindkeysToCode = false;
             defaultWorkspace = "workspace number 1";
@@ -119,7 +133,9 @@ in {
             bars = [ ];
 
             seat = {
-              "seat0" = { xcursor_theme = "Catppuccin-Mocha-Dark-Cursors 24"; };
+              "seat0" = {
+                xcursor_theme = "Catppuccin-Mocha-Dark-Cursors 24";
+              };
             };
 
             fonts = {
@@ -136,10 +152,10 @@ in {
             };
 
             assigns = {
-              "workspace 1" = [{ app_id = emacsRegexp; }];
-              "workspace 2" = [{ app_id = terminalRegexp; }];
-              "workspace 3" = [{ app_id = firefoxRegexp; }];
-              "workspace 4" = [{ class = discordRegexp; }];
+              "workspace 1" = [ { app_id = emacsRegexp; } ];
+              "workspace 2" = [ { app_id = terminalRegexp; } ];
+              "workspace 3" = [ { app_id = firefoxRegexp; } ];
+              "workspace 4" = [ { class = discordRegexp; } ];
               "workspace 5" = [
                 { app_id = spotifyRegexp; }
                 { class = freetubeRegexp; }
@@ -160,7 +176,7 @@ in {
                 { app_id = gameRegexp; }
               ];
               "workspace 8" = [ ];
-              "workspace 9" = [{ class = intellijRegexp; }];
+              "workspace 9" = [ { class = intellijRegexp; } ];
               "workspace 10" = [ ];
             };
 
@@ -222,136 +238,156 @@ in {
             window = {
               border = 1;
 
-              commands = [
-                {
-                  criteria = { window_role = "pop-up"; };
-                  command = "floating enable";
-                }
-                {
-                  criteria = { window_role = "task_dialog"; };
-                  command = "floating enable";
-                }
-                {
-                  criteria = {
-                    title = any;
-                    app_id = any;
-                    instance = any;
-                    class = any;
+              commands =
+                [
+                  {
+                    criteria = {
+                      window_role = "pop-up";
+                    };
+                    command = "floating enable";
+                  }
+                  {
+                    criteria = {
+                      window_role = "task_dialog";
+                    };
+                    command = "floating enable";
+                  }
+                  {
+                    criteria = {
+                      title = any;
+                      app_id = any;
+                      instance = any;
+                      class = any;
 
-                  };
-                  command = ''
+                    };
+                    command = ''
+                      {
+                        inhibit_idle fullscreen
+                        title_format "<b>%title</b> (%app_id%instance,%shell)"
+                      }
+                    '';
+                  }
+                ]
+                ++ (builtins.concatMap
+                  (class: [
                     {
-                      inhibit_idle fullscreen
-                      title_format "<b>%title</b> (%app_id%instance,%shell)"
+                      criteria = {
+                        class = class;
+                      };
+                      command = focusOnGameCommand;
                     }
-                  '';
-                }
-              ] ++ (builtins.concatMap (class: [
-                {
-                  criteria = { class = class; };
-                  command = focusOnGameCommand;
-                }
-                {
-                  criteria = { app_id = class; };
-                  command = focusOnGameCommand;
-                }
-              ]) [ steamGameRegexp gameRegexp ]) ++ (builtins.map
-                ({ app_id, width, height }: {
-                  criteria = { inherit app_id; };
-                  command = addToScratchpad width height;
-                }) [
-                  {
-                    app_id = volumeRegexp;
-                    width = 800;
-                    height = 600;
-                  }
-                  {
-                    app_id = zathuraRegexp;
-                    width = 800;
-                    height = 600;
-                  }
-                  {
-                    app_id = qBitTorrentRegexp;
-                    width = 800;
-                    height = 600;
-                  }
-                ]);
+                    {
+                      criteria = {
+                        app_id = class;
+                      };
+                      command = focusOnGameCommand;
+                    }
+                  ])
+                  [
+                    steamGameRegexp
+                    gameRegexp
+                  ]
+                )
+                ++ (builtins.map
+                  (
+                    {
+                      app_id,
+                      width,
+                      height,
+                    }:
+                    {
+                      criteria = {
+                        inherit app_id;
+                      };
+                      command = addToScratchpad width height;
+                    }
+                  )
+                  [
+                    {
+                      app_id = volumeRegexp;
+                      width = 800;
+                      height = 600;
+                    }
+                    {
+                      app_id = zathuraRegexp;
+                      width = 800;
+                      height = 600;
+                    }
+                    {
+                      app_id = qBitTorrentRegexp;
+                      width = 800;
+                      height = 600;
+                    }
+                  ]
+                );
             };
 
-            keybindings = {
-              "${mod}+${down}" = "focus down";
-              "${mod}+${left}" = "focus left";
-              "${mod}+${right}" = "focus right";
-              "${mod}+${up}" = "focus up";
-              "${mod}+Down" = "focus down";
-              "${mod}+Escape" = ''
-                exec "${pkgs.procps}/bin/pkill fuzzel || ${powermenuScript}/bin/powermenu"'';
-              "${mod}+Left" = "focus left";
-              "${mod}+Minus" = "scratchpad show";
-              "${mod}+Return" = "exec ${pkgs.alacritty}/bin/alacritty";
-              "${mod}+Right" = "focus right";
-              "${mod}+Shift+${down}" = "move down";
-              "${mod}+Shift+${left}" = "move left";
-              "${mod}+Shift+${right}" = "move right";
-              "${mod}+Shift+${up}" = "move up";
-              "${mod}+Shift+o" = "move workspace to output HDMI-A-1";
-              "${mod}+Shift+p" = "move workspace to output DP-1 ";
-              "${mod}+Shift+Down" = "move down";
-              "${mod}+Shift+Left" = "move left";
-              "${mod}+Shift+Right" = "move right";
-              "${mod}+Shift+Up" = "move up";
-              "${mod}+Shift+b" = "border toggle";
-              "${mod}+Shift+c" = "reload";
-              "${mod}+Shift+g" =
-                "exec ${pkgs.emacs29-pgtk}/bin/emacsclient -c -a=''";
-              "${mod}+Shift+minus" = "move scratchpad";
-              "${mod}+Shift+q" = "kill";
-              "${mod}+Shift+r" = ''mode "resize"'';
-              "${mod}+r" = ''mode "default"'';
-              "${mod}+Shift+space" = "floating toggle";
-              "${mod}+Tab" =
-                "${pkgs.procps}/bin/pkill fuzzel || ${windowsScript}/bin/windows";
-              "${mod}+Up" = "focus up";
-              "${mod}+a" = "focus parent";
-              "${mod}+b" = "splith";
-              "${mod}+c" = "exec ${toggleSinkScript}/bin/toggle-sink";
-              "${mod}+d" = ''
-                exec "${pkgs.procps}/bin/pkill fuzzel || ${pkgs.fuzzel}/bin/fuzzel"'';
-              "${mod}+e" = "layout toggle split";
-              "${mod}+f" = "fullscreen";
-              "${mod}+s" = "layout stacking";
-              "${mod}+space" = "focus mode_toggle";
-              "${mod}+t" =
-                "exec ${pkgs.swaynotificationcenter}/bin/swaync-client -t -sw";
-              "${mod}+v" = "splitv";
-              "${mod}+w" = "layout tabbed";
-              "Print" = "exec ${screenshotScript}/bin/screenshot";
-            } // (attrsets.mergeAttrsList (builtins.map (num: {
-              "${mod}+${toString num}" = "workspace number ${toString num}";
-              "${mod}+Shift+${toString num}" =
-                "move container to workspace number ${
-                  toString num
-                }, workspace number ${toString num}";
-            }) (lists.range 0 9)));
+            keybindings =
+              {
+                "${mod}+${down}" = "focus down";
+                "${mod}+${left}" = "focus left";
+                "${mod}+${right}" = "focus right";
+                "${mod}+${up}" = "focus up";
+                "${mod}+Down" = "focus down";
+                "${mod}+Escape" = ''exec "${pkgs.procps}/bin/pkill fuzzel || ${powermenuScript}/bin/powermenu"'';
+                "${mod}+Left" = "focus left";
+                "${mod}+Minus" = "scratchpad show";
+                "${mod}+Return" = "exec ${pkgs.alacritty}/bin/alacritty";
+                "${mod}+Right" = "focus right";
+                "${mod}+Shift+${down}" = "move down";
+                "${mod}+Shift+${left}" = "move left";
+                "${mod}+Shift+${right}" = "move right";
+                "${mod}+Shift+${up}" = "move up";
+                "${mod}+Shift+o" = "move workspace to output HDMI-A-1";
+                "${mod}+Shift+p" = "move workspace to output DP-1 ";
+                "${mod}+Shift+Down" = "move down";
+                "${mod}+Shift+Left" = "move left";
+                "${mod}+Shift+Right" = "move right";
+                "${mod}+Shift+Up" = "move up";
+                "${mod}+Shift+b" = "border toggle";
+                "${mod}+Shift+c" = "reload";
+                "${mod}+Shift+g" = "exec ${pkgs.emacs29-pgtk}/bin/emacsclient -c -a=''";
+                "${mod}+Shift+minus" = "move scratchpad";
+                "${mod}+Shift+q" = "kill";
+                "${mod}+Shift+r" = ''mode "resize"'';
+                "${mod}+r" = ''mode "default"'';
+                "${mod}+Shift+space" = "floating toggle";
+                "${mod}+Tab" = "${pkgs.procps}/bin/pkill fuzzel || ${windowsScript}/bin/windows";
+                "${mod}+Up" = "focus up";
+                "${mod}+a" = "focus parent";
+                "${mod}+b" = "splith";
+                "${mod}+c" = "exec ${toggleSinkScript}/bin/toggle-sink";
+                "${mod}+d" = ''exec "${pkgs.procps}/bin/pkill fuzzel || ${pkgs.fuzzel}/bin/fuzzel"'';
+                "${mod}+e" = "layout toggle split";
+                "${mod}+f" = "fullscreen";
+                "${mod}+s" = "layout stacking";
+                "${mod}+space" = "focus mode_toggle";
+                "${mod}+t" = "exec ${pkgs.swaynotificationcenter}/bin/swaync-client -t -sw";
+                "${mod}+v" = "splitv";
+                "${mod}+w" = "layout tabbed";
+                "Print" = "exec ${screenshotScript}/bin/screenshot";
+              }
+              // (attrsets.mergeAttrsList (
+                builtins.map (num: {
+                  "${mod}+${toString num}" = "workspace number ${toString num}";
+                  "${mod}+Shift+${toString num}" = "move container to workspace number ${toString num}, workspace number ${toString num}";
+                }) (lists.range 0 9)
+              ));
 
             startup = [
               {
-                command =
-                  "${pkgs.gnome-keyring}/bin/gnome-keyring-daemon --start --foreground --components=pkcs11,secrets,ssh";
+                command = "${pkgs.gnome-keyring}/bin/gnome-keyring-daemon --start --foreground --components=pkcs11,secrets,ssh";
               }
               { command = "${pkgs.pavucontrol}/bin/pavucontrol"; }
               { command = "${pkgs.swayidle}/bin/swayidle -w"; }
               {
-                command =
-                  "${pkgs.wl-clipboard}/bin/wl-paste --type image --watch cliphist store";
+                command = "${pkgs.wl-clipboard}/bin/wl-paste --type image --watch cliphist store";
               }
               {
-                command =
-                  "${pkgs.wl-clipboard}/bin/wl-paste --type text --watch cliphist store";
+                command = "${pkgs.wl-clipboard}/bin/wl-paste --type text --watch cliphist store";
               }
               {
-                command =
-                  "${pkgs.autotiling}/bin/autotiling -w 1 2 3 4 5 6 7 8 9 10";
+                command = "${pkgs.autotiling}/bin/autotiling -w 1 2 3 4 5 6 7 8 9 10";
               }
               { command = "${pkgs.alacritty}/bin/alacritty"; }
               { command = "${pkgs.emacs29-pgtk}/bin/emacsclient -c -a=''"; }
@@ -363,8 +399,7 @@ in {
               { command = "${pkgs.steam}/bin/steam"; }
               { command = "${pkgs.armcord}/bin/armcord"; }
               {
-                command =
-                  "${pkgs.flatpak}/bin/flatpak run io.freetubeapp.FreeTube";
+                command = "${pkgs.flatpak}/bin/flatpak run io.freetubeapp.FreeTube";
               }
               {
                 command = "${pkgs.procps}/bin/pkill fuzzel";
@@ -383,8 +418,7 @@ in {
                 always = true;
               }
               {
-                command =
-                  "${pkgs.swaynotificationcenter}/bin/swaync-client -R -rs -sw";
+                command = "${pkgs.swaynotificationcenter}/bin/swaync-client -R -rs -sw";
                 always = true;
               }
             ];

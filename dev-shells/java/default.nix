@@ -1,3 +1,10 @@
-{ pkgs ? import <nixpkgs> { } }:
+{
+  pkgs ? import <nixpkgs> { },
+}:
 
-pkgs.mkShell { nativeBuildInputs = with pkgs; [ jdk gradle ]; }
+pkgs.mkShell {
+  nativeBuildInputs = with pkgs; [
+    jdk
+    gradle
+  ];
+}

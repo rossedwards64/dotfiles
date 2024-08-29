@@ -1,10 +1,18 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 with lib;
 let
   generic_fmt = "\\[[$symbol($version)]($style)\\]";
   cfg = config.modules.system;
-in {
-  options.modules.starship = { enable = mkEnableOption "starship"; };
+in
+{
+  options.modules.starship = {
+    enable = mkEnableOption "starship";
+  };
 
   config = mkIf cfg.enable {
     programs.starship = {
@@ -12,7 +20,11 @@ in {
       enableZshIntegration = true;
 
       settings = {
-        format = lib.concatStrings [ "$directory" "$all" " $character" ];
+        format = lib.concatStrings [
+          "$directory"
+          "$all"
+          " $character"
+        ];
 
         add_newline = false;
         continuation_prompt = ">> ";
@@ -31,10 +43,12 @@ in {
           charging_symbol = "🔌 ";
           discharging_symbol = "⚡ ";
 
-          display = [{
-            threshold = 30;
-            style = "bold red";
-          }];
+          display = [
+            {
+              threshold = 30;
+              style = "bold red";
+            }
+          ];
         };
 
         cmd_duration = {
@@ -59,14 +73,12 @@ in {
         git_state = { };
 
         git_metrics = {
-          format =
-            "\\[([+$added]($added_style))/([-$deleted]($deleted_style))\\]";
+          format = "\\[([+$added]($added_style))/([-$deleted]($deleted_style))\\]";
           disabled = false;
         };
 
         kubernetes.format = "[[$symbol$context( ($namespace))]($style)]";
-        ocaml.format =
-          "[[$symbol($version)(($switch_indicator$switch_name))]($style)]";
+        ocaml.format = "[[$symbol($version)(($switch_indicator$switch_name))]($style)]";
         openstack.format = "[[$symbol$cloud(($project))]($style)]";
         pulumi.format = "[[$symbol$stack]($style)]";
         raku.format = "'[[$symbol($version-$vm_version)]($style)]'";
@@ -81,15 +93,19 @@ in {
 
         aws = {
           symbol = "  ";
-          format =
-            "\\[[$symbol($profile)(\\($region\\))(\\[$duration\\])]($style)\\]";
+          format = "\\[[$symbol($profile)(\\($region\\))(\\[$duration\\])]($style)\\]";
         };
 
         buf.symbol = " ";
 
         c = {
           symbol = " ";
-          detect_extensions = [ "c" "h" "cpp" "hpp" ];
+          detect_extensions = [
+            "c"
+            "h"
+            "cpp"
+            "hpp"
+          ];
           format = "\\[[$symbol($version(-$name))]($style)\\]";
         };
 

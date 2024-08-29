@@ -1,8 +1,17 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 with lib;
-let cfg = config.modules.topgrade;
-in {
-  options.modules.topgrade = { enable = mkEnableOption "topgrade"; };
+let
+  cfg = config.modules.topgrade;
+in
+{
+  options.modules.topgrade = {
+    enable = mkEnableOption "topgrade";
+  };
 
   config = mkIf cfg.enable {
     programs.topgrade = {
@@ -41,12 +50,14 @@ in {
           emerge_sync_flags = "-q";
           emerge_update_flags = "-uDNa --with-bdeps=y @world";
           enable_tlmgr = true;
-          home_manager_arguments = [ "--flake" "file" ];
+          home_manager_arguments = [
+            "--flake"
+            "file"
+          ];
           nix_arguments = "--flake";
           nix_env_arguments = "--prebuilt-only";
           show_arch_news = true;
-          yay_arguments =
-            "--nodevel --answerclean None --removemake --topdown --cleanafter";
+          yay_arguments = "--nodevel --answerclean None --removemake --topdown --cleanafter";
         };
 
         python = {

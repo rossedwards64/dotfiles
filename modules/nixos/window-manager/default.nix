@@ -1,7 +1,14 @@
-{ lib, config, pkgs, ... }:
+{
+  lib,
+  config,
+  pkgs,
+  ...
+}:
 with lib;
-let cfg = config.modules.window-manager;
-in {
+let
+  cfg = config.modules.window-manager;
+in
+{
   options.modules.window-manager = {
     enable = mkEnableOption "window-manager";
   };

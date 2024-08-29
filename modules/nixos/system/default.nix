@@ -1,8 +1,17 @@
-{ lib, config, pkgs, ... }:
+{
+  lib,
+  config,
+  pkgs,
+  ...
+}:
 with lib;
-let cfg = config.modules.system;
-in {
-  options.modules.system = { enable = mkEnableOption "system"; };
+let
+  cfg = config.modules.system;
+in
+{
+  options.modules.system = {
+    enable = mkEnableOption "system";
+  };
 
   config = mkIf cfg.enable {
     environment = {
@@ -56,7 +65,9 @@ in {
       };
     };
 
-    console = { useXkbConfig = true; };
+    console = {
+      useXkbConfig = true;
+    };
 
     services = {
       accounts-daemon.enable = true;

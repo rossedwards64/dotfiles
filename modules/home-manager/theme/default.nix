@@ -1,8 +1,17 @@
-{ lib, config, pkgs, ... }:
+{
+  lib,
+  config,
+  pkgs,
+  ...
+}:
 with lib;
-let cfg = config.modules.theme;
-in {
-  options.modules.theme = { enable = mkEnableOption "theme"; };
+let
+  cfg = config.modules.theme;
+in
+{
+  options.modules.theme = {
+    enable = mkEnableOption "theme";
+  };
 
   config = mkIf cfg.enable {
     home.packages = with pkgs; [ catppuccin ];

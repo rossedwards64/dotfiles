@@ -1,8 +1,17 @@
-{ lib, config, pkgs, ... }:
+{
+  lib,
+  config,
+  pkgs,
+  ...
+}:
 with lib;
-let cfg = config.modules.environment;
-in {
-  options.modules.environment = { enable = mkEnableOption "environment"; };
+let
+  cfg = config.modules.environment;
+in
+{
+  options.modules.environment = {
+    enable = mkEnableOption "environment";
+  };
 
   config = mkIf cfg.enable {
     programs.zsh.enable = true;

@@ -1,4 +1,9 @@
-{ lib, config, pkgs, ... }:
+{
+  lib,
+  config,
+  pkgs,
+  ...
+}:
 with lib;
 let
   cfg = config.modules.hyprland;
@@ -13,12 +18,9 @@ let
   toggleSinkScript = import ../scripts/toggle-sink.nix { inherit pkgs; };
   wobScript = import ../scripts/wob.nix { inherit pkgs; };
 
-  powermenuScript =
-    import ../wm-programs/fuzzel/scripts/powermenu.nix { inherit pkgs; };
-  screenshotScript =
-    import ../wm-programs/fuzzel/scripts/screenshot.nix { inherit pkgs; };
-  windowsScript =
-    import ../wm-programs/fuzzel/scripts/windows.nix { inherit pkgs; };
+  powermenuScript = import ../wm-programs/fuzzel/scripts/powermenu.nix { inherit pkgs; };
+  screenshotScript = import ../wm-programs/fuzzel/scripts/screenshot.nix { inherit pkgs; };
+  windowsScript = import ../wm-programs/fuzzel/scripts/windows.nix { inherit pkgs; };
 
   reload = ''hyprctl reload && notify-send "Reloaded Hyprland"'';
   gameTabs = ''hyprctl --batch "workspace 7 ; togglegroup"'';
@@ -46,53 +48,131 @@ let
 
   setRule = rule: regexp: "${rule},class:${regexp}";
 
-  noComposite = builtins.concatMap (regexp: [
-    (setRule "noblur" regexp)
-    (setRule "opaque" regexp)
-    (setRule "center" regexp)
-    (setRule "fullscreen" regexp)
-    (setRule "idleinhibit always" regexp)
-    (setRule "group new" regexp)
-  ]) [ steamGameRegexp gameRegexp ];
-
-  noBlurAndOpaque = builtins.concatMap
-    (regexp: [ (setRule "noblur" regexp) (setRule "opaque" regexp) ]) [
-      firefoxRegexp
-      freetubeRegexp
-      mpvRegexp
-      vlcRegexp
-      discordRegexp
-    ];
-
-  workspaceAssigns = builtins.map (assignment:
-    ((num: regexp: "workspace ${toString num} silent,class:${regexp}")
-      (head assignment) (lists.last assignment))) [
-        [ 1 emacsRegexp ]
-        [ 2 terminalRegexp ]
-        [ 3 firefoxRegexp ]
-        [ 4 discordRegexp ]
-        [ 5 spotifyRegexp ]
-        [ 6 steamRegexp ]
-        [ 6 lutrisRegexp ]
-        [ 6 minecraftRegexp ]
-        [ 6 itchioRegexp ]
-        [ 6 epicGamesRegexp ]
-        [ 7 steamGameRegexp ]
-        [ 7 gameRegexp ]
-        [ 8 virtManagerRegexp ]
-        [ 9 intellijRegexp ]
-        [ "special" volumeRegexp ]
-        [ "special" zathuraRegexp ]
+  noComposite =
+    builtins.concatMap
+      (regexp: [
+        (setRule "noblur" regexp)
+        (setRule "opaque" regexp)
+        (setRule "center" regexp)
+        (setRule "fullscreen" regexp)
+        (setRule "idleinhibit always" regexp)
+        (setRule "group new" regexp)
+      ])
+      [
+        steamGameRegexp
+        gameRegexp
       ];
 
-  monitorAssigns = builtins.map (assignment:
-    (monitor: regexp: "monitor ${monitor},class:${regexp}") (head assignment)
-    (lists.last assignment)) [
-      [ monitor1 steamGameRegexp ]
-      [ monitor1 gameRegexp ]
-    ];
-in {
-  options.modules.hyprland = { enable = mkEnableOption "hyprland"; };
+  noBlurAndOpaque =
+    builtins.concatMap
+      (regexp: [
+        (setRule "noblur" regexp)
+        (setRule "opaque" regexp)
+      ])
+      [
+        firefoxRegexp
+        freetubeRegexp
+        mpvRegexp
+        vlcRegexp
+        discordRegexp
+      ];
+
+  workspaceAssigns =
+    builtins.map
+      (
+        assignment:
+        ((num: regexp: "workspace ${toString num} silent,class:${regexp}") (head assignment) (
+          lists.last assignment
+        ))
+      )
+      [
+        [
+          1
+          emacsRegexp
+        ]
+        [
+          2
+          terminalRegexp
+        ]
+        [
+          3
+          firefoxRegexp
+        ]
+        [
+          4
+          discordRegexp
+        ]
+        [
+          5
+          spotifyRegexp
+        ]
+        [
+          6
+          steamRegexp
+        ]
+        [
+          6
+          lutrisRegexp
+        ]
+        [
+          6
+          minecraftRegexp
+        ]
+        [
+          6
+          itchioRegexp
+        ]
+        [
+          6
+          epicGamesRegexp
+        ]
+        [
+          7
+          steamGameRegexp
+        ]
+        [
+          7
+          gameRegexp
+        ]
+        [
+          8
+          virtManagerRegexp
+        ]
+        [
+          9
+          intellijRegexp
+        ]
+        [
+          "special"
+          volumeRegexp
+        ]
+        [
+          "special"
+          zathuraRegexp
+        ]
+      ];
+
+  monitorAssigns =
+    builtins.map
+      (
+        assignment:
+        (monitor: regexp: "monitor ${monitor},class:${regexp}") (head assignment) (lists.last assignment)
+      )
+      [
+        [
+          monitor1
+          steamGameRegexp
+        ]
+        [
+          monitor1
+          gameRegexp
+        ]
+      ];
+in
+{
+  options.modules.hyprland = {
+    enable = mkEnableOption "hyprland";
+  };
 
   config = mkIf cfg.enable {
     xdg.configFile."hypr/hyprpaper.conf".text = ''
@@ -258,44 +338,53 @@ in {
               ];
             };
 
-            windowrulev2 = [ "group new,class:${firefoxRegexp}" ] ++ noComposite
-              ++ noBlurAndOpaque ++ workspaceAssigns ++ monitorAssigns;
+            windowrulev2 = [
+              "group new,class:${firefoxRegexp}"
+            ] ++ noComposite ++ noBlurAndOpaque ++ workspaceAssigns ++ monitorAssigns;
 
             workspace = [ "7,monitor:${monitor1}" ];
 
             layerrule = [ "blur,fuzzel" ];
 
-            bind = [
-              "${mod},RETURN,exec,${pkgs.alacritty}/bin/alacritty"
-              ''${mod}SHIFT,e,exec,${pkgs.emacs}/bin/emacsclient -c -a=""''
-              "${mod}SHIFT,c,exec,${reload}"
-              "${mod},f,fullscreen"
-              "${mod}SHIFT,q,killactive,"
-              "${mod}SHIFT,m,exit,"
-              "${mod},y,togglefloating,"
-              "${mod},p,pseudo,"
-              "${mod},t,exec,${pkgs.swaynotificationcenter}/bin/swaync-client -t"
-              "${mod}SHIFT,b,pin"
-              ",Print,exec,${screenshotScript}/bin/screenshot"
-              ''${mod},C,exec,"${toggleSinkScript}/bin/toggle-sink"''
-              "${mod}SHIFT,o,movecurrentworkspacetomonitor,${monitor2}"
-              "${mod}SHIFT,p,movecurrentworkspacetomonitor,${monitor1}"
-              "${mod},minus,togglespecialworkspace"
-              "${mod}SHIFT,minus,movetoworkspace,special"
-              "${mod},mouse_down,workspace,e+1"
-              "${mod},mouse_up,workspace,e-1"
-              "${mod},g,togglegroup"
-              "${mod}SHIFT,g,changegroupactive,f"
-              "${mod}SHIFT,f,changegroupactive,g"
-            ] ++ builtins.concatMap (num:
-              let workspaceNum = "${toString num}";
-              in [
-                "${mod},${workspaceNum},workspace,${workspaceNum}"
-                "${mod}SHIFT,${workspaceNum},movetoworkspace,${workspaceNum}"
-              ]) (lists.range 0 9);
+            bind =
+              [
+                "${mod},RETURN,exec,${pkgs.alacritty}/bin/alacritty"
+                ''${mod}SHIFT,e,exec,${pkgs.emacs}/bin/emacsclient -c -a=""''
+                "${mod}SHIFT,c,exec,${reload}"
+                "${mod},f,fullscreen"
+                "${mod}SHIFT,q,killactive,"
+                "${mod}SHIFT,m,exit,"
+                "${mod},y,togglefloating,"
+                "${mod},p,pseudo,"
+                "${mod},t,exec,${pkgs.swaynotificationcenter}/bin/swaync-client -t"
+                "${mod}SHIFT,b,pin"
+                ",Print,exec,${screenshotScript}/bin/screenshot"
+                ''${mod},C,exec,"${toggleSinkScript}/bin/toggle-sink"''
+                "${mod}SHIFT,o,movecurrentworkspacetomonitor,${monitor2}"
+                "${mod}SHIFT,p,movecurrentworkspacetomonitor,${monitor1}"
+                "${mod},minus,togglespecialworkspace"
+                "${mod}SHIFT,minus,movetoworkspace,special"
+                "${mod},mouse_down,workspace,e+1"
+                "${mod},mouse_up,workspace,e-1"
+                "${mod},g,togglegroup"
+                "${mod}SHIFT,g,changegroupactive,f"
+                "${mod}SHIFT,f,changegroupactive,g"
+              ]
+              ++ builtins.concatMap (
+                num:
+                let
+                  workspaceNum = "${toString num}";
+                in
+                [
+                  "${mod},${workspaceNum},workspace,${workspaceNum}"
+                  "${mod}SHIFT,${workspaceNum},movetoworkspace,${workspaceNum}"
+                ]
+              ) (lists.range 0 9);
 
-            bindm =
-              [ "${mod},mouse:272,movewindow" "${mod},mouse:273,resizewindow" ];
+            bindm = [
+              "${mod},mouse:272,movewindow"
+              "${mod},mouse:273,resizewindow"
+            ];
 
             bindr = [
               "${mod},d,exec,${pkgs.procps}/bin/pkill fuzzel || ${pkgs.fuzzel}/bin/fuzzel"
@@ -326,10 +415,8 @@ in {
             ];
 
             bindl = [
-              ''
-                ,XF86AudioMute,exec,${pkgs.wireplumber}/bin/wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle && "${checkMuteScript}/bin/check-mute" "-s"''
-              ''
-                ,XF86AudioMicMute,exec,${pkgs.wireplumber}/bin/wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle && "${checkMuteScript}/bin/check-mute" "-m"''
+              '',XF86AudioMute,exec,${pkgs.wireplumber}/bin/wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle && "${checkMuteScript}/bin/check-mute" "-s"''
+              '',XF86AudioMicMute,exec,${pkgs.wireplumber}/bin/wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle && "${checkMuteScript}/bin/check-mute" "-m"''
 
             ];
 

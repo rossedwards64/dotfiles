@@ -14,7 +14,8 @@
     stylix.url = "github:danth/stylix";
   };
 
-  outputs = { self, ... }@inputs:
+  outputs =
+    { self, ... }@inputs:
     let
       inherit (self) outputs;
       username = "ross";
@@ -22,7 +23,9 @@
       nixpkgs = inputs.nixpkgs;
       lib = nixpkgs.lib // inputs.home-manager.lib;
       pkgs = nixpkgs.legacyPackages.${system};
-      specialArgs = { inherit inputs outputs username; };
+      specialArgs = {
+        inherit inputs outputs username;
+      };
       extraSpecialArgs = specialArgs;
 
       font = {
@@ -45,11 +48,9 @@
       };
 
       stylix = {
-        base16Scheme =
-          "${pkgs.base16-schemes}/share/themes/catppuccin-mocha.yaml";
+        base16Scheme = "${pkgs.base16-schemes}/share/themes/catppuccin-mocha.yaml";
 
-        image = /home/${username}/Pictures/wallpapers
-          + "/Gurren Lagann/simon.jpg";
+        image = /home/${username}/Pictures/wallpapers + "/Gurren Lagann/simon.jpg";
 
         cursor = {
           package = pkgs.catppuccin-cursors.mochaDark;
@@ -57,15 +58,22 @@
         };
 
         fonts = {
-          monospace = { inherit (font) package name; };
-          sansSerif = { inherit (font) package name; };
-          serif = { inherit (font) package name; };
+          monospace = {
+            inherit (font) package name;
+          };
+          sansSerif = {
+            inherit (font) package name;
+          };
+          serif = {
+            inherit (font) package name;
+          };
         };
 
         polarity = "dark";
       };
 
-      makeSystem = hostname: extraModules:
+      makeSystem =
+        hostname: extraModules:
         lib.nixosSystem {
           inherit system specialArgs;
           modules = [
@@ -73,108 +81,154 @@
             ./hosts/${hostname}/configuration.nix
             inputs.stylix.nixosModules.stylix
             { inherit stylix; }
-            ({ config, pkgs, options, ... }: {
-              nixpkgs.config.allowUnfree = true;
-              stylix.enable = true;
+            (
+              {
+                config,
+                pkgs,
+                options,
+                ...
+              }:
+              {
+                nixpkgs.config.allowUnfree = true;
+                stylix.enable = true;
 
-              modules = {
-                boot.enable = true;
-                desktop.enable = true;
-                environment.enable = true;
-                fonts.enable = true;
-                games.enable = true;
-                networking.enable = true;
-                syncthing.enable = true;
-                system.enable = true;
-                user.enable = true;
-              };
-            })
+                modules = {
+                  boot.enable = true;
+                  desktop.enable = true;
+                  environment.enable = true;
+                  fonts.enable = true;
+                  games.enable = true;
+                  networking.enable = true;
+                  syncthing.enable = true;
+                  system.enable = true;
+                  user.enable = true;
+                };
+              }
+            )
           ] ++ extraModules;
         };
 
-      makeThinkpad = hostname: extraModules:
-        makeSystem hostname ([{
-          modules = {
-            thinkpad.enable = true;
-            window-manager.enable = true;
-          };
-          stylix.fonts.sizes = {
-            inherit (smallFontSizes) applications desktop terminal popups;
-          };
-        }] ++ extraModules);
+      makeThinkpad =
+        hostname: extraModules:
+        makeSystem hostname (
+          [
+            {
+              modules = {
+                thinkpad.enable = true;
+                window-manager.enable = true;
+              };
+              stylix.fonts.sizes = {
+                inherit (smallFontSizes)
+                  applications
+                  desktop
+                  terminal
+                  popups
+                  ;
+              };
+            }
+          ]
+          ++ extraModules
+        );
 
-      makeHome = extraModules:
+      makeHome =
+        extraModules:
         lib.homeManagerConfiguration {
           inherit pkgs extraSpecialArgs;
           modules = [
-	    ./modules/home-manager
+            ./modules/home-manager
             ./home/home.nix
             inputs.stylix.homeManagerModules.stylix
             { inherit stylix; }
-            ({ config, pkgs, options, ... }: {
-              stylix.enable = true;
-              modules = {
-                alacritty.enable = true;
-                desktop.enable = true;
-                emacs.enable = true;
-                email.enable = true;
-                firefox.enable = true;
-                games.enable = true;
-                music.enable = true;
-                pass.enable = true;
-                starship.enable = true;
-                system.enable = true;
-                theme.enable = true;
-                tmux.enable = true;
-                topgrade.enable = true;
-                window-manager.enable = true;
-                zsh.enable = true;
-              };
-            })
+            (
+              {
+                config,
+                pkgs,
+                options,
+                ...
+              }:
+              {
+                stylix.enable = true;
+                modules = {
+                  alacritty.enable = true;
+                  desktop.enable = true;
+                  emacs.enable = true;
+                  email.enable = true;
+                  firefox.enable = true;
+                  games.enable = true;
+                  music.enable = true;
+                  pass.enable = true;
+                  starship.enable = true;
+                  system.enable = true;
+                  theme.enable = true;
+                  tmux.enable = true;
+                  topgrade.enable = true;
+                  window-manager.enable = true;
+                  zsh.enable = true;
+                };
+              }
+            )
           ] ++ extraModules;
         };
-    in {
+    in
+    {
       nix = {
         registry.nixpkgs.flake = nixpkgs;
         package = nixpkgs.nixFlakes;
         settings = {
           auto-optimise-store = true;
-          experimental-features = [ "nix-command" "flakes" ];
+          experimental-features = [
+            "nix-command"
+            "flakes"
+          ];
           allowed-users = [ username ];
         };
       };
 
       nixosConfigurations = {
-        ross-desktop = makeSystem "ross-desktop" [{
-          modules = {
-            # kde.enable = true;
-            qemu.enable = true;
-            window-manager.enable = true;
-          };
-          stylix.fonts.sizes = {
-            inherit (largeFontSizes) applications desktop terminal popups;
-          };
-        }];
+        ross-desktop = makeSystem "ross-desktop" [
+          {
+            modules = {
+              # kde.enable = true;
+              qemu.enable = true;
+              window-manager.enable = true;
+            };
+            stylix.fonts.sizes = {
+              inherit (largeFontSizes)
+                applications
+                desktop
+                terminal
+                popups
+                ;
+            };
+          }
+        ];
 
-        ross-thinkpad-x230 = makeThinkpad "ross-thinkpad-x230"
-          [ inputs.nixos-hardware.nixosModules.lenovo-thinkpad-x230 ];
+        ross-thinkpad-x230 = makeThinkpad "ross-thinkpad-x230" [
+          inputs.nixos-hardware.nixosModules.lenovo-thinkpad-x230
+        ];
 
-        ross-thinkpad-x200 = makeThinkpad "ross-thinkpad-x200"
-          [ inputs.nixos-hardware.nixosModules.lenovo-thinkpad-x200s ];
+        ross-thinkpad-x200 = makeThinkpad "ross-thinkpad-x200" [
+          inputs.nixos-hardware.nixosModules.lenovo-thinkpad-x200s
+        ];
       };
 
-      homeConfigurations = lib.attrsets.mergeAttrsList
-        (builtins.map (host: { ${host} = makeHome [ ]; }) [
+      homeConfigurations = lib.attrsets.mergeAttrsList (
+        builtins.map (host: { ${host} = makeHome [ ]; }) [
           "${username}@ross-desktop"
           "${username}@ross-thinkpad-x230"
           "${username}@ross-thinkpad-x200"
-        ]);
+        ]
+      );
 
-    } // inputs.flake-utils.lib.eachDefaultSystem (system:
-      let pkgs = nixpkgs.legacyPackages.${system};
-      in {
-        devShells = lib.attrsets.mergeAttrsList (builtins.map
-          (lang: { ${lang} = import ./dev-shells/${lang} { inherit pkgs; }; }) [
+    }
+    // inputs.flake-utils.lib.eachDefaultSystem (
+      system:
+      let
+        pkgs = nixpkgs.legacyPackages.${system};
+      in
+      {
+        devShells = lib.attrsets.mergeAttrsList (
+          builtins.map (lang: { ${lang} = import ./dev-shells/${lang} { inherit pkgs; }; }) [
             "c-cpp"
             "clojure"
             "common-lisp"
@@ -182,6 +236,8 @@
             "java"
             "rust"
             "scheme"
-          ]);
-      });
+          ]
+        );
+      }
+    );
 }

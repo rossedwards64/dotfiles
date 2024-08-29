@@ -1,10 +1,21 @@
-{ config, lib, pkgs, specialArgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  specialArgs,
+  ...
+}:
 let
   folderConfig = {
     enable = true;
-    devices = [ "ross-desktop" "ross-thinkpad-x230" "ross-phone" ];
+    devices = [
+      "ross-desktop"
+      "ross-thinkpad-x230"
+      "ross-phone"
+    ];
   };
-in {
+in
+{
   imports = [ ./hardware-configuration.nix ];
 
   boot.loader.grub.device = "/dev/sda";

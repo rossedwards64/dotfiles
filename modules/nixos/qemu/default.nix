@@ -1,8 +1,17 @@
-{ lib, config, pkgs, ... }:
+{
+  lib,
+  config,
+  pkgs,
+  ...
+}:
 with lib;
-let cfg = config.modules.qemu;
-in {
-  options.modules.qemu = { enable = mkEnableOption "qemu"; };
+let
+  cfg = config.modules.qemu;
+in
+{
+  options.modules.qemu = {
+    enable = mkEnableOption "qemu";
+  };
 
   config = mkIf cfg.enable {
     environment = {
@@ -29,13 +38,12 @@ in {
           swtpm.enable = true;
           ovmf = {
             enable = true;
-            packages = with pkgs;
-              [
-                (OVMF.override {
-                  secureBoot = true;
-                  tpmSupport = true;
-                }).fd
-              ];
+            packages = with pkgs; [
+              (OVMF.override {
+                secureBoot = true;
+                tpmSupport = true;
+              }).fd
+            ];
           };
         };
       };

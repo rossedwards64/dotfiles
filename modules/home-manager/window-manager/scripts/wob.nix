@@ -2,7 +2,13 @@
 
 pkgs.writeShellApplication {
   name = "wob";
-  runtimeInputs = with pkgs; [ bc wob brightnessctl wireplumber findutils ];
+  runtimeInputs = with pkgs; [
+    bc
+    wob
+    brightnessctl
+    wireplumber
+    findutils
+  ];
 
   text = ''
     SYS=

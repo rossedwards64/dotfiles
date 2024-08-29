@@ -2,7 +2,10 @@
 
 pkgs.writeShellApplication {
   name = "check-mute";
-  runtimeInputs = with pkgs; [ wireplumber libnotify ];
+  runtimeInputs = with pkgs; [
+    wireplumber
+    libnotify
+  ];
 
   text = ''
     usage() {

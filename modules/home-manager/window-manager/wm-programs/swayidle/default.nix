@@ -1,8 +1,17 @@
-{ lib, config, pkgs, ... }:
+{
+  lib,
+  config,
+  pkgs,
+  ...
+}:
 with lib;
-let cfg = config.modules.swayidle;
-in {
-  options.modules.swayidle = { enable = mkEnableOption "swayidle"; };
+let
+  cfg = config.modules.swayidle;
+in
+{
+  options.modules.swayidle = {
+    enable = mkEnableOption "swayidle";
+  };
 
   config = mkIf cfg.enable {
     services.swayidle = {

@@ -1,15 +1,36 @@
-{ lib, pkgs, config, ... }:
+{
+  lib,
+  pkgs,
+  config,
+  ...
+}:
 with lib;
-let cfg = config.modules.wm-programs;
-in {
-  imports = [ ./fuzzel ./swayidle ./swaylock ./swaync ./waybar ./wob ];
+let
+  cfg = config.modules.wm-programs;
+in
+{
+  imports = [
+    ./fuzzel
+    ./swayidle
+    ./swaylock
+    ./swaync
+    ./waybar
+    ./wob
+  ];
 
-  options.modules.wm-programs = { enable = mkEnableOption "wm-programs"; };
+  options.modules.wm-programs = {
+    enable = mkEnableOption "wm-programs";
+  };
 
   config = mkIf cfg.enable {
-    home.packages = with pkgs; [ brightnessctl swaynotificationcenter ];
+    home.packages = with pkgs; [
+      brightnessctl
+      swaynotificationcenter
+    ];
 
-    programs = { imv.enable = true; };
+    programs = {
+      imv.enable = true;
+    };
 
     services = {
       udiskie = {

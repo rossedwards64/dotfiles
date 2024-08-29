@@ -1,8 +1,17 @@
-{ lib, config, pkgs, ... }:
+{
+  lib,
+  config,
+  pkgs,
+  ...
+}:
 with lib;
-let cfg = config.modules.games;
-in {
-  options.modules.games = { enable = mkEnableOption "games"; };
+let
+  cfg = config.modules.games;
+in
+{
+  options.modules.games = {
+    enable = mkEnableOption "games";
+  };
 
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
@@ -38,8 +47,8 @@ in {
       vulkan-tools
 
       (steam.override {
-        extraPkgs = pkgs:
-          with pkgs; [
+        extraPkgs =
+          pkgs: with pkgs; [
             inconsolata
             SDL
             SDL2_image
@@ -81,10 +90,13 @@ in {
         localNetworkGameTransfers.openFirewall = true;
         gamescopeSession = {
           enable = true;
-          args = [ "-w 1920" "-h 1080" "-f" ];
+          args = [
+            "-w 1920"
+            "-h 1080"
+            "-f"
+          ];
         };
       };
     };
   };
 }
-

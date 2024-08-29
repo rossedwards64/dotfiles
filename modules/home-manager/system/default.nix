@@ -1,10 +1,18 @@
-{ lib, config, pkgs, ... }:
+{
+  lib,
+  config,
+  pkgs,
+  ...
+}:
 with lib;
 let
   cfg = config.modules.system;
   xdg = config.xdg;
-in {
-  options.modules.system = { enable = mkEnableOption "system"; };
+in
+{
+  options.modules.system = {
+    enable = mkEnableOption "system";
+  };
 
   config = mkIf cfg.enable {
     home.packages = with pkgs; [
@@ -60,7 +68,9 @@ in {
             nuse_pager = true;
           };
 
-          updates = { auto_update = true; };
+          updates = {
+            auto_update = true;
+          };
         };
       };
 
@@ -73,7 +83,11 @@ in {
     services = {
       gnome-keyring = {
         enable = true;
-        components = [ "pkcs11" "secrets" "ssh" ];
+        components = [
+          "pkcs11"
+          "secrets"
+          "ssh"
+        ];
       };
 
       gpg-agent = {

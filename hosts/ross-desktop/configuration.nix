@@ -1,42 +1,84 @@
-{ config, lib, pkgs, specialArgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  specialArgs,
+  ...
+}:
 let
   folderConfig = {
     enable = true;
-    devices = [ "ross-thinkpad-x230" "ross-thinkpad-x200" "ross-phone" ];
+    devices = [
+      "ross-thinkpad-x230"
+      "ross-thinkpad-x200"
+      "ross-phone"
+    ];
   };
 
   fc = rec {
     devPathPrefix = "/sys/devices";
     cpu = devPathPrefix + "/platform/it87.2656/hwmon";
-    gpu = devPathPrefix
-      + "/pci0000:00/0000:00:03.1/0000:0a:00.0/0000:0b:00.0/0000:0c:00.0/hwmon";
+    gpu = devPathPrefix + "/pci0000:00/0000:00:03.1/0000:0a:00.0/0000:0b:00.0/0000:0c:00.0/hwmon";
     hwmonPathPrefix = "/hwmon[[:print:]]*";
     pwm = x: hwmonPathPrefix + "/pwm${toString x}";
     tempInput = x: hwmonPathPrefix + "/temp${toString x}_input";
     fanInput = x: hwmonPathPrefix + "/fan${toString x}_input";
 
-    makeAssignStatement = pair:
+    makeAssignStatement =
+      pair:
       lib.concatStrings [
         (builtins.head pair)
         "="
         (builtins.head (builtins.tail pair))
       ];
 
-    assignToInput = input:
-      toString (map makeAssignStatement ([[ (gpu + (pwm 1)) (gpu + (input 1)) ]]
-        ++ map (x: [ (cpu + (pwm x)) (cpu + (input x)) ]) (lib.range 1 3)));
+    assignToInput =
+      input:
+      toString (
+        map makeAssignStatement (
+          [
+            [
+              (gpu + (pwm 1))
+              (gpu + (input 1))
+            ]
+          ]
+          ++ map (x: [
+            (cpu + (pwm x))
+            (cpu + (input x))
+          ]) (lib.range 1 3)
+        )
+      );
 
-    assignToNumber = num:
-      let numStr = toString num;
-      in toString (map makeAssignStatement ([[ (gpu + (pwm 1)) numStr ]]
-        ++ map (x: [ (cpu + (pwm x)) numStr ]) (lib.range 1 3)));
+    assignToNumber =
+      num:
+      let
+        numStr = toString num;
+      in
+      toString (
+        map makeAssignStatement (
+          [
+            [
+              (gpu + (pwm 1))
+              numStr
+            ]
+          ]
+          ++ map (x: [
+            (cpu + (pwm x))
+            numStr
+          ]) (lib.range 1 3)
+        )
+      );
   };
-in {
+in
+{
   imports = [ ./hardware-configuration.nix ];
 
   boot = {
     extraModulePackages = [ config.boot.kernelPackages.gcadapter-oc-kmod ];
-    kernelModules = [ "gcadapter_oc" "it87" ];
+    kernelModules = [
+      "gcadapter_oc"
+      "it87"
+    ];
     loader = {
       efi = {
         canTouchEfiVariables = true;

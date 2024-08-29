@@ -1,4 +1,9 @@
-{ lib, config, pkgs, ... }:
+{
+  lib,
+  config,
+  pkgs,
+  ...
+}:
 with lib;
 let
   cfg = config.modules.waybar;
@@ -18,25 +23,29 @@ let
   fanSpeedScript = import ./scripts/fan-speed.nix { inherit pkgs; };
   powerScript = import ../fuzzel/scripts/powermenu.nix { inherit pkgs; };
 
-  makeDisk = (disk: path: {
-    name = "disk#${disk}";
-    config = {
-      format = "󰋊 ${lib.toUpper disk}: {used} / {total}";
-      tooltip-format = "{used} / {total} used";
-      path = "${path}";
-      interval = 300;
-    };
-  });
+  makeDisk = (
+    disk: path: {
+      name = "disk#${disk}";
+      config = {
+        format = "󰋊 ${lib.toUpper disk}: {used} / {total}";
+        tooltip-format = "{used} / {total} used";
+        path = "${path}";
+        interval = 300;
+      };
+    }
+  );
 
-  makeDiskNoLabel = (disk: path: {
-    name = "disk#${disk}";
-    config = {
-      format = "󰋊 {used} / {total}";
-      tooltip-format = "{used} / {total} used";
-      path = "${path}";
-      interval = 300;
-    };
-  });
+  makeDiskNoLabel = (
+    disk: path: {
+      name = "disk#${disk}";
+      config = {
+        format = "󰋊 {used} / {total}";
+        tooltip-format = "{used} / {total} used";
+        path = "${path}";
+        interval = 300;
+      };
+    }
+  );
 
   modules = {
     builtin = rec {
@@ -75,9 +84,11 @@ let
         };
       };
 
-      cpuNoLabel = (attrsets.overrideExisting cpu {
-        config.format = "󰘚 {usage}% {avg_frequency}GHz";
-      });
+      cpuNoLabel = (
+        attrsets.overrideExisting cpu {
+          config.format = "󰘚 {usage}% {avg_frequency}GHz";
+        }
+      );
 
       memory = {
         name = "memory";
@@ -87,16 +98,24 @@ let
         };
       };
 
-      memoryNoLabel = (attrsets.overrideExisting memory {
-        config.format = " {used:0.1f}G / {total:0.1f}G";
-      });
+      memoryNoLabel = (
+        attrsets.overrideExisting memory {
+          config.format = " {used:0.1f}G / {total:0.1f}G";
+        }
+      );
 
       temperature = {
         name = "temperature";
         config = {
           critical-threshold = 70;
           format = "{icon} {temperatureC}°C";
-          format-icons = [ "" "" "" "" "" ];
+          format-icons = [
+            ""
+            ""
+            ""
+            ""
+            ""
+          ];
         };
       };
 
@@ -173,7 +192,10 @@ let
             phone = "";
             portable = "";
             car = "";
-            default = [ "" "" ];
+            default = [
+              ""
+              ""
+            ];
           };
           on-click = "${pkgs.helvum}/bin/helvum";
         };
@@ -217,14 +239,19 @@ let
 
         mode = {
           name = "sway/mode";
-          config = { format = ''<span style="italic">{}</span>''; };
+          config = {
+            format = ''<span style="italic">{}</span>'';
+          };
         };
 
         scratchpad = {
           name = "sway/scratchpad";
           config = {
             format = "{icon} {count}";
-            format-icons = [ "󱘔" "󱘒" ];
+            format-icons = [
+              "󱘔"
+              "󱘒"
+            ];
             show-empty = true;
             tooltip = true;
             tooltip-format = "{app}: {title}";
@@ -278,7 +305,15 @@ let
           on-scroll-down = "${pkgs.brightnessctl}/bin/brightnessctl set 5%-";
           on-scroll-up = "${pkgs.brightnessctl}/bin/brightnessctl set 5%+";
           format = "{icon} {percent}%";
-          format-icons = [ "󰃚" "󰃛" "󰃜" "󰃝" "󰃞" "󰃟" "󰃠" ];
+          format-icons = [
+            "󰃚"
+            "󰃛"
+            "󰃜"
+            "󰃝"
+            "󰃞"
+            "󰃟"
+            "󰃠"
+          ];
           on-click = "${pkgs.wdisplays}/bin/wdisplays";
         };
       };
@@ -318,13 +353,10 @@ let
           format-disabled = " disabled";
           format-off = " off";
           format-on = " on";
-          format-connected-battery =
-            " {device_alias} ({device_battery_percentage}%)";
+          format-connected-battery = " {device_alias} ({device_battery_percentage}%)";
           tooltip-format = "{controller_alias}\\t{controller_address}";
-          tooltip-format-connected =
-            "{controller_alias}\\t{controller_address}\\n\\n{device_enumerate}";
-          tooltip-format-enumerate-connected =
-            "{device_alias}\\t{device_address}";
+          tooltip-format-connected = "{controller_alias}\\t{controller_address}\\n\\n{device_enumerate}";
+          tooltip-format-enumerate-connected = "{device_alias}\\t{device_address}";
         };
       };
 
@@ -348,7 +380,13 @@ let
           format-plugged = " {capacity}% [{time}]";
           format-empty = "Empty";
           format-full = "Full [{time}]";
-          format-icons = [ "" "" "" "" "" ];
+          format-icons = [
+            ""
+            ""
+            ""
+            ""
+            ""
+          ];
         };
       };
     };
@@ -432,8 +470,7 @@ let
           interval = 1;
           return-type = "json";
           exec = "${spotifyScript}/bin/spotify";
-          exec-if =
-            "${pkgs.procps}/bin/pgrep spotify || ${pkgs.procps}/bin/pgrep spotify_player || ${pkgs.procps}/bin/pgrep spot || ${pkgs.procps}/bin/pgrep ncspot";
+          exec-if = "${pkgs.procps}/bin/pgrep spotify || ${pkgs.procps}/bin/pgrep spotify_player || ${pkgs.procps}/bin/pgrep spot || ${pkgs.procps}/bin/pgrep ncspot";
           escape = true;
         };
       };
@@ -448,19 +485,16 @@ let
             none = "󰂚 ";
             dnd-notification = "󰂛<span foreground='red'><sup> </sup></span>";
             dnd-none = "󰂛 ";
-            inhibited-notification =
-              "󰂚<span foreground='red'><sup> </sup></span>";
+            inhibited-notification = "󰂚<span foreground='red'><sup> </sup></span>";
             inhibited-none = "󰂚 ";
-            dnd-inhibited-notification =
-              "󰂛<span foreground='red'><sup> </sup></span>";
+            dnd-inhibited-notification = "󰂛<span foreground='red'><sup> </sup></span>";
             dnd-inhibited-none = "󰂛 ";
           };
           return-type = "json";
           exec-if = "which ${pkgs.swaynotificationcenter}/bin/swaync-client";
           exec = "${pkgs.swaynotificationcenter}/bin/swaync-client -swb";
           on-click = "${pkgs.swaynotificationcenter}/bin/swaync-client -t -sw";
-          on-click-right =
-            "${pkgs.swaynotificationcenter}/bin/swaync-client -d -sw";
+          on-click-right = "${pkgs.swaynotificationcenter}/bin/swaync-client -d -sw";
           escape = true;
         };
       };
@@ -476,98 +510,114 @@ let
     };
   };
 
-  allModules = with modules;
-    lib.mergeAttrsList
-    (builtins.map (module: { "${module.name}" = module.config; }) [
-      builtin.backlight
-      builtin.battery
-      builtin.clock
-      builtin.cpu
-      builtin.disk.hdd
-      builtin.disk.root
-      builtin.disk.ssd
-      builtin.disk.ssd2
-      builtin.diskNoLabel.root
-      builtin.gamemode
-      builtin.idleInhibitor
-      builtin.memory
-      builtin.network.disconnected
-      builtin.network.ethernet
-      builtin.network.wifi
-      builtin.pulseaudio
-      builtin.sway.mode
-      builtin.sway.scratchpad
-      builtin.sway.window
-      builtin.taskbar
-      builtin.temperature
-      builtin.tray
-      builtin.wireplumber
-      custom.cpuTemp
-      custom.fanSpeed
-      custom.gpuMem
-      custom.gpuPercent
-      custom.gpuTemp
-      custom.launcher
-      custom.notification
-      custom.power
-      custom.separator
-      custom.spotify
-      custom.weather
-    ]);
+  allModules =
+    with modules;
+    lib.mergeAttrsList (
+      builtins.map (module: { "${module.name}" = module.config; }) [
+        builtin.backlight
+        builtin.battery
+        builtin.clock
+        builtin.cpu
+        builtin.disk.hdd
+        builtin.disk.root
+        builtin.disk.ssd
+        builtin.disk.ssd2
+        builtin.diskNoLabel.root
+        builtin.gamemode
+        builtin.idleInhibitor
+        builtin.memory
+        builtin.network.disconnected
+        builtin.network.ethernet
+        builtin.network.wifi
+        builtin.pulseaudio
+        builtin.sway.mode
+        builtin.sway.scratchpad
+        builtin.sway.window
+        builtin.taskbar
+        builtin.temperature
+        builtin.tray
+        builtin.wireplumber
+        custom.cpuTemp
+        custom.fanSpeed
+        custom.gpuMem
+        custom.gpuPercent
+        custom.gpuTemp
+        custom.launcher
+        custom.notification
+        custom.power
+        custom.separator
+        custom.spotify
+        custom.weather
+      ]
+    );
 
-  allModulesNoLabels = with modules;
-    lib.mergeAttrsList
-    (builtins.map (module: { "${module.name}" = module.config; }) [
-      builtin.backlight
-      builtin.battery
-      builtin.clock
-      builtin.cpuNoLabel
-      builtin.diskNoLabel.root
-      builtin.gamemode
-      builtin.idleInhibitor
-      builtin.memoryNoLabel
-      builtin.network.disconnected
-      builtin.network.ethernet
-      builtin.network.wifi
-      builtin.pulseaudio
-      builtin.sway.mode
-      builtin.sway.scratchpad
-      builtin.sway.window
-      builtin.taskbar
-      builtin.temperature
-      builtin.tray
-      builtin.wireplumber
-      custom.cpuTemp
-      custom.fanSpeed
-      custom.gpuMem
-      custom.gpuPercent
-      custom.gpuTemp
-      custom.launcher
-      custom.notification
-      custom.power
-      custom.separator
-      custom.spotify
-      custom.weather
-    ]);
+  allModulesNoLabels =
+    with modules;
+    lib.mergeAttrsList (
+      builtins.map (module: { "${module.name}" = module.config; }) [
+        builtin.backlight
+        builtin.battery
+        builtin.clock
+        builtin.cpuNoLabel
+        builtin.diskNoLabel.root
+        builtin.gamemode
+        builtin.idleInhibitor
+        builtin.memoryNoLabel
+        builtin.network.disconnected
+        builtin.network.ethernet
+        builtin.network.wifi
+        builtin.pulseaudio
+        builtin.sway.mode
+        builtin.sway.scratchpad
+        builtin.sway.window
+        builtin.taskbar
+        builtin.temperature
+        builtin.tray
+        builtin.wireplumber
+        custom.cpuTemp
+        custom.fanSpeed
+        custom.gpuMem
+        custom.gpuPercent
+        custom.gpuTemp
+        custom.launcher
+        custom.notification
+        custom.power
+        custom.separator
+        custom.spotify
+        custom.weather
+      ]
+    );
 
-  makeBar =
-    (moduleSet: position: output: modules-left: modules-center: modules-right:
-      {
-        inherit height layer position output modules-left modules-center
-          modules-right;
-      } // moduleSet);
+  makeBar = (
+    moduleSet: position: output: modules-left: modules-center: modules-right:
+    {
+      inherit
+        height
+        layer
+        position
+        output
+        modules-left
+        modules-center
+        modules-right
+        ;
+    }
+    // moduleSet
+  );
 
-  makeBarWithLabels =
-    (position: output: modules-left: modules-center: modules-right:
-      makeBar allModules position output modules-left modules-center
-      modules-right);
+  makeBarWithLabels = (
+    position: output: modules-left: modules-center: modules-right:
+    makeBar allModules position output modules-left modules-center modules-right
+  );
 
-  makeBarNoLabels =
-    (position: output: modules-left: modules-center: modules-right:
-      makeBar allModulesNoLabels position output modules-left modules-center
-      modules-right);
-in {
-  options.modules.waybar = { enable = mkEnableOption "waybar"; };
+  makeBarNoLabels = (
+    position: output: modules-left: modules-center: modules-right:
+    makeBar allModulesNoLabels position output modules-left modules-center modules-right
+  );
+in
+{
+  options.modules.waybar = {
+    enable = mkEnableOption "waybar";
+  };
 
   config = mkIf cfg.enable {
     home.packages = with pkgs; [ procps ];
@@ -578,104 +628,134 @@ in {
       systemd.enable = true;
 
       settings = {
-        topbar-hdmi = (makeBarWithLabels "top" hdmi [
-          "${custom.launcher.name}"
-          "${custom.separator.name}"
-          "${builtin.memory.name}"
-          "${builtin.cpu.name}"
-          "${custom.cpuTemp.name}"
-          "${custom.gpuPercent.name}"
-          "${custom.gpuMem.name}"
-          "${custom.gpuTemp.name}"
-          "${custom.separator.name}"
-        ] [ "${builtin.clock.name}" ] [
-          "${custom.separator.name}"
-          "${builtin.network.disconnected.name}"
-          "${builtin.network.wifi.name}"
-          "${builtin.network.ethernet.name}"
-          "${builtin.network.disconnected.name}"
-          "${custom.separator.name}"
-          "${custom.power.name}"
-        ]);
-        bottombar-hdmi = (makeBarWithLabels "bottom" hdmi [
-          "${builtin.tray.name}"
-          "${builtin.gamemode.name}"
-          "${custom.separator.name}"
-          "${builtin.backlight.name}"
-          "${builtin.wireplumber.name}"
-          "${builtin.idleInhibitor.name}"
-          "${custom.separator.name}"
-        ] [ "${builtin.taskbar.name}" ] [
-          "${custom.separator.name}"
-          "${custom.separator.name}"
-        ]);
+        topbar-hdmi = (
+          makeBarWithLabels "top" hdmi
+            [
+              "${custom.launcher.name}"
+              "${custom.separator.name}"
+              "${builtin.memory.name}"
+              "${builtin.cpu.name}"
+              "${custom.cpuTemp.name}"
+              "${custom.gpuPercent.name}"
+              "${custom.gpuMem.name}"
+              "${custom.gpuTemp.name}"
+              "${custom.separator.name}"
+            ]
+            [ "${builtin.clock.name}" ]
+            [
+              "${custom.separator.name}"
+              "${builtin.network.disconnected.name}"
+              "${builtin.network.wifi.name}"
+              "${builtin.network.ethernet.name}"
+              "${builtin.network.disconnected.name}"
+              "${custom.separator.name}"
+              "${custom.power.name}"
+            ]
+        );
+        bottombar-hdmi = (
+          makeBarWithLabels "bottom" hdmi
+            [
+              "${builtin.tray.name}"
+              "${builtin.gamemode.name}"
+              "${custom.separator.name}"
+              "${builtin.backlight.name}"
+              "${builtin.wireplumber.name}"
+              "${builtin.idleInhibitor.name}"
+              "${custom.separator.name}"
+            ]
+            [ "${builtin.taskbar.name}" ]
+            [
+              "${custom.separator.name}"
+              "${custom.separator.name}"
+            ]
+        );
 
-        topbar-dp = (makeBarWithLabels "top" dp [
-          "${custom.launcher.name}"
-          "${custom.separator.name}"
-          "${builtin.disk.root.name}"
-          "${builtin.disk.ssd.name}"
-          "${builtin.disk.ssd2.name}"
-          "${builtin.disk.hdd.name}"
-          "${custom.separator.name}"
-        ] [ "${builtin.clock.name}" ] [
-          "${custom.separator.name}"
-          "${custom.spotify.name}"
-          "${custom.weather.name}"
-          "${custom.separator.name}"
-          "${custom.power.name}"
-        ]);
+        topbar-dp = (
+          makeBarWithLabels "top" dp
+            [
+              "${custom.launcher.name}"
+              "${custom.separator.name}"
+              "${builtin.disk.root.name}"
+              "${builtin.disk.ssd.name}"
+              "${builtin.disk.ssd2.name}"
+              "${builtin.disk.hdd.name}"
+              "${custom.separator.name}"
+            ]
+            [ "${builtin.clock.name}" ]
+            [
+              "${custom.separator.name}"
+              "${custom.spotify.name}"
+              "${custom.weather.name}"
+              "${custom.separator.name}"
+              "${custom.power.name}"
+            ]
+        );
 
-        bottombar-dp = (makeBarWithLabels "bottom" dp [
-          "${custom.separator.name}"
-          "${custom.separator.name}"
-        ] [ "${builtin.taskbar.name}" ] [
-          "${custom.separator.name}"
-          "${builtin.sway.scratchpad.name}"
-          "${builtin.sway.window.name}"
-          "${custom.separator.name}"
-        ]);
+        bottombar-dp = (
+          makeBarWithLabels "bottom" dp
+            [
+              "${custom.separator.name}"
+              "${custom.separator.name}"
+            ]
+            [ "${builtin.taskbar.name}" ]
+            [
+              "${custom.separator.name}"
+              "${builtin.sway.scratchpad.name}"
+              "${builtin.sway.window.name}"
+              "${custom.separator.name}"
+            ]
+        );
 
-        topbar-laptop = (makeBarNoLabels "top" laptopScreen [
-          "${custom.launcher.name}"
-          "${custom.separator.name}"
-          "${builtin.diskNoLabel.root.name}"
-          "${builtin.memoryNoLabel.name}"
-          "${builtin.cpuNoLabel.name}"
-          "${builtin.temperature.name}"
-          "${custom.fanSpeed.name}"
-          "${custom.separator.name}"
-        ] [ "${builtin.clock.name}" ] [
-          "${custom.separator.name}"
-          "${builtin.network.wifi.name}"
-          "${builtin.network.ethernet.name}"
-          "${builtin.network.disconnected.name}"
-          "${builtin.bluetooth.name}"
-          "${custom.separator.name}"
-          "${custom.weather.name}"
-          "${custom.separator.name}"
-          "${custom.power.name}"
-        ]);
+        topbar-laptop = (
+          makeBarNoLabels "top" laptopScreen
+            [
+              "${custom.launcher.name}"
+              "${custom.separator.name}"
+              "${builtin.diskNoLabel.root.name}"
+              "${builtin.memoryNoLabel.name}"
+              "${builtin.cpuNoLabel.name}"
+              "${builtin.temperature.name}"
+              "${custom.fanSpeed.name}"
+              "${custom.separator.name}"
+            ]
+            [ "${builtin.clock.name}" ]
+            [
+              "${custom.separator.name}"
+              "${builtin.network.wifi.name}"
+              "${builtin.network.ethernet.name}"
+              "${builtin.network.disconnected.name}"
+              "${builtin.bluetooth.name}"
+              "${custom.separator.name}"
+              "${custom.weather.name}"
+              "${custom.separator.name}"
+              "${custom.power.name}"
+            ]
+        );
 
-        bottombar-laptop = (makeBarNoLabels "bottom" laptopScreen [
-          "${builtin.tray.name}"
-          "${builtin.gamemode.name}"
-          "${custom.separator.name}"
-          "${custom.notification.name}"
-          "${custom.separator.name}"
-          "${builtin.battery.name}"
-          "${builtin.backlight.name}"
-          "${builtin.wireplumber.name}"
-          "${builtin.idleInhibitor.name}"
-          "${custom.separator.name}"
-        ] [ "${builtin.taskbar.name}" ] [
-          "${custom.separator.name}"
-          "${custom.spotify.name}"
-          "${custom.separator.name}"
-          "${builtin.sway.scratchpad.name}"
-          "${builtin.sway.window.name}"
-          "${custom.separator.name}"
-        ]);
+        bottombar-laptop = (
+          makeBarNoLabels "bottom" laptopScreen
+            [
+              "${builtin.tray.name}"
+              "${builtin.gamemode.name}"
+              "${custom.separator.name}"
+              "${custom.notification.name}"
+              "${custom.separator.name}"
+              "${builtin.battery.name}"
+              "${builtin.backlight.name}"
+              "${builtin.wireplumber.name}"
+              "${builtin.idleInhibitor.name}"
+              "${custom.separator.name}"
+            ]
+            [ "${builtin.taskbar.name}" ]
+            [
+              "${custom.separator.name}"
+              "${custom.spotify.name}"
+              "${custom.separator.name}"
+              "${builtin.sway.scratchpad.name}"
+              "${builtin.sway.window.name}"
+              "${custom.separator.name}"
+            ]
+        );
       };
 
       style = ''

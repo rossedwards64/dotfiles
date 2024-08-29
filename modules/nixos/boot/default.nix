@@ -1,8 +1,17 @@
-{ lib, config, pkgs, ... }:
+{
+  lib,
+  config,
+  pkgs,
+  ...
+}:
 with lib;
-let cfg = config.modules.boot;
-in {
-  options.modules.boot = { enable = mkEnableOption "boot"; };
+let
+  cfg = config.modules.boot;
+in
+{
+  options.modules.boot = {
+    enable = mkEnableOption "boot";
+  };
 
   config = mkIf cfg.enable {
     boot = {
@@ -11,12 +20,15 @@ in {
       loader.grub = {
         enable = true;
         useOSProber = true;
-        theme = lib.mkForce (pkgs.fetchFromGitHub {
-          owner = "catppuccin";
-          repo = "grub";
-          rev = "88f6124757331fd3a37c8a69473021389b7663ad";
-          sha256 = "sha256-e8XFWebd/GyX44WQI06Cx6sOduCZc5z7/YhweVQGMGY=";
-        } + "/src/catppuccin-mocha-grub-theme");
+        theme = lib.mkForce (
+          pkgs.fetchFromGitHub {
+            owner = "catppuccin";
+            repo = "grub";
+            rev = "88f6124757331fd3a37c8a69473021389b7663ad";
+            sha256 = "sha256-e8XFWebd/GyX44WQI06Cx6sOduCZc5z7/YhweVQGMGY=";
+          }
+          + "/src/catppuccin-mocha-grub-theme"
+        );
 
         extraConfig = ''
           GRUB_CMDLINE_LINUX=""

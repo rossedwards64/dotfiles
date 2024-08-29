@@ -1,4 +1,9 @@
-{ lib, config, pkgs, ... }:
+{
+  lib,
+  config,
+  pkgs,
+  ...
+}:
 with lib;
 let
   cfg = config.modules.email;
@@ -8,8 +13,11 @@ let
     key = "rossedwards";
     signByDefault = true;
   };
-in {
-  options.modules.email = { enable = mkEnableOption "email"; };
+in
+{
+  options.modules.email = {
+    enable = mkEnableOption "email";
+  };
 
   config = mkIf cfg.enable {
     programs = {
@@ -24,8 +32,7 @@ in {
         outlook = {
           realName = fullName;
           address = "redwards64@hotmail.com";
-          passwordCommand =
-            "${pkgs.pass-wayland}/bin/pass email/hotmail/personal";
+          passwordCommand = "${pkgs.pass-wayland}/bin/pass email/hotmail/personal";
           flavor = "outlook.office365.com";
           msmtp.enable = true;
           primary = true;
@@ -56,8 +63,7 @@ in {
         gmail = {
           realName = fullName;
           address = "redwards6469@gmail.com";
-          passwordCommand =
-            "${pkgs.pass-wayland}/bin/pass email/google/app-password";
+          passwordCommand = "${pkgs.pass-wayland}/bin/pass email/google/app-password";
           flavor = "gmail.com";
           msmtp.enable = true;
           primary = false;

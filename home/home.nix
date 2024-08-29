@@ -1,6 +1,14 @@
-{ config, lib, pkgs, specialArgs, ... }:
-let inherit (specialArgs) username;
-in {
+{
+  config,
+  lib,
+  pkgs,
+  specialArgs,
+  ...
+}:
+let
+  inherit (specialArgs) username;
+in
+{
   programs.home-manager.enable = true;
 
   home = {

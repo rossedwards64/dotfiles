@@ -2,7 +2,10 @@
 
 pkgs.writeShellApplication {
   name = "weather";
-  runtimeInputs = with pkgs; [ coreutils curl ];
+  runtimeInputs = with pkgs; [
+    coreutils
+    curl
+  ];
 
   text = ''
     text="Weather: $(curl -s "https://wttr.in/?format=1")"

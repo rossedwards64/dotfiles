@@ -2,7 +2,11 @@
 
 pkgs.writeShellApplication {
   name = "run-game";
-  runtimeInputs = with pkgs; [ mangohud gamemode gamescope ];
+  runtimeInputs = with pkgs; [
+    mangohud
+    gamemode
+    gamescope
+  ];
 
   text = ''
     width=1920

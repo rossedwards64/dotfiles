@@ -1,10 +1,21 @@
-{ config, lib, pkgs, specialArgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  specialArgs,
+  ...
+}:
 let
   folderConfig = {
     enable = true;
-    devices = [ "ross-desktop" "ross-thinkpad-x200" "ross-phone" ];
+    devices = [
+      "ross-desktop"
+      "ross-thinkpad-x200"
+      "ross-phone"
+    ];
   };
-in {
+in
+{
   imports = [ ./hardware-configuration.nix ];
 
   boot = {

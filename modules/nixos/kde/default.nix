@@ -1,8 +1,17 @@
-{ lib, config, pkgs, ... }:
+{
+  lib,
+  config,
+  pkgs,
+  ...
+}:
 with lib;
-let cfg = config.modules.kde;
-in {
-  options.modules.kde = { enable = mkEnableOption "kde"; };
+let
+  cfg = config.modules.kde;
+in
+{
+  options.modules.kde = {
+    enable = mkEnableOption "kde";
+  };
 
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs.kdePackages; [
@@ -17,7 +26,12 @@ in {
       tokodon
     ];
 
-    environment = { plasma5.excludePackages = with pkgs; [ konsole xterm ]; };
+    environment = {
+      plasma5.excludePackages = with pkgs; [
+        konsole
+        xterm
+      ];
+    };
 
     services = {
       xserver = {

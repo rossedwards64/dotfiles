@@ -2,7 +2,10 @@
 
 pkgs.writeShellApplication {
   name = "gpu-temp";
-  runtimeInputs = with pkgs; [ bc coreutils ];
+  runtimeInputs = with pkgs; [
+    bc
+    coreutils
+  ];
 
   text = ''
     triple_digits=100000

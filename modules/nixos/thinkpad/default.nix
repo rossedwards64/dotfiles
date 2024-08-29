@@ -1,11 +1,23 @@
-{ lib, config, pkgs, ... }:
+{
+  lib,
+  config,
+  pkgs,
+  ...
+}:
 with lib;
-let cfg = config.modules.thinkpad;
-in {
-  options.modules.thinkpad = { enable = mkEnableOption "thinkpad"; };
+let
+  cfg = config.modules.thinkpad;
+in
+{
+  options.modules.thinkpad = {
+    enable = mkEnableOption "thinkpad";
+  };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = with pkgs; [ tlp zcfan ];
+    environment.systemPackages = with pkgs; [
+      tlp
+      zcfan
+    ];
 
     boot.extraModprobeConfig = ''
       options thinkpad_acpi fan_control=1                       

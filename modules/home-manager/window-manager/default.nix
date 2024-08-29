@@ -1,8 +1,19 @@
-{ lib, config, pkgs, ... }:
+{
+  lib,
+  config,
+  pkgs,
+  ...
+}:
 with lib;
-let cfg = config.modules.window-manager;
-in {
-  imports = [ ./sway ./hyprland ./wm-programs ];
+let
+  cfg = config.modules.window-manager;
+in
+{
+  imports = [
+    ./sway
+    ./hyprland
+    ./wm-programs
+  ];
 
   options.modules.window-manager = {
     enable = mkEnableOption "window-manager";

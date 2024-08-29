@@ -2,7 +2,10 @@
 
 pkgs.writeShellApplication {
   name = "toggle-sink";
-  runtimeInputs = with pkgs; [ wireplumber libnotify ];
+  runtimeInputs = with pkgs; [
+    wireplumber
+    libnotify
+  ];
 
   text = ''
     headset='Headset Analog'

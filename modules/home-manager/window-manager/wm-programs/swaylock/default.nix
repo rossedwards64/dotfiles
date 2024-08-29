@@ -1,8 +1,17 @@
-{ lib, config, pkgs, ... }:
+{
+  lib,
+  config,
+  pkgs,
+  ...
+}:
 with lib;
-let cfg = config.modules.swaylock;
-in {
-  options.modules.swaylock = { enable = mkEnableOption "swaylock"; };
+let
+  cfg = config.modules.swaylock;
+in
+{
+  options.modules.swaylock = {
+    enable = mkEnableOption "swaylock";
+  };
 
   config = mkIf cfg.enable {
     programs.swaylock = {

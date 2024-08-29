@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 with lib;
 let
   cfg = config.modules.alacritty;
@@ -13,8 +18,11 @@ let
   off_y = 0;
   gloff_x = 0;
   gloff_y = 0;
-in {
-  options.modules.alacritty = { enable = mkEnableOption "alacritty"; };
+in
+{
+  options.modules.alacritty = {
+    enable = mkEnableOption "alacritty";
+  };
 
   config = mkIf cfg.enable {
 
@@ -32,7 +40,11 @@ in {
         selection.semantic_escape_chars = '',│`|:"' ()[]{}<>	'';
 
         shell = {
-          args = [ "-l" "-c" "${pkgs.tmuxinator}/bin/tmuxinator default" ];
+          args = [
+            "-l"
+            "-c"
+            "${pkgs.tmuxinator}/bin/tmuxinator default"
+          ];
           program = "${pkgs.zsh}/bin/zsh";
         };
 
@@ -91,7 +103,9 @@ in {
           renderer = "None";
         };
 
-        env = { TERM = "alacritty"; };
+        env = {
+          TERM = "alacritty";
+        };
 
         font = {
           builtin_box_drawing = true;
@@ -130,18 +144,19 @@ in {
         hints = {
           alphabet = "jfkdls;ahgurieowpq";
 
-          enabled = [{
-            command = "${pkgs.xdg-utils}/bin/xdg-open";
-            hyperlinks = true;
-            post_processing = true;
-            persist = true;
-            binding = {
-              key = "U";
-              mods = "Control|Shift";
-            };
-            regex = ''
-              (ipfs:|ipns:|magnet:|mailto:|gemini://|gopher://|https://|http://|news:|file:|git://|ssh:|ftp://)[^u0000-u001Fu007F-u009F<>"\\s{-}\\^⟨⟩`]+'';
-          }];
+          enabled = [
+            {
+              command = "${pkgs.xdg-utils}/bin/xdg-open";
+              hyperlinks = true;
+              post_processing = true;
+              persist = true;
+              binding = {
+                key = "U";
+                mods = "Control|Shift";
+              };
+              regex = ''(ipfs:|ipns:|magnet:|mailto:|gemini://|gopher://|https://|http://|news:|file:|git://|ssh:|ftp://)[^u0000-u001Fu007F-u009F<>"\\s{-}\\^⟨⟩`]+'';
+            }
+          ];
         };
 
         keyboard.bindings = [

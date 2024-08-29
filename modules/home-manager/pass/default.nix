@@ -1,10 +1,18 @@
-{ lib, config, pkgs, ... }:
+{
+  lib,
+  config,
+  pkgs,
+  ...
+}:
 with lib;
 let
   cfg = config.modules.pass;
   xdg = config.xdg;
-in {
-  options.modules.pass = { enable = mkEnableOption "pass"; };
+in
+{
+  options.modules.pass = {
+    enable = mkEnableOption "pass";
+  };
 
   config = mkIf cfg.enable {
     home.packages = with pkgs; [
@@ -22,7 +30,9 @@ in {
       enable = true;
       package = pkgs.pass-wayland;
 
-      settings = { PASSWORD_STORE_DIR = "${xdg.dataHome}/pass"; };
+      settings = {
+        PASSWORD_STORE_DIR = "${xdg.dataHome}/pass";
+      };
     };
   };
 }

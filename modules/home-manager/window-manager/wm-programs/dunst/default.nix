@@ -1,4 +1,9 @@
-{ lib, pkgs, config, ... }:
+{
+  lib,
+  pkgs,
+  config,
+  ...
+}:
 with lib;
 let
   cfg = config.modules.dunst;
@@ -6,8 +11,11 @@ let
   background = "#1e1e2e";
   foreground = "#cdd6fa";
   criticalFrameColour = "#fab387";
-in {
-  options.modules.dunst = { enable = mkEnableOption "dunst"; };
+in
+{
+  options.modules.dunst = {
+    enable = mkEnableOption "dunst";
+  };
 
   config = mkIf cfg.enable {
     services.dunst = {
@@ -74,7 +82,9 @@ in {
           mouse_right_click = "close_all";
         };
 
-        experimental = { per_monitor_dpi = false; };
+        experimental = {
+          per_monitor_dpi = false;
+        };
 
         urgency_low = {
           inherit background foreground;
@@ -92,21 +102,27 @@ in {
           timeout = 0;
         };
 
-        fullscreen_delay_everything = { fullscreen = "delay"; };
+        fullscreen_delay_everything = {
+          fullscreen = "delay";
+        };
 
         fullscreen_delay_critical = {
           msg_urgency = "critical";
           fullscreen = "show";
         };
 
-        music = { appname = "Music"; };
+        music = {
+          appname = "Music";
+        };
 
         volume = {
           summary = "Volume*";
           highlight = "#CB8CF4";
         };
 
-        battery = { appname = "Power Warning"; };
+        battery = {
+          appname = "Power Warning";
+        };
       };
     };
   };

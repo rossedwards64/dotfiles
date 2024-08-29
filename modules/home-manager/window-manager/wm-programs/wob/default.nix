@@ -1,12 +1,20 @@
-{ lib, config, pkgs, ... }:
+{
+  lib,
+  config,
+  pkgs,
+  ...
+}:
 with lib;
 let
   cfg = config.modules.wob;
   white = "ffffffff";
   black = "000000ff";
   red = "ff0000ff";
-in {
-  options.modules.wob = { enable = mkEnableOption "wob"; };
+in
+{
+  options.modules.wob = {
+    enable = mkEnableOption "wob";
+  };
 
   config = mkIf cfg.enable {
     services.wob = {

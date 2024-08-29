@@ -1,14 +1,28 @@
-{ lib, config, pkgs, ... }:
+{
+  lib,
+  config,
+  pkgs,
+  ...
+}:
 with lib;
 let
   cfg = config.modules.emacs;
   package = pkgs.emacs29-pgtk;
-in {
-  options.modules.emacs = { enable = mkEnableOption "emacs"; };
+in
+{
+  options.modules.emacs = {
+    enable = mkEnableOption "emacs";
+  };
 
   config = mkIf cfg.enable {
     home.packages = with pkgs; [
-      (aspellWithDicts (dicts: with dicts; [ en en-computers en-science ]))
+      (aspellWithDicts (
+        dicts: with dicts; [
+          en
+          en-computers
+          en-science
+        ]
+      ))
       auctex
       emacs-all-the-icons-fonts
       mu
@@ -26,7 +40,10 @@ in {
       startWithUserSession = "graphical";
       client = {
         enable = true;
-        arguments = [ "-c" "-a=''" ];
+        arguments = [
+          "-c"
+          "-a=''"
+        ];
       };
     };
 

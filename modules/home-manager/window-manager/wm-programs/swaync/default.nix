@@ -1,8 +1,17 @@
-{ lib, config, pkgs, ... }:
+{
+  lib,
+  config,
+  pkgs,
+  ...
+}:
 with lib;
-let cfg = config.modules.swaync;
-in {
-  options.modules.swaync = { enable = mkEnableOption "swaync"; };
+let
+  cfg = config.modules.swaync;
+in
+{
+  options.modules.swaync = {
+    enable = mkEnableOption "swaync";
+  };
 
   config = mkIf cfg.enable {
     xdg.configFile = {

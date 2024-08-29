@@ -2,7 +2,11 @@
 
 pkgs.writeShellApplication {
   name = "gpufan";
-  runtimeInputs = with pkgs; [ bc coreutils gawk ];
+  runtimeInputs = with pkgs; [
+    bc
+    coreutils
+    gawk
+  ];
 
   text = ''
     temp_input=("/sys/class/drm/card"[[:digit:]]"/device/hwmon/"[[:print:]]*"/temp1_input")

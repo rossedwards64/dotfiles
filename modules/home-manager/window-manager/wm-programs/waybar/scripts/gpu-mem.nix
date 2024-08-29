@@ -2,7 +2,10 @@
 
 pkgs.writeShellApplication {
   name = "gpu-mem";
-  runtimeInputs = with pkgs; [ coreutils gnused ];
+  runtimeInputs = with pkgs; [
+    coreutils
+    gnused
+  ];
 
   text = ''
     gpu_dir=/sys/class/drm/card1/device

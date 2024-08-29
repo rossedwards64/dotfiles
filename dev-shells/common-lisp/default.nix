@@ -1,8 +1,17 @@
-{ pkgs ? import <nixpkgs> { } }:
+{
+  pkgs ? import <nixpkgs> { },
+}:
 
-let sbcl' = pkgs.sbcl.withPackages (ps: with ps; [ ]);
-in pkgs.mkShell {
-  nativeBuildInputs = with pkgs; [ sbcl' lispPackages.quicklisp asdf roswell ];
+let
+  sbcl' = pkgs.sbcl.withPackages (ps: with ps; [ ]);
+in
+pkgs.mkShell {
+  nativeBuildInputs = with pkgs; [
+    sbcl'
+    lispPackages.quicklisp
+    asdf
+    roswell
+  ];
   buildInputs = with pkgs; [ openssl ];
 
   shellHook = ''
