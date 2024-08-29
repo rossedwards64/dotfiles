@@ -1,10 +1,18 @@
-{ lib, config, pkgs, ... }:
+{
+  lib,
+  config,
+  pkgs,
+  ...
+}:
 with lib;
 let
   cfg = config.modules.zsh;
   xdg = config.xdg;
-in {
-  options.modules.zsh = { enable = mkEnableOption "zsh"; };
+in
+{
+  options.modules.zsh = {
+    enable = mkEnableOption "zsh";
+  };
 
   config = mkIf cfg.enable {
     programs = {
@@ -38,8 +46,7 @@ in {
           GOPATH = "${xdg.dataHome}/go";
           GRADLE_USER_HOME = "${xdg.dataHome}/gradle";
           KDEHOME = "${xdg.configHome}/kde";
-          LEDGER_FILE =
-            "$HOME/Documents/finance/$(${pkgs.coreutils}/bin/date -I | cut -d'-' -f1).journal";
+          LEDGER_FILE = "$HOME/Documents/finance/$(${pkgs.coreutils}/bin/date -I | cut -d'-' -f1).journal";
           LEIN_HOME = "${xdg.dataHome}/lein";
           PASSWORD_STORE_DIR = "${xdg.dataHome}/pass";
           PLATFORMIO_CORE_DIR = "${xdg.configHome}/platformio";
@@ -98,13 +105,10 @@ in {
           find = "${pkgs.fd}/bin/fd";
           du = "${pkgs.dust}/bin/dust -Hr";
           clear = "clear && ${pkgs.coreutils}/bin/stty sane";
-          update-home =
-            "${pkgs.nh}/bin/nh home switch --nom -c $HOST -- --impure";
-          upgrade-home =
-            "${pkgs.nh}/bin/nh home switch --nom --update -c $HOST -- --impure";
+          update-home = "${pkgs.nh}/bin/nh home switch --nom -c $HOST -- --impure";
+          upgrade-home = "${pkgs.nh}/bin/nh home switch --nom --update -c $HOST -- --impure";
           update-system = "${pkgs.nh}/bin/nh os switch --nom -- --impure";
-          upgrade-system =
-            "${pkgs.nh}/bin/nh os switch --nom --update -- --impure";
+          upgrade-system = "${pkgs.nh}/bin/nh os switch --nom --update -- --impure";
           nix-shell = "nix-shell --command zsh";
         };
 
@@ -119,7 +123,6 @@ in {
             "cp"
             "direnv"
             "extract"
-            "fd"
             "fzf"
             "git"
             "gitfast"
@@ -130,7 +133,6 @@ in {
             "lein"
             "otp"
             "pass"
-            "ripgrep"
             "ros"
             "rsync"
             "tmux"
@@ -138,7 +140,9 @@ in {
           ];
         };
 
-        syntaxHighlighting = { enable = true; };
+        syntaxHighlighting = {
+          enable = true;
+        };
 
         initExtra = ''
           nixify() {

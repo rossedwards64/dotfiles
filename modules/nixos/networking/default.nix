@@ -1,8 +1,17 @@
-{ lib, config, pkgs, ... }:
+{
+  lib,
+  config,
+  pkgs,
+  ...
+}:
 with lib;
-let cfg = config.modules.networking;
-in {
-  options.modules.networking = { enable = mkEnableOption "networking"; };
+let
+  cfg = config.modules.networking;
+in
+{
+  options.modules.networking = {
+    enable = mkEnableOption "networking";
+  };
 
   config = mkIf cfg.enable {
     networking = {
@@ -10,6 +19,9 @@ in {
       networkmanager.enable = true;
     };
 
-    services.avahi.enable = true;
+    services.avahi = {
+      enable = true;
+      nssmdns4 = true;
+    };
   };
 }
