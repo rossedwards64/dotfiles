@@ -895,7 +895,7 @@ The `with-eval-after-load` block is a workaround for [[https://github.com/emacs-
 	lsp-ui-imenu-enable t
 	lsp-ui-mode t
 	lsp-ui-peek-enable t
-	lsp-ui-sideline-enable t
+	lsp-ui-sideline-enable nil
 	lsp-ui-sideline-show-code-actions t
 	lsp-ui-sideline-show-diagnostics t
 	lsp-ui-sideline-show-hover t)

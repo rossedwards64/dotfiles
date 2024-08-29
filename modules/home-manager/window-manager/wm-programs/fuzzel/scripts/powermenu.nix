@@ -52,7 +52,6 @@ pkgs.writeShellApplication {
         "$suspend")
             ans=$(rdialog &)
             if [[ $ans == "yes" ]] || [[ $ans == "YES" ]] || [[ $ans == "y" ]]; then
-                playerctl pause
                 systemctl suspend
             elif [[ $ans == "no" ]] || [[ $ans == "NO" ]] || [[ $ans == "n" ]]; then
                 exit

@@ -4,12 +4,39 @@ let
     enable = true;
     devices = [ "ross-thinkpad-x230" "ross-thinkpad-x200" "ross-phone" ];
   };
+
+  fc = rec {
+    devPathPrefix = "/sys/devices";
+    cpu = devPathPrefix + "/platform/it87.2656/hwmon";
+    gpu = devPathPrefix
+      + "/pci0000:00/0000:00:03.1/0000:0a:00.0/0000:0b:00.0/0000:0c:00.0/hwmon";
+    hwmonPathPrefix = "/hwmon[[:print:]]*";
+    pwm = x: hwmonPathPrefix + "/pwm${toString x}";
+    tempInput = x: hwmonPathPrefix + "/temp${toString x}_input";
+    fanInput = x: hwmonPathPrefix + "/fan${toString x}_input";
+
+    makeAssignStatement = pair:
+      lib.concatStrings [
+        (builtins.head pair)
+        "="
+        (builtins.head (builtins.tail pair))
+      ];
+
+    assignToInput = input:
+      toString (map makeAssignStatement ([[ (gpu + (pwm 1)) (gpu + (input 1)) ]]
+        ++ map (x: [ (cpu + (pwm x)) (cpu + (input x)) ]) (lib.range 1 3)));
+
+    assignToNumber = num:
+      let numStr = toString num;
+      in toString (map makeAssignStatement ([[ (gpu + (pwm 1)) numStr ]]
+        ++ map (x: [ (cpu + (pwm x)) numStr ]) (lib.range 1 3)));
+  };
 in {
   imports = [ ./hardware-configuration.nix ];
 
   boot = {
     extraModulePackages = [ config.boot.kernelPackages.gcadapter-oc-kmod ];
-    kernelModules = [ "gcadapter_oc" ];
+    kernelModules = [ "gcadapter_oc" "it87" ];
     loader = {
       efi = {
         canTouchEfiVariables = true;
@@ -83,12 +110,16 @@ in {
 
     fancontrol = {
       enable = true;
-      config = ''
-        INTERVAL = 5
-        FCTEMPS  = hwmon4/pwm1=hwmon3/temp1_input
-        FCFANS   = hwmon4/pwm1=hwmon/fan1_input
-        MINTEMP  = hwmon5/pwm1=45
-        MAXTEMP  = hwmon5/pwm1=65
+      config = with fc; ''
+	INTERVAL=10
+	FCTEMPS=${assignToInput tempInput}
+	FCANS=${assignToInput fanInput}
+	MINTEMP=${assignToNumber 40}
+	MAXTEMP=${assignToNumber 65}
+	MINSTART=${assignToNumber 80}
+	MINSTOP=${assignToNumber 80}
+	MINPWM=${assignToNumber 125}
+	MAXPWM=${assignToNumber 255}
       '';
     };
 

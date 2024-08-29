@@ -28,6 +28,7 @@ in {
       unzip
     ];
 
+    xdg.enable = true;
     programs = {
       git = {
         enable = true;
@@ -79,23 +80,6 @@ in {
         enable = true;
         enableZshIntegration = true;
         pinentryPackage = pkgs.pinentry-qt;
-      };
-    };
-
-    xdg = {
-      enable = true;
-      configFile = {
-        "sbcl/init.lisp".text = ''
-          #-quicklisp
-          (let ((quicklisp-init (merge-pathnames
-                                  "quicklisp/setup.lisp"
-                                  (uiop:xdg-data-pathname))))
-            (when (probe-file quicklisp-init)
-              (load quicklisp-init)))
-        '';
-        "wireplumber.conf.d/10-disable-camera.conf".text = ''
-          wireplumber.profiles = { main = { monitor.libcamera = disabled } }
-        '';
       };
     };
   };

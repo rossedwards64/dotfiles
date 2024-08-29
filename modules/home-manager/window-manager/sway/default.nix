@@ -302,7 +302,8 @@ in {
               "${mod}+Shift+Up" = "move up";
               "${mod}+Shift+b" = "border toggle";
               "${mod}+Shift+c" = "reload";
-              "${mod}+Shift+g" = "exec ${pkgs.emacs29-pgtk}/bin/emacsclient -c -a=''";
+              "${mod}+Shift+g" =
+                "exec ${pkgs.emacs29-pgtk}/bin/emacsclient -c -a=''";
               "${mod}+Shift+minus" = "move scratchpad";
               "${mod}+Shift+q" = "kill";
               "${mod}+Shift+r" = ''mode "resize"'';
@@ -359,6 +360,12 @@ in {
               { command = "${pkgs.qbittorrent}/bin/qbittorrent"; }
               { command = "${pkgs.spot}/bin/spot"; }
               { command = "${pkgs.zathura}/bin/zathura"; }
+              { command = "${pkgs.steam}/bin/steam"; }
+              { command = "${pkgs.armcord}/bin/armcord"; }
+              {
+                command =
+                  "${pkgs.flatpak}/bin/flatpak run io.freetubeapp.FreeTube";
+              }
               {
                 command = "${pkgs.procps}/bin/pkill fuzzel";
                 always = true;
