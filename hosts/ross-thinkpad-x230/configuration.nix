@@ -21,7 +21,7 @@ in {
     };
   };
 
-  hardware.opengl.extraPackages = [ pkgs.intel-vaapi-driver ];
+  hardware.graphics.extraPackages = [ pkgs.intel-vaapi-driver ];
 
   services = {
     blueman.enable = true;

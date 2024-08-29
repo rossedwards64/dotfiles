@@ -9,7 +9,7 @@ in {
 
   boot.loader.grub.device = "/dev/sda";
 
-  hardware.opengl.extraPackages = [ pkgs.intel-vaapi-driver ];
+  hardware.graphics.extraPackages = [ pkgs.intel-vaapi-driver ];
 
   services = {
     xserver.xkb.layout = "gb";

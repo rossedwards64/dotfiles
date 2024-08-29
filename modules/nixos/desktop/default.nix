@@ -8,7 +8,7 @@ in {
     environment.systemPackages = with pkgs; [
       dolphin
       flatpak
-      gnome.gnome-software
+      gnome-software
       neovim
       rose-pine-icon-theme
       wayland

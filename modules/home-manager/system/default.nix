@@ -16,7 +16,7 @@ in {
       nil
       nix-health
       nix-info
-      nixfmt
+      nixfmt-rfc-style
       p7zip
       rar
       ripgrep

@@ -9,5 +9,7 @@ in {
       useDHCP = false;
       networkmanager.enable = true;
     };
+
+    services.avahi.enable = true;
   };
 }

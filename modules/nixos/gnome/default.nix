@@ -6,7 +6,7 @@ in {
 
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
-      gnome.gnome-software
+      gnome-software
       gnome.gnome-settings-daemon
       gnomeExtensions.appindicator
     ];

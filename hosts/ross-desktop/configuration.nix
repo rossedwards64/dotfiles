@@ -100,7 +100,7 @@ in {
   };
 
   hardware = {
-    opengl = {
+    graphics = {
       extraPackages = with pkgs; [
         vulkan-loader
         vulkan-validation-layers
@@ -111,15 +111,15 @@ in {
     fancontrol = {
       enable = true;
       config = with fc; ''
-	INTERVAL=10
-	FCTEMPS=${assignToInput tempInput}
-	FCANS=${assignToInput fanInput}
-	MINTEMP=${assignToNumber 40}
-	MAXTEMP=${assignToNumber 65}
-	MINSTART=${assignToNumber 80}
-	MINSTOP=${assignToNumber 80}
-	MINPWM=${assignToNumber 125}
-	MAXPWM=${assignToNumber 255}
+        INTERVAL=10
+        FCTEMPS=${assignToInput tempInput}
+        FCANS=${assignToInput fanInput}
+        MINTEMP=${assignToNumber 40}
+        MAXTEMP=${assignToNumber 65}
+        MINSTART=${assignToNumber 80}
+        MINSTOP=${assignToNumber 80}
+        MINPWM=${assignToNumber 125}
+        MAXPWM=${assignToNumber 255}
       '';
     };
 
