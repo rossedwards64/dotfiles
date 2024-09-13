@@ -39,7 +39,7 @@ in
           CARGO_HOME = "${xdg.dataHome}/cargo";
           CMAKE_GENERATOR = "Ninja";
           DIRENV_ALLOW_NIX = "1";
-          EDITOR = "${pkgs.emacs}/bin/emacs";
+          EDITOR = "${pkgs.emacs29-pgtk}/bin/emacs";
           EMACSDIR = "${xdg.configHome}/emacs";
           FLAKE = "$HOME/.dotfiles";
           GDBHISTFILE = "${xdg.dataHome}/gdb/history";
@@ -57,7 +57,7 @@ in
           TEXMFCONFIG = "${xdg.configHome}/texlive/texmf-config";
           TEXMFHOME = "${xdg.dataHome}/texlive/texmf";
           TEXMFVAR = "${xdg.stateHome}/texlive/texmf-var";
-          VISUAL = "${pkgs.emacs}/bin/emacsclient -c -a emacs";
+          VISUAL = "${pkgs.emacs29-pgtk}/bin/emacsclient -c -a emacs";
           WAKATIME_HOME = "${xdg.configHome}/wakatime";
           WINEPREFIX = "${xdg.dataHome}/wineprefixes/default";
           XCURSOR_SIZE = 24;

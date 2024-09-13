@@ -870,6 +870,7 @@ The `with-eval-after-load` block is a workaround for [[https://github.com/emacs-
 	     lsp-clients))
   
   (setq lsp-diagnostics-mode t
+	lsp-clients-clangd-executable "clangd"
 	lsp-enable-folding t
 	lsp-enable-on-type-formatting t
 	lsp-enable-relative-indentation t

@@ -14,6 +14,10 @@ in
   };
 
   config = mkIf cfg.enable {
+    environment.systemPackages = with pkgs; [
+      nss-mdns
+    ];
+
     networking = {
       useDHCP = false;
       networkmanager.enable = true;

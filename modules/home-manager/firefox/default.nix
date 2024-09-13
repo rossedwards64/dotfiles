@@ -9,7 +9,7 @@ let
   cfg = config.modules.firefox;
   defaultEngine = rec {
     name = "SearXNG";
-    url = "https://sx.zorby.top/";
+    url = "https://searx.tiekoetter.com/";
     icon = "${url}/favicon.ico";
     params = [
       {
