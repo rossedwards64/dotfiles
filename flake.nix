@@ -171,19 +171,6 @@
         };
     in
     {
-      nix = {
-        registry.nixpkgs.flake = nixpkgs;
-        package = nixpkgs.nixFlakes;
-        settings = {
-          auto-optimise-store = true;
-          experimental-features = [
-            "nix-command"
-            "flakes"
-          ];
-          allowed-users = [ username ];
-        };
-      };
-
       nixosConfigurations = {
         ross-desktop = makeSystem "ross-desktop" [
           {
@@ -192,6 +179,7 @@
               qemu.enable = true;
               window-manager.enable = true;
             };
+
             stylix.fonts.sizes = {
               inherit (largeFontSizes)
                 applications
