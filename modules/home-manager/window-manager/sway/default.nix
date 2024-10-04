@@ -8,7 +8,7 @@ with lib;
 let
   cfg = config.modules.sway;
   font = "Iosevka NF";
-  mod = "Mod4";
+  modifier = "Mod4";
   down = "j";
   right = "l";
   left = "h";
@@ -117,12 +117,12 @@ in
 
           config = {
             inherit
+              modifier
               down
               right
               left
               up
               ;
-            modifier = mod;
             bindkeysToCode = false;
             defaultWorkspace = "workspace number 1";
             menu = "${pkgs.fuzzel}/bin/fuzzel";
@@ -223,7 +223,7 @@ in
             };
 
             floating = {
-              modifier = mod;
+              modifier = modifier;
               border = 1;
               criteria = [ ];
               titlebar = true;
@@ -322,57 +322,65 @@ in
                 );
             };
 
-            keybindings =
+            keybindings = attrsets.mergeAttrsList [
+              (attrsets.mergeAttrsList (
+                lib.flatten [
+                  (builtins.map (num: {
+                    "${modifier}+${toString num}" = "workspace number ${toString num}";
+                    "${modifier}+Ctrl+${toString num}" = "move container to workspace number ${toString num}";
+                    "${modifier}+Shift+${toString num}" = "move container to workspace number ${toString num}, workspace number ${toString num}";
+                  }) (lists.range 0 9))
+                  (builtins.map
+                    (direction: {
+                      "${modifier}+${direction}" = "focus ${direction}";
+                      "${modifier}+Shift+${direction}" = "move ${direction}";
+                    })
+                    [
+                      left
+                      right
+                      up
+                      down
+                    ]
+                  )
+                ]
+              ))
+              (attrsets.concatMapAttrs
+                (key: monitor: {
+                  "${modifier}+${key}" = "move workspace to output ${monitor}";
+                })
+                {
+                  o = "HDMI-A-1";
+                  p = "DP-1";
+                }
+              )
               {
-                "${mod}+${down}" = "focus down";
-                "${mod}+${left}" = "focus left";
-                "${mod}+${right}" = "focus right";
-                "${mod}+${up}" = "focus up";
-                "${mod}+Down" = "focus down";
-                "${mod}+Escape" = ''exec "${pkgs.procps}/bin/pkill fuzzel || ${powermenuScript}/bin/powermenu"'';
-                "${mod}+Left" = "focus left";
-                "${mod}+Minus" = "scratchpad show";
-                "${mod}+Return" = "exec ${pkgs.alacritty}/bin/alacritty";
-                "${mod}+Right" = "focus right";
-                "${mod}+Shift+${down}" = "move down";
-                "${mod}+Shift+${left}" = "move left";
-                "${mod}+Shift+${right}" = "move right";
-                "${mod}+Shift+${up}" = "move up";
-                "${mod}+Shift+o" = "move workspace to output HDMI-A-1";
-                "${mod}+Shift+p" = "move workspace to output DP-1 ";
-                "${mod}+Shift+Down" = "move down";
-                "${mod}+Shift+Left" = "move left";
-                "${mod}+Shift+Right" = "move right";
-                "${mod}+Shift+Up" = "move up";
-                "${mod}+Shift+b" = "border toggle";
-                "${mod}+Shift+c" = "reload";
-                "${mod}+Shift+g" = "exec ${pkgs.emacs29-pgtk}/bin/emacsclient -c -a=''";
-                "${mod}+Shift+minus" = "move scratchpad";
-                "${mod}+Shift+q" = "kill";
-                "${mod}+Shift+r" = ''mode "resize"'';
-                "${mod}+r" = ''mode "default"'';
-                "${mod}+Shift+space" = "floating toggle";
-                "${mod}+Tab" = "${pkgs.procps}/bin/pkill fuzzel || ${windowsScript}/bin/windows";
-                "${mod}+Up" = "focus up";
-                "${mod}+a" = "focus parent";
-                "${mod}+b" = "splith";
-                "${mod}+c" = "exec ${toggleSinkScript}/bin/toggle-sink";
-                "${mod}+d" = ''exec "${pkgs.procps}/bin/pkill fuzzel || ${pkgs.fuzzel}/bin/fuzzel"'';
-                "${mod}+e" = "layout toggle split";
-                "${mod}+f" = "fullscreen";
-                "${mod}+s" = "layout stacking";
-                "${mod}+space" = "focus mode_toggle";
-                "${mod}+t" = "exec ${pkgs.swaynotificationcenter}/bin/swaync-client -t -sw";
-                "${mod}+v" = "splitv";
-                "${mod}+w" = "layout tabbed";
+                "${modifier}+Escape" = ''exec "${pkgs.procps}/bin/pkill fuzzel || ${powermenuScript}/bin/powermenu"'';
+                "${modifier}+Return" = "exec ${pkgs.alacritty}/bin/alacritty";
+                "${modifier}+Shift+Return" = "exec ${pkgs.firefox}/bin/firefox";
+                "${modifier}+Shift+g" = "exec ${pkgs.emacs29-pgtk}/bin/emacsclient -c -a=''";
+                "${modifier}+Tab" = "${pkgs.procps}/bin/pkill fuzzel || ${windowsScript}/bin/windows";
+                "${modifier}+c" = "exec ${toggleSinkScript}/bin/toggle-sink";
+                "${modifier}+d" = ''exec "${pkgs.procps}/bin/pkill fuzzel || ${pkgs.fuzzel}/bin/fuzzel"'';
+                "${modifier}+t" = "exec ${pkgs.swaynotificationcenter}/bin/swaync-client -t -sw";
                 "Print" = "exec ${screenshotScript}/bin/screenshot";
+                "${modifier}+g" = "splith";
+                "${modifier}+v" = "splitv";
+                "${modifier}+e" = "layout toggle split";
+                "${modifier}+s" = "layout stacking";
+                "${modifier}+w" = "layout tabbed";
+                "${modifier}+f" = "fullscreen";
+                "${modifier}+Shift+c" = "reload";
+                "${modifier}+Shift+q" = "kill";
+                "${modifier}+r" = ''mode "default"'';
+                "${modifier}+Shift+r" = ''mode "resize"'';
+                "${modifier}+Minus" = "scratchpad show";
+                "${modifier}+Shift+minus" = "move scratchpad";
+                "${modifier}+Shift+b" = "border toggle";
+                "${modifier}+Shift+space" = "floating toggle";
+                "${modifier}+a" = "focus parent";
+                "${modifier}+space" = "focus mode_toggle";
               }
-              // (attrsets.mergeAttrsList (
-                builtins.map (num: {
-                  "${mod}+${toString num}" = "workspace number ${toString num}";
-                  "${mod}+Shift+${toString num}" = "move container to workspace number ${toString num}, workspace number ${toString num}";
-                }) (lists.range 0 9)
-              ));
+            ];
 
             startup = [
               {

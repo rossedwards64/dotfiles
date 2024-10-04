@@ -96,8 +96,8 @@
 (use-package nerd-icons
   :config
   (let ((fonts-dir ".local/share/fonts"))
-      (unless (file-exists-p (concat (getenv "HOME") "/" fonts-dir "/NFM.ttf"))
-	(nerd-icons-install-fonts))))
+    (unless (file-exists-p (concat (getenv "HOME") "/" fonts-dir "/NFM.ttf"))
+      (nerd-icons-install-fonts))))
 
 <<dashboard>>
 
@@ -252,7 +252,8 @@
 (use-package ef-themes)
 (use-package exotica-theme)
 (use-package gruber-darker-theme)
-(use-package kanagawa-theme)
+(use-package kanagawa-theme
+  :elpaca nil)
 (use-package kuronami-theme)
 (use-package modus-themes)
 (use-package standard-themes)

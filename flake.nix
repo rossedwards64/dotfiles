@@ -12,16 +12,25 @@
     flake-utils.url = "github:numtide/flake-utils";
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     stylix.url = "github:danth/stylix";
+    ssbm.url = "github:djanatyn/ssbm-nix";
   };
 
   outputs =
-    { self, ... }@inputs:
+    {
+      self,
+      nixpkgs,
+      home-manager,
+      flake-utils,
+      nixos-hardware,
+      stylix,
+      ssbm,
+      ...
+    }@inputs:
     let
       inherit (self) outputs;
       username = "ross";
       system = "x86_64-linux";
-      nixpkgs = inputs.nixpkgs;
-      lib = nixpkgs.lib // inputs.home-manager.lib;
+      lib = nixpkgs.lib // home-manager.lib;
       pkgs = nixpkgs.legacyPackages.${system};
       specialArgs = {
         inherit inputs outputs username;
@@ -47,7 +56,7 @@
         popups = 14;
       };
 
-      stylix = {
+      stylixConfig = {
         base16Scheme = "${pkgs.base16-schemes}/share/themes/catppuccin-mocha.yaml";
 
         image = /home/${username}/Pictures/wallpapers + "/Gurren Lagann/simon.jpg";
@@ -79,8 +88,9 @@
           modules = [
             ./modules/nixos
             ./hosts/${hostname}/configuration.nix
-            inputs.stylix.nixosModules.stylix
-            { inherit stylix; }
+            stylix.nixosModules.stylix
+            ssbm.nixosModule
+            { stylix = stylixConfig; }
             (
               {
                 config,
@@ -91,6 +101,14 @@
               {
                 nixpkgs.config.allowUnfree = true;
                 stylix.enable = true;
+                ssbm = {
+                  overlay.enable = true;
+                  cache.enable = true;
+                  gcc = {
+                    oc-kmod.enable = true;
+                    rules.enable = true;
+                  };
+                };
 
                 modules = {
                   boot.enable = true;
@@ -117,6 +135,7 @@
                 thinkpad.enable = true;
                 window-manager.enable = true;
               };
+
               stylix.fonts.sizes = {
                 inherit (smallFontSizes)
                   applications
@@ -135,10 +154,11 @@
         lib.homeManagerConfiguration {
           inherit pkgs extraSpecialArgs;
           modules = [
+            # ssbm.homeManagerModule
+            stylix.homeManagerModules.stylix
             ./modules/home-manager
             ./home/home.nix
-            inputs.stylix.homeManagerModules.stylix
-            { inherit stylix; }
+            { stylix = stylixConfig; }
             (
               {
                 config,
@@ -148,6 +168,7 @@
               }:
               {
                 stylix.enable = true;
+
                 modules = {
                   alacritty.enable = true;
                   desktop.enable = true;
@@ -192,11 +213,11 @@
         ];
 
         ross-thinkpad-x230 = makeThinkpad "ross-thinkpad-x230" [
-          inputs.nixos-hardware.nixosModules.lenovo-thinkpad-x230
+          nixos-hardware.nixosModules.lenovo-thinkpad-x230
         ];
 
         ross-thinkpad-x200 = makeThinkpad "ross-thinkpad-x200" [
-          inputs.nixos-hardware.nixosModules.lenovo-thinkpad-x200s
+          nixos-hardware.nixosModules.lenovo-thinkpad-x200s
         ];
       };
 
@@ -207,9 +228,8 @@
           "${username}@ross-thinkpad-x200"
         ]
       );
-
     }
-    // inputs.flake-utils.lib.eachDefaultSystem (
+    // flake-utils.lib.eachDefaultSystem (
       system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
