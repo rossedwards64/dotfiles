@@ -330,23 +330,28 @@ in
                     "${modifier}+Ctrl+${toString num}" = "move container to workspace number ${toString num}";
                     "${modifier}+Shift+${toString num}" = "move container to workspace number ${toString num}, workspace number ${toString num}";
                   }) (lists.range 0 9))
-                  (builtins.map
-                    (direction: {
-                      "${modifier}+${direction}" = "focus ${direction}";
-                      "${modifier}+Shift+${direction}" = "move ${direction}";
-                    })
-                    [
-                      left
-                      right
-                      up
-                      down
-                    ]
-                  )
+
                 ]
               ))
               (attrsets.concatMapAttrs
+                (key: direction: {
+                  "${modifier}+${key}" = "focus ${direction}";
+                  "${modifier}+Shift+${key}" = "move ${direction}";
+                })
+                {
+		  ${left} = "left";
+                  ${right} = "right";
+                  ${up} = "up";
+                  ${down} = "down";
+                  left = "left";
+                  right = "right";
+                  up = "up";
+                  down = "down";
+                }
+              )
+              (attrsets.concatMapAttrs
                 (key: monitor: {
-                  "${modifier}+${key}" = "move workspace to output ${monitor}";
+                  "${modifier}+Shift+${key}" = "move workspace to output ${monitor}";
                 })
                 {
                   o = "HDMI-A-1";
@@ -365,9 +370,9 @@ in
                 "Print" = "exec ${screenshotScript}/bin/screenshot";
                 "${modifier}+g" = "splith";
                 "${modifier}+v" = "splitv";
-                "${modifier}+e" = "layout toggle split";
-                "${modifier}+s" = "layout stacking";
-                "${modifier}+w" = "layout tabbed";
+                "${modifier}+b" = "splitt";
+                "${modifier}+e" = "layout toggle all";
+                "${modifier}+w" = "layout default";
                 "${modifier}+f" = "fullscreen";
                 "${modifier}+Shift+c" = "reload";
                 "${modifier}+Shift+q" = "kill";
@@ -377,6 +382,7 @@ in
                 "${modifier}+Shift+minus" = "move scratchpad";
                 "${modifier}+Shift+b" = "border toggle";
                 "${modifier}+Shift+space" = "floating toggle";
+                "${modifier}+Ctrl+space" = "sticky toggle";
                 "${modifier}+a" = "focus parent";
                 "${modifier}+space" = "focus mode_toggle";
               }
