@@ -15,7 +15,6 @@ in
 
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
-      dolphin
       flatpak
       gnome-software
       neovim
@@ -25,6 +24,7 @@ in
       wl-clipboard
       xwayland
     ];
+
     services = {
       xserver = {
         enable = true;

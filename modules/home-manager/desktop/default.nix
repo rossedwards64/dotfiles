@@ -16,6 +16,7 @@ in
   config = mkIf cfg.enable {
     home.packages = with pkgs; [
       ani-cli
+      ark
       armcord
       gimp
       hledger
@@ -30,6 +31,10 @@ in
       qbittorrent
       texliveFull
       vlc
+      xfce.thunar
+      xfce.thunar-archive-plugin
+      xfce.thunar-media-tags-plugin
+      xfce.thunar-volman
       zathura
     ];
 
