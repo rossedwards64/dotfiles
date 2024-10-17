@@ -85,6 +85,7 @@ in
     programs = {
       steam = {
         enable = true;
+        protontricks.enable = true;
         remotePlay.openFirewall = true;
         dedicatedServer.openFirewall = true;
         localNetworkGameTransfers.openFirewall = true;
@@ -96,6 +97,12 @@ in
             "-f"
           ];
         };
+
+        fontPackages = with pkgs; [
+          noto-fonts
+          noto-fonts-cjk
+          noto-fonts-emoji
+        ];
       };
     };
   };

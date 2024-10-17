@@ -980,6 +980,10 @@ The `with-eval-after-load` block is a workaround for [[https://github.com/emacs-
 **** Common Lisp
 #+BEGIN_SRC emacs-lisp
 (use-package sly
+  :hook
+  (((sly-mode . (lambda ()
+		  (unless (sly-connected-p)
+		    (save-excursion (sly)))))))
   :config
   (setq inferior-lisp-program "sbcl"))
 #+END_SRC

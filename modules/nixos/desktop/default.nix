@@ -33,6 +33,8 @@ in
           options = "ctrl:nocaps";
         };
       };
+
+      jackett.enable = true;
     };
 
     xdg.portal = {

@@ -44,27 +44,29 @@ let
     }
   '';
 
-  any = ".*";
-  discordRegexp = "^ArmCord$";
-  emacsRegexp = "^emacs(client)?$";
-  epicGamesRegexp = "^heroic$";
-  firefoxRegexp = "^firefox$";
-  freetubeRegexp = "^FreeTube$";
-  gameConquerorRegexp = "^GameConqueror.py$";
-  gameRegexp = "^(factorio|youronlymoveishustle|dwarfort|gamescope).*$";
-  intellijRegexp = "^jetbrains-idea$";
-  itchioRegexp = "^itch$";
-  lutrisRegexp = "^lutris$";
-  minecraftRegexp = "^com-atlauncher-App$";
-  mpvRegexp = "^mpv$";
-  qBitTorrentRegexp = "^org.qbittorrent.qBittorrent$";
-  spotifyRegexp = "^(dev.alextren.)?Spot(ify)?$";
-  steamGameRegexp = "^steam_app_[0-9]*$";
-  steamRegexp = "^steam$";
-  terminalRegexp = "^Alacritty$";
-  vlcRegexp = "^vlc$";
-  volumeRegexp = "^pavucontrol$";
-  zathuraRegexp = "^org.pwmt.zathura$";
+  regexp = {
+    any = ".*";
+    discord = "^ArmCord$";
+    emacs = "^emacs(client)?$";
+    epicGames = "^heroic$";
+    firefox = "^firefox$";
+    freetube = "^FreeTube$";
+    gameConqueror = "^GameConqueror.py$";
+    game = "^(factorio|youronlymoveishustle|dwarfort|gamescope).*$";
+    intellij = "^jetbrains-idea$";
+    itchio = "^itch$";
+    lutris = "^lutris$";
+    minecraft = "^com-atlauncher-App$";
+    mpv = "^mpv$";
+    qBitTorrent = "^org.qbittorrent.qBittorrent$";
+    spotify = "^(dev.alextren.)?Spot(ify)?$";
+    steamGame = "^steam_app_[0-9]*$";
+    steam = "^steam$";
+    terminal = "^Alacritty$";
+    vlc = "^vlc$";
+    volume = "^org.pulseaudio.pavucontrol$";
+    zathura = "^org.pwmt.zathura$";
+  };
 in
 {
   options.modules.sway = {
@@ -78,7 +80,10 @@ in
           enable = true;
           checkConfig = false;
           xwayland = true;
-          wrapperFeatures.gtk = true;
+          wrapperFeatures = {
+            base = true;
+            gtk = true;
+          };
 
           systemd = {
             enable = true;
@@ -123,6 +128,7 @@ in
               left
               up
               ;
+
             bindkeysToCode = false;
             defaultWorkspace = "workspace number 1";
             menu = "${pkgs.fuzzel}/bin/fuzzel";
@@ -152,31 +158,31 @@ in
             };
 
             assigns = {
-              "workspace 1" = [ { app_id = emacsRegexp; } ];
-              "workspace 2" = [ { app_id = terminalRegexp; } ];
-              "workspace 3" = [ { app_id = firefoxRegexp; } ];
-              "workspace 4" = [ { class = discordRegexp; } ];
+              "workspace 1" = [ { app_id = regexp.emacs; } ];
+              "workspace 2" = [ { app_id = regexp.terminal; } ];
+              "workspace 3" = [ { app_id = regexp.firefox; } ];
+              "workspace 4" = [ { class = regexp.discord; } ];
               "workspace 5" = [
-                { app_id = spotifyRegexp; }
-                { class = freetubeRegexp; }
-                { app_id = mpvRegexp; }
-                { class = vlcRegexp; }
+                { app_id = regexp.spotify; }
+                { class = regexp.freetube; }
+                { app_id = regexp.mpv; }
+                { class = regexp.vlc; }
               ];
               "workspace 6" = [
-                { class = steamRegexp; }
-                { class = epicGamesRegexp; }
-                { class = itchioRegexp; }
-                { app_id = lutrisRegexp; }
-                { class = minecraftRegexp; }
-                { app_id = gameConquerorRegexp; }
+                { class = regexp.steam; }
+                { class = regexp.epicGames; }
+                { class = regexp.itchio; }
+                { app_id = regexp.lutris; }
+                { class = regexp.minecraft; }
+                { app_id = regexp.gameConqueror; }
               ];
               "workspace 7" = [
-                { class = steamGameRegexp; }
-                { class = gameRegexp; }
-                { app_id = gameRegexp; }
+                { class = regexp.steamGame; }
+                { class = regexp.game; }
+                { app_id = regexp.game; }
               ];
               "workspace 8" = [ ];
-              "workspace 9" = [ { class = intellijRegexp; } ];
+              "workspace 9" = [ { class = regexp.intellij; } ];
               "workspace 10" = [ ];
             };
 
@@ -254,10 +260,10 @@ in
                   }
                   {
                     criteria = {
-                      title = any;
-                      app_id = any;
-                      instance = any;
-                      class = any;
+                      title = regexp.any;
+                      app_id = regexp.any;
+                      instance = regexp.any;
+                      class = regexp.any;
 
                     };
                     command = ''
@@ -284,8 +290,8 @@ in
                     }
                   ])
                   [
-                    steamGameRegexp
-                    gameRegexp
+                    regexp.steamGame
+                    regexp.game
                   ]
                 )
                 ++ (builtins.map
@@ -304,17 +310,17 @@ in
                   )
                   [
                     {
-                      app_id = volumeRegexp;
+                      app_id = regexp.volume;
                       width = 800;
                       height = 600;
                     }
                     {
-                      app_id = zathuraRegexp;
+                      app_id = regexp.zathura;
                       width = 800;
                       height = 600;
                     }
                     {
-                      app_id = qBitTorrentRegexp;
+                      app_id = regexp.qBitTorrent;
                       width = 800;
                       height = 600;
                     }
@@ -339,7 +345,7 @@ in
                   "${modifier}+Shift+${key}" = "move ${direction}";
                 })
                 {
-		  ${left} = "left";
+                  ${left} = "left";
                   ${right} = "right";
                   ${up} = "up";
                   ${down} = "down";
@@ -359,6 +365,7 @@ in
                 }
               )
               {
+                "Print" = "exec ${screenshotScript}/bin/screenshot";
                 "${modifier}+Escape" = ''exec "${pkgs.procps}/bin/pkill fuzzel || ${powermenuScript}/bin/powermenu"'';
                 "${modifier}+Return" = "exec ${pkgs.alacritty}/bin/alacritty";
                 "${modifier}+Shift+Return" = "exec ${pkgs.firefox}/bin/firefox";
@@ -367,24 +374,23 @@ in
                 "${modifier}+c" = "exec ${toggleSinkScript}/bin/toggle-sink";
                 "${modifier}+d" = ''exec "${pkgs.procps}/bin/pkill fuzzel || ${pkgs.fuzzel}/bin/fuzzel"'';
                 "${modifier}+t" = "exec ${pkgs.swaynotificationcenter}/bin/swaync-client -t -sw";
-                "Print" = "exec ${screenshotScript}/bin/screenshot";
-                "${modifier}+g" = "splith";
-                "${modifier}+v" = "splitv";
+                "${modifier}+Ctrl+space" = "sticky toggle";
+                "${modifier}+Minus" = "scratchpad show";
+                "${modifier}+Shift+b" = "border toggle";
+                "${modifier}+Shift+c" = "reload";
+                "${modifier}+Shift+minus" = "move scratchpad";
+                "${modifier}+Shift+q" = "kill";
+                "${modifier}+Shift+r" = ''mode "resize"'';
+                "${modifier}+Shift+space" = "floating toggle";
+                "${modifier}+a" = "focus parent";
                 "${modifier}+b" = "splitt";
                 "${modifier}+e" = "layout toggle all";
-                "${modifier}+w" = "layout default";
                 "${modifier}+f" = "fullscreen";
-                "${modifier}+Shift+c" = "reload";
-                "${modifier}+Shift+q" = "kill";
+                "${modifier}+g" = "splith";
                 "${modifier}+r" = ''mode "default"'';
-                "${modifier}+Shift+r" = ''mode "resize"'';
-                "${modifier}+Minus" = "scratchpad show";
-                "${modifier}+Shift+minus" = "move scratchpad";
-                "${modifier}+Shift+b" = "border toggle";
-                "${modifier}+Shift+space" = "floating toggle";
-                "${modifier}+Ctrl+space" = "sticky toggle";
-                "${modifier}+a" = "focus parent";
                 "${modifier}+space" = "focus mode_toggle";
+                "${modifier}+v" = "splitv";
+                "${modifier}+w" = "layout default";
               }
             ];
 
@@ -404,17 +410,16 @@ in
                 command = "${pkgs.autotiling}/bin/autotiling -w 1 2 3 4 5 6 7 8 9 10";
               }
               { command = "${pkgs.alacritty}/bin/alacritty"; }
-              { command = "${pkgs.emacs29-pgtk}/bin/emacsclient -c -a=''"; }
               { command = "${pkgs.firefox}/bin/firefox"; }
               { command = "${pkgs.lutris}/bin/lutris"; }
               { command = "${pkgs.qbittorrent}/bin/qbittorrent"; }
               { command = "${pkgs.spot}/bin/spot"; }
-              { command = "${pkgs.zathura}/bin/zathura"; }
               { command = "${pkgs.steam}/bin/steam"; }
               { command = "${pkgs.armcord}/bin/armcord"; }
               {
                 command = "${pkgs.flatpak}/bin/flatpak run io.freetubeapp.FreeTube";
               }
+              { command = "${pkgs.emacs29-pgtk}/bin/emacsclient -c -a=''"; }
               {
                 command = "${pkgs.procps}/bin/pkill fuzzel";
                 always = true;
