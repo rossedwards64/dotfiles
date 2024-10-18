@@ -11,8 +11,23 @@
 
     flake-utils.url = "github:numtide/flake-utils";
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
-    stylix.url = "github:danth/stylix";
-    ssbm.url = "github:djanatyn/ssbm-nix";
+
+    stylix = {
+      url = "github:danth/stylix";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.home-manager.follows = "home-manager";
+    };
+
+    ssbm = {
+      url = "github:djanatyn/ssbm-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    plasma-manager = {
+      url = "github:nix-community/plasma-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.home-manager.follows = "home-manager";
+    };
   };
 
   outputs =
@@ -24,12 +39,15 @@
       nixos-hardware,
       stylix,
       ssbm,
+      plasma-manager,
       ...
     }@inputs:
     let
       inherit (self) outputs;
       username = "ross";
       system = "x86_64-linux";
+      window-manager.enable = true;
+      kde.enable = !window-manager.enable;
       lib = nixpkgs.lib // home-manager.lib;
       pkgs = nixpkgs.legacyPackages.${system};
       specialArgs = {
@@ -132,8 +150,8 @@
           [
             {
               modules = {
+                inherit window-manager kde;
                 thinkpad.enable = true;
-                window-manager.enable = true;
               };
 
               stylix.fonts.sizes = {
@@ -156,6 +174,7 @@
           modules = [
             # ssbm.homeManagerModule
             stylix.homeManagerModules.stylix
+            plasma-manager.homeManagerModules.plasma-manager
             ./modules/home-manager
             ./home/home.nix
             { stylix = stylixConfig; }
@@ -170,6 +189,7 @@
                 stylix.enable = true;
 
                 modules = {
+		  inherit window-manager;
                   alacritty.enable = true;
                   desktop.enable = true;
                   emacs.enable = true;
@@ -183,7 +203,6 @@
                   theme.enable = true;
                   tmux.enable = true;
                   topgrade.enable = true;
-                  window-manager.enable = true;
                   zsh.enable = true;
                 };
               }
@@ -196,9 +215,8 @@
         ross-desktop = makeSystem "ross-desktop" [
           {
             modules = {
-              # kde.enable = true;
+	      inherit window-manager kde;
               qemu.enable = true;
-              window-manager.enable = true;
             };
 
             stylix.fonts.sizes = {
@@ -228,24 +246,5 @@
           "${username}@ross-thinkpad-x200"
         ]
       );
-    }
-    // flake-utils.lib.eachDefaultSystem (
-      system:
-      let
-        pkgs = nixpkgs.legacyPackages.${system};
-      in
-      {
-        devShells = lib.attrsets.mergeAttrsList (
-          builtins.map (lang: { ${lang} = import ./dev-shells/${lang} { inherit pkgs; }; }) [
-            "c-cpp"
-            "clojure"
-            "common-lisp"
-            "embedded"
-            "java"
-            "rust"
-            "scheme"
-          ]
-        );
-      }
-    );
+    };
 }

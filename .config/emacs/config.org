@@ -412,13 +412,17 @@
 
 (use-package org-roam
   :bind
-  (:map global-map
-	("C-c nl" . org-roam-buffer-toggle)
-	("C-c nf" . org-roam-node-find)
-	("C-c ng" . org-roam-graph)
-	("C-c ni" . org-roam-node-insert)
-	("C-c nc" . org-roam-capture)
-	("C-c nj" . org-roam-dailies-capture-today))
+  ((:map global-map
+	 ("C-c nl" . org-roam-buffer-toggle)
+	 ("C-c nf" . org-roam-node-find)
+	 ("C-c ng" . org-roam-graph)
+	 ("C-c ni" . org-roam-node-insert)
+	 ("C-c nc" . org-roam-capture)
+	 ("C-c ny" . org-roam-dailies-capture-yesterday)
+	 ("C-c nj" . org-roam-dailies-capture-today)
+	 ("C-c nt" . org-roam-dailies-capture-tomorrow))
+   (:map org-mode-map
+	 ("C-M-i" . completion-at-point)))
   :config
   (setq org-roam-node-display-template
 	(concat "${title:*} " (propertize "${tags:10}"

@@ -7,6 +7,10 @@
 }:
 let
   inherit (specialArgs) username;
+  font = {
+    family = "Iosevka NF";
+    pointSize = 10;
+  };
 in
 {
   programs.home-manager.enable = true;
@@ -114,4 +118,60 @@ in
       uris = [ "qemu:///system" ];
     };
   };
+
+  programs.plasma = {
+      enable = true;
+
+      kwin = {
+        effects = {
+          blur.enable = true;
+          desktopSwitching.animation = "slide";
+          dimAdminMode.enable = true;
+          dimInactive.enable = true;
+        };
+
+        scripts.polonium.enable = false;
+        tiling.padding = 2;
+      };
+
+      workspace = {
+        wallpaper = "/home/ross/Pictures/wallpapers/Gurren Lagann/lordgenome.jpeg";
+      };
+
+      powerdevil = {
+        battery = {
+          displayBrightness = 75;
+          powerProfile = "powerSaving";
+
+          autoSuspend = {
+            action = "sleep";
+            idleTimeout = 600;
+          };
+
+          dimDisplay = {
+            enable = true;
+            idleTimeout = 180;
+          };
+        };
+      };
+
+      fonts = {
+        general = font;
+        fixedWidth = font;
+        menu = font;
+        small = font;
+        toolbar = font;
+        windowTitle = font;
+      };
+
+      input = {
+        keyboard = {
+          layouts = [
+            { layout = "gb"; }
+            { layout = "us"; }
+          ];
+          options = [ "ctrl:nocaps" ];
+        };
+      };
+    };
 }
