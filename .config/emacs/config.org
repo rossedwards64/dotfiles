@@ -183,7 +183,6 @@
   (toggle-text-mode-auto-fill)
   (blink-cursor-mode -1)
   (global-auto-revert-mode +1)
-  (global-display-fill-column-indicator-mode +1)
   (global-hl-line-mode +1)
   (global-prettify-symbols-mode +1)
   (menu-bar-mode -1)
@@ -199,10 +198,6 @@
 
 (use-package vterm)
 (use-package pass)
-
-(use-package smex
-  :defines smex-save-file
-  :config (smex-initialize))
 #+END_SRC
 
 * Themes
@@ -252,8 +247,6 @@
 (use-package ef-themes)
 (use-package exotica-theme)
 (use-package gruber-darker-theme)
-(use-package kanagawa-theme
-  :elpaca nil)
 (use-package kuronami-theme)
 (use-package modus-themes)
 (use-package standard-themes)
@@ -469,6 +462,10 @@
 (use-package org-bookmark-heading)
 (use-package ox-pandoc)
 (use-package org-ac)
+(use-package company-org-block
+  :hook ((org-mode . (lambda ()
+		       (setq-local company-backends '(company-org-block))
+		       (company-mode +1)))))
 #+END_SRC
 
 * UI
@@ -534,18 +531,11 @@
   (dolist (mode '(doc-view-mode pdf-view-mode))
     (add-to-list 'dabbrev-ignored-buffer-modes mode)))
 
-(use-package counsel
-  :bind
-  (("M-x" . counsel-M-x)))
+(use-package counsel)
 
 (use-package consult
   :bind
-  (:map mode-specific-map
-	("M-x" . consult-mode-command)
-	("ch" . consult-history)
-	("cm" . consult-man)
-	("ci" . consult-info)
-	:map global-map
+  (:map global-map
 	([remap switch-to-buffer] . consult-buffer)
 	([remap switch-to-buffer-other-window] . consult-buffer-other-window)
 	([remap switch-to-buffer-other-frame] . consult-buffer-other-frame)
@@ -1206,8 +1196,7 @@ have to scroll past it every time I read or edit my config.
 	dashboard-set-navigator t
 	dashboard-projects-switch-function 'projectile-switch-project
 	dashboard-projects-backend 'projectile
-	dashboard-items '((projects . 3)
-			  (agenda . 3))
+	dashboard-items (mapcar (lambda (k) `(,k . 3)) '(recents agenda projects))
 	dashboard-footer-icon (all-the-icons-fileicon "nix"
 						      :height 1.1
 						      :v-adjust -0.05

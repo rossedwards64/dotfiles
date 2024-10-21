@@ -11,6 +11,7 @@
 
     flake-utils.url = "github:numtide/flake-utils";
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
+    emacs-overlay.url = "github:/nix-community/emacs-overlay";
 
     stylix = {
       url = "github:danth/stylix";
@@ -37,6 +38,7 @@
       home-manager,
       flake-utils,
       nixos-hardware,
+      emacs-overlay,
       stylix,
       ssbm,
       plasma-manager,
@@ -51,7 +53,12 @@
       lib = nixpkgs.lib // home-manager.lib;
       pkgs = nixpkgs.legacyPackages.${system};
       specialArgs = {
-        inherit inputs outputs username;
+        inherit
+          inputs
+          outputs
+          username
+          system
+          ;
       };
       extraSpecialArgs = specialArgs;
 
@@ -117,7 +124,12 @@
                 ...
               }:
               {
-                nixpkgs.config.allowUnfree = true;
+                imports = [ /etc/nixos/cachix.nix ];
+                nixpkgs = {
+                  config.allowUnfree = true;
+                  overlays = [ emacs-overlay.overlays.default ];
+                };
+
                 stylix.enable = true;
                 ssbm = {
                   overlay.enable = true;
@@ -189,7 +201,7 @@
                 stylix.enable = true;
 
                 modules = {
-		  inherit window-manager;
+                  inherit window-manager;
                   alacritty.enable = true;
                   desktop.enable = true;
                   emacs.enable = true;
@@ -215,7 +227,7 @@
         ross-desktop = makeSystem "ross-desktop" [
           {
             modules = {
-	      inherit window-manager kde;
+              inherit window-manager kde;
               qemu.enable = true;
             };
 

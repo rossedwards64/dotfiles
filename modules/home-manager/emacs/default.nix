@@ -2,12 +2,14 @@
   lib,
   config,
   pkgs,
+  inputs,
+  system,
   ...
 }:
 with lib;
 let
   cfg = config.modules.emacs;
-  package = pkgs.emacs29-pgtk;
+  package = inputs.emacs-overlay.packages.${system}.emacs-unstable-pgtk;
 in
 {
   options.modules.emacs = {

@@ -2,6 +2,8 @@
   lib,
   config,
   pkgs,
+  inputs,
+  system,
   ...
 }:
 with lib;
@@ -22,6 +24,8 @@ let
   powermenuScript = import ../wm-programs/fuzzel/scripts/powermenu.nix { inherit pkgs; };
   screenshotScript = import ../wm-programs/fuzzel/scripts/screenshot.nix { inherit pkgs; };
   windowsScript = import ../wm-programs/fuzzel/scripts/windows.nix { inherit pkgs; };
+
+  emacsPackage = inputs.emacs-overlay.packages.${system}.emacs-unstable-pgtk;
 
   addToScratchpad = (
     width: height: ''
@@ -369,7 +373,7 @@ in
                 "${modifier}+Escape" = ''exec "${pkgs.procps}/bin/pkill fuzzel || ${powermenuScript}/bin/powermenu"'';
                 "${modifier}+Return" = "exec ${pkgs.alacritty}/bin/alacritty";
                 "${modifier}+Shift+Return" = "exec ${pkgs.firefox}/bin/firefox";
-                "${modifier}+Shift+g" = "exec ${pkgs.emacs29-pgtk}/bin/emacsclient -c -a=''";
+                "${modifier}+Shift+g" = "exec ${emacsPackage}/bin/emacsclient -c -a=''";
                 "${modifier}+Tab" = "${pkgs.procps}/bin/pkill fuzzel || ${windowsScript}/bin/windows";
                 "${modifier}+c" = "exec ${toggleSinkScript}/bin/toggle-sink";
                 "${modifier}+d" = ''exec "${pkgs.procps}/bin/pkill fuzzel || ${pkgs.fuzzel}/bin/fuzzel"'';
@@ -419,7 +423,7 @@ in
               {
                 command = "${pkgs.flatpak}/bin/flatpak run io.freetubeapp.FreeTube";
               }
-              { command = "${pkgs.emacs29-pgtk}/bin/emacsclient -c -a=''"; }
+              { command = "${emacsPackage}/bin/emacsclient -c -a=''"; }
               {
                 command = "${pkgs.procps}/bin/pkill fuzzel";
                 always = true;
