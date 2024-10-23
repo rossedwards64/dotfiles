@@ -43,15 +43,21 @@
 (setenv "LSP_USE_PLISTS" "true")
 
 (defvar font-name "Iosevka NF")
-(defvar macbook-hostname "Rosss-MacBook-Pro.local")
 
 (defun ross/set-font (frame)
   "Apply FONT to FRAME."
   (when (and (find-font (font-spec :name font-name))
 	     (display-graphic-p frame))
-    (let ((font-height (pcase (system-name)
-			 ((pred (string-equal macbook-hostname)) 180)
-			 (_ 120))))
+    (let* ((resolution-width (display-pixel-width))
+	   (resolution-height (display-pixel-height))
+	   (font-height (cond
+			 ((and (<= resolution-width 1366)
+			       (<= resolution-height) 768) 120)
+			 ((and (<= resolution-width 1920)
+			       (<= resolution-height 1080)) 130)
+			 ((or (> resolution-width 1920)
+			      (> resolution-height 1080)) 160)
+			 (t 120))))
       (dolist (mode '(default fixed-pitch variable-pitch))
 	(set-face-attribute mode nil
 			    :family font-name
@@ -130,11 +136,11 @@
 
   (dolist (frame-setting
 	   `((fullscreen . maximized)
-	     (alpha-background . ,(pcase (system-name)
-				    ((pred (string-equal macbook-hostname)) 100)
-				    (_ 95)))))
-    (add-to-list 'default-frame-alist frame-setting)
-    (set-frame-parameter nil 'alpha-background 0.95))
+	     (alpha-background . ,(if (eq system-type 'darwin)
+				      100
+				    95))))
+    (add-to-list 'default-frame-alist frame-setting))
+  (set-frame-parameter nil 'alpha-background 0.95)
   
   (advice-add #'completing-read-multiple :filter-args
 	      (lambda (args)
@@ -381,7 +387,9 @@
 	:map global-map
 	("C-c na" . #'org-agenda))
   :hook ((org-mode . auto-complete-mode)
-	 (org-mode . variable-pitch-mode))
+	 (org-mode . variable-pitch-mode)
+	 (org-mode . (lambda ()
+		       (setq-local tab-width 8))))
   :config
   (dolist (face '((org-level-1 . 1.2)
 		  (org-level-2 . 1.1)
