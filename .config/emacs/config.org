@@ -134,13 +134,16 @@
   :init
   (mapc (lambda (frame) (ross/set-font frame)) (frame-list))
 
-  (dolist (frame-setting
-	   `((fullscreen . maximized)
-	     (alpha-background . ,(if (eq system-type 'darwin)
-				      100
-				    95))))
-    (add-to-list 'default-frame-alist frame-setting))
-  (set-frame-parameter nil 'alpha-background 0.95)
+  (let ((alpha-value (if (eq system-type 'darwin)
+			 100
+		       95)))
+    (dolist (frame-setting
+	     `((fullscreen . maximized)
+	       (alpha-background . ,alpha-value)))
+      (add-to-list 'default-frame-alist frame-setting))
+    (add-hook 'after-make-frame-functions
+	      (set-frame-parameter nil 'alpha-background
+				   (/ (float alpha-value) 100))))
   
   (advice-add #'completing-read-multiple :filter-args
 	      (lambda (args)
@@ -1156,6 +1159,7 @@ The `with-eval-after-load` block is a workaround for [[https://github.com/emacs-
 	([remap project-shell-command] . projectile-run-shell-command-in-root)
 	([remap project-async-shell-command] . projectile-run-async-shell-command-in-root)))
 
+(use-package git-commit)
 (use-package magit
   :bind (("C-c v g" . magit)))
 
