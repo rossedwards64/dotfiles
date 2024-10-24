@@ -19,7 +19,7 @@ in
       packages = with pkgs; [
         iosevka
         noto-fonts
-        noto-fonts-cjk
+        noto-fonts-cjk-sans
         noto-fonts-emoji
         source-code-pro
         source-han-mono

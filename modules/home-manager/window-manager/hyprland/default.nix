@@ -27,7 +27,7 @@ let
 
   any = "^(.*)$";
   steamGameRegexp = "^(steam_app_[0-9]*)$";
-  discordRegexp = "^(ArmCord)$";
+  discordRegexp = "^(legcord)$";
   emacsRegexp = "^(emacs(client)?)$";
   epicGamesRegexp = "^(heroic)$";
   firefoxRegexp = "^(firefox)$";

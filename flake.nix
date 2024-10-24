@@ -19,15 +19,20 @@
       inputs.home-manager.follows = "home-manager";
     };
 
+    plasma-manager = {
+      url = "github:nix-community/plasma-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.home-manager.follows = "home-manager";
+    };
+
     ssbm = {
       url = "github:djanatyn/ssbm-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    plasma-manager = {
-      url = "github:nix-community/plasma-manager";
+    nix-gaming = {
+      url = "github:fufexan/nix-gaming";
       inputs.nixpkgs.follows = "nixpkgs";
-      inputs.home-manager.follows = "home-manager";
     };
   };
 
@@ -39,6 +44,7 @@
       flake-utils,
       nixos-hardware,
       emacs-overlay,
+      nix-gaming,
       stylix,
       ssbm,
       plasma-manager,
@@ -115,6 +121,8 @@
             ./hosts/${hostname}/configuration.nix
             stylix.nixosModules.stylix
             ssbm.nixosModule
+            nix-gaming.nixosModules.pipewireLowLatency
+            nix-gaming.nixosModules.platformOptimizations
             { stylix = stylixConfig; }
             (
               {
@@ -125,6 +133,16 @@
               }:
               {
                 imports = [ /etc/nixos/cachix.nix ];
+
+                nix = {
+                  settings.trusted-users = [
+                    "root"
+                    "ross"
+                  ];
+
+                  nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
+                };
+
                 nixpkgs = {
                   config.allowUnfree = true;
                   overlays = [ emacs-overlay.overlays.default ];

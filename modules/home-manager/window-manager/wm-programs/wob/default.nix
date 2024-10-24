@@ -7,9 +7,6 @@
 with lib;
 let
   cfg = config.modules.wob;
-  white = "ffffffff";
-  black = "000000ff";
-  red = "ff0000ff";
 in
 {
   options.modules.wob = {
@@ -33,12 +30,6 @@ in
           overflow_mode = "nowrap";
           height = 30;
           width = 300;
-          border_color = "${white}";
-          background_color = "${black}";
-          bar_color = "${white}";
-          overflow_border_color = "${white}";
-          overflow_background_color = "${black}";
-          overflow_bar_color = "${red}";
           output_mode = "focused";
         };
       };

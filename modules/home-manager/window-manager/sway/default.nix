@@ -50,7 +50,7 @@ let
 
   regexp = {
     any = ".*";
-    discord = "^ArmCord$";
+    discord = "^legcord$";
     emacs = "^emacs(client)?$";
     epicGames = "^heroic$";
     firefox = "^firefox$";
@@ -416,10 +416,11 @@ in
               { command = "${pkgs.alacritty}/bin/alacritty"; }
               { command = "${pkgs.firefox}/bin/firefox"; }
               { command = "${pkgs.lutris}/bin/lutris"; }
+              { command = "${pkgs.itch}/bin/itch"; }
               { command = "${pkgs.qbittorrent}/bin/qbittorrent"; }
               { command = "${pkgs.spot}/bin/spot"; }
               { command = "${pkgs.steam}/bin/steam"; }
-              { command = "${pkgs.armcord}/bin/armcord"; }
+              { command = "${pkgs.legcord}/bin/legcord"; }
               {
                 command = "${pkgs.flatpak}/bin/flatpak run io.freetubeapp.FreeTube";
               }

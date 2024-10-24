@@ -147,7 +147,7 @@ in
       };
     };
 
-    udev.packages = [ pkgs.dolphinEmu ];
+    udev.packages = [ pkgs.dolphin-emu ];
   };
 
   hardware = {

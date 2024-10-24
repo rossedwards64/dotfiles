@@ -2,6 +2,7 @@
   lib,
   config,
   pkgs,
+  inputs,
   ...
 }:
 with lib;
@@ -27,7 +28,7 @@ in
       glxinfo
       gzdoom
       heroic
-      # itch # dependency is currently broken
+      itch # dependency is currently broken
       lutris
       mangohud
       mupen64plus
@@ -41,8 +42,6 @@ in
       space-station-14-launcher
       srb2
       srb2kart
-      steam-tui
-      steamPackages.steamcmd
       vkd3d-proton
       vulkan-tools
 
@@ -89,6 +88,7 @@ in
         remotePlay.openFirewall = true;
         dedicatedServer.openFirewall = true;
         localNetworkGameTransfers.openFirewall = true;
+        platformOptimizations.enable = true;
         gamescopeSession = {
           enable = true;
           args = [
@@ -100,7 +100,7 @@ in
 
         fontPackages = with pkgs; [
           noto-fonts
-          noto-fonts-cjk
+          noto-fonts-cjk-sans
           noto-fonts-emoji
         ];
       };

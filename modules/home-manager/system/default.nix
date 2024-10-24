@@ -21,9 +21,9 @@ in
       ffmpeg
       fzf
       gcr
-      nil
       nix-health
       nix-info
+      nixd
       nixfmt-rfc-style
       p7zip
       rar

@@ -17,7 +17,7 @@ in
     home.packages = with pkgs; [
       ani-cli
       ark
-      armcord
+      legcord
       gimp
       hledger
       hledger
