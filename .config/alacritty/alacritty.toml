@@ -12,10 +12,43 @@ duration = 0
 draw_bold_text_with_bright_colors = false
 transparent_background_colors = true
 
+[colors.normal]
+black = "#1e1e2e"
+blue = "#89b4fa"
+cyan = "#94e2d5"
+green = "#a6e3a1"
+magenta = "#cba6f7"
+red = "#f38ba8"
+white = "#cdd6f4"
+yellow = "#f9e2af"
+
+[colors.bright]
+black = "#45475a"
+blue = "#89b4fa"
+cyan = "#94e2d5"
+green = "#a6e3a1"
+magenta = "#cba6f7"
+red = "#f38ba8"
+white = "#b4befe"
+yellow = "#f9e2af"
+
+[colors.primary]
+background = "#1e1e2e"
+bright_foreground = "#b4befe"
+foreground = "#cdd6f4"
+
+[colors.selection]
+background = "#313244"
+text = "#cdd6f4"
+
 [cursor]
 blink_interval = 750
 thickness = 0.15
 unfocused_hollow = true
+
+[colors.cursor]
+cursor = "#cdd6f4"
+text = "#1e1e2e"
 
 [cursor.style]
 blinking = "On"
@@ -525,8 +558,8 @@ multiplier = 3
 semantic_escape_chars = ",│`|:\"' ()[]{}<>\t"
 
 [shell]
-#args = ["-l", "-c", "tmux"]
-program = "/bin/zsh"
+program = "zsh"
+args = ["-l", "-c", "tmux"]
 
 [window]
 decorations = "full"

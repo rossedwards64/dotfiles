@@ -13,7 +13,7 @@ export ZSH="$XDG_DATA_HOME/oh-my-zsh"
 export ZDOTDIR="$HOME/.config/zsh"
 export ZSH_COMPDUMP="$ZSH/cache/.zcompdump-$HOST"
 
-# Shell enviornment
+# Shell environment
 export LANG="en_GB.UTF-8"
 export EDITOR='emacsclient -c -a ""'
 export ALTERNATE_EDITOR="nvim"
@@ -27,6 +27,7 @@ export SDL_VIDEODRIVER="wayland"
 export MOZ_ENABLE_WAYLAND=1
 export CMAKE_GENERATOR="Ninja"
 export XAUTHORITY="$XDG_RUNTIME_DIR/Xauthority"
+export SVDIR="$XDG_CONFIG_HOME/service"
 
 # Home dirs
 export CARGO_HOME="$XDG_DATA_HOME/cargo"

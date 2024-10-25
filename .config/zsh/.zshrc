@@ -4,13 +4,11 @@ COMPLETION_WAITING_DOTS="true"
 HIST_STAMPS="dd/mm/yyyy"
 
 plugins=(
-    archlinux
     colored-man-pages
     command-not-found
     cp
     #emacs
     extract
-    fd
     fzf
     git
     gitfast
@@ -21,7 +19,6 @@ plugins=(
     lein
     otp
     pass
-    ripgrep
     ros
     rsync
     tmux
@@ -59,11 +56,6 @@ alias find="fd"
 alias du="dust -Hr"
 alias stow="stow -v"
 alias clear="clear && stty sane"
-alias cleanup="sudo pacman -Rns $(pacman -Qtdq)"
-alias pkgsearch="yay -Slq | \
-                    fzf --preview 'yay -Si {}' \
-                        --layout=reverse \
-                        --bind 'enter:execute(yay -S {})+accept'"
 
 if [[ ${XDG_CURRENT_DESKTOP} = "sway" ]]; then
     alias zathura="swayhide zathura"
@@ -99,7 +91,6 @@ prompt_context() {
     fi
 }
 
-eval "$(antidot init)"
 eval "$(zoxide init zsh)"
 
 if [[ $TERM == "tramp" ]] && [[ -n $INSIDE_EMACS ]]; then

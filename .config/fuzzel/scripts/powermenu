@@ -1,4 +1,4 @@
-!#/usr/bin/env bash
+#!/usr/bin/env bash
 
 uptime="$(uptime -p | sed -e 's/up //g')"
 
@@ -20,7 +20,7 @@ case $chosen in
     "$shutdown")
         ans=$(rdialog &)
         if [[ $ans == "yes" ]] || [[ $ans == "YES" ]] || [[ $ans == "y" ]]; then
-            systemctl poweroff
+            loginctl poweroff
         elif [[ $ans == "no" ]] || [[ $ans == "NO" ]] || [[ $ans == "n" ]]; then
             exit
         fi
@@ -28,7 +28,7 @@ case $chosen in
     "$reboot")
         ans=$(rdialog &)
         if [[ $ans == "yes" ]] || [[ $ans == "YES" ]] || [[ $ans == "y" ]]; then
-            systemctl reboot
+            loginctl reboot
         elif [[ $ans == "no" ]] || [[ $ans == "NO" ]] || [[ $ans == "n" ]]; then
             exit
         fi
@@ -40,7 +40,7 @@ case $chosen in
         ans=$(rdialog &)
         if [[ $ans == "yes" ]] || [[ $ans == "YES" ]] || [[ $ans == "y" ]]; then
             playerctl pause
-            systemctl suspend
+            loginctl suspend
         elif [[ $ans == "no" ]] || [[ $ans == "NO" ]] || [[ $ans == "n" ]]; then
             exit
         fi

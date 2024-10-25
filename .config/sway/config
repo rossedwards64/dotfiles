@@ -68,11 +68,9 @@ output LVDS-1 {
 
 exec {
     # background programs
-    systemctl --user import-environment $SESSION_VARS
-    dbus-update-activation-environment --systemd $SESSION_VARS
     pavucontrol
     swayidle -w
-    udiskie -ant &
+    udiskie -ant
     wl-paste --type image --watch cliphist store
     wl-paste --type text --watch cliphist store
     autotiling -w 1 2 3 4 5 6 7 8 9 10
@@ -80,16 +78,18 @@ exec {
     # regular programs
     emacs
     alacritty
-    firefox
+    falkon
     zathura
 }
 
 exec_always {
     pkill fuzzel
-    systemctl --user start sway-session.target
-    systemctl --user restart waybar
     rm -f $WOBSOCK && mkfifo $WOBSOCK && tail -f $WOBSOCK | wob
     swaync-client -R -rs -sw
+}
+
+bar {
+    swaybar_command waybar
 }
 
 input "type:keyboard" {
