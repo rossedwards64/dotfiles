@@ -20,6 +20,7 @@
 - [[#documents][Documents]]
 - [[#project-tools][Project Tools]]
 - [[#lemmy][Lemmy]]
+- [[#finance][Finance]]
 - [[#startup-dashboard][Startup Dashboard]]
 - [[#package-manager][Package Manager]]
 
@@ -42,14 +43,21 @@
 (setenv "LSP_USE_PLISTS" "true")
 
 (defvar font-name "Iosevka NF")
-(defvar macbook-hostname "Rosss-MacBook-Pro.local")
 
 (defun ross/set-font (frame)
   "Apply FONT to FRAME."
-  (when (display-graphic-p frame)
-    (let ((font-height (pcase (system-name)
-			 ((pred (string-equal macbook-hostname)) 180)
-			 (_ 120))))
+  (when (and (find-font (font-spec :name font-name))
+	     (display-graphic-p frame))
+    (let* ((resolution-width (display-pixel-width))
+	   (resolution-height (display-pixel-height))
+	   (font-height (cond
+			 ((and (<= resolution-width 1366)
+			       (<= resolution-height) 768) 120)
+			 ((and (<= resolution-width 1920)
+			       (<= resolution-height 1080)) 130)
+			 ((or (> resolution-width 1920)
+			      (> resolution-height 1080)) 160)
+			 (t 120))))
       (dolist (mode '(default fixed-pitch variable-pitch))
 	(set-face-attribute mode nil
 			    :family font-name
@@ -93,8 +101,9 @@
 
 (use-package nerd-icons
   :config
-  (unless (file-exists-p (concat (getenv "HOME") "/.local/share/fonts/NFM.ttf"))
-    (nerd-icons-install-fonts)))
+  (let ((fonts-dir ".local/share/fonts"))
+    (unless (file-exists-p (concat (getenv "HOME") "/" fonts-dir "/NFM.ttf"))
+      (nerd-icons-install-fonts))))
 
 <<dashboard>>
 
@@ -125,12 +134,16 @@
   :init
   (mapc (lambda (frame) (ross/set-font frame)) (frame-list))
 
-  (dolist (frame-setting
-	   `((fullscreen . maximized)
-	     (alpha-background . ,(pcase (system-name)
-				    ((pred (string-equal macbook-hostname)) 100)
-				    (_ 95)))))
-    (add-to-list 'default-frame-alist frame-setting))
+  (let ((alpha-value (if (eq system-type 'darwin)
+			 100
+		       95)))
+    (dolist (frame-setting
+	     `((fullscreen . maximized)
+	       (alpha-background . ,alpha-value)))
+      (add-to-list 'default-frame-alist frame-setting))
+    (add-hook 'after-make-frame-functions
+	      (set-frame-parameter nil 'alpha-background
+				   (/ (float alpha-value) 100))))
   
   (advice-add #'completing-read-multiple :filter-args
 	      (lambda (args)
@@ -161,6 +174,11 @@
 	make-backup-files nil
 	read-process-output-max (* 1024 1024)
 	require-final-newline t
+	savehist-additional-variables '(kill-ring
+					search-ring
+					regexp-search-ring
+					projectile-project-command-history
+					counsel-M-x-history)
 	tab-always-indent 'complete
 	tab-width 4
 	treesit-extra-load-path '((concat elpaca-builds-directory "/tree-sitter-langs/bin"))
@@ -174,7 +192,6 @@
   (toggle-text-mode-auto-fill)
   (blink-cursor-mode -1)
   (global-auto-revert-mode +1)
-  (global-display-fill-column-indicator-mode +1)
   (global-hl-line-mode +1)
   (global-prettify-symbols-mode +1)
   (menu-bar-mode -1)
@@ -239,7 +256,6 @@
 (use-package ef-themes)
 (use-package exotica-theme)
 (use-package gruber-darker-theme)
-(use-package kanagawa-theme)
 (use-package kuronami-theme)
 (use-package modus-themes)
 (use-package standard-themes)
@@ -374,7 +390,9 @@
 	:map global-map
 	("C-c na" . #'org-agenda))
   :hook ((org-mode . auto-complete-mode)
-	 (org-mode . variable-pitch-mode))
+	 (org-mode . variable-pitch-mode)
+	 (org-mode . (lambda ()
+		       (setq-local tab-width 8))))
   :config
   (dolist (face '((org-level-1 . 1.2)
 		  (org-level-2 . 1.1)
@@ -398,13 +416,17 @@
 
 (use-package org-roam
   :bind
-  (:map global-map
-	("C-c nl" . org-roam-buffer-toggle)
-	("C-c nf" . org-roam-node-find)
-	("C-c ng" . org-roam-graph)
-	("C-c ni" . org-roam-node-insert)
-	("C-c nc" . org-roam-capture)
-	("C-c nj" . org-roam-dailies-capture-today))
+  ((:map global-map
+	 ("C-c nl" . org-roam-buffer-toggle)
+	 ("C-c nf" . org-roam-node-find)
+	 ("C-c ng" . org-roam-graph)
+	 ("C-c ni" . org-roam-node-insert)
+	 ("C-c nc" . org-roam-capture)
+	 ("C-c ny" . org-roam-dailies-capture-yesterday)
+	 ("C-c nj" . org-roam-dailies-capture-today)
+	 ("C-c nt" . org-roam-dailies-capture-tomorrow))
+   (:map org-mode-map
+	 ("C-M-i" . completion-at-point)))
   :config
   (setq org-roam-node-display-template
 	(concat "${title:*} " (propertize "${tags:10}"
@@ -451,6 +473,10 @@
 (use-package org-bookmark-heading)
 (use-package ox-pandoc)
 (use-package org-ac)
+(use-package company-org-block
+  :hook ((org-mode . (lambda ()
+		       (setq-local company-backends '(company-org-block))
+		       (company-mode +1)))))
 #+END_SRC
 
 * UI
@@ -520,12 +546,7 @@
 
 (use-package consult
   :bind
-  (:map mode-specific-map
-	("M-x" . consult-mode-command)
-	("ch" . consult-history)
-	("cm" . consult-man)
-	("ci" . consult-info)
-	:map global-map
+  (:map global-map
 	([remap switch-to-buffer] . consult-buffer)
 	([remap switch-to-buffer-other-window] . consult-buffer-other-window)
 	([remap switch-to-buffer-other-frame] . consult-buffer-other-frame)
@@ -707,7 +728,8 @@
 	mu4e-change-filenames-when-moving t
 	mu4e-update-interval 3600
 	mu4e-notification-support t
-	mail-user-agent 'mu4e-user-agent)
+	mail-user-agent 'mu4e-user-agent
+	message-mail-user-agent t)
   (mu4e-alert-enable-notifications)
   (mu4e-alert-enable-mode-line-display)
   :custom
@@ -854,6 +876,7 @@ The `with-eval-after-load` block is a workaround for [[https://github.com/emacs-
 	     lsp-clients))
   
   (setq lsp-diagnostics-mode t
+	lsp-clients-clangd-executable "clangd"
 	lsp-enable-folding t
 	lsp-enable-on-type-formatting t
 	lsp-enable-relative-indentation t
@@ -879,7 +902,7 @@ The `with-eval-after-load` block is a workaround for [[https://github.com/emacs-
 	lsp-ui-imenu-enable t
 	lsp-ui-mode t
 	lsp-ui-peek-enable t
-	lsp-ui-sideline-enable t
+	lsp-ui-sideline-enable nil
 	lsp-ui-sideline-show-code-actions t
 	lsp-ui-sideline-show-diagnostics t
 	lsp-ui-sideline-show-hover t)
@@ -962,7 +985,12 @@ The `with-eval-after-load` block is a workaround for [[https://github.com/emacs-
 **** Common Lisp
 #+BEGIN_SRC emacs-lisp
 (use-package sly
-  :config (setq inferior-lisp-program "ros -L sbcl -Q run"))
+  :hook
+  (((sly-mode . (lambda ()
+		  (unless (sly-connected-p)
+		    (save-excursion (sly)))))))
+  :config
+  (setq inferior-lisp-program "sbcl"))
 #+END_SRC
 
 **** Emacs Lisp
@@ -1131,6 +1159,7 @@ The `with-eval-after-load` block is a workaround for [[https://github.com/emacs-
 	([remap project-shell-command] . projectile-run-shell-command-in-root)
 	([remap project-async-shell-command] . projectile-run-async-shell-command-in-root)))
 
+(use-package git-commit)
 (use-package magit
   :bind (("C-c v g" . magit)))
 
@@ -1152,6 +1181,13 @@ The `with-eval-after-load` block is a workaround for [[https://github.com/emacs-
 	lem-instance-url "https://programming.dev"))
 #+END_SRC
 
+* Finance
+#+begin_src emacs-lisp
+(use-package ledger-mode)
+
+(use-package flymake-hledger)
+#+end_src
+
 * Startup Dashboard
 This is a massive configuration block that won't be updated very
 often, so have org-babel tangle it into the first src block so I don't
@@ -1172,8 +1208,7 @@ have to scroll past it every time I read or edit my config.
 	dashboard-set-navigator t
 	dashboard-projects-switch-function 'projectile-switch-project
 	dashboard-projects-backend 'projectile
-	dashboard-items '((projects . 3)
-			  (agenda . 3))
+	dashboard-items (mapcar (lambda (k) `(,k . 3)) '(recents agenda projects))
 	dashboard-footer-icon (all-the-icons-fileicon "nix"
 						      :height 1.1
 						      :v-adjust -0.05
