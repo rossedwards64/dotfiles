@@ -37,7 +37,6 @@ in
           ARCHFLAGS = "-arch x86_64";
           BROWSER = "${pkgs.firefox}/bin/firefox";
           CARGO_HOME = "${xdg.dataHome}/cargo";
-          CMAKE_GENERATOR = "Ninja";
           DIRENV_ALLOW_NIX = "1";
           EDITOR = "${pkgs.emacs29-pgtk}/bin/emacs";
           EMACSDIR = "${xdg.configHome}/emacs";

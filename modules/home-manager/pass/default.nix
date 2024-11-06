@@ -17,12 +17,11 @@ in
   config = mkIf cfg.enable {
     home.packages = with pkgs; [
       pass-git-helper
-      #passExtensions.pass-audit
+      passExtensions.pass-audit
       passExtensions.pass-checkup
       passExtensions.pass-genphrase
       passExtensions.pass-import
       passExtensions.pass-otp
-      passExtensions.pass-tomb
       passExtensions.pass-update
     ];
 

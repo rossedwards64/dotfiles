@@ -351,10 +351,12 @@
   (setq org-src-preserve-indentation t
 	org-src-window-setup 'other-window
 	org-directory "~/Documents/org"
-	org-agenda-files (cl-map 'list (lambda (path)
-					 (concat org-directory path))
-				 '("/agenda.org"))
+	org-agenda-files `(,(concat org-directory "/agenda.org"))
+	org-agenda-custom-commands '(("i" "Inbox"
+				      ((todo ".*" ((org-agenda-files `(,(concat org-directory "/todo.org")))
+						   (org-agenda-overriding-header "Unprocessed Inbox Items"))))))
 	org-log-done 'time
+	org-log-into-drawer t
 	org-plantuml-exec-path (executable-find "plantuml")
 	org-pretty-entities-include-sub-superscripts t
 	org-return-follows-link t
