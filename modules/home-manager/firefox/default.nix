@@ -8,8 +8,8 @@ with lib;
 let
   cfg = config.modules.firefox;
   defaultEngine = rec {
-    name = "SearXNG";
-    url = "https://searx.tiekoetter.com/";
+    name = "Qwant";
+    url = "https://www.qwant.com/";
     icon = "${url}/favicon.ico";
     params = [
       {
@@ -17,7 +17,7 @@ let
         value = "{searchTerms}";
       }
     ];
-    alias = "@searxng";
+    alias = "@${lib.toLower name}";
   };
   updateInterval = 24 * 60 * 60 * 1000;
 in

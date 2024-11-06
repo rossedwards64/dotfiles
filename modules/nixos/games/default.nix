@@ -2,7 +2,6 @@
   lib,
   config,
   pkgs,
-  inputs,
   ...
 }:
 with lib;
@@ -18,7 +17,7 @@ in
     environment.systemPackages = with pkgs; [
       devilutionx
       duckstation
-      dwarf-fortress
+      dwarf-fortress-packages.dwarf-fortress-full
       dxvk_2
       fallout-ce
       fallout2-ce
@@ -28,7 +27,7 @@ in
       glxinfo
       gzdoom
       heroic
-      itch # dependency is currently broken
+      itch
       lutris
       mangohud
       mupen64plus

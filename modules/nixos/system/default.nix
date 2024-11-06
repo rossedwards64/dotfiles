@@ -2,7 +2,6 @@
   lib,
   config,
   pkgs,
-  inputs,
   ...
 }:
 with lib;
@@ -18,7 +17,7 @@ in
     environment = {
       systemPackages = with pkgs; [
         bc
-	cachix
+        cachix
         jdk
         killall
         libnotify

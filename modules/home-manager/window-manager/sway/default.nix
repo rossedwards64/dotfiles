@@ -56,7 +56,7 @@ let
     firefox = "^firefox$";
     freetube = "^FreeTube$";
     gameConqueror = "^GameConqueror.py$";
-    game = "^(factorio|youronlymoveishustle|dwarfort|gamescope).*$";
+    game = "^(dwarfort|factorio|gamescope|spring|youronlymoveishustle).*$";
     intellij = "^jetbrains-idea$";
     itchio = "^itch$";
     lutris = "^lutris$";
@@ -64,8 +64,10 @@ let
     mpv = "^mpv$";
     qBitTorrent = "^org.qbittorrent.qBittorrent$";
     spotify = "^(dev.alextren.)?Spot(ify)?$";
-    steamGame = "^steam_app_[0-9]*$";
-    steam = "^steam$";
+    steam = {
+      client = "^steam$";
+      game = "^steam_app_[0-9]*$";
+    };
     terminal = "^Alacritty$";
     vlc = "^vlc$";
     volume = "^org.pulseaudio.pavucontrol$";
@@ -173,7 +175,7 @@ in
                 { class = regexp.vlc; }
               ];
               "workspace 6" = [
-                { class = regexp.steam; }
+                { class = regexp.steam.client; }
                 { class = regexp.epicGames; }
                 { class = regexp.itchio; }
                 { app_id = regexp.lutris; }
@@ -181,7 +183,7 @@ in
                 { app_id = regexp.gameConqueror; }
               ];
               "workspace 7" = [
-                { class = regexp.steamGame; }
+                { class = regexp.steam.game; }
                 { class = regexp.game; }
                 { app_id = regexp.game; }
               ];
@@ -208,8 +210,15 @@ in
               HDMI-A-1 = {
                 scale = "1";
                 res = "1920x1080@75Hz";
+                pos = "1920 0";
                 bg = "${wallpapersDir}/Jujutsu Kaisen/vol4.jpg fill";
-                pos = "1920 190";
+              };
+
+              DP-2 = {
+                scale = "1";
+                res = "1280x1024@75Hz";
+                pos = "3840 498";
+                bg = "${wallpapersDir}/Chainsaw Man/csm.jpg fill";
               };
             };
 
@@ -294,7 +303,7 @@ in
                     }
                   ])
                   [
-                    regexp.steamGame
+                    regexp.steam.game
                     regexp.game
                   ]
                 )
@@ -365,7 +374,8 @@ in
                 })
                 {
                   o = "HDMI-A-1";
-                  p = "DP-1";
+                  i = "DP-1";
+                  p = "DP-2";
                 }
               )
               {

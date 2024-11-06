@@ -10,7 +10,8 @@ let
   font = "Iosevka NF";
   height = 32;
   hdmi = "HDMI-A-1";
-  dp = "DP-1";
+  dp1 = "DP-1";
+  dp2 = "DP-2";
   laptopScreen = "LVDS-1";
   layer = "bottom";
 
@@ -670,8 +671,8 @@ in
             ]
         );
 
-        topbar-dp = (
-          makeBarWithLabels "top" dp
+        topbar-dp1 = (
+          makeBarWithLabels "top" dp1
             [
               "${custom.launcher.name}"
               "${custom.separator.name}"
@@ -691,8 +692,8 @@ in
             ]
         );
 
-        bottombar-dp = (
-          makeBarWithLabels "bottom" dp
+        bottombar-dp1 = (
+          makeBarWithLabels "bottom" dp1
             [
               "${custom.separator.name}"
               "${custom.separator.name}"
@@ -702,6 +703,35 @@ in
               "${custom.separator.name}"
               "${builtin.sway.scratchpad.name}"
               "${builtin.sway.window.name}"
+              "${custom.separator.name}"
+            ]
+        );
+
+        topbar-dp2 = (
+          makeBarNoLabels "top" dp2
+            [
+              "${custom.launcher.name}"
+              "${custom.separator.name}"
+              "${custom.separator.name}"
+            ]
+            [ "${builtin.clock.name}" ]
+            [
+              "${custom.separator.name}"
+              "${custom.separator.name}"
+              "${custom.power.name}"
+            ]
+        );
+
+        bottombar-dp2 = (
+          makeBarNoLabels "bottom" dp2
+            [
+              "${builtin.tray.name}"
+              "${custom.separator.name}"
+              "${custom.separator.name}"
+            ]
+            [ "${builtin.taskbar.name}" ]
+            [
+              "${custom.separator.name}"
               "${custom.separator.name}"
             ]
         );

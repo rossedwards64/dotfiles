@@ -252,7 +252,7 @@
 	       (concat elpaca-builds-directory "everblush-theme")))
 
 (use-package catppuccin-theme
-  :config (ross/set-theme-maybe-daemon 'catppuccin))
+  :config (ross/set-theme 'catppuccin))
 (use-package ef-themes)
 (use-package exotica-theme)
 (use-package gruber-darker-theme)
@@ -273,25 +273,13 @@
   (switch-to-buffer (find-file-noselect
 		     (concat user-emacs-directory "config.org"))))
 
-(defun ross/set-theme-maybe-daemon (theme)
-  "Apply THEME to FRAME and handle normal and client Emacs instances."
+(defun ross/set-theme (theme)
+  "Apply THEME."
   (if (daemonp)
       (add-hook 'after-make-frame-functions
-		(lambda (frame)
-		  (ross/set-theme-daemon theme frame)))
-    (ross/set-theme theme)))
-
-(defun ross/set-theme-daemon (theme frame)
-  "Apply THEME to FRAME and clean up \\=`after-make-frame-functions\\=' hook."
-  (ross/set-theme theme frame)
-  (remove-hook 'after-make-frame-functions #'ross/set-theme)
-  (fmakunbound 'ross/set-theme))
-
-(defun ross/set-theme (theme &optional frame)
-  "Apply THEME to FRAME."
-  (if frame
-      (with-selected-frame frame
-	(load-theme theme t))
+				(lambda (frame)
+				  (with-selected-frame frame
+					(load-theme theme t))))
     (load-theme theme t)))
 
 (with-eval-after-load "org"

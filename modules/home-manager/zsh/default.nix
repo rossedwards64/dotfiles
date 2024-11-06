@@ -105,10 +105,10 @@ in
           find = "${pkgs.fd}/bin/fd";
           du = "${pkgs.dust}/bin/dust -Hr";
           clear = "clear && ${pkgs.coreutils}/bin/stty sane";
-          update-home = "${pkgs.nh}/bin/nh home switch --nom -c $HOST -- --impure";
-          upgrade-home = "${pkgs.nh}/bin/nh home switch --nom --update -c $HOST -- --impure";
-          update-system = "${pkgs.nh}/bin/nh os switch --nom -- --impure";
-          upgrade-system = "${pkgs.nh}/bin/nh os switch --nom --update -- --impure";
+          update-home = "${pkgs.nh}/bin/nh home switch --backup-extension=bak -- --impure";
+          upgrade-home = "${pkgs.nh}/bin/nh home switch --backup-extension=bak --update -- --impure";
+          update-system = "${pkgs.nh}/bin/nh os switch -- --impure";
+          upgrade-system = "${pkgs.nh}/bin/nh os switch --update -- --impure";
           nix-shell = "nix-shell --command zsh";
         };
 
@@ -146,21 +146,6 @@ in
 
         initExtra = ''
           nixify() {
-            if [ ! -e ./envrc ]; then
-              echo "use nix" > .envrc
-              direnv allow
-            fi
-            if [[ ! -e shell.nix ]] && [[ ! -e default.nix ]]; then
-              cat > default.nix <<'EOF'
-          with import <nixpkgs> {};
-          mkShell {
-            nativeBuildInputs = [ bashInteractive ];
-          }
-          EOF
-            fi
-          }
-
-          flakify() {
             if [ ! -e flake.nix ]; then
               nix flake new -t github:nix-community/nix-direnv .
             elif [ ! -e .envrc ]; then
