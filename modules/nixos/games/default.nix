@@ -45,9 +45,8 @@ in
       vulkan-tools
 
       (steam.override {
-        extraPkgs =
+        extraLibraries =
           pkgs: with pkgs; [
-            inconsolata
             SDL
             SDL2_image
             fontconfig
@@ -81,6 +80,7 @@ in
     ];
 
     programs = {
+      gamemode.enable = true;
       steam = {
         enable = true;
         protontricks.enable = true;

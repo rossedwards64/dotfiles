@@ -141,7 +141,14 @@ in
             terminal = "${pkgs.alacritty}/bin/alacritty";
             workspaceAutoBackAndForth = true;
             workspaceLayout = "tabbed";
-            workspaceOutputAssign = [ ];
+
+            workspaceOutputAssign = [
+              {
+                workspace = "7";
+                output = "DP-1";
+              }
+            ];
+
             bars = [ ];
 
             seat = {

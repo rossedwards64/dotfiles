@@ -667,6 +667,8 @@ in
             [ "${builtin.taskbar.name}" ]
             [
               "${custom.separator.name}"
+	      "${builtin.sway.scratchpad.name}"
+              "${builtin.sway.window.name}"
               "${custom.separator.name}"
             ]
         );
@@ -695,6 +697,7 @@ in
         bottombar-dp1 = (
           makeBarWithLabels "bottom" dp1
             [
+	      "${builtin.tray.name}"
               "${custom.separator.name}"
               "${custom.separator.name}"
             ]
@@ -732,6 +735,8 @@ in
             [ "${builtin.taskbar.name}" ]
             [
               "${custom.separator.name}"
+	      "${builtin.sway.scratchpad.name}"
+              "${builtin.sway.window.name}"
               "${custom.separator.name}"
             ]
         );

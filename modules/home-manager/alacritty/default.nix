@@ -29,8 +29,21 @@ in
     programs.alacritty = {
       enable = true;
       settings = {
-        ipc_socket = true;
-        live_config_reload = true;
+        general = {
+          ipc_socket = true;
+          live_config_reload = true;
+        };
+
+        terminal = {
+          shell = {
+            args = [
+              "-l"
+              "-c"
+              "${pkgs.tmuxinator}/bin/tmuxinator default"
+            ];
+            program = "${pkgs.zsh}/bin/zsh";
+          };
+        };
 
         scrolling = {
           history = 10000;
@@ -38,15 +51,6 @@ in
         };
 
         selection.semantic_escape_chars = '',│`|:"' ()[]{}<>	'';
-
-        shell = {
-          args = [
-            "-l"
-            "-c"
-            "${pkgs.tmuxinator}/bin/tmuxinator default"
-          ];
-          program = "${pkgs.zsh}/bin/zsh";
-        };
 
         window = {
           decorations = "full";
@@ -167,11 +171,6 @@ in
           {
             action = "Copy";
             key = "Copy";
-          }
-          {
-            action = "ClearLogNotice";
-            key = "L";
-            mods = "Control";
           }
           {
             chars = "f";

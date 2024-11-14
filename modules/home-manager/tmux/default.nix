@@ -103,10 +103,6 @@ in
         bind h split-window -v -c "#{pane_current_path}"
         bind -nr S-left previous-window
         bind -nr S-right next-window
-        bind -nr C-h select-pane -L
-        bind -nr C-l select-pane -R
-        bind -nr C-k select-pane -U
-        bind -nr C-j select-pane -D
         bind -nr M-k swap-pane -U
         bind -nr M-j swap-pane -D
         bind -nr C-M-h resize-pane -L 5
@@ -116,11 +112,6 @@ in
 
         bind -T copy-mode-vi v send-keys -X begin-selection
         bind -T copy-mode-vi y send-keys -X copy-pipe-and-cancel "wl-copy --primary"
-        bind -n C-h if-shell "$is_vim" "send-keys C-h"  "select-pane -L"
-        bind -n C-l if-shell "$is_vim" "send-keys C-l"  "select-pane -R"
-        bind -n C-k if-shell "$is_vim" "send-keys C-k"  "select-pane -U"
-        bind -n C-j if-shell "$is_vim" "send-keys C-j"  "select-pane -D"
-        bind -n C-\\ if-shell "$is_vim" "send-keys C-\\" "select-pane -l"
 
         set -g display-time 4000
         set -g status-interval 1
@@ -128,8 +119,6 @@ in
         set -g allow-rename off
         set -sg escape-time 0
         set -g -a terminal-overrides ',*:Ss=\E[%p1%d q:Se\=E[2 q'
-        is_vim="ps -o state= -o comm= -t '#{pane_tty}' \
-            | grep -iqE '^[^TXZ ]+ +(\\S+\\/)?g?(view|n?vim?x?)(diff)?$'"
         setw -g monitor-activity on
         setw -g aggressive-resize on
         set-option -g set-titles on
