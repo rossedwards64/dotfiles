@@ -124,8 +124,9 @@
    (minibuffer-exit . (lambda ()
 			(run-at-time 1 nil (lambda ()
 					     (setq gc-cons-threshold (* 1024 1024 16))))))
-   (prog-mode . which-function-mode)
-   (prog-mode . display-line-numbers-mode)
+   (prog-mode . (lambda ()
+		  (which-function-mode +1)
+		  (display-line-numbers-mode +1)))
    ((prog-mode ielm-mode) . eldoc-mode)
    (text-mode . visual-line-mode))
   :bind
@@ -142,8 +143,9 @@
 	       (alpha-background . ,alpha-value)))
       (add-to-list 'default-frame-alist frame-setting))
     (add-hook 'after-make-frame-functions
-	      (set-frame-parameter nil 'alpha-background
-				   (/ (float alpha-value) 100))))
+	      (lambda (frame)
+		(set-frame-parameter frame 'alpha-background
+				     (/ (float alpha-value) 100)))))
   
   (advice-add #'completing-read-multiple :filter-args
 	      (lambda (args)
@@ -174,6 +176,7 @@
 	make-backup-files nil
 	read-process-output-max (* 1024 1024)
 	require-final-newline t
+	ring-bell-function 'ignore
 	savehist-additional-variables '(kill-ring
 					search-ring
 					regexp-search-ring
@@ -183,7 +186,6 @@
 	tab-width 4
 	treesit-extra-load-path '((concat elpaca-builds-directory "/tree-sitter-langs/bin"))
 	vc-follow-symlinks t
-	visible-bell t
 	warning-minimum-level :error
         completion-cycle-threshold 3
         enable-recursive-minibuffers t
@@ -206,41 +208,12 @@
   (exec-path-from-shell-initialize))
 
 (use-package vterm)
-(use-package pass)
 #+END_SRC
 
 * Themes
 #+NAME: themes
 #+BEGIN_SRC emacs-lisp :tangle no
 (use-package autothemer)
-
-(use-package doom-themes
-  :init
-  (setq doom-themes-enable-bold t
-	doom-themes-enable-italic t)
-  (doom-themes-visual-bell-config)
-  (doom-themes-org-config))
-
-(use-package rose-pine-emacs
-  :disabled t
-  :elpaca
-  (:host github
-	 :repo "thongpv87/rose-pine-emacs"
-	 :main nil)
-  :init
-  (add-to-list 'custom-theme-load-path
-	       (concat elpaca-builds-directory "rose-pine-emacs")))
-
-(use-package tronesque
-  :disabled t
-  :elpaca
-  (:host github
-	 :repo "aurelienbottazini/tronesque"
-	 :files (:defaults "themes/*.el" (:exclude "*"))
-	 :main "themes/tronesque-theme.el")
-  :init
-  (add-to-list 'custom-theme-load-path
-	       (concat elpaca-builds-directory "tronesque")))
 
 (use-package everblush-theme
   :elpaca
@@ -253,20 +226,15 @@
 
 (use-package catppuccin-theme
   :config (ross/set-theme 'catppuccin))
-(use-package ef-themes)
-(use-package exotica-theme)
-(use-package gruber-darker-theme)
-(use-package kuronami-theme)
 (use-package modus-themes)
-(use-package standard-themes)
-(use-package timu-caribbean-theme)
-(use-package timu-macos-theme)
-(use-package toxi-theme)
 #+END_SRC
 
 * Functions
 #+NAME: functions
 #+BEGIN_SRC emacs-lisp :tangle no
+(defun nixos-p ()
+  (string-match-p "NixOS" (shell-command-to-string "uname -v")))
+
 (defun ross/open-config ()
   "Switch to \\='config.org\\='."
   (interactive)
@@ -277,9 +245,9 @@
   "Apply THEME."
   (if (daemonp)
       (add-hook 'after-make-frame-functions
-				(lambda (frame)
-				  (with-selected-frame frame
-					(load-theme theme t))))
+		(lambda (frame)
+		  (with-selected-frame frame
+		    (load-theme theme t))))
     (load-theme theme t)))
 
 (with-eval-after-load "org"
@@ -289,42 +257,6 @@
     (interactive)
     (org-babel-tangle-file (concat user-emacs-directory "config.org"))
     (load (concat user-emacs-directory "init.el"))))
-
-(with-eval-after-load "org-present"
-  (defun ross/org-start-presentation ()
-    "Customizes Org-Mode faces for presentation mode."
-    (org-present-big)
-    (org-display-inline-images)
-    (org-present-hide-cursor)
-    (org-present-read-only)
-    (visual-fill-column-mode +1)
-    (visual-line-mode +1)
-    (setq header-line-format " ")
-    (setq-local face-remapping-alist '((default (:height 1.5) variable-pitch)
-				       (header-line (:height 4.0) variable-pitch)
-				       (org-document-title (:height 1.75) org-document-title)
-				       (org-code (:height 1.55) org-code)
-				       (org-verbatim (:height 1.55) org-verbatim)
-				       (org-block (:height 1.25) org-block)
-				       (org-block (:height 1.25) org-inline-src-block)
-				       (org-block-begin-line (:height 0.7) org-block))))
-
-  (defun ross/org-presentation-prepare-slide (buffer-name heading)
-    "Prepares the next slide in the presentation."
-    (org-overview)
-    (org-show-entry)
-    (org-show-children))
-
-  (defun ross/org-end-presentation ()
-    "Resets Org-Mode presentation face customizations."
-    (org-present-small)
-    (org-remove-inline-images)
-    (org-present-show-cursor)
-    (org-present-read-write)
-    (visual-fill-column-mode -1)
-    (visual-line-mode -1)
-    (setq header-line-format nil)
-    (setq-local face-remapping-alist '((default variable-pitch default)))))
 
 (with-eval-after-load "cl-lib"
   (cl-defun ross/get-closest-pathname (&optional (file "Makefile"))
@@ -357,7 +289,6 @@
 						   (org-agenda-overriding-header "Unprocessed Inbox Items"))))))
 	org-log-done 'time
 	org-log-into-drawer t
-	org-plantuml-exec-path (executable-find "plantuml")
 	org-pretty-entities-include-sub-superscripts t
 	org-return-follows-link t
 	org-startup-with-inline-images t
@@ -371,6 +302,7 @@
 			     "BLOCKED(b@/!)"
 			     "|"
 			     "DONE(d!)"
+			     "CANCELLED(c@)"
 			     "STOPPED(s@/!)")))
   :bind
   (:map help-map
@@ -379,30 +311,10 @@
 	("C-c C-c" . #'org-edit-src-exit)
 	:map global-map
 	("C-c na" . #'org-agenda))
-  :hook ((org-mode . auto-complete-mode)
-	 (org-mode . variable-pitch-mode)
-	 (org-mode . (lambda ()
-		       (setq-local tab-width 8))))
-  :config
-  (dolist (face '((org-level-1 . 1.2)
-		  (org-level-2 . 1.1)
-		  (org-level-3 . 1.05)
-		  (org-level-4 . 1.0)
-		  (org-level-5 . 1.1)
-		  (org-level-6 . 1.1)
-		  (org-level-7 . 1.1)
-		  (org-level-8 . 1.1)))
-    (set-face-attribute (car face) nil :font font-name :weight 'medium :height (cdr face)))
-
-  (set-face-attribute 'org-document-title nil :font font-name :weight 'bold :height 1.3)
-  (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
-  (set-face-attribute 'org-table nil :inherit 'fixed-pitch)
-  (set-face-attribute 'org-formula nil :inherit 'fixed-pitch)
-  (set-face-attribute 'org-code nil :inherit '(shadow fixed-pitch))
-  (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
-  (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
-  (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
-  (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch))
+  :hook ((org-mode . (lambda ()
+		       (auto-complete-mode +1)
+		       (variable-pitch-mode +1)
+		       (setq-local tab-width 8)))))
 
 (use-package org-roam
   :bind
@@ -432,14 +344,6 @@
 	org-alert-notification-title "---TODO REMINDER---"
 	org-alert-time-match-string "\\(?:SCHEDULED\\|DEADLINE\\):.*?<.*?\\([0-9]\\{2\\}:[0-9]\\{2\\}\\).*>")
   (org-alert-enable))
-
-(use-package org-present
-  :commands (org-present)
-  :hook
-  ((org-present-mode . ross/org-start-presentation)
-   (org-present-mode-quit . ross/org-end-presentation))
-  :config (add-hook 'org-present-after-navigate-functions
-		    #'ross/org-presentation-prepare-slide))
 
 (use-package org-auto-tangle
   :config (org-auto-tangle-mode +1))
@@ -608,9 +512,6 @@
   (popper-mode +1)
   (popper-echo-mode +1))
 
-(use-package popwin
-  :config (popwin-mode +1))
-
 (use-package winum
   :config (winum-mode +1))
 
@@ -679,23 +580,15 @@
 (use-package solaire-mode
   :config (solaire-global-mode +1))
 
-(use-package visual-fill-column
-  :config
-  (setq visual-fill-column-width 110
-	visual-fill-column-center-text t))
-
-(use-package darkroom)
+(use-package transient)
 #+END_SRC
 
 * File Manager
 #+BEGIN_SRC emacs-lisp
 (use-package nerd-icons-dired
   :hook ((dired-mode . nerd-icons-dired-mode)))
-
-(use-package dirvish)
 (use-package diredfl
   :config (diredfl-global-mode +1))
-
 (use-package fd-dired)
 (use-package dired-rsync)
 #+END_SRC
@@ -725,7 +618,6 @@
   :custom
   (read-mail-command 'mu4e))
 
-(use-package org-msg)
 (use-package mu4e-alert)
 #+END_SRC
 
@@ -794,10 +686,6 @@
   :hook
   (((LaTeX-mode org-mode) . flyspell-mode)
    (prog-mode . flyspell-prog-mode)))
-
-(use-package writegood-mode
-  :hook
-  (((LaTeX-mode org-mode) . writegood-mode)))
 #+END_SRC
 
 * Programming
@@ -843,8 +731,9 @@ The `with-eval-after-load` block is a workaround for [[https://github.com/emacs-
 (use-package lsp-mode
   :init (setq lsp-keymap-prefix "C-c")
   :hook
-  ((lsp-mode . lsp-enable-which-key-integration)
-   (lsp-mode . yas-minor-mode)
+  ((lsp-mode . (lambda ()
+		 (lsp-enable-which-key-integration)
+		 (yas-minor-mode +1)))
    (prog-mode . lsp-deferred))
   :bind
   (:map lsp-mode-map
@@ -915,13 +804,12 @@ The `with-eval-after-load` block is a workaround for [[https://github.com/emacs-
   :hook
   (((c-mode c++-mode c-ts-mode c++-ts-mode makefile-mode makefile-gmake-mode)
     . (lambda ()
-	(setq-local c-basic-offset 4
-		    gdb-many-windows t
-		    compile-command (format "make -C %s -k"
+	(setq-local compile-command (format "make -C %s -k"
 					    (substring (ross/get-closest-pathname)
 	       					       0 -8))
 		    +format-with "clang-format"))))
-  :config (setq c-basic-offset 4))
+  :config (setq c-basic-offset 4
+		gdb-many-windows t))
 
 (use-package irony
   :hook (((c-mode c++-mode c-ts-mode c++-ts-mode) . irony-mode)))
@@ -1014,10 +902,11 @@ The `with-eval-after-load` block is a workaround for [[https://github.com/emacs-
 
 *** Nix
 #+BEGIN_SRC emacs-lisp
-(use-package nix-mode)
-(use-package nix-ts-mode)
-(use-package nixpkgs-fmt)
-(use-package nix-buffer)
+(when (nixos-p)
+  (use-package nix-mode)
+  (use-package nix-ts-mode)
+  (use-package nixpkgs-fmt)
+  (use-package nix-buffer))
 #+END_SRC
 
 *** Embedded
@@ -1069,12 +958,7 @@ The `with-eval-after-load` block is a workaround for [[https://github.com/emacs-
 	bibtex-align-at-equal-sign t
 	bibtex-dialect 'biblatex
 	bibtex-text-indentation 20
-	default-truncate-lines t)
-  (add-to-list 'TeX-expand-list
-	       '("%sn" (lambda () server-name)))
-  (setcar (cdr (assoc 'output-pdf
-		      TeX-view-program-selection))
-	  "Zathura"))
+	default-truncate-lines t))
 
 (use-package auctex-latexmk
   :init (setq auctex-latexmk-inherit-TeX-PDF-mode t)
@@ -1086,25 +970,6 @@ The `with-eval-after-load` block is a workaround for [[https://github.com/emacs-
 (use-package company-bibtex)
 (use-package magic-latex-buffer)
 (use-package ebib)
-#+END_SRC
-
-*** Java
-#+BEGIN_SRC emacs-lisp
-(use-package lsp-java
-  :config (setq lsp-java-configuration-runtimes
-		'[(:name
-		   "JavaSE-17"
-		   :path
-		   "/usr/lib/jvm/java-17-openjdk"
-		   :default
-		   t)]))
-#+END_SRC
-
-*** Groovy
-#+BEGIN_SRC emacs-lisp
-(use-package groovy-mode)
-(use-package gradle-mode)
-(use-package flycheck-gradle)
 #+END_SRC
 
 *** Haskell
@@ -1149,7 +1014,6 @@ The `with-eval-after-load` block is a workaround for [[https://github.com/emacs-
 	([remap project-shell-command] . projectile-run-shell-command-in-root)
 	([remap project-async-shell-command] . projectile-run-async-shell-command-in-root)))
 
-(use-package git-commit)
 (use-package magit
   :bind (("C-c v g" . magit)))
 
@@ -1174,7 +1038,6 @@ The `with-eval-after-load` block is a workaround for [[https://github.com/emacs-
 * Finance
 #+begin_src emacs-lisp
 (use-package ledger-mode)
-
 (use-package flymake-hledger)
 #+end_src
 
@@ -1208,12 +1071,12 @@ have to scroll past it every time I read or edit my config.
 					"[ GitHub ]"
 					"Browse GitHub profile"
 					(lambda (&rest _) (browse-url "https://github.com/rossedwards64/dotfiles")) nil "" ""))))
+  :hook
+  (elpaca-after-init . (lambda ()
+			 (dashboard-insert-startupify-lists)
+			 (dashboard-initialize)
+			 (dashboard-setup-startup-hook)))
   :config
-  (add-hook 'elpaca-after-init-hook #'dashboard-insert-startupify-lists)
-  (add-hook 'elpaca-after-init-hook #'dashboard-initialize)
-  (dashboard-setup-startup-hook)
-  (dashboard-modify-heading-icons '((recents . "file-text")
-				    (bookmarks . "book")))
   (setq initial-buffer-choice (lambda () (get-buffer-create "*dashboard*"))))
 #+END_SRC
 
@@ -1222,7 +1085,10 @@ Same as the [[*Startup Dashboard][startup dashboard config]]. This is the bootst
 for Elpaca, obtained from [[https://github.com/progfolio/elpaca#installer][the Elpaca Github repository]].
 #+NAME: package-manager
 #+BEGIN_SRC emacs-lisp :tangle no
-(defvar elpaca-installer-version 0.7)
+(when (nixos-p)
+  (setq elpaca-core-date 20241026)) ;; update this on the next emacs release
+
+(defvar elpaca-installer-version 0.8)
 (defvar elpaca-directory (expand-file-name "elpaca/" user-emacs-directory))
 (defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
 (defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
@@ -1239,18 +1105,18 @@ for Elpaca, obtained from [[https://github.com/progfolio/elpaca#installer][the E
     (make-directory repo t)
     (when (< emacs-major-version 28) (require 'subr-x))
     (condition-case-unless-debug err
-        (if-let ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
-                 ((zerop (apply #'call-process `("git" nil ,buffer t "clone"
-                                                 ,@(when-let ((depth (plist-get order :depth)))
-                                                     (list (format "--depth=%d" depth) "--no-single-branch"))
-                                                 ,(plist-get order :repo) ,repo))))
-                 ((zerop (call-process "git" nil buffer t "checkout"
-                                       (or (plist-get order :ref) "--"))))
-                 (emacs (concat invocation-directory invocation-name))
-                 ((zerop (call-process emacs nil buffer nil "-Q" "-L" "." "--batch"
-                                       "--eval" "(byte-recompile-directory \".\" 0 'force)")))
-                 ((require 'elpaca))
-                 ((elpaca-generate-autoloads "elpaca" repo)))
+        (if-let* ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
+                  ((zerop (apply #'call-process `("git" nil ,buffer t "clone"
+                                                  ,@(when-let* ((depth (plist-get order :depth)))
+                                                      (list (format "--depth=%d" depth) "--no-single-branch"))
+                                                  ,(plist-get order :repo) ,repo))))
+                  ((zerop (call-process "git" nil buffer t "checkout"
+                                        (or (plist-get order :ref) "--"))))
+                  (emacs (concat invocation-directory invocation-name))
+                  ((zerop (call-process emacs nil buffer nil "-Q" "-L" "." "--batch"
+                                        "--eval" "(byte-recompile-directory \".\" 0 'force)")))
+                  ((require 'elpaca))
+                  ((elpaca-generate-autoloads "elpaca" repo)))
             (progn (message "%s" (buffer-string)) (kill-buffer buffer))
           (error "%s" (with-current-buffer buffer (buffer-string))))
       ((error) (warn "%s" err) (delete-directory repo 'recursive))))
