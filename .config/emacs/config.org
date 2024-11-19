@@ -1016,6 +1016,7 @@ The `with-eval-after-load` block is a workaround for [[https://github.com/emacs-
 
 (use-package magit
   :bind (("C-c v g" . magit)))
+(use-package git-commit)
 
 (use-package ibuffer-projectile)
 (use-package ibuffer-git)

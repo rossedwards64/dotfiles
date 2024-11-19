@@ -7,7 +7,6 @@
 with lib;
 let
   cfg = config.modules.alacritty;
-
   title = "Alacritty";
   term_font = "Iosevka NF";
   pos_x = 0;
@@ -171,12 +170,6 @@ in
           {
             action = "Copy";
             key = "Copy";
-          }
-          {
-            chars = "f";
-            key = "L";
-            mode = "~Vi|~Search";
-            mods = "Control";
           }
           {
             action = "ScrollPageUp";

@@ -160,7 +160,6 @@ in
             fonts = {
               names = [ font ];
               style = "Regular";
-              size = 10.0;
             };
 
             gaps = {

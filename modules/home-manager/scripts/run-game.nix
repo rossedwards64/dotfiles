@@ -6,6 +6,7 @@ pkgs.writeShellApplication {
     mangohud
     gamemode
     gamescope
+    steam-run
   ];
 
   text = ''
@@ -94,9 +95,9 @@ pkgs.writeShellApplication {
     pwd
 
     if [[ "$debug" = true ]]; then
-    	gamescope "''${size_args[@]}" "$fullscreen" -- "''${exec_args[@]}" "$game"
+        steam-run gamescope "''${size_args[@]}" "$fullscreen" -- "''${exec_args[@]}" "$game"
     else
-    	nohup gamescope "''${size_args[@]}" -- "''${exec_args[@]}" "$game" &>/dev/null & disown
+        nohup steam-run gamescope "''${size_args[@]}" -- "''${exec_args[@]}" "$game" &>/dev/null & disown
     fi
   '';
 }

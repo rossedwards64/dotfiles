@@ -19,7 +19,6 @@ in
 
       settings = {
         main = {
-          font = mkForce "Iosevka NF:size=16";
           icon-theme = "rose-pine-moon";
           terminal = "${pkgs.alacritty}/bin/alacritty";
           anchor = "center";

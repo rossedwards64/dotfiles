@@ -32,7 +32,7 @@ in
                 - clear
           - spotify:
               panes:
-                - ${pkgs.spotify-player}/bin/spotify_player
+                - ${pkgs.ncspot}/bin/ncspot
           - monitor:
               panes: 
                 - ${pkgs.btop}/bin/btop

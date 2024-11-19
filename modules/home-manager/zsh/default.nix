@@ -18,19 +18,31 @@ in
     programs = {
       zsh = {
         enable = true;
-        autosuggestion.enable = true;
+
+        autosuggestion = {
+          enable = true;
+          strategy = [
+            "history"
+            "completion"
+          ];
+        };
+
         enableCompletion = true;
 
         history = {
-          size = 10000;
-          save = 10000;
-          path = "${xdg.dataHome}/zsh/history";
-          share = true;
+          append = true;
+          expireDuplicatesFirst = true;
           extended = true;
+          ignoreAllDups = true;
           ignoreDups = true;
           ignoreSpace = true;
-          ignoreAllDups = true;
+          path = "${xdg.dataHome}/zsh/history";
+          save = 10000;
+          share = true;
+          size = 10000;
         };
+
+        historySubstringSearch.enable = true;
 
         sessionVariables = {
           ALTERNATE_EDITOR = "${pkgs.neovim}/bin/nvim";
@@ -141,6 +153,12 @@ in
 
         syntaxHighlighting = {
           enable = true;
+          highlighters = [
+            "main"
+            "brackets"
+            "cursor"
+            "root"
+          ];
         };
 
         initExtra = ''

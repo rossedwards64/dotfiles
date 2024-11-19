@@ -76,14 +76,14 @@
       largeFontSizes = {
         applications = 14;
         terminal = 12;
-        desktop = 14;
+        desktop = 12;
         popups = 16;
       };
 
       smallFontSizes = {
         applications = 12;
-        terminal = 10;
-        desktop = 12;
+        terminal = 12;
+        desktop = 10;
         popups = 14;
       };
 
@@ -269,12 +269,45 @@
         ];
       };
 
-      homeConfigurations = lib.attrsets.mergeAttrsList (
-        builtins.map (host: { ${host} = makeHome [ ]; }) [
-          "${username}@ross-desktop"
-          "${username}@ross-thinkpad-x230"
-          "${username}@ross-thinkpad-x200"
-        ]
-      );
+      homeConfigurations = {
+        "${username}@ross-desktop" = makeHome [
+          {
+            stylix.fonts.sizes = {
+              inherit (largeFontSizes)
+                applications
+                desktop
+                terminal
+                popups
+                ;
+            };
+          }
+        ];
+
+        "${username}@ross-thinkpad-x230" = makeHome [
+          {
+            stylix.fonts.sizes = {
+              inherit (smallFontSizes)
+                applications
+                desktop
+                terminal
+                popups
+                ;
+            };
+          }
+        ];
+
+        "${username}@ross-thinkpad-x200" = makeHome [
+          {
+            stylix.fonts.sizes = {
+              inherit (smallFontSizes)
+                applications
+                desktop
+                terminal
+                popups
+                ;
+            };
+          }
+        ];
+      };
     };
 }
