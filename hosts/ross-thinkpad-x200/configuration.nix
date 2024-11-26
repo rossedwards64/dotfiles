@@ -14,19 +14,7 @@ let
 in
 {
   imports = [ ./hardware-configuration.nix ];
-
-  nix = {
-    settings = {
-      auto-optimise-store = true;
-      experimental-features = [
-        "nix-command"
-        "flakes"
-      ];
-    };
-  };
-
   boot.loader.grub.device = "/dev/sda";
-
   hardware.graphics.extraPackages = [ pkgs.intel-vaapi-driver ];
 
   services = {

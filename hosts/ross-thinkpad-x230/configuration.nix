@@ -14,17 +14,7 @@ let
 in
 {
   imports = [ ./hardware-configuration.nix ];
-
-  nix = {
-    settings = {
-      auto-optimise-store = true;
-      experimental-features = [
-        "nix-command"
-        "flakes"
-      ];
-    };
-  };
-
+  hardware.graphics.extraPackages = [ pkgs.intel-vaapi-driver ];
   boot = {
     loader = {
       efi = {
@@ -38,8 +28,6 @@ in
       };
     };
   };
-
-  hardware.graphics.extraPackages = [ pkgs.intel-vaapi-driver ];
 
   services = {
     blueman.enable = true;

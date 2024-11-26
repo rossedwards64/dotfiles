@@ -16,16 +16,6 @@ in
 {
   imports = [ ./hardware-configuration.nix ];
 
-  nix = {
-    settings = {
-      auto-optimise-store = true;
-      experimental-features = [
-        "nix-command"
-        "flakes"
-      ];
-    };
-  };
-
   boot = {
     extraModulePackages = [ config.boot.kernelPackages.gcadapter-oc-kmod ];
     kernelModules = [

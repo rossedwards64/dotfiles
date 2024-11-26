@@ -126,9 +126,6 @@
             { stylix = stylixConfig; }
             (
               {
-                config,
-                pkgs,
-                options,
                 ...
               }:
               {
@@ -210,9 +207,6 @@
             { stylix = stylixConfig; }
             (
               {
-                config,
-                pkgs,
-                options,
                 ...
               }:
               {
@@ -269,45 +263,41 @@
         ];
       };
 
-      homeConfigurations = {
-        "${username}@ross-desktop" = makeHome [
-          {
-            stylix.fonts.sizes = {
-              inherit (largeFontSizes)
-                applications
-                desktop
-                terminal
-                popups
-                ;
-            };
-          }
-        ];
-
-        "${username}@ross-thinkpad-x230" = makeHome [
-          {
-            stylix.fonts.sizes = {
-              inherit (smallFontSizes)
-                applications
-                desktop
-                terminal
-                popups
-                ;
-            };
-          }
-        ];
-
-        "${username}@ross-thinkpad-x200" = makeHome [
-          {
-            stylix.fonts.sizes = {
-              inherit (smallFontSizes)
-                applications
-                desktop
-                terminal
-                popups
-                ;
-            };
-          }
-        ];
-      };
+      homeConfigurations =
+        {
+          "${username}@ross-desktop" = makeHome [
+            {
+              stylix.fonts.sizes = {
+                inherit (largeFontSizes)
+                  applications
+                  desktop
+                  terminal
+                  popups
+                  ;
+              };
+            }
+          ];
+        }
+        // (
+          [
+            "${username}@ross-thinkpad-x230"
+            "${username}@ross-thinkpad-x200"
+          ]
+          |> builtins.map (hostname: {
+            "${hostname}" = makeHome [
+              {
+                stylix.fonts.sizes = {
+                  inherit (smallFontSizes)
+                    applications
+                    desktop
+                    terminal
+                    popups
+                    ;
+                };
+              }
+            ];
+          })
+          |> lib.attrsets.mergeAttrsList
+        );
     };
 }

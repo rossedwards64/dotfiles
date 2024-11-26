@@ -27,19 +27,6 @@ let
 
   emacsPackage = inputs.emacs-overlay.packages.${system}.emacs-unstable-pgtk;
 
-  addToScratchpad = (
-    width: height: ''
-      {
-          floating enable
-          move to scratchpad
-          resize set {
-              width ${toString width}
-              height ${toString height}
-          }
-      }
-    ''
-  );
-
   focusOnGameCommand = ''
     {
       inhibit_idle fullscreen
@@ -293,8 +280,12 @@ in
                     '';
                   }
                 ]
-                ++ (builtins.concatMap
-                  (class: [
+                ++ (
+                  [
+                    regexp.steam.game
+                    regexp.game
+                  ]
+                  |> builtins.concatMap (class: [
                     {
                       criteria = {
                         class = class;
@@ -308,25 +299,8 @@ in
                       command = focusOnGameCommand;
                     }
                   ])
-                  [
-                    regexp.steam.game
-                    regexp.game
-                  ]
                 )
-                ++ (builtins.map
-                  (
-                    {
-                      app_id,
-                      width,
-                      height,
-                    }:
-                    {
-                      criteria = {
-                        inherit app_id;
-                      };
-                      command = addToScratchpad width height;
-                    }
-                  )
+                ++ (
                   [
                     {
                       app_id = regexp.volume;
@@ -344,81 +318,117 @@ in
                       height = 600;
                     }
                   ]
+                  |> builtins.map (
+                    {
+                      app_id,
+                      width,
+                      height,
+                    }:
+                    {
+                      criteria = {
+                        inherit app_id;
+                      };
+                      command =
+                        (width: height: ''
+                          {
+                              floating enable
+                              move to scratchpad
+                              resize set {
+                                  width ${toString width}
+                                  height ${toString height}
+                              }
+                          }
+                        '')
+                          width
+                          height;
+                    }
+                  )
                 );
             };
 
-            keybindings = attrsets.mergeAttrsList [
-              (attrsets.mergeAttrsList (
-                lib.flatten [
-                  (builtins.map (num: {
-                    "${modifier}+${toString num}" = "workspace number ${toString num}";
-                    "${modifier}+Ctrl+${toString num}" = "move container to workspace number ${toString num}";
-                    "${modifier}+Shift+${toString num}" = "move container to workspace number ${toString num}, workspace number ${toString num}";
-                  }) (lists.range 0 9))
-
-                ]
-              ))
-              (attrsets.concatMapAttrs
-                (key: direction: {
-                  "${modifier}+${key}" = "focus ${direction}";
-                  "${modifier}+Shift+${key}" = "move ${direction}";
-                })
+            keybindings =
+              [
+                (
+                  [
+                    (
+                      (lists.range 0 9)
+                      |> builtins.map (num: {
+                        "${modifier}+${toString num}" = "workspace number ${toString num}";
+                        "${modifier}+Ctrl+${toString num}" = "move container to workspace number ${toString num}";
+                        "${modifier}+Shift+${toString num}" = "move container to workspace number ${toString num}, workspace number ${toString num}";
+                      })
+                    )
+                  ]
+                  |> flatten
+                  |> attrsets.mergeAttrsList
+                )
+                (
+                  {
+                    ${left} = "left";
+                    ${right} = "right";
+                    ${up} = "up";
+                    ${down} = "down";
+                    left = "left";
+                    right = "right";
+                    up = "up";
+                    down = "down";
+                  }
+                  |> attrsets.concatMapAttrs (
+                    key: direction: {
+                      "${modifier}+${key}" = "focus ${direction}";
+                      "${modifier}+Shift+${key}" = "move ${direction}";
+                    }
+                  )
+                )
+                (
+                  {
+                    o = "HDMI-A-1";
+                    i = "DP-1";
+                    p = "DP-2";
+                  }
+                  |> attrsets.concatMapAttrs (
+                    key: monitor: {
+                      "${modifier}+Shift+${key}" = "move workspace to output ${monitor}";
+                    }
+                  )
+                )
                 {
-                  ${left} = "left";
-                  ${right} = "right";
-                  ${up} = "up";
-                  ${down} = "down";
-                  left = "left";
-                  right = "right";
-                  up = "up";
-                  down = "down";
+                  "Print" = "exec ${screenshotScript}/bin/screenshot";
+                  "${modifier}+Escape" = ''exec "${pkgs.procps}/bin/pkill fuzzel || ${powermenuScript}/bin/powermenu"'';
+                  "${modifier}+Return" = "exec ${pkgs.alacritty}/bin/alacritty";
+                  "${modifier}+Shift+Return" = "exec ${pkgs.firefox}/bin/firefox";
+                  "${modifier}+Shift+g" = "exec ${emacsPackage}/bin/emacsclient -c -a=''";
+                  "${modifier}+Tab" = "${pkgs.procps}/bin/pkill fuzzel || ${windowsScript}/bin/windows";
+                  "${modifier}+c" = "exec ${toggleSinkScript}/bin/toggle-sink";
+                  "${modifier}+d" = ''exec "${pkgs.procps}/bin/pkill fuzzel || ${pkgs.fuzzel}/bin/fuzzel"'';
+                  "${modifier}+t" = "exec ${pkgs.swaynotificationcenter}/bin/swaync-client -t -sw";
+                  "${modifier}+Ctrl+space" = "sticky toggle";
+                  "${modifier}+Minus" = "scratchpad show";
+                  "${modifier}+Shift+b" = "border toggle";
+                  "${modifier}+Shift+c" = "reload";
+                  "${modifier}+Shift+minus" = "move scratchpad";
+                  "${modifier}+Shift+q" = "kill";
+                  "${modifier}+Shift+r" = ''mode "resize"'';
+                  "${modifier}+Shift+space" = "floating toggle";
+                  "${modifier}+Shift+v" = "${pkgs.myxer}/bin/myxer";
+                  "${modifier}+a" = "focus parent";
+                  "${modifier}+b" = "splitt";
+                  "${modifier}+e" = "layout toggle all";
+                  "${modifier}+f" = "fullscreen";
+                  "${modifier}+g" = "splith";
+                  "${modifier}+r" = ''mode "default"'';
+                  "${modifier}+space" = "focus mode_toggle";
+                  "${modifier}+v" = "splitv";
+                  "${modifier}+w" = "layout default";
                 }
-              )
-              (attrsets.concatMapAttrs
-                (key: monitor: {
-                  "${modifier}+Shift+${key}" = "move workspace to output ${monitor}";
-                })
-                {
-                  o = "HDMI-A-1";
-                  i = "DP-1";
-                  p = "DP-2";
-                }
-              )
-              {
-                "Print" = "exec ${screenshotScript}/bin/screenshot";
-                "${modifier}+Escape" = ''exec "${pkgs.procps}/bin/pkill fuzzel || ${powermenuScript}/bin/powermenu"'';
-                "${modifier}+Return" = "exec ${pkgs.alacritty}/bin/alacritty";
-                "${modifier}+Shift+Return" = "exec ${pkgs.firefox}/bin/firefox";
-                "${modifier}+Shift+g" = "exec ${emacsPackage}/bin/emacsclient -c -a=''";
-                "${modifier}+Tab" = "${pkgs.procps}/bin/pkill fuzzel || ${windowsScript}/bin/windows";
-                "${modifier}+c" = "exec ${toggleSinkScript}/bin/toggle-sink";
-                "${modifier}+d" = ''exec "${pkgs.procps}/bin/pkill fuzzel || ${pkgs.fuzzel}/bin/fuzzel"'';
-                "${modifier}+t" = "exec ${pkgs.swaynotificationcenter}/bin/swaync-client -t -sw";
-                "${modifier}+Ctrl+space" = "sticky toggle";
-                "${modifier}+Minus" = "scratchpad show";
-                "${modifier}+Shift+b" = "border toggle";
-                "${modifier}+Shift+c" = "reload";
-                "${modifier}+Shift+minus" = "move scratchpad";
-                "${modifier}+Shift+q" = "kill";
-                "${modifier}+Shift+r" = ''mode "resize"'';
-                "${modifier}+Shift+space" = "floating toggle";
-                "${modifier}+a" = "focus parent";
-                "${modifier}+b" = "splitt";
-                "${modifier}+e" = "layout toggle all";
-                "${modifier}+f" = "fullscreen";
-                "${modifier}+g" = "splith";
-                "${modifier}+r" = ''mode "default"'';
-                "${modifier}+space" = "focus mode_toggle";
-                "${modifier}+v" = "splitv";
-                "${modifier}+w" = "layout default";
-              }
-            ];
+              ]
+              |> attrsets.mergeAttrsList;
 
             startup = [
               {
                 command = "${pkgs.gnome-keyring}/bin/gnome-keyring-daemon --start --foreground --components=pkcs11,secrets,ssh";
               }
-              { command = "${pkgs.pavucontrol}/bin/pavucontrol"; }
+              { command = "${pkgs.myxer}/bin/myxer"; }
               { command = "${pkgs.swayidle}/bin/swayidle -w"; }
               {
                 command = "${pkgs.wl-clipboard}/bin/wl-paste --type image --watch cliphist store";

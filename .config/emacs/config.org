@@ -314,7 +314,13 @@
   :hook ((org-mode . (lambda ()
 		       (auto-complete-mode +1)
 		       (variable-pitch-mode +1)
-		       (setq-local tab-width 8)))))
+		       (setq-local tab-width 8)))
+	 (org-after-todo-statistics . (lambda (done not-done)
+					(let ((org-log-done org-todo-log-states))
+					  (org-todo
+					   (if (= not-done 0)
+					       "DONE"
+					     "TODO")))))))
 
 (use-package org-roam
   :bind
