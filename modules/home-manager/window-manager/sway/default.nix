@@ -57,7 +57,7 @@ let
     };
     terminal = "^Alacritty$";
     vlc = "^vlc$";
-    volume = "^org.pulseaudio.pavucontrol$";
+    volume = "^myxer$";
     zathura = "^org.pwmt.zathura$";
   };
 in
