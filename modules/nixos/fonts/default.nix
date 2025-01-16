@@ -17,6 +17,8 @@ in
     fonts = {
       enableDefaultPackages = true;
       packages = with pkgs; [
+        ipafont
+        nerd-fonts.iosevka
         iosevka
         noto-fonts
         noto-fonts-cjk-sans
@@ -26,7 +28,6 @@ in
         source-han-sans
         source-han-serif
         wqy_zenhei
-        (nerdfonts.override { fonts = [ "Iosevka" ]; })
       ];
 
       fontDir.enable = true;

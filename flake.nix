@@ -69,14 +69,14 @@
       extraSpecialArgs = specialArgs;
 
       font = {
-        package = (pkgs.nerdfonts.override { fonts = [ "Iosevka" ]; });
+        package = pkgs.nerd-fonts.iosevka;
         name = "Iosevka NF";
       };
 
       largeFontSizes = {
         applications = 14;
         terminal = 12;
-        desktop = 12;
+        desktop = 10;
         popups = 16;
       };
 
@@ -124,6 +124,7 @@
             nix-gaming.nixosModules.pipewireLowLatency
             nix-gaming.nixosModules.platformOptimizations
             { stylix = stylixConfig; }
+            { programs.steam.platformOptimizations.enable = true; }
             (
               {
                 ...

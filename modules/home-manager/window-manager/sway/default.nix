@@ -29,9 +29,10 @@ let
 
   focusOnGameCommand = ''
     {
-      inhibit_idle fullscreen
-      fullscreen enable
-      focus
+        allow_tearing yes
+        inhibit_idle fullscreen
+        fullscreen enable
+        focus
     }
   '';
 
@@ -254,18 +255,6 @@ in
                 [
                   {
                     criteria = {
-                      window_role = "pop-up";
-                    };
-                    command = "floating enable";
-                  }
-                  {
-                    criteria = {
-                      window_role = "task_dialog";
-                    };
-                    command = "floating enable";
-                  }
-                  {
-                    criteria = {
                       title = regexp.any;
                       app_id = regexp.any;
                       instance = regexp.any;
@@ -280,6 +269,21 @@ in
                     '';
                   }
                 ]
+                ++ (
+                  [
+                    "pop-up"
+                    "task_dialog"
+                    "dialog"
+                  ]
+                  |> builtins.concatMap (window_role: [
+                    {
+                      criteria = {
+                        inherit window_role;
+                      };
+                      command = "floating enable";
+                    }
+                  ])
+                )
                 ++ (
                   [
                     regexp.steam.game
@@ -302,47 +306,23 @@ in
                 )
                 ++ (
                   [
-                    {
-                      app_id = regexp.volume;
-                      width = 800;
-                      height = 600;
-                    }
-                    {
-                      app_id = regexp.zathura;
-                      width = 800;
-                      height = 600;
-                    }
-                    {
-                      app_id = regexp.qBitTorrent;
-                      width = 800;
-                      height = 600;
-                    }
+                    regexp.volume
+                    regexp.zathura
+                    regexp.qBitTorrent
                   ]
-                  |> builtins.map (
-                    {
-                      app_id,
-                      width,
-                      height,
-                    }:
-                    {
-                      criteria = {
-                        inherit app_id;
-                      };
-                      command =
-                        (width: height: ''
-                          {
-                              floating enable
-                              move to scratchpad
-                              resize set {
-                                  width ${toString width}
-                                  height ${toString height}
-                              }
-                          }
-                        '')
-                          width
-                          height;
-                    }
-                  )
+                  |> builtins.map (app_id: {
+                    criteria = {
+                      inherit app_id;
+                    };
+                    command = ''
+                      {
+                          floating enable
+                          move to scratchpad
+                          move position center
+                          resize set 80ppt 80ppt
+                      }
+                    '';
+                  })
                 );
             };
 
@@ -393,33 +373,33 @@ in
                   )
                 )
                 {
-                  "Print" = "exec ${screenshotScript}/bin/screenshot";
+                  "${modifier}+Ctrl+space" = "sticky toggle";
                   "${modifier}+Escape" = ''exec "${pkgs.procps}/bin/pkill fuzzel || ${powermenuScript}/bin/powermenu"'';
+                  "${modifier}+Minus" = "scratchpad show";
                   "${modifier}+Return" = "exec ${pkgs.alacritty}/bin/alacritty";
                   "${modifier}+Shift+Return" = "exec ${pkgs.firefox}/bin/firefox";
-                  "${modifier}+Shift+g" = "exec ${emacsPackage}/bin/emacsclient -c -a=''";
-                  "${modifier}+Tab" = "${pkgs.procps}/bin/pkill fuzzel || ${windowsScript}/bin/windows";
-                  "${modifier}+c" = "exec ${toggleSinkScript}/bin/toggle-sink";
-                  "${modifier}+d" = ''exec "${pkgs.procps}/bin/pkill fuzzel || ${pkgs.fuzzel}/bin/fuzzel"'';
-                  "${modifier}+t" = "exec ${pkgs.swaynotificationcenter}/bin/swaync-client -t -sw";
-                  "${modifier}+Ctrl+space" = "sticky toggle";
-                  "${modifier}+Minus" = "scratchpad show";
                   "${modifier}+Shift+b" = "border toggle";
                   "${modifier}+Shift+c" = "reload";
-                  "${modifier}+Shift+minus" = "move scratchpad";
+                  "${modifier}+Shift+g" = "exec ${emacsPackage}/bin/emacsclient -c -a=''";
+                  "${modifier}+Shift+minus" = "move to scratchpad";
                   "${modifier}+Shift+q" = "kill";
                   "${modifier}+Shift+r" = ''mode "resize"'';
                   "${modifier}+Shift+space" = "floating toggle";
                   "${modifier}+Shift+v" = "${pkgs.myxer}/bin/myxer";
+                  "${modifier}+Tab" = "${pkgs.procps}/bin/pkill fuzzel || ${windowsScript}/bin/windows";
                   "${modifier}+a" = "focus parent";
                   "${modifier}+b" = "splitt";
+                  "${modifier}+c" = "exec ${toggleSinkScript}/bin/toggle-sink";
+                  "${modifier}+d" = ''exec "${pkgs.procps}/bin/pkill fuzzel || ${pkgs.fuzzel}/bin/fuzzel"'';
                   "${modifier}+e" = "layout toggle all";
                   "${modifier}+f" = "fullscreen";
                   "${modifier}+g" = "splith";
                   "${modifier}+r" = ''mode "default"'';
                   "${modifier}+space" = "focus mode_toggle";
+                  "${modifier}+t" = "exec ${pkgs.swaynotificationcenter}/bin/swaync-client -t -sw";
                   "${modifier}+v" = "splitv";
                   "${modifier}+w" = "layout default";
+                  "Print" = "exec ${screenshotScript}/bin/screenshot";
                 }
               ]
               |> attrsets.mergeAttrsList;

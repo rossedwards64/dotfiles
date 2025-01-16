@@ -18,13 +18,11 @@ in
       devilutionx
       duckstation
       dwarf-fortress-packages.dwarf-fortress-full
-      dxvk_2
       fallout-ce
       fallout2-ce
       fceux
       gamemode
       gamescope
-      glxinfo
       gzdoom
       heroic
       itch
@@ -33,7 +31,7 @@ in
       mupen64plus
       openjk
       openmw
-      openra
+      #openra
       openrct2
       openttd
       protontricks
@@ -41,8 +39,6 @@ in
       space-station-14-launcher
       srb2
       srb2kart
-      vkd3d-proton
-      vulkan-tools
 
       (steam.override {
         extraLibraries =
