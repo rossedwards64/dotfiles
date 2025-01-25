@@ -1,13 +1,7 @@
-zstyle ':omz:update' mode auto
-ENABLE_CORRECTION="true"
-COMPLETION_WAITING_DOTS="true"
-HIST_STAMPS="dd/mm/yyyy"
-
 plugins=(
     colored-man-pages
     command-not-found
     cp
-    #emacs
     extract
     fzf
     git
@@ -27,19 +21,46 @@ plugins=(
     zsh-syntax-highlighting
 )
 
+zstyle ':omz:update' mode auto
+zstyle ':completion:*' completer _expand _complete _ignored _approximate
+zstyle ':completion:*' cache-path $XDG_CACHE_HOME/zsh/zcompcache
+zstyle :compinstall filename '/home/ross/.config/.zshrc'
+fpath+=$XDG_CONFIG_HOME/.zfunc
+
+ZSH_AUTOSUGGEST_STRATEGY=(history completion)
+ZSH_HIGHLIGHT_HIGHLIGHTERS+=(main brackets cursor root)
+
 source $ZSH/oh-my-zsh.sh
 
-bindkey -r '^[l'
+if [[ -n "$TERM" ]] && [[ "$TERM" != "dumb" ]]; then
+    export BOLD="$(tput bold)"
+    export MAGENTA="$(tput setaf 5)"
+    export RED="$(tput setaf 1)"
+    export CYAN="$(tput setaf 6)"
+    export RMYELLOW="$(tput setaf 3)"
+    export GREEN="$(tput setaf 2)"
+    export BLUE="$(tput setaf 4)"
+    export NORM="$(tput sgr0)"
+fi
 
-setopt NO_CASE_GLOB
-setopt AUTO_CD
-setopt SHARE_HISTORY
+ENABLE_CORRECTION="true"
+COMPLETION_WAITING_DOTS="true"
+HIST_STAMPS="dd/mm/yyyy"
+
 setopt APPEND_HISTORY
-setopt INC_APPEND_HISTORY
+setopt AUTO_CD
+setopt EXTENDED_HISTORY
 setopt HIST_EXPIRE_DUPS_FIRST
-setopt HIST_IGNORE_DUPS
+setopt HIST_FCNTL_LOCK
 setopt HIST_FIND_NO_DUPS
+setopt HIST_IGNORE_ALL_DUPS
+setopt HIST_IGNORE_DUPS
+setopt HIST_IGNORE_SPACE
 setopt HIST_REDUCE_BLANKS
+setopt INC_APPEND_HISTORY
+setopt NO_CASE_GLOB
+setopt SHARE_HISTORY
+setopt autocd
 
 alias vim="nvim"
 alias mv="mv -iv"
@@ -64,40 +85,8 @@ if [[ ${XDG_CURRENT_DESKTOP} = "sway" ]]; then
     alias vlc="swayhide vlc"
 fi
 
-if [[ -n "$TERM" ]] && [[ "$TERM" != "dumb" ]]; then
-    export BOLD="$(tput bold)"
-    export MAGENTA="$(tput setaf 5)"
-    export RED="$(tput setaf 1)"
-    export CYAN="$(tput setaf 6)"
-    export RMYELLOW="$(tput setaf 3)"
-    export GREEN="$(tput setaf 2)"
-    export BLUE="$(tput setaf 4)"
-    export NORM="$(tput sgr0)"
-fi
-
-zstyle ':completion:*' completer _expand _complete _ignored _approximate
-zstyle ':completion:*' cache-path $XDG_CACHE_HOME/zsh/zcompcache
-zstyle :compinstall filename '/home/ross/.zshrc'
-
-fpath+=$XDG_CONFIG_HOME/.zfunc
-autoload -Uz compinit
-compinit -d "$XDG_CACHE_HOME"/zsh/zcompdump-"$ZSH_VERSION"
-
-prompt_context() {
-    emojis=("⚡" "🔥" "💀" "👑" "😎" "🐸" "🐵" "🌈" "🍻" "🚀" "💡" "🎉" "🔑" "💣" "🚦" "🌙")
-    RAND_EMOJI_N=$(( $RANDOM % ${#emojis[@]} + 1 ))
-    if [[ "$USER" != "$DEFAULT_USER" || -n "$SSH_CLIENT" ]]; then
-        prompt_segment black white "$USER"
-    fi
-}
-
 eval "$(zoxide init zsh)"
 
-if [[ $TERM == "tramp" ]] && [[ -n $INSIDE_EMACS ]]; then
-    unsetopt zle;
-    PS1='[\u@\h \W]\$ '
-else
-    if [ -x "$(command -v starship)" ]; then
-        eval "$(starship init zsh)"
-    fi
+if [ "$TERM" != "dumb" -a -x "$(command -v starship)" ]; then
+    eval "$(starship init zsh)"
 fi

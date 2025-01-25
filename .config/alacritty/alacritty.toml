@@ -1,3 +1,4 @@
+[general]
 import = ["/home/ross/.config/alacritty/themes/themes/dracula.toml"]
 ipc_socket = true
 live_config_reload = true
@@ -557,7 +558,7 @@ multiplier = 3
 [selection]
 semantic_escape_chars = ",│`|:\"' ()[]{}<>\t"
 
-[shell]
+[terminal.shell]
 program = "zsh"
 args = ["-l", "-c", "tmux"]
 
