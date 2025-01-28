@@ -18,6 +18,7 @@ in
 
     programs.sm64ex = {
       enable = true;
+      package = pkgs.sm64coopdx;
     };
   };
 }

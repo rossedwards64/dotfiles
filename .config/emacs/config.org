@@ -13,7 +13,7 @@
   - [[#window-management][Window Management]]
   - [[#completion][Completion]]
 - [[#file-manager][File Manager]]
-- [[#e-mail][E-Mail]]
+- [[#internet][Internet]]
 - [[#navigation][Navigation]]
 - [[#text-editing][Text Editing]]
 - [[#programming][Programming]]
@@ -632,7 +632,7 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
 (use-package dired-rsync)
 #+end_src
 
-* E-Mail
+* Internet
 #+begin_src emacs-lisp
 (use-package mu4e
   :elpaca nil
@@ -658,6 +658,21 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
   (read-mail-command 'mu4e))
 
 (use-package mu4e-alert)
+
+(use-package elfeed
+  :bind
+  (:map global-map
+		("C-c MR" . elfeed))
+  :config
+  (setq elfeed-feeds
+		'(("https://planet.emacslife.com/atom.xml" emacs blog)
+		  ("https://www.theguardian.com/world/rss" news))))
+
+(use-package erc
+  :elpaca nil
+  :bind
+  (:map global-map
+		("C-c MI" . erc)))
 #+end_src
 
 * Navigation

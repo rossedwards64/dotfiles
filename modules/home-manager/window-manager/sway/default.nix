@@ -29,10 +29,10 @@ let
 
   focusOnGameCommand = ''
     {
-        allow_tearing yes
-        inhibit_idle fullscreen
-        fullscreen enable
-        focus
+      allow_tearing yes
+      inhibit_idle fullscreen
+      fullscreen enable
+      focus
     }
   '';
 
@@ -47,7 +47,7 @@ let
     game = "^(dwarfort|factorio|gamescope|spring|youronlymoveishustle).*$";
     intellij = "^jetbrains-idea$";
     itchio = "^itch$";
-    lutris = "^lutris$";
+    lutris = "^net.lutris.Lutris$";
     minecraft = "^com-atlauncher-App$";
     mpv = "^mpv$";
     qBitTorrent = "^org.qbittorrent.qBittorrent$";
@@ -255,12 +255,22 @@ in
                 [
                   {
                     criteria = {
-                      title = regexp.any;
-                      app_id = regexp.any;
-                      instance = regexp.any;
-                      class = regexp.any;
-
+                      title = "^(?!Steam).*$";
+                      class = regexp.steam.client;
                     };
+
+                    command = ''
+                      {
+                        floating enable
+                        resize set 80ppt 80ppt;
+                      }
+                    '';
+                  }
+                  {
+                    criteria = {
+                      all = true;
+                    };
+
                     command = ''
                       {
                         inhibit_idle fullscreen
@@ -291,15 +301,11 @@ in
                   ]
                   |> builtins.concatMap (class: [
                     {
-                      criteria = {
-                        class = class;
-                      };
+                      criteria.class = class;
                       command = focusOnGameCommand;
                     }
                     {
-                      criteria = {
-                        app_id = class;
-                      };
+                      criteria.app_id = class;
                       command = focusOnGameCommand;
                     }
                   ])
@@ -316,10 +322,10 @@ in
                     };
                     command = ''
                       {
-                          floating enable
-                          move to scratchpad
-                          move position center
-                          resize set 80ppt 80ppt
+                        floating enable
+                        move to scratchpad
+                        move position center
+                        resize set 80ppt 80ppt
                       }
                     '';
                   })
@@ -335,7 +341,8 @@ in
                       |> builtins.map (num: {
                         "${modifier}+${toString num}" = "workspace number ${toString num}";
                         "${modifier}+Ctrl+${toString num}" = "move container to workspace number ${toString num}";
-                        "${modifier}+Shift+${toString num}" = "move container to workspace number ${toString num}, workspace number ${toString num}";
+                        "${modifier}+Shift+${toString num}" =
+                          "move container to workspace number ${toString num}, workspace number ${toString num}";
                       })
                     )
                   ]
@@ -374,7 +381,8 @@ in
                 )
                 {
                   "${modifier}+Ctrl+space" = "sticky toggle";
-                  "${modifier}+Escape" = ''exec "${pkgs.procps}/bin/pkill fuzzel || ${powermenuScript}/bin/powermenu"'';
+                  "${modifier}+Escape" =
+                    ''exec "${pkgs.procps}/bin/pkill fuzzel || ${powermenuScript}/bin/powermenu"'';
                   "${modifier}+Minus" = "scratchpad show";
                   "${modifier}+Return" = "exec ${pkgs.alacritty}/bin/alacritty";
                   "${modifier}+Shift+Return" = "exec ${pkgs.firefox}/bin/firefox";

@@ -17,19 +17,18 @@ in
     home.packages = with pkgs; [
       ani-cli
       ark
-      legcord
+      caprine
       gimp
-      hledger
       hledger
       imv
       iosevka
+      legcord
       libreoffice
       mpv
       neovim
       nyxt
       pandoc
       qbittorrent
-      texliveFull
       vlc
       xfce.thunar
       xfce.thunar-archive-plugin
