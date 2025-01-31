@@ -544,7 +544,7 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
 
 (use-package olivetti
   :hook ((org-mode . olivetti-mode))
-  :config (setq olivetti-body-width 120))
+  :config (setq-default olivetti-body-width 0.8))
 #+end_src
 
 ** Window Management

@@ -87,6 +87,6 @@ fi
 
 eval "$(zoxide init zsh)"
 
-if [ "$TERM" != "dumb" -a -x "$(command -v starship)" ]; then
+if [ "$TERM" != "dumb" -a ! "$INSIDE_EMACS" -a -x "$(command -v starship)" ]; then
     eval "$(starship init zsh)"
 fi

@@ -55,14 +55,6 @@ text = "#1e1e2e"
 blinking = "On"
 shape = "Block"
 
-[debug]
-highlight_damage = false
-log_level = "Warn"
-persistent_logging = false
-print_events = false
-render_timer = false
-renderer = "None"
-
 [env]
 TERM = "alacritty"
 

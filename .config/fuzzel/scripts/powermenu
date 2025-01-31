@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -eou pipefail
+
 uptime="$(uptime -p | sed -e 's/up //g')"
 
 shutdown="󰐥 Shutdown"
@@ -9,7 +11,7 @@ suspend="󰒲 Sleep"
 logout="󰩈 Logout"
 
 rdialog() {
-    fuzzel -l1 -p "Are you sure?: " --dmenu
+	fuzzel -l1 -p "Are you sure?: " --dmenu
 }
 
 options="$lock\n$suspend\n$logout\n$reboot\n$shutdown"
@@ -17,40 +19,40 @@ lines="$(echo -e "$options" | awk 'END{print NR}')"
 chosen="$(echo -e "$options" | fuzzel --password="" -p "UPTIME: $uptime" --dmenu -l "$lines" -w 40)"
 
 case $chosen in
-    "$shutdown")
-        ans=$(rdialog &)
-        if [[ $ans == "yes" ]] || [[ $ans == "YES" ]] || [[ $ans == "y" ]]; then
-            loginctl poweroff
-        elif [[ $ans == "no" ]] || [[ $ans == "NO" ]] || [[ $ans == "n" ]]; then
-            exit
-        fi
-        ;;
-    "$reboot")
-        ans=$(rdialog &)
-        if [[ $ans == "yes" ]] || [[ $ans == "YES" ]] || [[ $ans == "y" ]]; then
-            loginctl reboot
-        elif [[ $ans == "no" ]] || [[ $ans == "NO" ]] || [[ $ans == "n" ]]; then
-            exit
-        fi
-        ;;
-    "$lock")
-        swaylock
-        ;;
-    "$suspend")
-        ans=$(rdialog &)
-        if [[ $ans == "yes" ]] || [[ $ans == "YES" ]] || [[ $ans == "y" ]]; then
-            playerctl pause
-            loginctl suspend
-        elif [[ $ans == "no" ]] || [[ $ans == "NO" ]] || [[ $ans == "n" ]]; then
-            exit
-        fi
-        ;;
-    "$logout")
-        ans=$(rdialog &)
-        if [[ $ans == "yes" ]] || [[ $ans == "YES" ]] || [[ $ans == "y" ]]; then
-            killall -u "$USER"
-        elif [[ $ans == "no" ]] || [[ $ans == "NO" ]] || [[ $ans == "n" ]]; then
-            exit
-        fi
-        ;;
+"$shutdown")
+	ans=$(rdialog &)
+	if [[ $ans == "yes" ]] || [[ $ans == "YES" ]] || [[ $ans == "y" ]]; then
+		loginctl poweroff
+	elif [[ $ans == "no" ]] || [[ $ans == "NO" ]] || [[ $ans == "n" ]]; then
+		exit
+	fi
+	;;
+"$reboot")
+	ans=$(rdialog &)
+	if [[ $ans == "yes" ]] || [[ $ans == "YES" ]] || [[ $ans == "y" ]]; then
+		loginctl reboot
+	elif [[ $ans == "no" ]] || [[ $ans == "NO" ]] || [[ $ans == "n" ]]; then
+		exit
+	fi
+	;;
+"$lock")
+	swaylock
+	;;
+"$suspend")
+	ans=$(rdialog &)
+	if [[ $ans == "yes" ]] || [[ $ans == "YES" ]] || [[ $ans == "y" ]]; then
+		playerctl pause
+		loginctl suspend
+	elif [[ $ans == "no" ]] || [[ $ans == "NO" ]] || [[ $ans == "n" ]]; then
+		exit
+	fi
+	;;
+"$logout")
+	ans=$(rdialog &)
+	if [[ $ans == "yes" ]] || [[ $ans == "YES" ]] || [[ $ans == "y" ]]; then
+		killall -u "$USER"
+	elif [[ $ans == "no" ]] || [[ $ans == "NO" ]] || [[ $ans == "n" ]]; then
+		exit
+	fi
+	;;
 esac

@@ -1,78 +1,80 @@
 #!/usr/bin/env bash
 
+set -euo pipefail
+
 notify_view() {
-    notify-send -u low --replace-id 699 "Copied to clipboard." "$dir/$file"
-    if [[ -e "$dir/$file" ]]; then
-    	notify-send -u low --replace-id 699 "Screenshot Saved."
-    else
-        notify-send -u low --replace-id 699 "Screenshot Deleted."
-    fi
+	notify-send -u low --replace-id 699 "Copied to clipboard." "$dir/$file"
+	if [[ -e "$dir/$file" ]]; then
+		notify-send -u low --replace-id 699 "Screenshot Saved."
+	else
+		notify-send -u low --replace-id 699 "Screenshot Deleted."
+	fi
 }
 
 countdown() {
-    for sec in $(seq "$1" -1 1); do
-    	notify-send -t 1000 --replace 699 "Taking shot in : $sec"
-    	sleep 1
-    done
+	for sec in $(seq "$1" -1 1); do
+		notify-send -t 1000 --replace 699 "Taking shot in : $sec"
+		sleep 1
+	done
 }
 
 get_geometry() {
-    if [[ ${XDG_CURRENT_DESKTOP} = "Hyprland" ]]; then
-    	hyprctl -j monitors |
-            jq -r "\"\(.[$1].x),\(.[$1].y) \(.[$1].width)x\(.[$1].height)"\"
-    elif [[ ${XDG_CURRENT_DESKTOP} = "sway" ]]; then
-    	swaymsg -t get_outputs |
-    	    jq -r '.[] | select(.focused) | .current_mode | .rect | "\(.x),\(.y) \(.width)x\(.height)"'
-    fi
+	if [[ ${XDG_CURRENT_DESKTOP} = "Hyprland" ]]; then
+		hyprctl -j monitors |
+			jq -r "\"\(.[$1].x),\(.[$1].y) \(.[$1].width)x\(.[$1].height)"\"
+	elif [[ ${XDG_CURRENT_DESKTOP} = "sway" ]]; then
+		swaymsg -t get_outputs |
+			jq -r '.[] | select(.focused) | .current_mode | .rect | "\(.x),\(.y) \(.width)x\(.height)"'
+	fi
 }
 
 get_resolution() {
-    if [[ ${XDG_CURRENT_DESKTOP} = "Hyprland" ]]; then
-    	hyprctl -j monitors |
-            jq -r "\"\(.[$1].width)x\(.[$1].height)\""
-    elif [[ ${XDG_CURRENT_DESKTOP} = "sway" ]]; then
-    	swaymsg -t get_outputs |
-    	    jq -r '.[] | select(.focused) | .current_mode | .rect | "\(.width)x\(.height)"'
-    fi
+	if [[ ${XDG_CURRENT_DESKTOP} = "Hyprland" ]]; then
+		hyprctl -j monitors |
+			jq -r "\"\(.[$1].width)x\(.[$1].height)\""
+	elif [[ ${XDG_CURRENT_DESKTOP} = "sway" ]]; then
+		swaymsg -t get_outputs |
+			jq -r '.[] | select(.focused) | .current_mode | .rect | "\(.width)x\(.height)"'
+	fi
 }
 
 get_position() {
-    if [[ ${XDG_CURRENT_DESKTOP} = "sway" ]]; then
-    	swaymsg -t get_tree |
-            jq -r '.. | select(.pid? and .visible?) | .rect | "\(.x),\(.y) \(.width)x\(.height)"'
-    elif [[ ${XDG_CURRENT_DESKTOP} = "Hyprland" ]]; then
-    	hyprctl -j activewindow |
-            jq -r '"\(.at[0]),\(.at[1]) \(.size[0])x\(.size[1])"'
-    fi
+	if [[ ${XDG_CURRENT_DESKTOP} = "sway" ]]; then
+		swaymsg -t get_tree |
+			jq -r '.. | select(.pid? and .visible?) | .rect | "\(.x),\(.y) \(.width)x\(.height)"'
+	elif [[ ${XDG_CURRENT_DESKTOP} = "Hyprland" ]]; then
+		hyprctl -j activewindow |
+			jq -r '"\(.at[0]),\(.at[1]) \(.size[0])x\(.size[1])"'
+	fi
 }
 
 take_shot() {
-    grim -g - - | tee "$file" | wl-copy --type image/png
+	grim -g - - | tee "$file" | wl-copy --type image/png
 }
 
 take_shot_screen() {
-    cd "$dir" && get_geometry "$1" | take_shot
+	cd "$dir" && get_geometry "$1" | take_shot
 }
 
 take_shot_now() {
-    sleep 0.5 && take_shot_screen "$1"
-    notify_view
+	sleep 0.5 && take_shot_screen "$1"
+	notify_view
 }
 
 take_shot_delay() {
-    countdown "$2"
-    sleep 1 && take_shot_screen "$1"
-    notify_view
+	countdown "$2"
+	sleep 1 && take_shot_screen "$1"
+	notify_view
 }
 
 take_shot_win() {
-    sleep 0.5 && cd "$dir" && get_position | take_shot
-    notify_view
+	sleep 0.5 && cd "$dir" && get_position | take_shot
+	notify_view
 }
 
 take_shot_area() {
-    cd "$dir" && slurp | take_shot
-    notify_view
+	cd "$dir" && slurp | take_shot
+	notify_view
 }
 
 time=$(date +%Y-%m-%d-%I-%M-%S)
@@ -97,48 +99,48 @@ lines="$(echo -e "$options" | awk 'END{print NR}')"
 chosen="$(echo -e "$options" | fuzzel --dmenu -l "$lines")"
 
 if [[ ! -d "$dir" ]]; then
-    mkdir -p "$dir"
+	mkdir -p "$dir"
 fi
 
 case "$chosen" in
-    "$screen1" | "$screen2")
-        if [[ "$chosen" = "$screen1" ]]; then
-    	    monitorid="0"
-    	elif [[ "$chosen" = "$screen2" ]]; then
-    	    monitorid="1"
-    	fi
-    	geometry="$(get_resolution "$monitorid")"
-    	file="Screenshot_${time}_${geometry}.png"
-    	take_shot_now "$monitorid"
-    	;;
+"$screen1" | "$screen2")
+	if [[ "$chosen" = "$screen1" ]]; then
+		monitorid="0"
+	elif [[ "$chosen" = "$screen2" ]]; then
+		monitorid="1"
+	fi
+	geometry="$(get_resolution "$monitorid")"
+	file="Screenshot_${time}_${geometry}.png"
+	take_shot_now "$monitorid"
+	;;
 
-    "$area")
-    	take_shot_area
-    	;;
+"$area")
+	take_shot_area
+	;;
 
-    "$window")
-    	take_shot_win
-    	;;
+"$window")
+	take_shot_win
+	;;
 
-    "$infive1" | "$infive2")
-    	if [[ "$chosen" = "$infive1" ]]; then
-    	    monitorid="0"
-    	elif [[ "$chosen" = "$infive2" ]]; then
-    	    monitorid=1
-    	fi
-    	geometry="$(get_resolution "$monitorid")"
-    	file="Screenshot_${time}_${geometry}.png"
-    	take_shot_delay "$monitorid" 5
-    	;;
+"$infive1" | "$infive2")
+	if [[ "$chosen" = "$infive1" ]]; then
+		monitorid="0"
+	elif [[ "$chosen" = "$infive2" ]]; then
+		monitorid=1
+	fi
+	geometry="$(get_resolution "$monitorid")"
+	file="Screenshot_${time}_${geometry}.png"
+	take_shot_delay "$monitorid" 5
+	;;
 
-    "$inten1" | "$inten2")
-    	if [[ "$chosen" = "$inten1" ]]; then
-    	    monitorid="0"
-    	elif [[ "$chosen" = "$inten2" ]]; then
-    	    monitorid=1
-    	fi
-    	geometry="$(get_resolution "$monitorid")"
-    	file="Screenshot_${time}_${geometry}.png"
-    	take_shot_delay "$monitorid" 10
-    	;;
+"$inten1" | "$inten2")
+	if [[ "$chosen" = "$inten1" ]]; then
+		monitorid="0"
+	elif [[ "$chosen" = "$inten2" ]]; then
+		monitorid=1
+	fi
+	geometry="$(get_resolution "$monitorid")"
+	file="Screenshot_${time}_${geometry}.png"
+	take_shot_delay "$monitorid" 10
+	;;
 esac

@@ -1,4 +1,4 @@
-font pango:Iosevka NF, Iosevka NF Regular 10.000000
+font pango:Iosevka NF Regular 10
 floating_modifier Mod4
 default_border normal 1
 default_floating_border normal 1
@@ -36,7 +36,7 @@ bindsym Mod4+Ctrl+7 move container to workspace number 7
 bindsym Mod4+Ctrl+8 move container to workspace number 8
 bindsym Mod4+Ctrl+9 move container to workspace number 9
 bindsym Mod4+Ctrl+space sticky toggle
-bindsym Mod4+Escape exec "powermenu"
+bindsym Mod4+Escape exec $HOME/.config/fuzzel/scripts/powermenu
 bindsym Mod4+Minus scratchpad show
 bindsym Mod4+Return exec alacritty
 bindsym Mod4+Shift+0 move container to workspace number 0, workspace number 0
@@ -72,7 +72,7 @@ bindsym Mod4+Shift+v myxer
 bindsym Mod4+Tab windows
 bindsym Mod4+a focus parent
 bindsym Mod4+b splitt
-bindsym Mod4+c exec toggle-sink
+bindsym Mod4+c exec $HOME/.config/sway/scripts/toggle-sink
 bindsym Mod4+d exec "fuzzel"
 bindsym Mod4+down focus down
 bindsym Mod4+e layout toggle all
@@ -90,7 +90,7 @@ bindsym Mod4+t exec swaync-client -t -sw
 bindsym Mod4+up focus up
 bindsym Mod4+v splitv
 bindsym Mod4+w layout default
-bindsym Print exec screenshot
+bindsym Print exec $HOME/.config/fuzzel/scripts/screenshot
 
 input "1:1:AT_Translated_Set_2_keyboard" {
   xkb_layout gb
@@ -142,7 +142,7 @@ assign [class="^jetbrains-idea$"] workspace 9
 
 gaps inner 5
 gaps outer 5
-for_window [app_id=".*" class=".*" instance=".*" title=".*"] {
+for_window [all] {
   inhibit_idle fullscreen
   title_format "<b>%title</b> (%app_id%instance,%shell)"
 }
@@ -208,7 +208,6 @@ exec alacritty
 exec emacsclient -c -a=''
 
 exec_always pkill fuzzel
-exec_always systemctl --user restart waybar
 exec_always systemctl --user restart wob
 exec_always systemctl --user restart swaync
 exec_always swaync-client -R -rs -sw
@@ -216,8 +215,8 @@ exec_always swaync-client -R -rs -sw
 workspace "7" output "DP-1"
 exec "dbus-update-activation-environment --systemd --all; systemctl --user reset-failed && systemctl --user start sway-session.target && swaymsg -mt subscribe '[]' || true && systemctl --user stop sway-session.target"
 bindsym --locked {
-    XF86AudioRaiseVolume exec wob "-v" "-i5"
-    XF86AudioLowerVolume exec wob "-v" "-d5"
+    XF86AudioRaiseVolume exec $HOME/.config/sway/scripts/wob "-v" "-i5"
+    XF86AudioLowerVolume exec $HOME/.config/sway/scripts/wob "-v" "-d5"
     XF86AudioMute exec wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle && \
                     check-mute "getspeaker"
     XF86AudioMicMute exec wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle && \
@@ -225,7 +224,15 @@ bindsym --locked {
     XF86AudioPlay exec playerctl play-pause
     XF86AudioNext exec playerctl next
     XF86AudioPrev exec playerctl previous
-    XF86MonBrightnessUp exec wob "-b" "-i5"
-    XF86MonBrightnessDown exec wob "-b" "-d5"
+    XF86MonBrightnessUp exec $HOME/.config/sway/scripts/wob "-b" "-i5"
+    XF86MonBrightnessDown exec $HOME/.config/sway/scripts/wob "-b" "-d5"
     XF86RotateWindows exec $HOME/.config/sway/scripts/rotate
+}
+
+bar {
+    font pango:Iosevka NF Regular 10
+    position bottom
+    status_command i3status-rs ~/.config/i3status-rust/config.toml
+	height 24
+	status_padding 0
 }
