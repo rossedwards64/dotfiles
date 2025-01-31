@@ -294,21 +294,21 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
   "Switch to `config.org'."
   (interactive)
   (switch-to-buffer (find-file-noselect
-					 (concat user-emacs-directory "config.org"))))
+                     (concat user-emacs-directory "config.org"))))
 
 (defun ross/set-theme (theme)
   "Apply THEME."
   (if (daemonp)
-	  (add-hook 'after-make-frame-functions
-				(lambda (frame)
-				  (with-selected-frame frame
-					(load-theme theme t))))
+      (add-hook 'after-make-frame-functions
+                (lambda (frame)
+                  (with-selected-frame frame
+                    (load-theme theme t))))
     (load-theme theme t)))
 
 (with-eval-after-load "org"
   (defun ross/tangle-and-eval-config ()
     "Tangles the code blocks from `config.org' to `init.el',
-       and re-evaluates `init.el'."
+     and re-evaluates `init.el'."
     (interactive)
     (org-babel-tangle-file (concat user-emacs-directory "config.org"))
     (load (concat user-emacs-directory "init.el"))))
