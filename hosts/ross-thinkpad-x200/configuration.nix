@@ -24,10 +24,8 @@ in
     syncthing = {
       settings = {
         folders = {
+          "Reading" = folderConfig;
           "Org Files" = folderConfig;
-          "Books" = folderConfig;
-          "Papers" = folderConfig;
-          "Manuals" = folderConfig;
           "Pictures" = folderConfig;
         };
       };

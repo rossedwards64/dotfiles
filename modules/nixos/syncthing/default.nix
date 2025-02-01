@@ -35,8 +35,13 @@ in
             autoAcceptFolders = true;
           };
           "ross-thinkpad-x200" = {
-            id = "C2YUE77-ZYJ4OZY-OPA3VU5-VGG5BL3-WDVGY5N-RRPIEF4-5Q3EEY6-TTLJ5AY";
+            id = "D2UMJGH-DUNDDMX-LE7QF3S-XJG44ZN-EKY4HQZ-4F5R6S5-PYZ7TO6-FXV3TQ5";
             name = "Thinkpad-X200";
+            autoAcceptFolders = true;
+          };
+          "ross-thinklpad-x61t" = {
+            id = "LKFTFDM-X2Z2OGG-CI27TTD-C5ASSAA-6OO523V-OQL2NLW-ZI26KC4-QEZN7AS";
+            name = "Thinkpad-X61T";
             autoAcceptFolders = true;
           };
           "ross-phone" = {
@@ -50,14 +55,8 @@ in
           "Org Files" = {
             path = "${documents}/org";
           };
-          "Books" = {
-            path = "${documents}/books";
-          };
-          "Papers" = {
-            path = "${documents}/papers";
-          };
-          "Manuals" = {
-            path = "${documents}/manuals";
+          "Reading" = {
+            path = "${documents}/reading";
           };
           "Pictures" = {
             path = "${home}/Pictures/camera";

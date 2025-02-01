@@ -38,10 +38,8 @@ in
       settings = {
         folders = {
           "Org Files" = folderConfig;
-          "Books" = folderConfig;
-          "Papers" = folderConfig;
-          "Manuals" = folderConfig;
           "Pictures" = folderConfig;
+          "Reading" = folderConfig;
         };
       };
     };
