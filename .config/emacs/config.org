@@ -319,7 +319,13 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
 (use-package org
   :init
   (setq org-directory "~/Documents/org"
-        org-agenda-files `(,(concat org-directory "/agenda.org"))
+        org-agenda-files (cl-map 'list (lambda (file)
+                                         (let ((file (concat org-directory "/" file)))
+                                           (when (not (file-exists-p file))
+                                             (make-empty-file file))
+                                           file))
+                                 '("agenda.org" "habits.org" "meetings.org" "todo.org"))
+        org-default-notes-file (concat org-directory "/notes.org")
         org-auto-align-tags t
         org-edit-src-content-indentation 0
         org-hide-emphasis-markers t
@@ -330,6 +336,7 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
         org-pretty-entities-include-sub-superscripts t
         org-return-follows-link t
         org-roam-directory (concat org-directory "/roam")
+        org-roam-completion-everywhere t
         org-special-ctrl-a/e t
         org-special-ctrl-k t
         org-special-ctrl-o t
@@ -340,24 +347,49 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
         org-startup-with-inline-images t
         org-support-shift-select t
         org-use-property-inheritance t
-        org-agenda-custom-commands '(("i" "Inbox"
-                                      ((todo ".*" ((org-agenda-files `(,(concat org-directory "/todo.org")))
-                                                   (org-agenda-overriding-header "Unprocessed Inbox Items"))))))
         org-todo-keywords '((sequence
                              "TODO(t)"
-                             "PROG(p!)"
+                             "MEETING(m)"
+                             "PROGRESS(p!)"
                              "BLOCKED(b@/!)"
+                             "WAITING(w)"
                              "|"
                              "DONE(d!)"
                              "CANCELLED(c@)"
-                             "STOPPED(s@/!)")))
+                             "STOPPED(s@/!)"))
+        org-capture-templates '(("t" "Task")
+                                ("tu" "Unscheduled" entry
+                                 (file+headline "todo.org" "Unscheduled Tasks")
+                                 "** TODO %?\n%i\n%a"
+                                 :empty-lines-before 1)
+                                ("ts" "Scheduled" entry
+                                 (file+headline "agenda.org" "Scheduled Tasks")
+                                 "** TODO %?\nSCHEDULED: %^T\n%^{LOCATION|N/A}p"
+                                 :empty-lines-before 1)
+                                ("td" "Deadline" entry
+                                 (file+headline "agenda.org" "Deadlined Tasks")
+                                 "** TODO %?\nDEADLINE: %^T"
+                                 :empty-lines-before 1)
+                                ("th" "Habit" entry
+                                 (file+headline "habits.org")
+                                 "* TODO %?\nSCHEDULED: %^T\n:PROPERTIES:\n:STYLE: habit\n:END:"
+                                 :empty-lines-before 1)
+                                ("n" "Note" entry
+                                 (file "notes.org")
+                                 "* %?\nEntered on %U\n%i\n%a"
+                                 :empty-lines-before 1)
+                                ("i" "Idea" entry
+                                 (file "ideas.org")
+                                 "* %? :IDEA: \n%t"
+                                 :empty-lines-before 1)))
   :bind
   (:map help-map
-        ("r" . #'ross/tangle-and-eval-config)
+        ("r" . ross/tangle-and-eval-config)
         :map org-src-mode-map
-        ("C-c C-c" . #'org-edit-src-exit)
+        ("C-c C-c" . org-edit-src-exit)
         :map global-map
-        ("C-c na" . #'org-agenda))
+        ("C-c na" . org-agenda)
+        ("C-c nc" . org-capture))
   :hook ((org-mode . (lambda ()
                        (auto-complete-mode +1)
                        (variable-pitch-mode +1)))
@@ -371,20 +403,21 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
 (use-package org-roam
   :bind
   ((:map global-map
-         ("C-c nl" . org-roam-buffer-toggle)
-         ("C-c nf" . org-roam-node-find)
-         ("C-c ng" . org-roam-graph)
-         ("C-c ni" . org-roam-node-insert)
-         ("C-c nc" . org-roam-capture)
-         ("C-c ny" . org-roam-dailies-capture-yesterday)
-         ("C-c nj" . org-roam-dailies-capture-today)
-         ("C-c nt" . org-roam-dailies-capture-tomorrow))
+         ("C-c nra" . org-id-get-create)
+         ("C-c nrl" . org-roam-buffer-toggle)
+         ("C-c nrf" . org-roam-node-find)
+         ("C-c nrg" . org-roam-graph)
+         ("C-c nri" . org-roam-node-insert)
+         ("C-c nrc" . org-roam-capture)
+         ("C-c nry" . org-roam-dailies-capture-yesterday)
+         ("C-c nrt" . org-roam-dailies-capture-today)
+         ("C-c nrw" . org-roam-dailies-capture-tomorrow))
    (:map org-mode-map
          ("C-M-i" . completion-at-point)))
   :config
   (setq org-roam-node-display-template
-        (concat "${title:*} " (propertize "${tags:10}"
-                                          'face 'org-tag)))
+        (concat "${title:*} "
+                (propertize "${tags:*}" 'face 'org-tag)))
   (org-roam-db-autosync-enable))
 
 (use-package org-alert
@@ -540,7 +573,7 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
 
 (use-package olivetti
   :hook ((org-mode . olivetti-mode))
-  :config (setq olivetti-body-width 120))
+  :config (setq-default olivetti-body-width 0.8))
 #+end_src
 
 ** Window Management
@@ -591,23 +624,23 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
   (vertico-mode +1)
   (vertico-indexed-mode +1)
   (setq completion-in-region-function
-                (lambda (&rest args)
-                  (apply (if vertico-mode
-                                         #'consult-completion-in-region
-                                   #'completion--in-region)
-                                 args))))
+        (lambda (&rest args)
+          (apply (if vertico-mode
+                     #'consult-completion-in-region
+                   #'completion--in-region)
+                 args))))
 
 (use-package company
   :diminish
   :config
   (global-company-mode +1)
   (setq company-idle-delay (lambda () (if (company-in-string-or-comment) nil 0.5))
-                company-minimum-prefix-length 1
-                company-selection-wrap-around t
-                company-tooltip-align-annotations t
-                company-tooltip-limit 10
-                company-tooltip-margin 3
-                company-tooltip-offset-display 'lines))
+        company-minimum-prefix-length 1
+        company-selection-wrap-around t
+        company-tooltip-align-annotations t
+        company-tooltip-limit 10
+        company-tooltip-margin 3
+        company-tooltip-offset-display 'lines))
 
 (use-package company-posframe
   :hook (company-mode . company-posframe-mode))
@@ -662,17 +695,17 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
 (use-package elfeed
   :bind
   (:map global-map
-		("C-c MR" . elfeed))
+        ("C-c MR" . elfeed))
   :config
   (setq elfeed-feeds
-		'(("https://planet.emacslife.com/atom.xml" emacs blog)
-		  ("https://www.theguardian.com/world/rss" news))))
+        '(("https://planet.emacslife.com/atom.xml" emacs blog)
+          ("https://www.theguardian.com/world/rss" news))))
 
 (use-package erc
   :elpaca nil
   :bind
   (:map global-map
-		("C-c MI" . erc)))
+        ("C-c MI" . erc)))
 #+end_src
 
 * Navigation
@@ -691,7 +724,7 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
 (use-package ibuffer
   :elpaca nil
   :bind (:map global-map
-			  ([remap list-buffers] . ibuffer)))
+              ([remap list-buffers] . ibuffer)))
 #+end_src
 
 * Text Editing
@@ -911,12 +944,12 @@ This is a workaround for [[https://github.com/emacs-lsp/lsp-mode/issues/4332][th
 #+begin_src emacs-lisp
 (use-package cider
   :hook ((clojure-mode . cider-jack-in-clj)
-                 (clojurescript-mode . cider-jack-in-cljs)))
+         (clojurescript-mode . cider-jack-in-cljs)))
 
 (use-package clj-refactor
   :hook (((clojure-mode clojurescript-mode) . clj-refactor-mode)
-                 ((clojure-mode clojurescript-mode)
-                  . (lambda () (cljr-add-keybindings-with-prefix "C-c C-m")))))
+         ((clojure-mode clojurescript-mode)
+          . (lambda () (cljr-add-keybindings-with-prefix "C-c C-m")))))
 
 (use-package flycheck-clj-kondo)
 (use-package anakondo)
