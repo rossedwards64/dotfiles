@@ -749,6 +749,7 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
                    lisp-interaction-mode
                    sly-mrepl-mode
                    scheme-mode
+				   geiser-repl-mode
                    clojure-mode)
     (sp-local-pair "'" nil :actions nil)
     (sp-local-pair "`" nil :actions nil)))
@@ -998,7 +999,15 @@ It's a bit of a pain having to do 'M-x sly' every time I open a Lisp project.
 
 **** Scheme
 #+begin_src emacs-lisp
-(use-package geiser-guile)
+(use-package geiser-guile
+  :config
+  (setq geiser-mode-start-repl-p t
+		geiser-mode-smart-tab-p t
+		geiser-mode-eval-last-sexp-to-buffer t
+		geiser-mode-eval-to-buffer-prefix "=> "
+		geiser-repl-autoeval-mode-p t
+		geiser-repl-highlight-output-p t
+		geiser-repl-superparen-mode-p t))
 
 (use-package ac-geiser
   :hook
@@ -1012,7 +1021,20 @@ It's a bit of a pain having to do 'M-x sly' every time I open a Lisp project.
 No point loading these if not on NixOS.
 #+begin_src emacs-lisp
 (when (nixos-p)
-  (use-package nix-mode)
+  (use-package nix-mode
+	:after lsp-mode
+	:config
+	(setq lsp-nix-nixd-server-path "nixd"
+		  lsp-nix-nixd-formatting-command ["nixfmt"]
+		  lsp-nix-nixd-nixpkgs-expr "import <nixpkgs> { }"
+		  lsp-nix-nixd-nixos-options-expr (format
+										   "(builtins.getFlake \"/home/%s/.dotfiles\").nixosConfigurations.%s.options"
+										   user-login-name system-name)
+		  lsp-nix-nixd-home-manager-options-expr (format
+												  "(builtins.getFlake \"/home/%s/.dotfiles\").homeConfigurations.\"%s@%s\".options"
+												  user-login-name user-login-name system-name)))
+  
+  
   (use-package nix-ts-mode)
   (use-package nixpkgs-fmt)
   (use-package nix-buffer))

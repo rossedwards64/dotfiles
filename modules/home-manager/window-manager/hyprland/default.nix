@@ -14,7 +14,7 @@ let
   laptop = "LVDS-1";
   wallpapersDir = "/home/ross/Pictures/wallpapers";
 
-  checkMuteScript = import ../scripts/check-mute.nix { inherit pkgs; };
+  toggleMuteScript = import ../scripts/toggle-mute.nix { inherit pkgs; };
   toggleSinkScript = import ../scripts/toggle-sink.nix { inherit pkgs; };
   wobScript = import ../scripts/wob.nix { inherit pkgs; };
 
@@ -338,9 +338,14 @@ in
               ];
             };
 
-            windowrulev2 = [
-              "group new,class:${firefoxRegexp}"
-            ] ++ noComposite ++ noBlurAndOpaque ++ workspaceAssigns ++ monitorAssigns;
+            windowrulev2 =
+              [
+                "group new,class:${firefoxRegexp}"
+              ]
+              ++ noComposite
+              ++ noBlurAndOpaque
+              ++ workspaceAssigns
+              ++ monitorAssigns;
 
             workspace = [ "7,monitor:${monitor1}" ];
 
@@ -415,8 +420,8 @@ in
             ];
 
             bindl = [
-              '',XF86AudioMute,exec,${pkgs.wireplumber}/bin/wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle && "${checkMuteScript}/bin/check-mute" "-s"''
-              '',XF86AudioMicMute,exec,${pkgs.wireplumber}/bin/wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle && "${checkMuteScript}/bin/check-mute" "-m"''
+              '',XF86AudioMute,exec,"${toggleMuteScript}/bin/toggle-mute" "-s"''
+              '',XF86AudioMicMute,exec,"${toggleMuteScript}/bin/toggle-mute" "-m"''
 
             ];
 

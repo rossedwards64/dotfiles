@@ -17,7 +17,7 @@ let
   up = "k";
   wallpapersDir = "/home/ross/Pictures/wallpapers";
 
-  checkMuteScript = import ../scripts/check-mute.nix { inherit pkgs; };
+  toggleMuteScript = import ../scripts/toggle-mute.nix { inherit pkgs; };
   toggleSinkScript = import ../scripts/toggle-sink.nix { inherit pkgs; };
   wobScript = import ../scripts/wob.nix { inherit pkgs; };
 
@@ -93,10 +93,8 @@ in
             bindsym --locked {
                 XF86AudioRaiseVolume exec ${wobScript}/bin/wob "-v" "-i5"
                 XF86AudioLowerVolume exec ${wobScript}/bin/wob "-v" "-d5"
-                XF86AudioMute exec ${pkgs.wireplumber}/bin/wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle && \
-                                ${checkMuteScript}/bin/check-mute "getspeaker"
-                XF86AudioMicMute exec ${pkgs.wireplumber}/bin/wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle && \
-                                ${checkMuteScript}/bin/check-mute "getmic"
+                XF86AudioMute exec ${toggleMuteScript}/bin/toggle-mute -s
+                XF86AudioMicMute exec ${toggleMuteScript}/bin/toggle-mute -m
                 XF86AudioPlay exec ${pkgs.playerctl}/bin/playerctl play-pause
                 XF86AudioNext exec ${pkgs.playerctl}/bin/playerctl next
                 XF86AudioPrev exec ${pkgs.playerctl}/bin/playerctl previous
