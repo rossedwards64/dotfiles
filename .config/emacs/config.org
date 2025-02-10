@@ -13,7 +13,7 @@
   - [[#window-management][Window Management]]
   - [[#completion][Completion]]
 - [[#file-manager][File Manager]]
-- [[#e-mail][E-Mail]]
+- [[#internet][Internet]]
 - [[#navigation][Navigation]]
 - [[#text-editing][Text Editing]]
 - [[#programming][Programming]]
@@ -315,7 +315,7 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
 
 (defun ross/is-dual-core ()
   "Returns t if core count is 2."
-  (< 2 (num-processors)))
+  (= 2 (num-processors)))
 #+end_src
 
 * Org-Mode
@@ -636,7 +636,7 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
 (use-package dired-rsync)
 #+end_src
 
-* E-Mail
+* Internet
 #+begin_src emacs-lisp
 (use-package mu4e
   :elpaca nil
@@ -662,6 +662,21 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
   (read-mail-command 'mu4e))
 
 (use-package mu4e-alert)
+
+(use-package elfeed
+  :bind
+  (:map global-map
+                ("C-c MR" . elfeed))
+  :config
+  (setq elfeed-feeds
+                '(("https://planet.emacslife.com/atom.xml" emacs blog)
+                  ("https://www.theguardian.com/world/rss" news))))
+
+(use-package erc
+  :elpaca nil
+  :bind
+  (:map global-map
+                ("C-c MI" . erc)))
 #+end_src
 
 * Navigation
@@ -680,7 +695,7 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
 (use-package ibuffer
   :elpaca nil
   :bind (:map global-map
-			  ([remap list-buffers] . ibuffer)))
+              ([remap list-buffers] . ibuffer)))
 #+end_src
 
 * Text Editing
@@ -701,11 +716,11 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
   :config
   (smartparens-global-mode +1)
   (sp-with-modes '(emacs-lisp-mode
-				   lisp-mode
-				   lisp-interaction-mode
-				   sly-mrepl-mode
-				   scheme-mode
-				   clojure-mode)
+                   lisp-mode
+                   lisp-interaction-mode
+                   sly-mrepl-mode
+                   scheme-mode
+                   clojure-mode)
     (sp-local-pair "'" nil :actions nil)
     (sp-local-pair "`" nil :actions nil)))
 
@@ -713,8 +728,8 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
   :hook ((prog-mode . drag-stuff-mode))
   :bind
   (:map global-map
-		("M-<up>" . drag-stuff-up)
-		("M-<down>" . drag-stuff-down)))
+        ("M-<up>" . drag-stuff-up)
+        ("M-<down>" . drag-stuff-down)))
 
 (use-package format-all
   :commands format-all-mode
@@ -723,10 +738,10 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
 (use-package multiple-cursors
   :bind
   (:map global-map
-		("C-c ml" . mc/edit-lines)
-		("C-c mn" . mc/mark-next-like-this)
-		("C-c mp" . mc/mark-previous-like-this)
-		("C-c ma" . mc/mark-all-like-this)))
+        ("C-c ml" . mc/edit-lines)
+        ("C-c mn" . mc/mark-next-like-this)
+        ("C-c mp" . mc/mark-previous-like-this)
+        ("C-c ma" . mc/mark-all-like-this)))
 
 (use-package iedit)
 
@@ -734,37 +749,36 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
   :config (yas-global-mode +1))
 (use-package yasnippet-snippets)
 
-(when (not (ross/is-dual-core))
-  (use-package flyspell
-    :elpaca nil
-    :hook
-    (((LaTeX-mode org-mode) . flyspell-mode)
-     (prog-mode . flyspell-prog-mode))))
+(use-package flyspell
+  :elpaca nil
+  :unless (ross/is-dual-core)
+  :hook
+  (((LaTeX-mode org-mode) . flyspell-mode)))
 #+end_src
 
 * Programming
 ** General
 #+begin_src emacs-lisp
-(when (not (ross/is-dual-core))
-  (use-package flycheck
-    :init (global-flycheck-mode +1)
-    :config
-    (setq flycheck-emacs-lisp-load-path load-path)
-    (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc))))
+(use-package flycheck
+  :unless (ross/is-dual-core)
+  :init (global-flycheck-mode +1)
+  :config
+  (setq flycheck-emacs-lisp-load-path load-path)
+  (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc)))
 
 (use-package tree-sitter
   :hook ((tree-sitter-after-on . tree-sitter-hl-mode))
   :config
   (setq major-mode-remap-alist '((bash-mode . bash-ts-mode)
-								 (c++-mode . c++-ts-mode)
-								 (c-mode . c-ts-mode)
-								 (c-or-c++-mode . c-or-c++-ts-mode)
-								 (css-mode . css-ts-mode)
-								 (js-mode . js-ts-mode)
-								 (json-mode . json-ts-mode)
-								 (python-mode . python-ts-mode)
-								 (sh-mode . bash-ts-mode)
-								 (yaml-mode . yaml-ts-mode))))
+                                 (c++-mode . c++-ts-mode)
+                                 (c-mode . c-ts-mode)
+                                 (c-or-c++-mode . c-or-c++-ts-mode)
+                                 (css-mode . css-ts-mode)
+                                 (js-mode . js-ts-mode)
+                                 (json-mode . json-ts-mode)
+                                 (python-mode . python-ts-mode)
+                                 (sh-mode . bash-ts-mode)
+                                 (yaml-mode . yaml-ts-mode))))
 
 (use-package tree-sitter-langs)
 
@@ -940,9 +954,8 @@ It's a bit of a pain having to do 'M-x sly' every time I open a Lisp project.
 **** Emacs Lisp
 #+begin_src emacs-lisp
 (use-package elisp-def
-  :config
-  (dolist (hook '(emacs-lisp-mode-hook ielm-mode-hook))
-    (add-hook hook #'elisp-def-mode)))
+  :hook
+  (((emacs-lisp-mode ielm-mode) . elisp-def-mode)))
 
 (use-package elisp-demos
   :config
@@ -950,8 +963,10 @@ It's a bit of a pain having to do 'M-x sly' every time I open a Lisp project.
   (advice-add 'helpful-update :after #'elisp-demos-advice-helpful-update))
 
 (use-package macrostep)
+
 (use-package morlock
-  :config (global-morlock-mode +1))
+  :hook
+  ((emacs-lisp-mode . morlock-mode)))
 #+end_src
 
 **** Scheme
@@ -1006,7 +1021,7 @@ No point loading these if not on NixOS.
   :hook
   (((tex-mode TeX-mode) . lsp-deferred)
    (LaTeX-mode . TeX-source-correlate-mode))
-  :mode ("\\.tex\\'" . LaTeX-mode)
+  :mode ((rx ".tex" string-end) . LaTeX-mode)
   :config
   (setq LaTeX-electric-left-right-brace t
         TeX-auto-save t
@@ -1081,7 +1096,6 @@ No point loading these if not on NixOS.
 
 (use-package magit
   :bind (("C-c v g" . magit)))
-(use-package git-commit)
 
 (use-package ibuffer-projectile)
 (use-package ibuffer-git)
