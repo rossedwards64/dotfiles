@@ -36,15 +36,15 @@ pkgs.writers.writeGuileBin "toggle-mute" { } ''
         (letrec ((devices (filter (compose not nil?)
                                   (list (if (nil? microphone)
                                             #f
-                                            '("microphone" . "@DEFAULT_SOURCE@"))
+                                            '("microphone" . "@DEFAULT_AUDIO_SOURCE@"))
                                         (if (nil? speaker)
                                             #f
-                                            '("speaker" . "@DEFAULT_SINK@")))))
+                                            '("speaker" . "@DEFAULT_AUDIO_SINK@")))))
                  (toggle-devices (lambda (devices)
                                    (unless (nil? devices)
                                      (toggle-device (caar devices) (cdar devices))
                                      (toggle-devices (cdr devices))))))
           (if (nil? devices)
-              (error "Must specify the microphone and/or speaker\n~a")
+              (error "Must specify the microphone and/or speaker.\n")
               (toggle-devices devices)))))
 ''

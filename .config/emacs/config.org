@@ -782,8 +782,7 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
 (use-package flyspell
   :elpaca nil
   :hook
-  (((LaTeX-mode org-mode) . flyspell-mode)
-   (prog-mode . flyspell-prog-mode)))
+  (((LaTeX-mode org-mode) . flyspell-mode)))
 #+end_src
 
 * Programming

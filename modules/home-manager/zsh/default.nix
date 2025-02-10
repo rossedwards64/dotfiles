@@ -18,6 +18,8 @@ in
     programs = {
       zsh = {
         enable = true;
+        enableCompletion = true;
+        historySubstringSearch.enable = true;
 
         autosuggestion = {
           enable = true;
@@ -26,8 +28,6 @@ in
             "completion"
           ];
         };
-
-        enableCompletion = true;
 
         history = {
           append = true;
@@ -41,8 +41,6 @@ in
           share = true;
           size = 10000;
         };
-
-        historySubstringSearch.enable = true;
 
         sessionVariables = {
           ALTERNATE_EDITOR = "${pkgs.neovim}/bin/nvim";

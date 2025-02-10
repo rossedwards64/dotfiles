@@ -22,5 +22,6 @@
   home.packages = [
     (import ./scripts/gpufan.nix { inherit pkgs; })
     (import ./scripts/run-game.nix { inherit pkgs; })
+    (import ./scripts/mkproject.nix { inherit pkgs; })
   ];
 }
