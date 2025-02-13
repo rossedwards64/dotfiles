@@ -417,14 +417,15 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
   :hook ((org-mode . org-sticky-header-mode))
   :config (setq org-sticky-header-full-path 'full))
 
-(use-package helm-org-rifle)
 (use-package org-bookmark-heading)
 (use-package ox-pandoc)
 (use-package org-ac)
-(use-package company-org-block
-  :hook ((org-mode . (lambda ()
-                       (setq-local company-backends '(company-org-block))
-                       (company-mode +1)))))
+
+(eval-after-load "company"
+  (use-package company-org-block
+    :hook ((org-mode . (lambda ()
+                         (setq-local company-backends '(company-org-block))
+                         (company-mode +1))))))
 #+end_src
 
 * UI
@@ -443,16 +444,6 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
 (use-package anzu
   :init
   (global-anzu-mode +1))
-
-(use-package dabbrev
-  :elpaca nil
-  :bind
-  (("M-/" . dabbrev-completion)
-   ("C-M-/" . dabbrev-expand))
-  :config
-  (add-to-list 'dabbrev-ignored-buffer-regexps "\\` ")
-  (dolist (mode '(doc-view-mode pdf-view-mode))
-    (add-to-list 'dabbrev-ignored-buffer-modes mode)))
 
 (use-package consult
   :bind
@@ -602,10 +593,14 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
                  args))))
 
 (use-package company
+  :disabled
   :diminish
+  :init (global-company-mode +1)
   :config
-  (global-company-mode +1)
-  (setq company-idle-delay (lambda () (if (company-in-string-or-comment) nil 0.5))
+  (setq company-idle-delay (lambda ()
+                             (if (company-in-string-or-comment)
+                                 nil
+                               0.5))
         company-minimum-prefix-length 1
         company-selection-wrap-around t
         company-tooltip-align-annotations t
@@ -613,17 +608,48 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
         company-tooltip-margin 3
         company-tooltip-offset-display 'lines))
 
-(use-package company-posframe
-  :hook (company-mode . company-posframe-mode))
-(use-package company-quickhelp
+(eval-after-load "company"
+  (use-package company-posframe
+    :hook (company-mode . company-posframe-mode))
+  (use-package company-quickhelp
+    :init (company-quickhelp-mode +1)))
+
+(use-package corfu
+  :init (global-corfu-mode +1)
   :config
-  (company-quickhelp-mode +1))
+  (setq corfu-cycle t
+        corfu-auto t
+        corfu-auto-prefix 2))
+
+(use-package nerd-icons-corfu
+  :config
+  (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
+
+(use-package cape
+  :init
+  (dolist (cape-fn `(,(function cape-file)
+                     ,(function cape-dabbrev)))
+    (add-to-list 'completion-at-point-functions cape-fn))
+  :config
+  (dolist (cape-wrapper `(,(function cape-wrap-silent)
+                          ,(function cape-wrap-purify)))
+    (advice-add 'pcomplete-completions-at-point :around cape-wrapper)))
 
 (use-package orderless
   :init
-  (setq completion-styles '(substring orderless basic)
+  (setq completion-styles '(orderless partial-completion basic)
         completion-category-defaults nil
-        completion-category-overrides '((file (styles basic partial-completion)))))
+        completion-category-overrides nil))
+
+(use-package dabbrev
+  :elpaca nil
+  :bind
+  (("M-/" . dabbrev-completion)
+   ("C-M-/" . dabbrev-expand))
+  :config
+  (add-to-list 'dabbrev-ignored-buffer-regexps "\\` ")
+  (dolist (mode '(doc-view-mode pdf-view-mode))
+    (add-to-list 'dabbrev-ignored-buffer-modes mode)))
 #+end_src
 
 * File Manager
@@ -641,6 +667,8 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
 (use-package mu4e
   :elpaca nil
   :ensure nil
+  :unless (and (executable-find "mbsync")
+               (executable-find "mu"))
   :after (org)
   :bind
   (:map global-map
@@ -661,22 +689,24 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
   :custom
   (read-mail-command 'mu4e))
 
-(use-package mu4e-alert)
+(use-package mu4e-alert
+  :unless (and (executable-find "mbsync")
+               (executable-find "mu")))
 
 (use-package elfeed
   :bind
   (:map global-map
-                ("C-c MR" . elfeed))
+        ("C-c MR" . elfeed))
   :config
   (setq elfeed-feeds
-                '(("https://planet.emacslife.com/atom.xml" emacs blog)
-                  ("https://www.theguardian.com/world/rss" news))))
+        '(("https://planet.emacslife.com/atom.xml" emacs blog)
+          ("https://www.theguardian.com/world/rss" news))))
 
 (use-package erc
   :elpaca nil
   :bind
   (:map global-map
-                ("C-c MI" . erc)))
+        ("C-c MI" . erc)))
 #+end_src
 
 * Navigation
@@ -791,6 +821,7 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
   :config (apheleia-global-mode +1))
 
 (use-package direnv
+  :unless (executable-find "direnv")
   :config (direnv-mode +1))
 
 (use-package dumb-jump
@@ -890,9 +921,11 @@ This is a workaround for [[https://github.com/emacs-lsp/lsp-mode/issues/4332][th
 (use-package modern-cpp-font-lock
   :config (modern-c++-font-lock-global-mode +1))
 
-(use-package company-irony)
+(eval-after-load "company"
+  (use-package company-irony)
+  (use-package company-irony-c-headers))
+
 (use-package flycheck-irony)
-(use-package company-irony-c-headers)
 (use-package irony-eldoc)
 (use-package disaster)
 #+end_src
@@ -1003,7 +1036,9 @@ No point loading these if not on NixOS.
 
 *** Shell
 #+begin_src emacs-lisp
-(use-package company-shell)
+(eval-after-load "company"
+  (use-package company-shell))
+
 (use-package shelldoc)
 (use-package shfmt)
 #+end_src
@@ -1044,10 +1079,12 @@ No point loading these if not on NixOS.
   :init (setq auctex-latexmk-inherit-TeX-PDF-mode t)
   :config (auctex-latexmk-setup))
 
+(eval-after-load "company"
+  (use-package company-auctex)
+  (use-package company-reftex)
+  (use-package company-bibtex))
+
 (use-package latex-preview-pane)
-(use-package company-auctex)
-(use-package company-reftex)
-(use-package company-bibtex)
 (use-package magic-latex-buffer)
 (use-package ebib)
 #+end_src
