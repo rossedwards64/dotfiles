@@ -63,7 +63,13 @@ in
     rpcs3
     ryujinx
     xemu
+    lact
   ];
+
+  systemd = {
+    packages = with pkgs; [ lact ];
+    services.lactd.wantedBy = [ "multi-user.target" ];
+  };
 
   services = {
     xserver = {

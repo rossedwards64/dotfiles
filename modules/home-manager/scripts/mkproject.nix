@@ -126,7 +126,7 @@ pkgs.writers.writeGuileBin "mkproject" { } ''
 
   $(TARGET):
   ~/sbcl --no-userinit --no-sysinit --non-interactive \\
-  ~2/ --eval '(load (sb-ext:posix-getenv \"ASDF\"))' \\
+  ~2/ --eval '(handler-case (load (sb-ext:posix-getenv \"ASDF\")) (type-error (e) (require \"asdf\")))' \\
   ~2/ --load ./~a.asd \\
   ~2/ --eval '(asdf:make :~a)' \\
   ~2/ --eval '(quit)'
