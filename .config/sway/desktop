@@ -1,0 +1,44 @@
+include "common"
+
+input "12625:16387:ROYUAN_Akko_keyboard" {
+   xkb_layout us
+   xkb_options ctrl:nocaps,altwin:swap_lalt_lwin
+}
+
+input "1356:2508:Sony_Interactive_Entertainment_Wireless_Controller_Touchpad" {
+   events disabled
+}
+
+output "DP-1" {
+   bg /home/ross/Pictures/wallpapers/Gurren Lagann/simon.jpg fill
+   pos 0 0
+   res 1920x1080@144Hz
+   scale 1
+}
+
+output "DP-2" {
+   bg /home/ross/Pictures/wallpapers/Chainsaw Man/csm.jpg fill
+   pos 3840 498
+   res 1280x1024@75Hz
+   scale 1
+}
+
+output "HDMI-A-1" {
+   bg /home/ross/Pictures/wallpapers/Jujutsu Kaisen/vol4.jpg fill
+   pos 1920 0
+   res 1920x1080@75Hz
+   scale 1
+}
+
+workspace "7" output "DP-1"
+
+bindsym Mod4+Shift+i move workspace to output DP-1
+bindsym Mod4+Shift+o move workspace to output HDMI-A-1
+bindsym Mod4+Shift+p move workspace to output DP-2
+
+exec steam
+exec itch
+exec flatpak run io.freetubeapp.FreeTube
+exec flatpak run com.discordapp.Discord
+exec flatpak run com.spotify.Client
+exec flatpak run com.heroicgameslauncher.hgl

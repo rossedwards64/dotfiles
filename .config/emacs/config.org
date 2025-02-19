@@ -319,13 +319,7 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
 (use-package org
   :init
   (setq org-directory "~/Documents/org"
-        org-agenda-files (cl-map 'list (lambda (file)
-                                         (let ((file (concat org-directory "/" file)))
-                                           (when (not (file-exists-p file))
-                                             (make-empty-file file))
-                                           file))
-                                 '("agenda.org" "habits.org" "meetings.org" "todo.org"))
-        org-default-notes-file (concat org-directory "/notes.org")
+        org-agenda-files `(,(concat org-directory "/agenda.org"))
         org-auto-align-tags t
         org-edit-src-content-indentation 0
         org-hide-emphasis-markers t
@@ -446,14 +440,15 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
   :hook ((org-mode . org-sticky-header-mode))
   :config (setq org-sticky-header-full-path 'full))
 
-(use-package helm-org-rifle)
 (use-package org-bookmark-heading)
 (use-package ox-pandoc)
 (use-package org-ac)
-(use-package company-org-block
-  :hook ((org-mode . (lambda ()
-                       (setq-local company-backends '(company-org-block))
-                       (company-mode +1)))))
+
+(with-eval-after-load "company"
+  (use-package company-org-block
+    :hook ((org-mode . (lambda ()
+                         (setq-local company-backends '(company-org-block))
+                         (company-mode +1))))))
 #+end_src
 
 * UI
@@ -472,16 +467,6 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
 (use-package anzu
   :init
   (global-anzu-mode +1))
-
-(use-package dabbrev
-  :elpaca nil
-  :bind
-  (("M-/" . dabbrev-completion)
-   ("C-M-/" . dabbrev-expand))
-  :config
-  (add-to-list 'dabbrev-ignored-buffer-regexps "\\` ")
-  (dolist (mode '(doc-view-mode pdf-view-mode))
-    (add-to-list 'dabbrev-ignored-buffer-modes mode)))
 
 (use-package consult
   :bind
@@ -631,10 +616,14 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
                  args))))
 
 (use-package company
+  :disabled
   :diminish
+  :init (global-company-mode +1)
   :config
-  (global-company-mode +1)
-  (setq company-idle-delay (lambda () (if (company-in-string-or-comment) nil 0.5))
+  (setq company-idle-delay (lambda ()
+                             (if (company-in-string-or-comment)
+                                 nil
+                               0.5))
         company-minimum-prefix-length 1
         company-selection-wrap-around t
         company-tooltip-align-annotations t
@@ -642,17 +631,61 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
         company-tooltip-margin 3
         company-tooltip-offset-display 'lines))
 
-(use-package company-posframe
-  :hook (company-mode . company-posframe-mode))
-(use-package company-quickhelp
+(with-eval-after-load "company"
+  (use-package company-posframe
+    :hook (company-mode . company-posframe-mode))
+  (use-package company-quickhelp
+    :init (company-quickhelp-mode +1)))
+
+(use-package corfu
+  :init (global-corfu-mode +1)
   :config
-  (company-quickhelp-mode +1))
+  (setq corfu-cycle t
+        corfu-auto t
+        corfu-auto-prefix 2
+        corfu-preselect 'directory)
+  (corfu-echo-mode +1)
+  (corfu-history-mode +1)
+  (corfu-popupinfo-mode +1)
+  (keymap-set corfu-map "RET"
+              `(menu-item "" nil :filter
+                          ,(lambda (&optional _)
+                             (and (derived-mode-p 'eshell-mode 'comint-mode)
+                                  #'corfu-send)))))
+
+(use-package corfu-candidate-overlay
+  :config
+  (corfu-candiate-overlay-mode +1))
+
+(use-package nerd-icons-corfu
+  :config
+  (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
+
+(use-package cape
+  :init
+  (dolist (cape-fn `(,(function cape-file)
+                     ,(function cape-dabbrev)))
+    (add-to-list 'completion-at-point-functions cape-fn))
+  :config
+  (dolist (cape-wrapper `(,(function cape-wrap-silent)
+                          ,(function cape-wrap-purify)))
+    (advice-add 'pcomplete-completions-at-point :around cape-wrapper)))
 
 (use-package orderless
   :init
-  (setq completion-styles '(substring orderless basic)
+  (setq completion-styles '(orderless partial-completion basic)
         completion-category-defaults nil
-        completion-category-overrides '((file (styles basic partial-completion)))))
+        completion-category-overrides nil))
+
+(use-package dabbrev
+  :elpaca nil
+  :bind
+  (("M-/" . dabbrev-completion)
+   ("C-M-/" . dabbrev-expand))
+  :config
+  (add-to-list 'dabbrev-ignored-buffer-regexps "\\` ")
+  (dolist (mode '(doc-view-mode pdf-view-mode))
+    (add-to-list 'dabbrev-ignored-buffer-modes mode)))
 #+end_src
 
 * File Manager
@@ -670,6 +703,8 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
 (use-package mu4e
   :elpaca nil
   :ensure nil
+  :when (and (executable-find "mbsync")
+             (executable-find "mu"))
   :after (org)
   :bind
   (:map global-map
@@ -690,7 +725,9 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
   :custom
   (read-mail-command 'mu4e))
 
-(use-package mu4e-alert)
+(use-package mu4e-alert
+  :when (and (executable-find "mbsync")
+             (executable-find "mu")))
 
 (use-package elfeed
   :bind
@@ -791,6 +828,7 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
 
 (use-package flyspell
   :elpaca nil
+  :when (ross/is-dual-core)
   :hook
   (((LaTeX-mode org-mode) . flyspell-mode)))
 #+end_src
@@ -799,6 +837,7 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
 ** General
 #+begin_src emacs-lisp
 (use-package flycheck
+  :when (ross/is-dual-core)
   :init (global-flycheck-mode +1)
   :config
   (setq flycheck-emacs-lisp-load-path load-path)
@@ -829,6 +868,7 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
   :config (apheleia-global-mode +1))
 
 (use-package direnv
+  :when (executable-find "direnv")
   :config (direnv-mode +1))
 
 (use-package dumb-jump
@@ -928,9 +968,11 @@ This is a workaround for [[https://github.com/emacs-lsp/lsp-mode/issues/4332][th
 (use-package modern-cpp-font-lock
   :config (modern-c++-font-lock-global-mode +1))
 
-(use-package company-irony)
+(with-eval-after-load "company"
+  (use-package company-irony)
+  (use-package company-irony-c-headers))
+
 (use-package flycheck-irony)
-(use-package company-irony-c-headers)
 (use-package irony-eldoc)
 (use-package disaster)
 #+end_src
@@ -992,9 +1034,8 @@ It's a bit of a pain having to do 'M-x sly' every time I open a Lisp project.
 **** Emacs Lisp
 #+begin_src emacs-lisp
 (use-package elisp-def
-  :config
-  (dolist (hook '(emacs-lisp-mode-hook ielm-mode-hook))
-    (add-hook hook #'elisp-def-mode)))
+  :hook
+  (((emacs-lisp-mode ielm-mode) . elisp-def-mode)))
 
 (use-package elisp-demos
   :config
@@ -1022,7 +1063,7 @@ It's a bit of a pain having to do 'M-x sly' every time I open a Lisp project.
   :hook
   (((geiser-mode geiser-repl-mode) . ac-geiser-setup))
   :config
-  (eval-after-load "auto-complete"
+  (with-eval-after-load "auto-complete"
     '(add-to-list 'ac-modes 'geiser-repl-mode)))
 #+end_src
 
@@ -1042,8 +1083,6 @@ No point loading these if not on NixOS.
           lsp-nix-nixd-home-manager-options-expr (format
                                                   "(builtins.getFlake \"/home/%s/.dotfiles\").homeConfigurations.\"%s@%s\".options"
                                                   user-login-name user-login-name system-name)))
-  
-  
   (use-package nix-ts-mode)
   (use-package nixpkgs-fmt)
   (use-package nix-buffer))
@@ -1061,7 +1100,9 @@ No point loading these if not on NixOS.
 
 *** Shell
 #+begin_src emacs-lisp
-(use-package company-shell)
+(with-eval-after-load "company"
+  (use-package company-shell))
+
 (use-package shelldoc)
 (use-package shfmt)
 #+end_src
@@ -1079,7 +1120,7 @@ No point loading these if not on NixOS.
   :hook
   (((tex-mode TeX-mode) . lsp-deferred)
    (LaTeX-mode . TeX-source-correlate-mode))
-  :mode ("\\.tex\\'" . LaTeX-mode)
+  :mode ((rx ".tex" string-end) . LaTeX-mode)
   :config
   (setq LaTeX-electric-left-right-brace t
         TeX-auto-save t
@@ -1102,10 +1143,12 @@ No point loading these if not on NixOS.
   :init (setq auctex-latexmk-inherit-TeX-PDF-mode t)
   :config (auctex-latexmk-setup))
 
+(with-eval-after-load "company"
+  (use-package company-auctex)
+  (use-package company-reftex)
+  (use-package company-bibtex))
+
 (use-package latex-preview-pane)
-(use-package company-auctex)
-(use-package company-reftex)
-(use-package company-bibtex)
 (use-package magic-latex-buffer)
 (use-package ebib)
 #+end_src
