@@ -1,160 +1,1083 @@
 [
   {
-    "name": "topbar",
-    "layer": "top",
-    "position": "top",
-    "height": 32,
-    "modules-left": [
-      "custom/launcher",
-      "custom/sep",
-      "disk",
-      "memory",
-      "cpu",
-      "temperature",
-      "custom/fan_speed",
-      "custom/sep"
-    ],
-    "modules-center": ["clock"],
-    "modules-right": [
-      "custom/sep",
-      "custom/pacman",
-      "custom/restart_needed",
-      "network#vpn",
-      "network#wifi",
-      "network#ethernet",
-      "network#disconnected",
-      "bluetooth",
-      "custom/sep",
-      "custom/mail",
-      "custom/weather",
-      "custom/sep",
-      "custom/poweroff"
-    ],
-    "custom/launcher": {
-      "format": "",
-      "on-click": "$HOME/.config/rofi/scripts/launcher &"
+    "backlight": {
+      "device": "intel_backlight",
+      "format": "{icon} {percent}%",
+      "format-icons": [
+        "󰃚",
+        "󰃛",
+        "󰃜",
+        "󰃝",
+        "󰃞",
+        "󰃟",
+        "󰃠"
+      ],
+      "interval": 1,
+      "on-click": "wdisplays",
+      "on-scroll-down": "brightnessctl set 5%-",
+      "on-scroll-up": "brightnessctl set 5%+"
+    },
+    "battery#bat1": {
+      "adapter": "AC",
+      "bat": "BAT0",
+      "format": "{icon}  {capacity}% [{time}]",
+      "format-charging": " {capacity}% [{time}]",
+      "format-empty": "Empty",
+      "format-full": "Full [{time}]",
+      "format-icons": [
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "format-plugged": " {capacity}% [{time}]",
+      "format-time": "{H}:{M}",
+      "full-at": 100,
+      "interval": 10,
+      "states": {
+        "critical": 20,
+        "empty": 15,
+        "full": 100,
+        "good": 99,
+        "warning": 30
+      }
     },
     "clock": {
-      "interval": 1,
+      "calendar": {
+        "format": {
+          "days": "<span color='#ecc6d9'><b>{}</b></span>",
+          "months": "<span color='#ffead3'><b>{}</b></span>",
+          "today": "<span color='#ff6699'><b><u>{}</u></b></span>",
+          "weekdays": "<span color='#ffcc66'><b>{}</b></span>",
+          "weeks": "<span color='#99ffdd'><b>W{}</b></span>"
+        },
+        "mode": "year",
+        "mode-mon-col": 3,
+        "on-click-right": "mode",
+        "on-scroll": 1,
+        "weeks-pos": "right"
+      },
       "format": "<b>{:%a %d-%m-%y %H:%M:%S}</b>",
       "format-alt": "<b>{:%A, %d of %B, %Y %H:%M:%S}</b>",
+      "interval": 1,
       "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"
     },
     "cpu": {
-      "format": " {usage}% {avg_frequency}GHz",
-      "tooltip": false,
+      "format": "󰘚 CPU: {usage}% {avg_frequency}GHz",
+      "interval": 1,
+      "tooltip": false
+    },
+    "custom/cpu-temp": {
+      "exec": "$HOME/.config/waybar/scripts/cpu-temp",
+      "format": " {}",
       "interval": 1
     },
-    "disk": {
-      "format": " {used}",
-      "tooltip-format": "{used} / {total} used",
-      "path": "/",
-      "interval": 300
-    },
-    "memory": {
-      "format": "󰍛 {used:0.1f}G",
-      "tooltip-format": "{used:0.1f}G / {total:0.1f}G used",
+    "custom/fan-speed": {
+      "exec": "$HOME/.config/waybar/scripts/fan-speed",
+      "format": "󰈐 {}",
       "interval": 1
     },
-    "temperature": {
-      "critical-threshold": 70,
-      "format": "{icon} {temperatureC}°C",
-      "format-icons": ["", "", "", "", ""],
+    "custom/gpu-mem": {
+      "exec": "$HOME/.config/waybar/scripts/gpu-mem",
+      "format": "{}",
       "interval": 1
     },
-    "network#disconnected": {
-      "tooltip-format": "No connection!",
-      "format-ethernet": "",
-      "format-wifi": "",
-      "format-linked": "",
-      "format-disconnected": "",
-      "on-click": "nm-connection-editor"
+    "custom/gpu-percent": {
+      "exec": "$HOME/.config/waybar/scripts/gpu-percent",
+      "format": "󰘚 GPU {}",
+      "interval": 1
     },
-    "network#ethernet": {
-      "interface": "enp*",
-      "format-ethernet": "{ifname} 󰈀",
-      "format-wifi": "",
-      "format-linked": "",
-      "format-disconnected": "",
-      "tooltip-format": "{ifname}: {ipaddr}/{cidr}",
-      "on-click": "nm-connection-editor"
+    "custom/gpu-temp": {
+      "exec": "$HOME/.config/waybar/scripts/gpu-temp",
+      "format": " {}",
+      "interval": 1
     },
-    "network#wifi": {
-      "interface": "wlan0",
-      "format-ethernet": "",
-      "format-wifi": " {essid} ({signalStrength}%)",
-      "format-linked": "",
-      "format-disconnected": "",
-      "tooltip-format": "{ifname}: {ipaddr}/{cidr}",
-      "on-click": "nm-connection-editor"
+    "custom/launcher": {
+      "format": "",
+      "on-click": "fuzzel"
     },
-    "network#vpn": {
-      "interface": "tun0",
-      "format": "",
-      "format-disconnected": "",
-      "tooltip-format": "{ifname}: {ipaddr}/{cidr}",
-      "on-click": "nm-connection-editor"
-    },
-    "bluetooth": {
-      "interval": 10,
-      "controller": "ross-thinkpad",
-      "format-device-preference": ["ross-thinkpad"],
-      "format": " {controller_alias}",
-      "format-connected": " {device_alias}",
-      "format-disabled": " disabled",
-      "format-off": " off",
-      "format-on": " on",
-      "format-connected-battery": " {device_alias} ({device_battery_percentage}%)",
-      "tooltip-format": "{controller_alias}\t{controller_address}",
-      "tooltip-format-connected": "{controller_alias}\t{controller_address}\n\n{device_enumerate}",
-      "tooltip-format-enumerate-connected": "{device_alias}\t{device_address}"
-    },
-    "custom/weather": {
+    "custom/notification": {
+      "escape": true,
+      "exec": "swaync-client -swb",
+      "exec-if": "which swaync-client",
+      "format": "{icon}",
+      "format-icons": {
+        "dnd-inhibited-none": "󰂛 ",
+        "dnd-inhibited-notification": "󰂛<span foreground='red'><sup> </sup></span>",
+        "dnd-none": "󰂛 ",
+        "dnd-notification": "󰂛<span foreground='red'><sup> </sup></span>",
+        "inhibited-none": "󰂚 ",
+        "inhibited-notification": "󰂚<span foreground='red'><sup> </sup></span>",
+        "none": "󰂚 ",
+        "notification": "󰂚<span foreground='red'><sup> </sup></span>"
+      },
+      "on-click": "swaync-client -t -sw",
+      "on-click-right": "swaync-client -d -sw",
       "return-type": "json",
-      "exec": "sh $HOME/.config/waybar/modules/weather.sh",
-      "interval": 300,
-      "on-click": "firefox https://wttr.in && swaymsg focuswindow 'firefox'"
+      "tooltip": false
     },
-    "custom/poweroff": {
-      "tooltip": false,
-      "format": "",
-      "on-click": "$HOME/.config/waybar/modules/poweroff.sh &"
-    },
-    "custom/mail": {
-      "tooltip": false,
-      "exec": "sh $HOME/.config/waybar/modules/mail.sh",
-      "interval": 3600,
-      "on-click": "thunderbird && swaymsg focuswindow 'thunderbird'"
+    "custom/power": {
+      "format": "󰐥",
+      "on-click": "powermenu",
+      "tooltip": false
     },
     "custom/sep": {
       "format": "|",
       "interval": "once",
       "tooltip": false
     },
-    "custom/pacman": {
-      "format": " {}",
-      "interval": 600,
-      "exec": "checkupdates | wc -l",
-      "exec-if": "exit 0",
-      "on-click": "alacritty -e 'sudo pacman -Syu'; pkill -SIGRTMIN+8 waybar",
-      "signal": 8
-    },
-    "custom/restart_needed": {
-      "format": "{}",
-      "interval": 3600,
-      "exec": "$HOME/.config/waybar/modules/restart-needed"
-    },
-    "custom/fan_speed": {
-      "format": "󰈐 {}",
+    "custom/spotify": {
+      "escape": true,
+      "exec": "$HOME/.config/waybar/scripts/spotify",
+      "exec-if": "pgrep spotify || pgrep spotify_player || pgrep spot || pgrep ncspot",
       "interval": 1,
-      "exec": "cat /proc/acpi/ibm/fan | grep speed | cut -f 3"
+      "return-type": "json"
+    },
+    "custom/weather": {
+      "exec": "sh $HOME/.config/waybar/scripts/weather",
+      "interval": 300,
+      "on-click": "firefox https://wttr.in",
+      "return-type": "json"
+    },
+    "disk#hdd": {
+      "format": "󰋊 HDD: {used} / {total}",
+      "interval": 300,
+      "path": "/HDD",
+      "tooltip-format": "{used} / {total} used"
+    },
+    "disk#root": {
+      "format": "󰋊 {used} / {total}",
+      "interval": 300,
+      "path": "/",
+      "tooltip-format": "{used} / {total} used"
+    },
+    "disk#ssd": {
+      "format": "󰋊 SSD: {used} / {total}",
+      "interval": 300,
+      "path": "/SSD",
+      "tooltip-format": "{used} / {total} used"
+    },
+    "disk#ssd2": {
+      "format": "󰋊 SSD2: {used} / {total}",
+      "interval": 300,
+      "path": "/SSD2",
+      "tooltip-format": "{used} / {total} used"
+    },
+    "gamemode": {
+      "format": "{glyph}",
+      "format-alt": "{glyph} {count}",
+      "glyph": "󰮂",
+      "hide-not-running": false,
+      "icon-name": "input-gaming-symbolic",
+      "icon-size": 24,
+      "icon-spacing": 4,
+      "tooltip": true,
+      "tooltip-format": "Games running: {count}",
+      "use-icon": true
+    },
+    "height": 32,
+    "idle_inhibitor": {
+      "format": "{icon}",
+      "format-icons": {
+        "activated": "󰈈",
+        "deactivated": "󰈉"
+      }
+    },
+    "layer": "bottom",
+    "memory": {
+      "format": " RAM: {used:0.1f}G / {total:0.1f}G",
+      "tooltip-format": "{used:0.1f}G / {total:0.1f}G used"
+    },
+    "modules-center": [
+      "wlr/taskbar"
+    ],
+    "modules-left": [
+      "tray",
+      "custom/sep",
+      "custom/sep"
+    ],
+    "modules-right": [
+      "custom/sep",
+      "sway/scratchpad",
+      "sway/window",
+      "custom/sep"
+    ],
+    "network#disconnected": {
+      "format-disconnected": "",
+      "format-ethernet": "",
+      "format-linked": "",
+      "format-wifi": "",
+      "on-click": "nm-connection-editor",
+      "tooltip-format": "No connection"
+    },
+    "network#ethernet": {
+      "format-disconnected": "",
+      "format-ethernet": "󰌗  {ifname}: {ipaddr}/{cidr}",
+      "format-linked": "",
+      "format-wifi": "",
+      "interface": "eno*",
+      "on-click": "nm-connection-editor",
+      "tooltip-format": "{ifname}: {ipaddr}/{cidr}"
+    },
+    "network#wifi": {
+      "format-disconnected": "",
+      "format-ethernet": "",
+      "format-linked": "",
+      "format-wifi": "  {essid} ({signalStrength}%)",
+      "interface": "wlp*",
+      "on-click": "nm-connection-editor",
+      "tooltip-format": "{ifname}: {ipaddr}/{cidr}"
+    },
+    "output": "DP-1",
+    "position": "bottom",
+    "pulseaudio": {
+      "format": "{icon} {volume}%{format_source}",
+      "format-bluetooth": "{icon}󰂯 {volume}%{format_source}",
+      "format-bluetooth-muted": " {icon}󰂯 {format_source}",
+      "format-icons": {
+        "car": "󰄋",
+        "default": [],
+        "headphone": "󰋋",
+        "phone": "󰏲",
+        "portable": ""
+      },
+      "format-muted": " {format_source}",
+      "format-source": "󰍬 {volume}%",
+      "format-source-muted": "󰍭",
+      "on-click": "alsamixer",
+      "scroll-step": 1
+    },
+    "sway/mode": {
+      "format": "<span style=\"italic\">{}</span>"
+    },
+    "sway/scratchpad": {
+      "format": "{icon} {count}",
+      "format-icons": [
+        "󱘔",
+        "󱘒"
+      ],
+      "show-empty": true,
+      "tooltip": true,
+      "tooltip-format": "{app}: {title}"
+    },
+    "sway/window": {
+      "format": "{} 󱂬",
+      "on-click": "swaymsg kill"
+    },
+    "temperature": {
+      "critical-threshold": 70,
+      "format": "{icon} {temperatureC}°C",
+      "format-icons": [
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    "tray": {
+      "icon-size": 24,
+      "spacing": 10
+    },
+    "wireplumber": {
+      "format": "{volume}% {icon}",
+      "format-icons": {
+        "car": "",
+        "default": [
+          "",
+          ""
+        ],
+        "hands-free": "󰂯",
+        "headphone": "",
+        "headset": "󰋎",
+        "phone": "",
+        "portable": ""
+      },
+      "format-muted": "",
+      "on-click": "helvum"
+    },
+    "wlr/taskbar": {
+      "format": "{icon}",
+      "icon-size": 24,
+      "icon-theme": "Papirus",
+      "on-click": "activate",
+      "on-click-right": "close",
+      "sort-by-app-id": true,
+      "tooltip": false
     }
   },
   {
-    "name": "bottombar",
-    "layer": "top",
-    "position": "bottom",
+    "backlight": {
+      "device": "intel_backlight",
+      "format": "{icon} {percent}%",
+      "format-icons": [
+        "󰃚",
+        "󰃛",
+        "󰃜",
+        "󰃝",
+        "󰃞",
+        "󰃟",
+        "󰃠"
+      ],
+      "interval": 1,
+      "on-click": "wdisplays",
+      "on-scroll-down": "brightnessctl set 5%-",
+      "on-scroll-up": "brightnessctl set 5%+"
+    },
+    "battery#bat1": {
+      "adapter": "AC",
+      "bat": "BAT0",
+      "format": "{icon}  {capacity}% [{time}]",
+      "format-charging": " {capacity}% [{time}]",
+      "format-empty": "Empty",
+      "format-full": "Full [{time}]",
+      "format-icons": [
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "format-plugged": " {capacity}% [{time}]",
+      "format-time": "{H}:{M}",
+      "full-at": 100,
+      "interval": 10,
+      "states": {
+        "critical": 20,
+        "empty": 15,
+        "full": 100,
+        "good": 99,
+        "warning": 30
+      }
+    },
+    "clock": {
+      "calendar": {
+        "format": {
+          "days": "<span color='#ecc6d9'><b>{}</b></span>",
+          "months": "<span color='#ffead3'><b>{}</b></span>",
+          "today": "<span color='#ff6699'><b><u>{}</u></b></span>",
+          "weekdays": "<span color='#ffcc66'><b>{}</b></span>",
+          "weeks": "<span color='#99ffdd'><b>W{}</b></span>"
+        },
+        "mode": "year",
+        "mode-mon-col": 3,
+        "on-click-right": "mode",
+        "on-scroll": 1,
+        "weeks-pos": "right"
+      },
+      "format": "<b>{:%a %d-%m-%y %H:%M:%S}</b>",
+      "format-alt": "<b>{:%A, %d of %B, %Y %H:%M:%S}</b>",
+      "interval": 1,
+      "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"
+    },
+    "cpu": {
+      "format": "󰘚 {usage}% {avg_frequency}GHz"
+    },
+    "custom/cpu-temp": {
+      "exec": "$HOME/.config/waybar/scripts/cpu-temp",
+      "format": " {}",
+      "interval": 1
+    },
+    "custom/fan-speed": {
+      "exec": "$HOME/.config/waybar/scripts/fan-speed",
+      "format": "󰈐 {}",
+      "interval": 1
+    },
+    "custom/gpu-mem": {
+      "exec": "$HOME/.config/waybar/scripts/gpu-mem",
+      "format": "{}",
+      "interval": 1
+    },
+    "custom/gpu-percent": {
+      "exec": "$HOME/.config/waybar/scripts/gpu-percent",
+      "format": "󰘚 GPU {}",
+      "interval": 1
+    },
+    "custom/gpu-temp": {
+      "exec": "$HOME/.config/waybar/scripts/gpu-temp",
+      "format": " {}",
+      "interval": 1
+    },
+    "custom/launcher": {
+      "format": "",
+      "on-click": "fuzzel"
+    },
+    "custom/notification": {
+      "escape": true,
+      "exec": "swaync-client -swb",
+      "exec-if": "which swaync-client",
+      "format": "{icon}",
+      "format-icons": {
+        "dnd-inhibited-none": "󰂛 ",
+        "dnd-inhibited-notification": "󰂛<span foreground='red'><sup> </sup></span>",
+        "dnd-none": "󰂛 ",
+        "dnd-notification": "󰂛<span foreground='red'><sup> </sup></span>",
+        "inhibited-none": "󰂚 ",
+        "inhibited-notification": "󰂚<span foreground='red'><sup> </sup></span>",
+        "none": "󰂚 ",
+        "notification": "󰂚<span foreground='red'><sup> </sup></span>"
+      },
+      "on-click": "swaync-client -t -sw",
+      "on-click-right": "swaync-client -d -sw",
+      "return-type": "json",
+      "tooltip": false
+    },
+    "custom/power": {
+      "format": "󰐥",
+      "on-click": "powermenu",
+      "tooltip": false
+    },
+    "custom/sep": {
+      "format": "|",
+      "interval": "once",
+      "tooltip": false
+    },
+    "custom/spotify": {
+      "escape": true,
+      "exec": "$HOME/.config/waybar/scripts/spotify",
+      "exec-if": "pgrep spotify || pgrep spotify_player || pgrep spot || pgrep ncspot",
+      "interval": 1,
+      "return-type": "json"
+    },
+    "custom/weather": {
+      "exec": "sh $HOME/.config/waybar/scripts/weather",
+      "interval": 300,
+      "on-click": "firefox https://wttr.in",
+      "return-type": "json"
+    },
+    "disk#root": {
+      "format": "󰋊 {used} / {total}",
+      "interval": 300,
+      "path": "/",
+      "tooltip-format": "{used} / {total} used"
+    },
+    "gamemode": {
+      "format": "{glyph}",
+      "format-alt": "{glyph} {count}",
+      "glyph": "󰮂",
+      "hide-not-running": false,
+      "icon-name": "input-gaming-symbolic",
+      "icon-size": 24,
+      "icon-spacing": 4,
+      "tooltip": true,
+      "tooltip-format": "Games running: {count}",
+      "use-icon": true
+    },
     "height": 32,
+    "idle_inhibitor": {
+      "format": "{icon}",
+      "format-icons": {
+        "activated": "󰈈",
+        "deactivated": "󰈉"
+      }
+    },
+    "layer": "bottom",
+    "memory": {
+      "format": " {used:0.1f}G / {total:0.1f}G"
+    },
+    "modules-center": [
+      "wlr/taskbar"
+    ],
+    "modules-left": [
+      "tray",
+      "custom/sep",
+      "custom/sep"
+    ],
+    "modules-right": [
+      "custom/sep",
+      "sway/scratchpad",
+      "sway/window",
+      "custom/sep"
+    ],
+    "network#disconnected": {
+      "format-disconnected": "",
+      "format-ethernet": "",
+      "format-linked": "",
+      "format-wifi": "",
+      "on-click": "nm-connection-editor",
+      "tooltip-format": "No connection"
+    },
+    "network#ethernet": {
+      "format-disconnected": "",
+      "format-ethernet": "󰌗  {ifname}: {ipaddr}/{cidr}",
+      "format-linked": "",
+      "format-wifi": "",
+      "interface": "eno*",
+      "on-click": "nm-connection-editor",
+      "tooltip-format": "{ifname}: {ipaddr}/{cidr}"
+    },
+    "network#wifi": {
+      "format-disconnected": "",
+      "format-ethernet": "",
+      "format-linked": "",
+      "format-wifi": "  {essid} ({signalStrength}%)",
+      "interface": "wlp*",
+      "on-click": "nm-connection-editor",
+      "tooltip-format": "{ifname}: {ipaddr}/{cidr}"
+    },
+    "output": "DP-2",
+    "position": "bottom",
+    "pulseaudio": {
+      "format": "{icon} {volume}%{format_source}",
+      "format-bluetooth": "{icon}󰂯 {volume}%{format_source}",
+      "format-bluetooth-muted": " {icon}󰂯 {format_source}",
+      "format-icons": {
+        "car": "󰄋",
+        "default": [],
+        "headphone": "󰋋",
+        "phone": "󰏲",
+        "portable": ""
+      },
+      "format-muted": " {format_source}",
+      "format-source": "󰍬 {volume}%",
+      "format-source-muted": "󰍭",
+      "on-click": "alsamixer",
+      "scroll-step": 1
+    },
+    "sway/mode": {
+      "format": "<span style=\"italic\">{}</span>"
+    },
+    "sway/scratchpad": {
+      "format": "{icon} {count}",
+      "format-icons": [
+        "󱘔",
+        "󱘒"
+      ],
+      "show-empty": true,
+      "tooltip": true,
+      "tooltip-format": "{app}: {title}"
+    },
+    "sway/window": {
+      "format": "{} 󱂬",
+      "on-click": "swaymsg kill"
+    },
+    "temperature": {
+      "critical-threshold": 70,
+      "format": "{icon} {temperatureC}°C",
+      "format-icons": [
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    "tray": {
+      "icon-size": 24,
+      "spacing": 10
+    },
+    "wireplumber": {
+      "format": "{volume}% {icon}",
+      "format-icons": {
+        "car": "",
+        "default": [
+          "",
+          ""
+        ],
+        "hands-free": "󰂯",
+        "headphone": "",
+        "headset": "󰋎",
+        "phone": "",
+        "portable": ""
+      },
+      "format-muted": "",
+      "on-click": "helvum"
+    },
+    "wlr/taskbar": {
+      "format": "{icon}",
+      "icon-size": 24,
+      "icon-theme": "Papirus",
+      "on-click": "activate",
+      "on-click-right": "close",
+      "sort-by-app-id": true,
+      "tooltip": false
+    }
+  },
+  {
+    "backlight": {
+      "device": "intel_backlight",
+      "format": "{icon} {percent}%",
+      "format-icons": [
+        "󰃚",
+        "󰃛",
+        "󰃜",
+        "󰃝",
+        "󰃞",
+        "󰃟",
+        "󰃠"
+      ],
+      "interval": 1,
+      "on-click": "wdisplays",
+      "on-scroll-down": "brightnessctl set 5%-",
+      "on-scroll-up": "brightnessctl set 5%+"
+    },
+    "battery#bat1": {
+      "adapter": "AC",
+      "bat": "BAT0",
+      "format": "{icon}  {capacity}% [{time}]",
+      "format-charging": " {capacity}% [{time}]",
+      "format-empty": "Empty",
+      "format-full": "Full [{time}]",
+      "format-icons": [
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "format-plugged": " {capacity}% [{time}]",
+      "format-time": "{H}:{M}",
+      "full-at": 100,
+      "interval": 10,
+      "states": {
+        "critical": 20,
+        "empty": 15,
+        "full": 100,
+        "good": 99,
+        "warning": 30
+      }
+    },
+    "clock": {
+      "calendar": {
+        "format": {
+          "days": "<span color='#ecc6d9'><b>{}</b></span>",
+          "months": "<span color='#ffead3'><b>{}</b></span>",
+          "today": "<span color='#ff6699'><b><u>{}</u></b></span>",
+          "weekdays": "<span color='#ffcc66'><b>{}</b></span>",
+          "weeks": "<span color='#99ffdd'><b>W{}</b></span>"
+        },
+        "mode": "year",
+        "mode-mon-col": 3,
+        "on-click-right": "mode",
+        "on-scroll": 1,
+        "weeks-pos": "right"
+      },
+      "format": "<b>{:%a %d-%m-%y %H:%M:%S}</b>",
+      "format-alt": "<b>{:%A, %d of %B, %Y %H:%M:%S}</b>",
+      "interval": 1,
+      "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"
+    },
+    "cpu": {
+      "format": "󰘚 CPU: {usage}% {avg_frequency}GHz",
+      "interval": 1,
+      "tooltip": false
+    },
+    "custom/cpu-temp": {
+      "exec": "$HOME/.config/waybar/scripts/cpu-temp",
+      "format": " {}",
+      "interval": 1
+    },
+    "custom/fan-speed": {
+      "exec": "$HOME/.config/waybar/scripts/fan-speed",
+      "format": "󰈐 {}",
+      "interval": 1
+    },
+    "custom/gpu-mem": {
+      "exec": "$HOME/.config/waybar/scripts/gpu-mem",
+      "format": "{}",
+      "interval": 1
+    },
+    "custom/gpu-percent": {
+      "exec": "$HOME/.config/waybar/scripts/gpu-percent",
+      "format": "󰘚 GPU {}",
+      "interval": 1
+    },
+    "custom/gpu-temp": {
+      "exec": "$HOME/.config/waybar/scripts/gpu-temp",
+      "format": " {}",
+      "interval": 1
+    },
+    "custom/launcher": {
+      "format": "",
+      "on-click": "fuzzel"
+    },
+    "custom/notification": {
+      "escape": true,
+      "exec": "swaync-client -swb",
+      "exec-if": "which swaync-client",
+      "format": "{icon}",
+      "format-icons": {
+        "dnd-inhibited-none": "󰂛 ",
+        "dnd-inhibited-notification": "󰂛<span foreground='red'><sup> </sup></span>",
+        "dnd-none": "󰂛 ",
+        "dnd-notification": "󰂛<span foreground='red'><sup> </sup></span>",
+        "inhibited-none": "󰂚 ",
+        "inhibited-notification": "󰂚<span foreground='red'><sup> </sup></span>",
+        "none": "󰂚 ",
+        "notification": "󰂚<span foreground='red'><sup> </sup></span>"
+      },
+      "on-click": "swaync-client -t -sw",
+      "on-click-right": "swaync-client -d -sw",
+      "return-type": "json",
+      "tooltip": false
+    },
+    "custom/power": {
+      "format": "󰐥",
+      "on-click": "powermenu",
+      "tooltip": false
+    },
+    "custom/sep": {
+      "format": "|",
+      "interval": "once",
+      "tooltip": false
+    },
+    "custom/spotify": {
+      "escape": true,
+      "exec": "$HOME/.config/waybar/scripts/spotify",
+      "exec-if": "pgrep spotify || pgrep spotify_player || pgrep spot || pgrep ncspot",
+      "interval": 1,
+      "return-type": "json"
+    },
+    "custom/weather": {
+      "exec": "sh $HOME/.config/waybar/scripts/weather",
+      "interval": 300,
+      "on-click": "firefox https://wttr.in",
+      "return-type": "json"
+    },
+    "disk#hdd": {
+      "format": "󰋊 HDD: {used} / {total}",
+      "interval": 300,
+      "path": "/HDD",
+      "tooltip-format": "{used} / {total} used"
+    },
+    "disk#root": {
+      "format": "󰋊 {used} / {total}",
+      "interval": 300,
+      "path": "/",
+      "tooltip-format": "{used} / {total} used"
+    },
+    "disk#ssd": {
+      "format": "󰋊 SSD: {used} / {total}",
+      "interval": 300,
+      "path": "/SSD",
+      "tooltip-format": "{used} / {total} used"
+    },
+    "disk#ssd2": {
+      "format": "󰋊 SSD2: {used} / {total}",
+      "interval": 300,
+      "path": "/SSD2",
+      "tooltip-format": "{used} / {total} used"
+    },
+    "gamemode": {
+      "format": "{glyph}",
+      "format-alt": "{glyph} {count}",
+      "glyph": "󰮂",
+      "hide-not-running": false,
+      "icon-name": "input-gaming-symbolic",
+      "icon-size": 24,
+      "icon-spacing": 4,
+      "tooltip": true,
+      "tooltip-format": "Games running: {count}",
+      "use-icon": true
+    },
+    "height": 32,
+    "idle_inhibitor": {
+      "format": "{icon}",
+      "format-icons": {
+        "activated": "󰈈",
+        "deactivated": "󰈉"
+      }
+    },
+    "layer": "bottom",
+    "memory": {
+      "format": " RAM: {used:0.1f}G / {total:0.1f}G",
+      "tooltip-format": "{used:0.1f}G / {total:0.1f}G used"
+    },
+    "modules-center": [
+      "wlr/taskbar"
+    ],
+    "modules-left": [
+      "tray",
+      "gamemode",
+      "custom/sep",
+      "backlight",
+      "wireplumber",
+      "idle_inhibitor",
+      "custom/sep"
+    ],
+    "modules-right": [
+      "custom/sep",
+      "sway/scratchpad",
+      "sway/window",
+      "custom/sep"
+    ],
+    "network#disconnected": {
+      "format-disconnected": "",
+      "format-ethernet": "",
+      "format-linked": "",
+      "format-wifi": "",
+      "on-click": "nm-connection-editor",
+      "tooltip-format": "No connection"
+    },
+    "network#ethernet": {
+      "format-disconnected": "",
+      "format-ethernet": "󰌗  {ifname}: {ipaddr}/{cidr}",
+      "format-linked": "",
+      "format-wifi": "",
+      "interface": "eno*",
+      "on-click": "nm-connection-editor",
+      "tooltip-format": "{ifname}: {ipaddr}/{cidr}"
+    },
+    "network#wifi": {
+      "format-disconnected": "",
+      "format-ethernet": "",
+      "format-linked": "",
+      "format-wifi": "  {essid} ({signalStrength}%)",
+      "interface": "wlp*",
+      "on-click": "nm-connection-editor",
+      "tooltip-format": "{ifname}: {ipaddr}/{cidr}"
+    },
+    "output": "HDMI-A-1",
+    "position": "bottom",
+    "pulseaudio": {
+      "format": "{icon} {volume}%{format_source}",
+      "format-bluetooth": "{icon}󰂯 {volume}%{format_source}",
+      "format-bluetooth-muted": " {icon}󰂯 {format_source}",
+      "format-icons": {
+        "car": "󰄋",
+        "default": [],
+        "headphone": "󰋋",
+        "phone": "󰏲",
+        "portable": ""
+      },
+      "format-muted": " {format_source}",
+      "format-source": "󰍬 {volume}%",
+      "format-source-muted": "󰍭",
+      "on-click": "alsamixer",
+      "scroll-step": 1
+    },
+    "sway/mode": {
+      "format": "<span style=\"italic\">{}</span>"
+    },
+    "sway/scratchpad": {
+      "format": "{icon} {count}",
+      "format-icons": [
+        "󱘔",
+        "󱘒"
+      ],
+      "show-empty": true,
+      "tooltip": true,
+      "tooltip-format": "{app}: {title}"
+    },
+    "sway/window": {
+      "format": "{} 󱂬",
+      "on-click": "swaymsg kill"
+    },
+    "temperature": {
+      "critical-threshold": 70,
+      "format": "{icon} {temperatureC}°C",
+      "format-icons": [
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    "tray": {
+      "icon-size": 24,
+      "spacing": 10
+    },
+    "wireplumber": {
+      "format": "{volume}% {icon}",
+      "format-icons": {
+        "car": "",
+        "default": [
+          "",
+          ""
+        ],
+        "hands-free": "󰂯",
+        "headphone": "",
+        "headset": "󰋎",
+        "phone": "",
+        "portable": ""
+      },
+      "format-muted": "",
+      "on-click": "helvum"
+    },
+    "wlr/taskbar": {
+      "format": "{icon}",
+      "icon-size": 24,
+      "icon-theme": "Papirus",
+      "on-click": "activate",
+      "on-click-right": "close",
+      "sort-by-app-id": true,
+      "tooltip": false
+    }
+  },
+  {
+    "backlight": {
+      "device": "intel_backlight",
+      "format": "{icon} {percent}%",
+      "format-icons": [
+        "󰃚",
+        "󰃛",
+        "󰃜",
+        "󰃝",
+        "󰃞",
+        "󰃟",
+        "󰃠"
+      ],
+      "interval": 1,
+      "on-click": "wdisplays",
+      "on-scroll-down": "brightnessctl set 5%-",
+      "on-scroll-up": "brightnessctl set 5%+"
+    },
+    "battery#bat1": {
+      "adapter": "AC",
+      "bat": "BAT0",
+      "format": "{icon}  {capacity}% [{time}]",
+      "format-charging": " {capacity}% [{time}]",
+      "format-empty": "Empty",
+      "format-full": "Full [{time}]",
+      "format-icons": [
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "format-plugged": " {capacity}% [{time}]",
+      "format-time": "{H}:{M}",
+      "full-at": 100,
+      "interval": 10,
+      "states": {
+        "critical": 20,
+        "empty": 15,
+        "full": 100,
+        "good": 99,
+        "warning": 30
+      }
+    },
+    "clock": {
+      "calendar": {
+        "format": {
+          "days": "<span color='#ecc6d9'><b>{}</b></span>",
+          "months": "<span color='#ffead3'><b>{}</b></span>",
+          "today": "<span color='#ff6699'><b><u>{}</u></b></span>",
+          "weekdays": "<span color='#ffcc66'><b>{}</b></span>",
+          "weeks": "<span color='#99ffdd'><b>W{}</b></span>"
+        },
+        "mode": "year",
+        "mode-mon-col": 3,
+        "on-click-right": "mode",
+        "on-scroll": 1,
+        "weeks-pos": "right"
+      },
+      "format": "<b>{:%a %d-%m-%y %H:%M:%S}</b>",
+      "format-alt": "<b>{:%A, %d of %B, %Y %H:%M:%S}</b>",
+      "interval": 1,
+      "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"
+    },
+    "cpu": {
+      "format": "󰘚 {usage}% {avg_frequency}GHz"
+    },
+    "custom/cpu-temp": {
+      "exec": "$HOME/.config/waybar/scripts/cpu-temp",
+      "format": " {}",
+      "interval": 1
+    },
+    "custom/fan-speed": {
+      "exec": "$HOME/.config/waybar/scripts/fan-speed",
+      "format": "󰈐 {}",
+      "interval": 1
+    },
+    "custom/gpu-mem": {
+      "exec": "$HOME/.config/waybar/scripts/gpu-mem",
+      "format": "{}",
+      "interval": 1
+    },
+    "custom/gpu-percent": {
+      "exec": "$HOME/.config/waybar/scripts/gpu-percent",
+      "format": "󰘚 GPU {}",
+      "interval": 1
+    },
+    "custom/gpu-temp": {
+      "exec": "$HOME/.config/waybar/scripts/gpu-temp",
+      "format": " {}",
+      "interval": 1
+    },
+    "custom/launcher": {
+      "format": "",
+      "on-click": "fuzzel"
+    },
+    "custom/notification": {
+      "escape": true,
+      "exec": "swaync-client -swb",
+      "exec-if": "which swaync-client",
+      "format": "{icon}",
+      "format-icons": {
+        "dnd-inhibited-none": "󰂛 ",
+        "dnd-inhibited-notification": "󰂛<span foreground='red'><sup> </sup></span>",
+        "dnd-none": "󰂛 ",
+        "dnd-notification": "󰂛<span foreground='red'><sup> </sup></span>",
+        "inhibited-none": "󰂚 ",
+        "inhibited-notification": "󰂚<span foreground='red'><sup> </sup></span>",
+        "none": "󰂚 ",
+        "notification": "󰂚<span foreground='red'><sup> </sup></span>"
+      },
+      "on-click": "swaync-client -t -sw",
+      "on-click-right": "swaync-client -d -sw",
+      "return-type": "json",
+      "tooltip": false
+    },
+    "custom/power": {
+      "format": "󰐥",
+      "on-click": "powermenu",
+      "tooltip": false
+    },
+    "custom/sep": {
+      "format": "|",
+      "interval": "once",
+      "tooltip": false
+    },
+    "custom/spotify": {
+      "escape": true,
+      "exec": "$HOME/.config/waybar/scripts/spotify",
+      "exec-if": "pgrep spotify || pgrep spotify_player || pgrep spot || pgrep ncspot",
+      "interval": 1,
+      "return-type": "json"
+    },
+    "custom/weather": {
+      "exec": "sh $HOME/.config/waybar/scripts/weather",
+      "interval": 300,
+      "on-click": "firefox https://wttr.in",
+      "return-type": "json"
+    },
+    "disk#root": {
+      "format": "󰋊 {used} / {total}",
+      "interval": 300,
+      "path": "/",
+      "tooltip-format": "{used} / {total} used"
+    },
+    "gamemode": {
+      "format": "{glyph}",
+      "format-alt": "{glyph} {count}",
+      "glyph": "󰮂",
+      "hide-not-running": false,
+      "icon-name": "input-gaming-symbolic",
+      "icon-size": 24,
+      "icon-spacing": 4,
+      "tooltip": true,
+      "tooltip-format": "Games running: {count}",
+      "use-icon": true
+    },
+    "height": 32,
+    "idle_inhibitor": {
+      "format": "{icon}",
+      "format-icons": {
+        "activated": "󰈈",
+        "deactivated": "󰈉"
+      }
+    },
+    "layer": "bottom",
+    "memory": {
+      "format": " {used:0.1f}G / {total:0.1f}G"
+    },
+    "modules-center": [
+      "wlr/taskbar"
+    ],
     "modules-left": [
       "tray",
       "gamemode",
@@ -167,132 +1090,1329 @@
       "idle_inhibitor",
       "custom/sep"
     ],
-    "modules-center": ["wlr/taskbar"],
     "modules-right": [
       "custom/sep",
       "custom/spotify",
       "custom/sep",
       "sway/scratchpad",
-      "sway/window"
+      "sway/window",
+      "custom/sep"
     ],
-    "tray": {
-      "icon-size": 24,
-      "spacing": 10,
-      "show-passive-items": true
+    "network#disconnected": {
+      "format-disconnected": "",
+      "format-ethernet": "",
+      "format-linked": "",
+      "format-wifi": "",
+      "on-click": "nm-connection-editor",
+      "tooltip-format": "No connection"
     },
-    "wlr/taskbar": {
-      "format": "{icon}",
-      "icon-size": 24,
-      "icon-theme": ["Papirus-Dark"],
-      "tooltip": "true",
-      "on-click": "activate",
-      "on-click-right": "close",
-      "sort-by-app-id": true
+    "network#ethernet": {
+      "format-disconnected": "",
+      "format-ethernet": "󰌗  {ifname}: {ipaddr}/{cidr}",
+      "format-linked": "",
+      "format-wifi": "",
+      "interface": "eno*",
+      "on-click": "nm-connection-editor",
+      "tooltip-format": "{ifname}: {ipaddr}/{cidr}"
+    },
+    "network#wifi": {
+      "format-disconnected": "",
+      "format-ethernet": "",
+      "format-linked": "",
+      "format-wifi": "  {essid} ({signalStrength}%)",
+      "interface": "wlp*",
+      "on-click": "nm-connection-editor",
+      "tooltip-format": "{ifname}: {ipaddr}/{cidr}"
+    },
+    "output": "LVDS-1",
+    "position": "bottom",
+    "pulseaudio": {
+      "format": "{icon} {volume}%{format_source}",
+      "format-bluetooth": "{icon}󰂯 {volume}%{format_source}",
+      "format-bluetooth-muted": " {icon}󰂯 {format_source}",
+      "format-icons": {
+        "car": "󰄋",
+        "default": [],
+        "headphone": "󰋋",
+        "phone": "󰏲",
+        "portable": ""
+      },
+      "format-muted": " {format_source}",
+      "format-source": "󰍬 {volume}%",
+      "format-source-muted": "󰍭",
+      "on-click": "alsamixer",
+      "scroll-step": 1
     },
     "sway/mode": {
       "format": "<span style=\"italic\">{}</span>"
     },
-    "idle_inhibitor": {
-      "format": "{icon}",
-      "format-icons": {
-        "activated": "",
-        "deactivated": ""
-      }
+    "sway/scratchpad": {
+      "format": "{icon} {count}",
+      "format-icons": [
+        "󱘔",
+        "󱘒"
+      ],
+      "show-empty": true,
+      "tooltip": true,
+      "tooltip-format": "{app}: {title}"
+    },
+    "sway/window": {
+      "format": "{} 󱂬",
+      "on-click": "swaymsg kill"
+    },
+    "temperature": {
+      "critical-threshold": 70,
+      "format": "{icon} {temperatureC}°C",
+      "format-icons": [
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    "tray": {
+      "icon-size": 24,
+      "spacing": 10
     },
     "wireplumber": {
       "format": "{volume}% {icon}",
-      "format-muted": "",
       "format-icons": {
-        "headphone": "",
+        "car": "",
+        "default": [
+          "",
+          ""
+        ],
         "hands-free": "󰂯",
+        "headphone": "",
         "headset": "󰋎",
         "phone": "",
-        "portable": "",
-        "car": "",
-        "default": ["", ""]
+        "portable": ""
       },
+      "format-muted": "",
       "on-click": "helvum"
     },
+    "wlr/taskbar": {
+      "format": "{icon}",
+      "icon-size": 24,
+      "icon-theme": "Papirus",
+      "on-click": "activate",
+      "on-click-right": "close",
+      "sort-by-app-id": true,
+      "tooltip": false
+    }
+  },
+  {
     "backlight": {
       "device": "intel_backlight",
-      "interval": 1,
-      "on-scroll-down": "brightlight -pd 1",
-      "on-scroll-up": "brightlight -pi 1",
       "format": "{icon} {percent}%",
-      "format-icons": ["", ""],
-      "on-click": "wdisplays"
+      "format-icons": [
+        "󰃚",
+        "󰃛",
+        "󰃜",
+        "󰃝",
+        "󰃞",
+        "󰃟",
+        "󰃠"
+      ],
+      "interval": 1,
+      "on-click": "wdisplays",
+      "on-scroll-down": "brightnessctl set 5%-",
+      "on-scroll-up": "brightnessctl set 5%+"
     },
-    "gamemode": {
-      "format": "{glyph}",
-      "format-alt": "{glyph} {count}",
-      "glyph": "",
-      "hide-not-running": false,
-      "use-icon": true,
-      "icon-name": "input-gaming-symbolic",
-      "icon-spacing": 4,
-      "icon-size": 20,
-      "tooltip": true,
-      "tooltip-format": "Games running: {count}"
+    "battery#bat1": {
+      "adapter": "AC",
+      "bat": "BAT0",
+      "format": "{icon}  {capacity}% [{time}]",
+      "format-charging": " {capacity}% [{time}]",
+      "format-empty": "Empty",
+      "format-full": "Full [{time}]",
+      "format-icons": [
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "format-plugged": " {capacity}% [{time}]",
+      "format-time": "{H}:{M}",
+      "full-at": 100,
+      "interval": 10,
+      "states": {
+        "critical": 20,
+        "empty": 15,
+        "full": 100,
+        "good": 99,
+        "warning": 30
+      }
+    },
+    "clock": {
+      "calendar": {
+        "format": {
+          "days": "<span color='#ecc6d9'><b>{}</b></span>",
+          "months": "<span color='#ffead3'><b>{}</b></span>",
+          "today": "<span color='#ff6699'><b><u>{}</u></b></span>",
+          "weekdays": "<span color='#ffcc66'><b>{}</b></span>",
+          "weeks": "<span color='#99ffdd'><b>W{}</b></span>"
+        },
+        "mode": "year",
+        "mode-mon-col": 3,
+        "on-click-right": "mode",
+        "on-scroll": 1,
+        "weeks-pos": "right"
+      },
+      "format": "<b>{:%a %d-%m-%y %H:%M:%S}</b>",
+      "format-alt": "<b>{:%A, %d of %B, %Y %H:%M:%S}</b>",
+      "interval": 1,
+      "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"
+    },
+    "cpu": {
+      "format": "󰘚 CPU: {usage}% {avg_frequency}GHz",
+      "interval": 1,
+      "tooltip": false
+    },
+    "custom/cpu-temp": {
+      "exec": "$HOME/.config/waybar/scripts/cpu-temp",
+      "format": " {}",
+      "interval": 1
+    },
+    "custom/fan-speed": {
+      "exec": "$HOME/.config/waybar/scripts/fan-speed",
+      "format": "󰈐 {}",
+      "interval": 1
+    },
+    "custom/gpu-mem": {
+      "exec": "$HOME/.config/waybar/scripts/gpu-mem",
+      "format": "{}",
+      "interval": 1
+    },
+    "custom/gpu-percent": {
+      "exec": "$HOME/.config/waybar/scripts/gpu-percent",
+      "format": "󰘚 GPU {}",
+      "interval": 1
+    },
+    "custom/gpu-temp": {
+      "exec": "$HOME/.config/waybar/scripts/gpu-temp",
+      "format": " {}",
+      "interval": 1
+    },
+    "custom/launcher": {
+      "format": "",
+      "on-click": "fuzzel"
+    },
+    "custom/notification": {
+      "escape": true,
+      "exec": "swaync-client -swb",
+      "exec-if": "which swaync-client",
+      "format": "{icon}",
+      "format-icons": {
+        "dnd-inhibited-none": "󰂛 ",
+        "dnd-inhibited-notification": "󰂛<span foreground='red'><sup> </sup></span>",
+        "dnd-none": "󰂛 ",
+        "dnd-notification": "󰂛<span foreground='red'><sup> </sup></span>",
+        "inhibited-none": "󰂚 ",
+        "inhibited-notification": "󰂚<span foreground='red'><sup> </sup></span>",
+        "none": "󰂚 ",
+        "notification": "󰂚<span foreground='red'><sup> </sup></span>"
+      },
+      "on-click": "swaync-client -t -sw",
+      "on-click-right": "swaync-client -d -sw",
+      "return-type": "json",
+      "tooltip": false
+    },
+    "custom/power": {
+      "format": "󰐥",
+      "on-click": "powermenu",
+      "tooltip": false
     },
     "custom/sep": {
       "format": "|",
       "interval": "once",
       "tooltip": false
     },
-    "battery#bat1": {
-      "bat": "BAT0",
-      "adapter": "AC",
-      "interval": 10,
-      "full-at": 100,
-      "states": {
-        "full": 100,
-        "good": 99,
-        "warning": 30,
-        "critical": 20,
-        "empty": 15
-      },
-      "format-time": "{H}:{M}",
-      "format": "{icon}  {capacity}% [{time}]",
-      "format-charging": " {capacity}% [{time}]",
-      "format-plugged": " {capacity}% [{time}]",
-      "format-empty": "Empty",
-      "format-full": "Full [{time}]",
-      "format-icons": ["", "", "", "", ""]
-    },
     "custom/spotify": {
+      "escape": true,
+      "exec": "$HOME/.config/waybar/scripts/spotify",
+      "exec-if": "pgrep spotify || pgrep spotify_player || pgrep spot || pgrep ncspot",
       "interval": 1,
-      "return-type": "json",
-      "exec": "$HOME/.config/waybar/modules/spotify",
-      "exec-if": "pgrep ncspot || pgrep spot || pgrep spotify",
-      "escape": true
+      "return-type": "json"
+    },
+    "custom/weather": {
+      "exec": "sh $HOME/.config/waybar/scripts/weather",
+      "interval": 300,
+      "on-click": "firefox https://wttr.in",
+      "return-type": "json"
+    },
+    "disk#hdd": {
+      "format": "󰋊 HDD: {used} / {total}",
+      "interval": 300,
+      "path": "/HDD",
+      "tooltip-format": "{used} / {total} used"
+    },
+    "disk#root": {
+      "format": "󰋊 {used} / {total}",
+      "interval": 300,
+      "path": "/",
+      "tooltip-format": "{used} / {total} used"
+    },
+    "disk#ssd": {
+      "format": "󰋊 SSD: {used} / {total}",
+      "interval": 300,
+      "path": "/SSD",
+      "tooltip-format": "{used} / {total} used"
+    },
+    "disk#ssd2": {
+      "format": "󰋊 SSD2: {used} / {total}",
+      "interval": 300,
+      "path": "/SSD2",
+      "tooltip-format": "{used} / {total} used"
+    },
+    "gamemode": {
+      "format": "{glyph}",
+      "format-alt": "{glyph} {count}",
+      "glyph": "󰮂",
+      "hide-not-running": false,
+      "icon-name": "input-gaming-symbolic",
+      "icon-size": 24,
+      "icon-spacing": 4,
+      "tooltip": true,
+      "tooltip-format": "Games running: {count}",
+      "use-icon": true
+    },
+    "height": 32,
+    "idle_inhibitor": {
+      "format": "{icon}",
+      "format-icons": {
+        "activated": "󰈈",
+        "deactivated": "󰈉"
+      }
+    },
+    "layer": "bottom",
+    "memory": {
+      "format": " RAM: {used:0.1f}G / {total:0.1f}G",
+      "tooltip-format": "{used:0.1f}G / {total:0.1f}G used"
+    },
+    "modules-center": [
+      "clock"
+    ],
+    "modules-left": [
+      "custom/launcher",
+      "custom/sep",
+      "disk#root",
+      "disk#ssd",
+      "disk#ssd2",
+      "disk#hdd",
+      "custom/sep"
+    ],
+    "modules-right": [
+      "custom/sep",
+      "custom/spotify",
+      "custom/weather",
+      "custom/sep",
+      "custom/power"
+    ],
+    "network#disconnected": {
+      "format-disconnected": "",
+      "format-ethernet": "",
+      "format-linked": "",
+      "format-wifi": "",
+      "on-click": "nm-connection-editor",
+      "tooltip-format": "No connection"
+    },
+    "network#ethernet": {
+      "format-disconnected": "",
+      "format-ethernet": "󰌗  {ifname}: {ipaddr}/{cidr}",
+      "format-linked": "",
+      "format-wifi": "",
+      "interface": "eno*",
+      "on-click": "nm-connection-editor",
+      "tooltip-format": "{ifname}: {ipaddr}/{cidr}"
+    },
+    "network#wifi": {
+      "format-disconnected": "",
+      "format-ethernet": "",
+      "format-linked": "",
+      "format-wifi": "  {essid} ({signalStrength}%)",
+      "interface": "wlp*",
+      "on-click": "nm-connection-editor",
+      "tooltip-format": "{ifname}: {ipaddr}/{cidr}"
+    },
+    "output": "DP-1",
+    "position": "top",
+    "pulseaudio": {
+      "format": "{icon} {volume}%{format_source}",
+      "format-bluetooth": "{icon}󰂯 {volume}%{format_source}",
+      "format-bluetooth-muted": " {icon}󰂯 {format_source}",
+      "format-icons": {
+        "car": "󰄋",
+        "default": [],
+        "headphone": "󰋋",
+        "phone": "󰏲",
+        "portable": ""
+      },
+      "format-muted": " {format_source}",
+      "format-source": "󰍬 {volume}%",
+      "format-source-muted": "󰍭",
+      "on-click": "alsamixer",
+      "scroll-step": 1
+    },
+    "sway/mode": {
+      "format": "<span style=\"italic\">{}</span>"
     },
     "sway/scratchpad": {
       "format": "{icon} {count}",
-      "format-icons": ["󱘔", "󱘒"],
-
+      "format-icons": [
+        "󱘔",
+        "󱘒"
+      ],
       "show-empty": true,
       "tooltip": true,
       "tooltip-format": "{app}: {title}"
     },
+    "sway/window": {
+      "format": "{} 󱂬",
+      "on-click": "swaymsg kill"
+    },
+    "temperature": {
+      "critical-threshold": 70,
+      "format": "{icon} {temperatureC}°C",
+      "format-icons": [
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    "tray": {
+      "icon-size": 24,
+      "spacing": 10
+    },
+    "wireplumber": {
+      "format": "{volume}% {icon}",
+      "format-icons": {
+        "car": "",
+        "default": [
+          "",
+          ""
+        ],
+        "hands-free": "󰂯",
+        "headphone": "",
+        "headset": "󰋎",
+        "phone": "",
+        "portable": ""
+      },
+      "format-muted": "",
+      "on-click": "helvum"
+    },
+    "wlr/taskbar": {
+      "format": "{icon}",
+      "icon-size": 24,
+      "icon-theme": "Papirus",
+      "on-click": "activate",
+      "on-click-right": "close",
+      "sort-by-app-id": true,
+      "tooltip": false
+    }
+  },
+  {
+    "backlight": {
+      "device": "intel_backlight",
+      "format": "{icon} {percent}%",
+      "format-icons": [
+        "󰃚",
+        "󰃛",
+        "󰃜",
+        "󰃝",
+        "󰃞",
+        "󰃟",
+        "󰃠"
+      ],
+      "interval": 1,
+      "on-click": "wdisplays",
+      "on-scroll-down": "brightnessctl set 5%-",
+      "on-scroll-up": "brightnessctl set 5%+"
+    },
+    "battery#bat1": {
+      "adapter": "AC",
+      "bat": "BAT0",
+      "format": "{icon}  {capacity}% [{time}]",
+      "format-charging": " {capacity}% [{time}]",
+      "format-empty": "Empty",
+      "format-full": "Full [{time}]",
+      "format-icons": [
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "format-plugged": " {capacity}% [{time}]",
+      "format-time": "{H}:{M}",
+      "full-at": 100,
+      "interval": 10,
+      "states": {
+        "critical": 20,
+        "empty": 15,
+        "full": 100,
+        "good": 99,
+        "warning": 30
+      }
+    },
+    "clock": {
+      "calendar": {
+        "format": {
+          "days": "<span color='#ecc6d9'><b>{}</b></span>",
+          "months": "<span color='#ffead3'><b>{}</b></span>",
+          "today": "<span color='#ff6699'><b><u>{}</u></b></span>",
+          "weekdays": "<span color='#ffcc66'><b>{}</b></span>",
+          "weeks": "<span color='#99ffdd'><b>W{}</b></span>"
+        },
+        "mode": "year",
+        "mode-mon-col": 3,
+        "on-click-right": "mode",
+        "on-scroll": 1,
+        "weeks-pos": "right"
+      },
+      "format": "<b>{:%a %d-%m-%y %H:%M:%S}</b>",
+      "format-alt": "<b>{:%A, %d of %B, %Y %H:%M:%S}</b>",
+      "interval": 1,
+      "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"
+    },
+    "cpu": {
+      "format": "󰘚 {usage}% {avg_frequency}GHz"
+    },
+    "custom/cpu-temp": {
+      "exec": "$HOME/.config/waybar/scripts/cpu-temp",
+      "format": " {}",
+      "interval": 1
+    },
+    "custom/fan-speed": {
+      "exec": "$HOME/.config/waybar/scripts/fan-speed",
+      "format": "󰈐 {}",
+      "interval": 1
+    },
+    "custom/gpu-mem": {
+      "exec": "$HOME/.config/waybar/scripts/gpu-mem",
+      "format": "{}",
+      "interval": 1
+    },
+    "custom/gpu-percent": {
+      "exec": "$HOME/.config/waybar/scripts/gpu-percent",
+      "format": "󰘚 GPU {}",
+      "interval": 1
+    },
+    "custom/gpu-temp": {
+      "exec": "$HOME/.config/waybar/scripts/gpu-temp",
+      "format": " {}",
+      "interval": 1
+    },
+    "custom/launcher": {
+      "format": "",
+      "on-click": "fuzzel"
+    },
     "custom/notification": {
-      "tooltip": false,
+      "escape": true,
+      "exec": "swaync-client -swb",
+      "exec-if": "which swaync-client",
       "format": "{icon}",
       "format-icons": {
-        "notification": "󰂚<span foreground='red'><sup> </sup></span>",
-        "none": "󰂚 ",
-        "dnd-notification": "󰂛<span foreground='red'><sup> </sup></span>",
-        "dnd-none": "󰂛 ",
-        "inhibited-notification": "󰂚<span foreground='red'><sup> </sup></span>",
-        "inhibited-none": "󰂚 ",
+        "dnd-inhibited-none": "󰂛 ",
         "dnd-inhibited-notification": "󰂛<span foreground='red'><sup> </sup></span>",
-        "dnd-inhibited-none": "󰂛 "
+        "dnd-none": "󰂛 ",
+        "dnd-notification": "󰂛<span foreground='red'><sup> </sup></span>",
+        "inhibited-none": "󰂚 ",
+        "inhibited-notification": "󰂚<span foreground='red'><sup> </sup></span>",
+        "none": "󰂚 ",
+        "notification": "󰂚<span foreground='red'><sup> </sup></span>"
       },
-      "return-type": "json",
-      "exec-if": "which swaync-client",
-      "exec": "swaync-client -swb",
       "on-click": "swaync-client -t -sw",
       "on-click-right": "swaync-client -d -sw",
-      "escape": true
+      "return-type": "json",
+      "tooltip": false
+    },
+    "custom/power": {
+      "format": "󰐥",
+      "on-click": "powermenu",
+      "tooltip": false
+    },
+    "custom/sep": {
+      "format": "|",
+      "interval": "once",
+      "tooltip": false
+    },
+    "custom/spotify": {
+      "escape": true,
+      "exec": "$HOME/.config/waybar/scripts/spotify",
+      "exec-if": "pgrep spotify || pgrep spotify_player || pgrep spot || pgrep ncspot",
+      "interval": 1,
+      "return-type": "json"
+    },
+    "custom/weather": {
+      "exec": "sh $HOME/.config/waybar/scripts/weather",
+      "interval": 300,
+      "on-click": "firefox https://wttr.in",
+      "return-type": "json"
+    },
+    "disk#root": {
+      "format": "󰋊 {used} / {total}",
+      "interval": 300,
+      "path": "/",
+      "tooltip-format": "{used} / {total} used"
+    },
+    "gamemode": {
+      "format": "{glyph}",
+      "format-alt": "{glyph} {count}",
+      "glyph": "󰮂",
+      "hide-not-running": false,
+      "icon-name": "input-gaming-symbolic",
+      "icon-size": 24,
+      "icon-spacing": 4,
+      "tooltip": true,
+      "tooltip-format": "Games running: {count}",
+      "use-icon": true
+    },
+    "height": 32,
+    "idle_inhibitor": {
+      "format": "{icon}",
+      "format-icons": {
+        "activated": "󰈈",
+        "deactivated": "󰈉"
+      }
+    },
+    "layer": "bottom",
+    "memory": {
+      "format": " {used:0.1f}G / {total:0.1f}G"
+    },
+    "modules-center": [
+      "clock"
+    ],
+    "modules-left": [
+      "custom/launcher",
+      "custom/sep",
+      "custom/sep"
+    ],
+    "modules-right": [
+      "custom/sep",
+      "custom/sep",
+      "custom/power"
+    ],
+    "network#disconnected": {
+      "format-disconnected": "",
+      "format-ethernet": "",
+      "format-linked": "",
+      "format-wifi": "",
+      "on-click": "nm-connection-editor",
+      "tooltip-format": "No connection"
+    },
+    "network#ethernet": {
+      "format-disconnected": "",
+      "format-ethernet": "󰌗  {ifname}: {ipaddr}/{cidr}",
+      "format-linked": "",
+      "format-wifi": "",
+      "interface": "eno*",
+      "on-click": "nm-connection-editor",
+      "tooltip-format": "{ifname}: {ipaddr}/{cidr}"
+    },
+    "network#wifi": {
+      "format-disconnected": "",
+      "format-ethernet": "",
+      "format-linked": "",
+      "format-wifi": "  {essid} ({signalStrength}%)",
+      "interface": "wlp*",
+      "on-click": "nm-connection-editor",
+      "tooltip-format": "{ifname}: {ipaddr}/{cidr}"
+    },
+    "output": "DP-2",
+    "position": "top",
+    "pulseaudio": {
+      "format": "{icon} {volume}%{format_source}",
+      "format-bluetooth": "{icon}󰂯 {volume}%{format_source}",
+      "format-bluetooth-muted": " {icon}󰂯 {format_source}",
+      "format-icons": {
+        "car": "󰄋",
+        "default": [],
+        "headphone": "󰋋",
+        "phone": "󰏲",
+        "portable": ""
+      },
+      "format-muted": " {format_source}",
+      "format-source": "󰍬 {volume}%",
+      "format-source-muted": "󰍭",
+      "on-click": "alsamixer",
+      "scroll-step": 1
+    },
+    "sway/mode": {
+      "format": "<span style=\"italic\">{}</span>"
+    },
+    "sway/scratchpad": {
+      "format": "{icon} {count}",
+      "format-icons": [
+        "󱘔",
+        "󱘒"
+      ],
+      "show-empty": true,
+      "tooltip": true,
+      "tooltip-format": "{app}: {title}"
+    },
+    "sway/window": {
+      "format": "{} 󱂬",
+      "on-click": "swaymsg kill"
+    },
+    "temperature": {
+      "critical-threshold": 70,
+      "format": "{icon} {temperatureC}°C",
+      "format-icons": [
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    "tray": {
+      "icon-size": 24,
+      "spacing": 10
+    },
+    "wireplumber": {
+      "format": "{volume}% {icon}",
+      "format-icons": {
+        "car": "",
+        "default": [
+          "",
+          ""
+        ],
+        "hands-free": "󰂯",
+        "headphone": "",
+        "headset": "󰋎",
+        "phone": "",
+        "portable": ""
+      },
+      "format-muted": "",
+      "on-click": "helvum"
+    },
+    "wlr/taskbar": {
+      "format": "{icon}",
+      "icon-size": 24,
+      "icon-theme": "Papirus",
+      "on-click": "activate",
+      "on-click-right": "close",
+      "sort-by-app-id": true,
+      "tooltip": false
+    }
+  },
+  {
+    "backlight": {
+      "device": "intel_backlight",
+      "format": "{icon} {percent}%",
+      "format-icons": [
+        "󰃚",
+        "󰃛",
+        "󰃜",
+        "󰃝",
+        "󰃞",
+        "󰃟",
+        "󰃠"
+      ],
+      "interval": 1,
+      "on-click": "wdisplays",
+      "on-scroll-down": "brightnessctl set 5%-",
+      "on-scroll-up": "brightnessctl set 5%+"
+    },
+    "battery#bat1": {
+      "adapter": "AC",
+      "bat": "BAT0",
+      "format": "{icon}  {capacity}% [{time}]",
+      "format-charging": " {capacity}% [{time}]",
+      "format-empty": "Empty",
+      "format-full": "Full [{time}]",
+      "format-icons": [
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "format-plugged": " {capacity}% [{time}]",
+      "format-time": "{H}:{M}",
+      "full-at": 100,
+      "interval": 10,
+      "states": {
+        "critical": 20,
+        "empty": 15,
+        "full": 100,
+        "good": 99,
+        "warning": 30
+      }
+    },
+    "clock": {
+      "calendar": {
+        "format": {
+          "days": "<span color='#ecc6d9'><b>{}</b></span>",
+          "months": "<span color='#ffead3'><b>{}</b></span>",
+          "today": "<span color='#ff6699'><b><u>{}</u></b></span>",
+          "weekdays": "<span color='#ffcc66'><b>{}</b></span>",
+          "weeks": "<span color='#99ffdd'><b>W{}</b></span>"
+        },
+        "mode": "year",
+        "mode-mon-col": 3,
+        "on-click-right": "mode",
+        "on-scroll": 1,
+        "weeks-pos": "right"
+      },
+      "format": "<b>{:%a %d-%m-%y %H:%M:%S}</b>",
+      "format-alt": "<b>{:%A, %d of %B, %Y %H:%M:%S}</b>",
+      "interval": 1,
+      "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"
+    },
+    "cpu": {
+      "format": "󰘚 CPU: {usage}% {avg_frequency}GHz",
+      "interval": 1,
+      "tooltip": false
+    },
+    "custom/cpu-temp": {
+      "exec": "$HOME/.config/waybar/scripts/cpu-temp",
+      "format": " {}",
+      "interval": 1
+    },
+    "custom/fan-speed": {
+      "exec": "$HOME/.config/waybar/scripts/fan-speed",
+      "format": "󰈐 {}",
+      "interval": 1
+    },
+    "custom/gpu-mem": {
+      "exec": "$HOME/.config/waybar/scripts/gpu-mem",
+      "format": "{}",
+      "interval": 1
+    },
+    "custom/gpu-percent": {
+      "exec": "$HOME/.config/waybar/scripts/gpu-percent",
+      "format": "󰘚 GPU {}",
+      "interval": 1
+    },
+    "custom/gpu-temp": {
+      "exec": "$HOME/.config/waybar/scripts/gpu-temp",
+      "format": " {}",
+      "interval": 1
+    },
+    "custom/launcher": {
+      "format": "",
+      "on-click": "fuzzel"
+    },
+    "custom/notification": {
+      "escape": true,
+      "exec": "swaync-client -swb",
+      "exec-if": "which swaync-client",
+      "format": "{icon}",
+      "format-icons": {
+        "dnd-inhibited-none": "󰂛 ",
+        "dnd-inhibited-notification": "󰂛<span foreground='red'><sup> </sup></span>",
+        "dnd-none": "󰂛 ",
+        "dnd-notification": "󰂛<span foreground='red'><sup> </sup></span>",
+        "inhibited-none": "󰂚 ",
+        "inhibited-notification": "󰂚<span foreground='red'><sup> </sup></span>",
+        "none": "󰂚 ",
+        "notification": "󰂚<span foreground='red'><sup> </sup></span>"
+      },
+      "on-click": "swaync-client -t -sw",
+      "on-click-right": "swaync-client -d -sw",
+      "return-type": "json",
+      "tooltip": false
+    },
+    "custom/power": {
+      "format": "󰐥",
+      "on-click": "powermenu",
+      "tooltip": false
+    },
+    "custom/sep": {
+      "format": "|",
+      "interval": "once",
+      "tooltip": false
+    },
+    "custom/spotify": {
+      "escape": true,
+      "exec": "$HOME/.config/waybar/scripts/spotify",
+      "exec-if": "pgrep spotify || pgrep spotify_player || pgrep spot || pgrep ncspot",
+      "interval": 1,
+      "return-type": "json"
+    },
+    "custom/weather": {
+      "exec": "sh $HOME/.config/waybar/scripts/weather",
+      "interval": 300,
+      "on-click": "firefox https://wttr.in",
+      "return-type": "json"
+    },
+    "disk#hdd": {
+      "format": "󰋊 HDD: {used} / {total}",
+      "interval": 300,
+      "path": "/HDD",
+      "tooltip-format": "{used} / {total} used"
+    },
+    "disk#root": {
+      "format": "󰋊 {used} / {total}",
+      "interval": 300,
+      "path": "/",
+      "tooltip-format": "{used} / {total} used"
+    },
+    "disk#ssd": {
+      "format": "󰋊 SSD: {used} / {total}",
+      "interval": 300,
+      "path": "/SSD",
+      "tooltip-format": "{used} / {total} used"
+    },
+    "disk#ssd2": {
+      "format": "󰋊 SSD2: {used} / {total}",
+      "interval": 300,
+      "path": "/SSD2",
+      "tooltip-format": "{used} / {total} used"
+    },
+    "gamemode": {
+      "format": "{glyph}",
+      "format-alt": "{glyph} {count}",
+      "glyph": "󰮂",
+      "hide-not-running": false,
+      "icon-name": "input-gaming-symbolic",
+      "icon-size": 24,
+      "icon-spacing": 4,
+      "tooltip": true,
+      "tooltip-format": "Games running: {count}",
+      "use-icon": true
+    },
+    "height": 32,
+    "idle_inhibitor": {
+      "format": "{icon}",
+      "format-icons": {
+        "activated": "󰈈",
+        "deactivated": "󰈉"
+      }
+    },
+    "layer": "bottom",
+    "memory": {
+      "format": " RAM: {used:0.1f}G / {total:0.1f}G",
+      "tooltip-format": "{used:0.1f}G / {total:0.1f}G used"
+    },
+    "modules-center": [
+      "clock"
+    ],
+    "modules-left": [
+      "custom/launcher",
+      "custom/sep",
+      "memory",
+      "cpu",
+      "custom/cpu-temp",
+      "custom/gpu-percent",
+      "custom/gpu-mem",
+      "custom/gpu-temp",
+      "custom/sep"
+    ],
+    "modules-right": [
+      "custom/sep",
+      "network#disconnected",
+      "network#wifi",
+      "network#ethernet",
+      "network#disconnected",
+      "custom/sep",
+      "custom/power"
+    ],
+    "network#disconnected": {
+      "format-disconnected": "",
+      "format-ethernet": "",
+      "format-linked": "",
+      "format-wifi": "",
+      "on-click": "nm-connection-editor",
+      "tooltip-format": "No connection"
+    },
+    "network#ethernet": {
+      "format-disconnected": "",
+      "format-ethernet": "󰌗  {ifname}: {ipaddr}/{cidr}",
+      "format-linked": "",
+      "format-wifi": "",
+      "interface": "eno*",
+      "on-click": "nm-connection-editor",
+      "tooltip-format": "{ifname}: {ipaddr}/{cidr}"
+    },
+    "network#wifi": {
+      "format-disconnected": "",
+      "format-ethernet": "",
+      "format-linked": "",
+      "format-wifi": "  {essid} ({signalStrength}%)",
+      "interface": "wlp*",
+      "on-click": "nm-connection-editor",
+      "tooltip-format": "{ifname}: {ipaddr}/{cidr}"
+    },
+    "output": "HDMI-A-1",
+    "position": "top",
+    "pulseaudio": {
+      "format": "{icon} {volume}%{format_source}",
+      "format-bluetooth": "{icon}󰂯 {volume}%{format_source}",
+      "format-bluetooth-muted": " {icon}󰂯 {format_source}",
+      "format-icons": {
+        "car": "󰄋",
+        "default": [],
+        "headphone": "󰋋",
+        "phone": "󰏲",
+        "portable": ""
+      },
+      "format-muted": " {format_source}",
+      "format-source": "󰍬 {volume}%",
+      "format-source-muted": "󰍭",
+      "on-click": "alsamixer",
+      "scroll-step": 1
+    },
+    "sway/mode": {
+      "format": "<span style=\"italic\">{}</span>"
+    },
+    "sway/scratchpad": {
+      "format": "{icon} {count}",
+      "format-icons": [
+        "󱘔",
+        "󱘒"
+      ],
+      "show-empty": true,
+      "tooltip": true,
+      "tooltip-format": "{app}: {title}"
+    },
+    "sway/window": {
+      "format": "{} 󱂬",
+      "on-click": "swaymsg kill"
+    },
+    "temperature": {
+      "critical-threshold": 70,
+      "format": "{icon} {temperatureC}°C",
+      "format-icons": [
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    "tray": {
+      "icon-size": 24,
+      "spacing": 10
+    },
+    "wireplumber": {
+      "format": "{volume}% {icon}",
+      "format-icons": {
+        "car": "",
+        "default": [
+          "",
+          ""
+        ],
+        "hands-free": "󰂯",
+        "headphone": "",
+        "headset": "󰋎",
+        "phone": "",
+        "portable": ""
+      },
+      "format-muted": "",
+      "on-click": "helvum"
+    },
+    "wlr/taskbar": {
+      "format": "{icon}",
+      "icon-size": 24,
+      "icon-theme": "Papirus",
+      "on-click": "activate",
+      "on-click-right": "close",
+      "sort-by-app-id": true,
+      "tooltip": false
+    }
+  },
+  {
+    "backlight": {
+      "device": "intel_backlight",
+      "format": "{icon} {percent}%",
+      "format-icons": [
+        "󰃚",
+        "󰃛",
+        "󰃜",
+        "󰃝",
+        "󰃞",
+        "󰃟",
+        "󰃠"
+      ],
+      "interval": 1,
+      "on-click": "wdisplays",
+      "on-scroll-down": "brightnessctl set 5%-",
+      "on-scroll-up": "brightnessctl set 5%+"
+    },
+    "battery#bat1": {
+      "adapter": "AC",
+      "bat": "BAT0",
+      "format": "{icon}  {capacity}% [{time}]",
+      "format-charging": " {capacity}% [{time}]",
+      "format-empty": "Empty",
+      "format-full": "Full [{time}]",
+      "format-icons": [
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "format-plugged": " {capacity}% [{time}]",
+      "format-time": "{H}:{M}",
+      "full-at": 100,
+      "interval": 10,
+      "states": {
+        "critical": 20,
+        "empty": 15,
+        "full": 100,
+        "good": 99,
+        "warning": 30
+      }
+    },
+    "clock": {
+      "calendar": {
+        "format": {
+          "days": "<span color='#ecc6d9'><b>{}</b></span>",
+          "months": "<span color='#ffead3'><b>{}</b></span>",
+          "today": "<span color='#ff6699'><b><u>{}</u></b></span>",
+          "weekdays": "<span color='#ffcc66'><b>{}</b></span>",
+          "weeks": "<span color='#99ffdd'><b>W{}</b></span>"
+        },
+        "mode": "year",
+        "mode-mon-col": 3,
+        "on-click-right": "mode",
+        "on-scroll": 1,
+        "weeks-pos": "right"
+      },
+      "format": "<b>{:%a %d-%m-%y %H:%M:%S}</b>",
+      "format-alt": "<b>{:%A, %d of %B, %Y %H:%M:%S}</b>",
+      "interval": 1,
+      "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"
+    },
+    "cpu": {
+      "format": "󰘚 {usage}% {avg_frequency}GHz"
+    },
+    "custom/cpu-temp": {
+      "exec": "$HOME/.config/waybar/scripts/cpu-temp",
+      "format": " {}",
+      "interval": 1
+    },
+    "custom/fan-speed": {
+      "exec": "$HOME/.config/waybar/scripts/fan-speed",
+      "format": "󰈐 {}",
+      "interval": 1
+    },
+    "custom/gpu-mem": {
+      "exec": "$HOME/.config/waybar/scripts/gpu-mem",
+      "format": "{}",
+      "interval": 1
+    },
+    "custom/gpu-percent": {
+      "exec": "$HOME/.config/waybar/scripts/gpu-percent",
+      "format": "󰘚 GPU {}",
+      "interval": 1
+    },
+    "custom/gpu-temp": {
+      "exec": "$HOME/.config/waybar/scripts/gpu-temp",
+      "format": " {}",
+      "interval": 1
+    },
+    "custom/launcher": {
+      "format": "",
+      "on-click": "fuzzel"
+    },
+    "custom/notification": {
+      "escape": true,
+      "exec": "swaync-client -swb",
+      "exec-if": "which swaync-client",
+      "format": "{icon}",
+      "format-icons": {
+        "dnd-inhibited-none": "󰂛 ",
+        "dnd-inhibited-notification": "󰂛<span foreground='red'><sup> </sup></span>",
+        "dnd-none": "󰂛 ",
+        "dnd-notification": "󰂛<span foreground='red'><sup> </sup></span>",
+        "inhibited-none": "󰂚 ",
+        "inhibited-notification": "󰂚<span foreground='red'><sup> </sup></span>",
+        "none": "󰂚 ",
+        "notification": "󰂚<span foreground='red'><sup> </sup></span>"
+      },
+      "on-click": "swaync-client -t -sw",
+      "on-click-right": "swaync-client -d -sw",
+      "return-type": "json",
+      "tooltip": false
+    },
+    "custom/power": {
+      "format": "󰐥",
+      "on-click": "powermenu",
+      "tooltip": false
+    },
+    "custom/sep": {
+      "format": "|",
+      "interval": "once",
+      "tooltip": false
+    },
+    "custom/spotify": {
+      "escape": true,
+      "exec": "$HOME/.config/waybar/scripts/spotify",
+      "exec-if": "pgrep spotify || pgrep spotify_player || pgrep spot || pgrep ncspot",
+      "interval": 1,
+      "return-type": "json"
+    },
+    "custom/weather": {
+      "exec": "sh $HOME/.config/waybar/scripts/weather",
+      "interval": 300,
+      "on-click": "firefox https://wttr.in",
+      "return-type": "json"
+    },
+    "disk#root": {
+      "format": "󰋊 {used} / {total}",
+      "interval": 300,
+      "path": "/",
+      "tooltip-format": "{used} / {total} used"
+    },
+    "gamemode": {
+      "format": "{glyph}",
+      "format-alt": "{glyph} {count}",
+      "glyph": "󰮂",
+      "hide-not-running": false,
+      "icon-name": "input-gaming-symbolic",
+      "icon-size": 24,
+      "icon-spacing": 4,
+      "tooltip": true,
+      "tooltip-format": "Games running: {count}",
+      "use-icon": true
+    },
+    "height": 32,
+    "idle_inhibitor": {
+      "format": "{icon}",
+      "format-icons": {
+        "activated": "󰈈",
+        "deactivated": "󰈉"
+      }
+    },
+    "layer": "bottom",
+    "memory": {
+      "format": " {used:0.1f}G / {total:0.1f}G"
+    },
+    "modules-center": [
+      "clock"
+    ],
+    "modules-left": [
+      "custom/launcher",
+      "custom/sep",
+      "disk#root",
+      "memory",
+      "cpu",
+      "temperature",
+      "custom/fan-speed",
+      "custom/sep"
+    ],
+    "modules-right": [
+      "custom/sep",
+      "network#wifi",
+      "network#ethernet",
+      "network#disconnected",
+      "bluetooth",
+      "custom/sep",
+      "custom/weather",
+      "custom/sep",
+      "custom/power"
+    ],
+    "network#disconnected": {
+      "format-disconnected": "",
+      "format-ethernet": "",
+      "format-linked": "",
+      "format-wifi": "",
+      "on-click": "nm-connection-editor",
+      "tooltip-format": "No connection"
+    },
+    "network#ethernet": {
+      "format-disconnected": "",
+      "format-ethernet": "󰌗  {ifname}: {ipaddr}/{cidr}",
+      "format-linked": "",
+      "format-wifi": "",
+      "interface": "eno*",
+      "on-click": "nm-connection-editor",
+      "tooltip-format": "{ifname}: {ipaddr}/{cidr}"
+    },
+    "network#wifi": {
+      "format-disconnected": "",
+      "format-ethernet": "",
+      "format-linked": "",
+      "format-wifi": "  {essid} ({signalStrength}%)",
+      "interface": "wlp*",
+      "on-click": "nm-connection-editor",
+      "tooltip-format": "{ifname}: {ipaddr}/{cidr}"
+    },
+    "output": "LVDS-1",
+    "position": "top",
+    "pulseaudio": {
+      "format": "{icon} {volume}%{format_source}",
+      "format-bluetooth": "{icon}󰂯 {volume}%{format_source}",
+      "format-bluetooth-muted": " {icon}󰂯 {format_source}",
+      "format-icons": {
+        "car": "󰄋",
+        "default": [],
+        "headphone": "󰋋",
+        "phone": "󰏲",
+        "portable": ""
+      },
+      "format-muted": " {format_source}",
+      "format-source": "󰍬 {volume}%",
+      "format-source-muted": "󰍭",
+      "on-click": "alsamixer",
+      "scroll-step": 1
+    },
+    "sway/mode": {
+      "format": "<span style=\"italic\">{}</span>"
+    },
+    "sway/scratchpad": {
+      "format": "{icon} {count}",
+      "format-icons": [
+        "󱘔",
+        "󱘒"
+      ],
+      "show-empty": true,
+      "tooltip": true,
+      "tooltip-format": "{app}: {title}"
+    },
+    "sway/window": {
+      "format": "{} 󱂬",
+      "on-click": "swaymsg kill"
+    },
+    "temperature": {
+      "critical-threshold": 70,
+      "format": "{icon} {temperatureC}°C",
+      "format-icons": [
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    "tray": {
+      "icon-size": 24,
+      "spacing": 10
+    },
+    "wireplumber": {
+      "format": "{volume}% {icon}",
+      "format-icons": {
+        "car": "",
+        "default": [
+          "",
+          ""
+        ],
+        "hands-free": "󰂯",
+        "headphone": "",
+        "headset": "󰋎",
+        "phone": "",
+        "portable": ""
+      },
+      "format-muted": "",
+      "on-click": "helvum"
+    },
+    "wlr/taskbar": {
+      "format": "{icon}",
+      "icon-size": 24,
+      "icon-theme": "Papirus",
+      "on-click": "activate",
+      "on-click-right": "close",
+      "sort-by-app-id": true,
+      "tooltip": false
     }
   }
 ]

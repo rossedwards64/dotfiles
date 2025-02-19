@@ -559,7 +559,7 @@ decorations = "full"
 decorations_theme_variant = "None"
 dynamic_padding = true
 dynamic_title = true
-opacity = 0.9
+opacity = 0.95
 
 [window.class]
 general = "Alacritty"

@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+triple_digits=100000
+temp=$(cat /sys/class/drm/card0/device/hwmon/[[:print:]]*/temp1_input | bc)
+
+if [[ "$temp" -ge "$triple_digits" ]]; then
+    echo "${temp::-2}°C"
+elif [[ "$temp" -lt "$triple_digits" ]]; then
+    echo "${temp::-3}°C"
+fi

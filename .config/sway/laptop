@@ -1,0 +1,28 @@
+include "./common"
+
+output "LVDS-1" {
+  bg /home/ross/Pictures/wallpapers/Gurren Lagann/lordgenome.jpeg fill
+  pos 0 0
+  res 1024x768
+  scale 1
+}
+
+input "1:1:AT_Translated_Set_2_keyboard" {
+  xkb_layout gb
+  xkb_options ctrl:nocaps
+}
+
+input "2:7:SynPS/2_Synaptics_TouchPad" {
+  dwt enabled
+  middle_emulation enabled
+  natural_scroll enabled
+  tap enabled
+}
+
+bar {
+    font pango:Iosevka NF Regular 10
+    position bottom
+    status_command i3status-rs ~/.config/i3status-rust/config.toml
+	height 24
+	status_padding 0
+}

@@ -1,0 +1,220 @@
+font pango:Iosevka NF Regular 10
+floating_modifier Mod4
+default_border normal 1
+default_floating_border normal 1
+hide_edge_borders none
+focus_wrapping no
+focus_follows_mouse always
+focus_on_window_activation urgent
+mouse_warping none
+workspace_layout tabbed
+workspace_auto_back_and_forth yes
+client.focused #89b4fa #1e1e2e #cdd6f4 #a6e3a1 #89b4fa
+client.focused_inactive #45475a #1e1e2e #cdd6f4 #a6e3a1 #45475a
+client.unfocused #45475a #1e1e2e #cdd6f4 #a6e3a1 #45475a
+client.urgent #f38ba8 #1e1e2e #cdd6f4 #a6e3a1 #f38ba8
+client.placeholder #45475a #1e1e2e #cdd6f4 #a6e3a1 #45475a
+client.background #1e1e2e
+bindsym Mod4+1 workspace number 1
+bindsym Mod4+0 workspace number 0
+bindsym Mod4+2 workspace number 2
+bindsym Mod4+3 workspace number 3
+bindsym Mod4+4 workspace number 4
+bindsym Mod4+5 workspace number 5
+bindsym Mod4+6 workspace number 6
+bindsym Mod4+7 workspace number 7
+bindsym Mod4+8 workspace number 8
+bindsym Mod4+9 workspace number 9
+bindsym Mod4+Ctrl+0 move container to workspace number 0
+bindsym Mod4+Ctrl+1 move container to workspace number 1
+bindsym Mod4+Ctrl+2 move container to workspace number 2
+bindsym Mod4+Ctrl+3 move container to workspace number 3
+bindsym Mod4+Ctrl+4 move container to workspace number 4
+bindsym Mod4+Ctrl+5 move container to workspace number 5
+bindsym Mod4+Ctrl+6 move container to workspace number 6
+bindsym Mod4+Ctrl+7 move container to workspace number 7
+bindsym Mod4+Ctrl+8 move container to workspace number 8
+bindsym Mod4+Ctrl+9 move container to workspace number 9
+bindsym Mod4+Ctrl+space sticky toggle
+bindsym Mod4+Escape exec $HOME/.config/fuzzel/scripts/powermenu
+bindsym Mod4+Minus scratchpad show
+bindsym Mod4+Return exec alacritty
+bindsym Mod4+Shift+0 move container to workspace number 0, workspace number 0
+bindsym Mod4+Shift+1 move container to workspace number 1, workspace number 1
+bindsym Mod4+Shift+2 move container to workspace number 2, workspace number 2
+bindsym Mod4+Shift+3 move container to workspace number 3, workspace number 3
+bindsym Mod4+Shift+4 move container to workspace number 4, workspace number 4
+bindsym Mod4+Shift+5 move container to workspace number 5, workspace number 5
+bindsym Mod4+Shift+6 move container to workspace number 6, workspace number 6
+bindsym Mod4+Shift+7 move container to workspace number 7, workspace number 7
+bindsym Mod4+Shift+8 move container to workspace number 8, workspace number 8
+bindsym Mod4+Shift+9 move container to workspace number 9, workspace number 9
+bindsym Mod4+Shift+Return exec firefox
+bindsym Mod4+Shift+b border toggle
+bindsym Mod4+Shift+c reload
+bindsym Mod4+Shift+down move down
+bindsym Mod4+Shift+g exec emacsclient -c -a=''
+bindsym Mod4+Shift+h move left
+bindsym Mod4+Shift+j move down
+bindsym Mod4+Shift+k move up
+bindsym Mod4+Shift+l move right
+bindsym Mod4+Shift+left move left
+bindsym Mod4+Shift+minus move to scratchpad
+bindsym Mod4+Shift+q kill
+bindsym Mod4+Shift+r mode "resize"
+bindsym Mod4+Shift+right move right
+bindsym Mod4+Shift+space floating toggle
+bindsym Mod4+Shift+up move up
+bindsym Mod4+Shift+v myxer
+bindsym Mod4+Tab windows
+bindsym Mod4+a focus parent
+bindsym Mod4+b splitt
+bindsym Mod4+c exec $HOME/.config/sway/scripts/toggle-sink
+bindsym Mod4+d exec "pkill fuzzel || fuzzel"
+bindsym Mod4+down focus down
+bindsym Mod4+e layout toggle all
+bindsym Mod4+f fullscreen
+bindsym Mod4+g splith
+bindsym Mod4+h focus left
+bindsym Mod4+j focus down
+bindsym Mod4+k focus up
+bindsym Mod4+l focus right
+bindsym Mod4+left focus left
+bindsym Mod4+r mode "default"
+bindsym Mod4+right focus right
+bindsym Mod4+space focus mode_toggle
+bindsym Mod4+t exec swaync-client -t -sw
+bindsym Mod4+up focus up
+bindsym Mod4+v splitv
+bindsym Mod4+w layout default
+bindsym Print exec $HOME/.config/fuzzel/scripts/screenshot
+
+seat "seat0" {
+  xcursor_theme Catppuccin-Mocha-Dark-Cursors 24
+}
+
+mode "resize" {
+  bindsym Down resize grow height 10 px
+  bindsym Escape mode default
+  bindsym Left resize shrink width 10 px
+  bindsym Return mode default
+  bindsym Right resize grow width 10 px
+  bindsym Up resize shrink height 10 px
+  bindsym h resize shrink width 10 px
+  bindsym j resize grow height 10 px
+  bindsym k resize shrink height 10 px
+  bindsym l resize grow width 10 px
+}
+
+assign [app_id="^emacs(client)?$"] workspace 1
+assign [app_id="^Alacritty$"] workspace 2
+assign [app_id="^Firefox$"] workspace 3
+assign [class="^discord$"] workspace 4
+assign [app_id="^(dev.alextren.)?spot(ify)?$"] workspace 5
+assign [class="^FreeTube$"] workspace 5
+assign [app_id="^mpv$"] workspace 5
+assign [class="^vlc$"] workspace 5
+assign [class="^steam$"] workspace 6
+assign [class="^heroic$"] workspace 6
+assign [class="^itch$"] workspace 6
+assign [app_id="^lutris$"] workspace 6
+assign [class="^com-atlauncher-App$"] workspace 6
+assign [app_id="^GameConqueror.py$"] workspace 6
+assign [class="^steam_app_[0-9]*$"] workspace 7
+assign [class="^(dwarfort|factorio|gamescope|spring|youronlymoveishustle).*$"] workspace 7
+assign [app_id="^(dwarfort|factorio|gamescope|spring|youronlymoveishustle).*$"] workspace 7
+assign [class="^jetbrains-idea$"] workspace 9
+
+gaps inner 5
+gaps outer 5
+for_window [all] {
+  inhibit_idle fullscreen
+  title_format "<b>%title</b> (%app_id%instance,%shell)"
+}
+
+for_window [window_role="pop-up"] floating enable
+for_window [window_role="task_dialog"] floating enable
+for_window [window_role="dialog"] floating enable
+for_window [class="^steam_app_[0-9]*$"] {
+    allow_tearing yes
+    inhibit_idle fullscreen
+    fullscreen enable
+    focus
+}
+
+for_window [app_id="^steam_app_[0-9]*$"] {
+    allow_tearing yes
+    inhibit_idle fullscreen
+    fullscreen enable
+    focus
+}
+
+for_window [class="^(dwarfort|factorio|gamescope|spring|youronlymoveishustle).*$"] {
+    allow_tearing yes
+    inhibit_idle fullscreen
+    fullscreen enable
+    focus
+}
+
+for_window [app_id="^(dwarfort|factorio|gamescope|spring|youronlymoveishustle).*$"] {
+    allow_tearing yes
+    inhibit_idle fullscreen
+    fullscreen enable
+    focus
+}
+
+for_window [app_id="^org.pulseaudio.pavucontrol$"] {
+    floating enable
+    move to scratchpad
+    move position center
+    resize set 80ppt 80ppt
+}
+
+for_window [app_id="^org.pwmt.zathura$"] {
+    floating enable
+    move to scratchpad
+    move position center
+    resize set 80ppt 80ppt
+}
+
+for_window [app_id="^org.qbittorrent.qBittorrent$"] {
+    floating enable
+    move to scratchpad
+    move position center
+    resize set 80ppt 80ppt
+}
+
+exec $HOME/.config/sway/scripts/start-session
+exec /usr/libexec/xdg-desktop-portal --replace
+exec "gnome-keyring-daemon --start --foreground --components=pkcs11,secrets,ssh"
+exec swayidle -w
+exec pipewire
+exec wl-paste --type image --watch cliphist store
+exec wl-paste --type text --watch cliphist store
+exec waybar
+exec autotiling -w 1 2 3 4 5 6 7 8 9 10
+exec alacritty
+exec emacsclient -c -a=''
+exec firefox
+exec lutris
+
+exec_always pkill fuzzel
+exec_always "exec rm -f $XDG_RUNTIME_DIR/wob.sock && mkfifo $XDG_RUNTIME_DIR/wob.sock && tail -f $XDG_RUNTIME_DIR/wob.sock | wob"
+exec_always "systemctl --user restart swaync"
+exec_always swaync-client -R -rs -sw
+exec_always pkill waybar && waybar
+
+bindsym --locked {
+    XF86AudioRaiseVolume exec $HOME/.config/sway/scripts/wob "-v" "-i5"
+    XF86AudioLowerVolume exec $HOME/.config/sway/scripts/wob "-v" "-d5"
+    XF86AudioMute exec wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle && \
+                    check-mute "getspeaker"
+    XF86AudioMicMute exec wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle && \
+                    check-mute "getmic"
+    XF86AudioPlay exec playerctl play-pause
+    XF86AudioNext exec playerctl next
+    XF86AudioPrev exec playerctl previous
+    XF86MonBrightnessUp exec $HOME/.config/sway/scripts/wob "-b" "-i5"
+    XF86MonBrightnessDown exec $HOME/.config/sway/scripts/wob "-b" "-d5"
+    XF86RotateWindows exec $HOME/.config/sway/scripts/rotate
+}

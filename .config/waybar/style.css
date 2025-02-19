@@ -1,68 +1,97 @@
-@import "frappe.css";
+@define-color base      #303446;
+@define-color mantle    #292c3c;
+@define-color crust     #232634;
+@define-color text      #c6d0f5;
+@define-color subtext0  #a5adce;
+@define-color subtext1  #b5bfe2;
+@define-color surface0  #414559;
+@define-color surface1  #51576d;
+@define-color surface2  #626880;
+@define-color overlay0  #737994;
+@define-color overlay1  #838ba7;
+@define-color overlay2  #949cbb;
+@define-color blue      #8caaee;
+@define-color lavender  #babbf1;
+@define-color sapphire  #85c1dc;
+@define-color sky       #99d1db;
+@define-color teal      #81c8be;
+@define-color green     #a6d189;
+@define-color yellow    #e5c890;
+@define-color peach     #ef9f76;
+@define-color maroon    #ea999c;
+@define-color red       #e78284;
+@define-color mauve     #ca9ee6;
+@define-color pink      #f4b8e4;
+@define-color flamingo  #eebebe;
+@define-color rosewater #f2d5cf;
 
 * {
-  border: none;
-  border-radius: 0;
-  font-family: "Iosevka NF";
-  font-size: 13px;
-  font-weight: normal;
-  min-height: 24px;
-  color: @text;
+    border: none;
+    border-radius: 0;
+    font-family: "Iosevka NF";
+    font-size: 13px;
+    font-weight: normal;
+    min-height: 24px;
+    color: @text;
 }
 
 window#waybar {
-  background: @mantle;
-  background-color: @mantle;
-  color: #c4c7c5;
-  transition-property: background-color;
-  transition-duration: 0.5s;
+    background: @mantle;
+    background-color: @mantle;
+    color: #C4C7C5;
+    transition-property: background-color;
+    transition-duration: .5s;
 }
-
-/* window > box {} */
 
 window#waybar.empty {
-  color: @crust;
+    color: @crust;
 }
 
-.topbar {
-  border-bottom: 3px solid @overlay2;
+.topbar-hdmi {
+    border-bottom: 3px solid @overlay2;
 }
 
-.bottombar {
-  border-top: 3px solid @overlay2;
+.bottombar-hdmi {
+    border-top: 3px solid @overlay2;
+}
+
+.topbar-dp {
+    border-bottom: 3px solid @overlay2;
+}
+
+.bottombar-dp {
+    border-top: 3px solid @overlay2;
 }
 
 #workspaces button {
-  padding: 0 5px 0 5px;
-  background-color: transparent;
+    padding: 0 5px 0 5px;
+    background-color: transparent;
 }
 
 #workspaces button:hover {
-  background: @crust;
-  box-shadow: inset 0 3px @lavender;
+    background: @crust;
+    box-shadow: inset 0 3px @lavender;
 }
 
 #workspaces button.focused {
-  background-color: @base;
-  box-shadow: inset 0 3px @lavender;
+    background-color: @base;
+    box-shadow: inset 0 3px @lavender;
 }
 
 #workspaces button.urgent {
-  background-color: @red;
+    background-color: @red;
 }
 
 #mode {
-  background-color: @mantle;
-  border-top: 3px solid @lavender;
+    background-color: @mantle;
+    border-top: 3px solid @lavender;
 }
 
 #backlight,
 #battery.bat1,
-#battery.bat2,
 #clock,
 #cpu,
-#custom-mail,
-#custom-poweroff,
+#custom-power,
 #custom-weather,
 #disk,
 #idle_inhibitor,
@@ -72,65 +101,171 @@ window#waybar.empty {
 #network.wifi,
 #network.ethernet,
 #network.disconnected,
-#wireplumber,
+#pulseaudio,
 #taskbar,
 #temperature,
 #tray,
-#custom-fan_speed,
 #gamemode,
 #window,
 #language,
 #submap,
-#bluetooth #custom-pacman {
-  padding: 0 5px;
-  margin: 0 0px;
+#custom-cpu-temp,
+#custom-gpu-temp,
+#custom-gpu-percent,
+#custom-gpu-mem,
+#custom-spotify,
+#custom-notification,
+#bluetooth {
+    padding: 0 5px;
+    margin: 0 0px;
 }
 
 @keyframes blink {
-  to {
-    background-color: @subtext1;
-    color: @crust;
-  }
+    to {
+        background-color: @subtext1;
+        color: @crust;
+    }
 }
 
 #battery.bat1.critical:not(.charging) {
-  background-color: @red;
-  animation-name: blink;
-  animation-duration: 0.5s;
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
-  animation-direction: alternate;
+    background-color: @red;
+    animation-name: blink;
+    animation-duration: 0.5s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
 }
 
 #temperature.critical {
-  background-color: @red;
+    background-color: @red;
 }
 
 #taskbar button:hover {
-  background: @crust;
-  box-shadow: inset 0 3px @lavender;
+    background: @crust;
+    box-shadow: inset 0 3px @lavender;
 }
 
 #taskbar button.active {
-  background-color: @crust;
-  box-shadow: inset 0 3px @lavender;
+    background-color: @crust;
+    box-shadow: inset 0 3px @lavender;
 }
 
 #custom-sep {
-  color: @subtext1;
-  padding: 0 5px;
+    color: @subtext1;
+    padding: 0 5px;
 }
 
 #custom-launcher {
-  color: #1794d2;
-  font-size: 18px;
-  padding: 0 5px;
+    color: #1794D2;
+    font-size: 18px;
+    padding: 0 5px;
 }
 
-#custom-poweroff {
-  margin: 0 5px 0 0;
+#custom-power {
+    margin: 0 5px;
 }
 
 #custom-notification {
-  font-family: "Iosevka NF";
+    font-family: "Iosevka NF";
+}
+
+@define-color base00 #1e1e2e; @define-color base01 #181825; @define-color base02 #313244; @define-color base03 #45475a;
+@define-color base04 #585b70; @define-color base05 #cdd6f4; @define-color base06 #f5e0dc; @define-color base07 #b4befe;
+
+@define-color base08 #f38ba8; @define-color base09 #fab387; @define-color base0A #f9e2af; @define-color base0B #a6e3a1;
+@define-color base0C #94e2d5; @define-color base0D #89b4fa; @define-color base0E #cba6f7; @define-color base0F #f2cdcd;
+
+* {
+    font-family: "Iosevka NF";
+    font-size: 10pt;
+}
+
+window#waybar, tooltip {
+    background: alpha(@base00, 1.000000);
+    color: @base05;
+}
+
+tooltip {
+    border-color: @base0D;
+}
+#wireplumber,
+#pulseaudio,
+#sndio {
+    padding: 0 5px;
+}
+#wireplumber.muted,
+#pulseaudio.muted,
+#sndio.muted {
+    padding: 0 5px;
+}
+#upower,
+#battery {
+    padding: 0 5px;
+}
+#upower.charging,
+#battery.Charging {
+    padding: 0 5px;
+}
+#network {
+    padding: 0 5px;
+}
+#network.disconnected {
+    padding: 0 5px;
+}
+#user {
+    padding: 0 5px;
+}
+#clock {
+    padding: 0 5px;
+}
+#backlight {
+    padding: 0 5px;
+}
+#cpu {
+    padding: 0 5px;
+}
+#disk {
+    padding: 0 5px;
+}
+#idle_inhibitor {
+    padding: 0 5px;
+}
+#temperature {
+    padding: 0 5px;
+}
+#mpd {
+    padding: 0 5px;
+}
+#language {
+    padding: 0 5px;
+}
+#keyboard-state {
+    padding: 0 5px;
+}
+#memory {
+    padding: 0 5px;
+}
+#window {
+    padding: 0 5px;
+}
+.modules-left #workspaces button {
+    border-bottom: 3px solid transparent;
+}
+.modules-left #workspaces button.focused,
+.modules-left #workspaces button.active {
+    border-bottom: 3px solid @base05;
+}
+.modules-center #workspaces button {
+    border-bottom: 3px solid transparent;
+}
+.modules-center #workspaces button.focused,
+.modules-center #workspaces button.active {
+    border-bottom: 3px solid @base05;
+}
+.modules-right #workspaces button {
+    border-bottom: 3px solid transparent;
+}
+.modules-right #workspaces button.focused,
+.modules-right #workspaces button.active {
+    border-bottom: 3px solid @base05;
 }

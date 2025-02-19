@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+grep 'speed' /proc/acpi/ibm/fan | head -n1 | cut -f3

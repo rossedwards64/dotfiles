@@ -1,0 +1,12 @@
+#!/usr/bin/env sh
+
+if command -v systemctl; then
+    dbus-update-activation-environment --systemd --all
+    systemctl --user reset-failed &&
+        systemctl --user start sway-session.target &&
+        swaymsg -mt subscribe '[]' ||
+        true &&
+        systemctl --user stop sway-session.target
+else
+    dbus-update-activation-environment --all
+fi
