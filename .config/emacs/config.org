@@ -312,6 +312,10 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
     (interactive)
     (org-babel-tangle-file (concat user-emacs-directory "config.org"))
     (load (concat user-emacs-directory "init.el"))))
+
+(defun ross/is-dual-core ()
+  "Returns t if core count is 2."
+  (= 2 (num-processors)))
 #+end_src
 
 * Org-Mode
@@ -653,10 +657,6 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
                              (and (derived-mode-p 'eshell-mode 'comint-mode)
                                   #'corfu-send)))))
 
-(use-package corfu-candidate-overlay
-  :config
-  (corfu-candiate-overlay-mode +1))
-
 (use-package nerd-icons-corfu
   :config
   (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
@@ -875,6 +875,9 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
   :config
   (add-hook 'xref-backend-functions #'dumb-jump-xref-activate)
   (setq xref-show-definitions-function #'xref-show-definitions-completing-read))
+
+(use-package just-mode)
+(use-package justl)
 #+end_src
 
 ** Language Servers
@@ -1044,7 +1047,7 @@ It's a bit of a pain having to do 'M-x sly' every time I open a Lisp project.
 
 (use-package macrostep)
 (use-package morlock
-  :config (global-morlock-mode +1))
+  :hook (((emacs-lisp-mode ielm-mode) . morlock-mode)))
 #+end_src
 
 **** Scheme
@@ -1260,6 +1263,7 @@ have to scroll past it every time I read or edit my config.
   :config
   (setq initial-buffer-choice (lambda () (get-buffer-create "*dashboard*"))))
 #+end_src
+
 * Package Manager
 Placed here at the end and tangled to the first src for the same reason as the [[*Startup Dashboard][startup dashboard config]]. This is the bootstrapping code
 for Elpaca, obtained from [[https://github.com/progfolio/elpaca#installer][the Elpaca Github repository]].

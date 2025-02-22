@@ -4,4 +4,4 @@ flake.lock
 hosts
 home
 modules
-
+Justfile
