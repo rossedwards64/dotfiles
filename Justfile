@@ -1,9 +1,9 @@
 distro_name := `cat /etc/os-release | sed -r '/^NAME=[^=]/!d;s/NAME=([^=])/\1/g;s/\"//g'`
 
-stow_ignore := if '{{ distro_name }}' == "NixOS" {
-    '^(.local/bin/.*)|.config/(?!emacs|nix(pkgs)?)$'
+stow_ignore := if distro_name == "NixOS" {
+    '^(\.local/bin/)|\.config/.*(?!emacs|nix(pkgs)?)$'
 } else {
-    '^(.config/nix(pkgs)?)$'
+    '^(\.config/nix(pkgs)?)$'
 }
 
 default:
