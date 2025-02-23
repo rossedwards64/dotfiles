@@ -112,8 +112,6 @@ assign [app_id="^Firefox$"] workspace 3
 assign [class="^(dis|arm)cord$"] workspace 4
 assign [app_id="^(dev.alextren.)?spot(ify)?$"] workspace 5
 assign [class="^FreeTube$"] workspace 5
-assign [app_id="^mpv$"] workspace 5
-assign [class="^vlc$"] workspace 5
 assign [class="^steam$"] workspace 6
 assign [class="^heroic$"] workspace 6
 assign [class="^itch$"] workspace 6
@@ -186,15 +184,12 @@ for_window [app_id="^org.qbittorrent.qBittorrent$"] {
 
 exec $HOME/.config/sway/scripts/start-session
 exec /usr/libexec/xdg-desktop-portal --replace
-exec "gnome-keyring-daemon --start --foreground --components=pkcs11,secrets,ssh"
-exec swayidle -w
-exec pipewire
 exec wl-paste --type image --watch cliphist store
 exec wl-paste --type text --watch cliphist store
 exec waybar
 exec autotiling -w 1 2 3 4 5 6 7 8 9 10
 exec alacritty
-exec emacsclient -c -a=''
+exec emacs
 exec firefox
 exec lutris
 

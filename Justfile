@@ -78,8 +78,8 @@ configure-zsh:
 install-wm:
     {{ if distro_name == 'NixOS' { error(nixos_err_msg) } else { '' } }}
     sudo {{ pkg_install_cmd }} {{ wm-packages }}
-	ln -s '{{ source_directory() }} .config/sway/config' '{{ source_directory() }}.config/sway/{{ wm-config }}'
-    sudo install -vm755 '{{ source_directory() }}.config/sway/start-sway' /usr/bin
+    ln -s '{{ source_directory() }}/.config/sway/config' '{{ source_directory() }}/.config/sway/{{ wm-config }}'
+    sudo install -vm755 '{{ source_directory() }}/.config/sway/start-sway' /usr/bin
 
 install-quicklisp:
     {{ if distro_name == 'NixOS' { error(nixos_err_msg) } else { '' } }}
