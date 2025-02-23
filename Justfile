@@ -84,7 +84,9 @@ stow:
 
 setup-archlinux: setup install-yay
 
-setup: install-packages configure-zsh install-wm install-flatpak
+setup-void: setup setup-user-runsvdir
+
+setup: install-packages configure-zsh install-wm install-flatpak setup-emacs
 
 install-packages:
     {{ if distro_name == 'NixOS' { error(nixos_err_msg) } else { '' } }}
@@ -125,3 +127,6 @@ install-flatpak:
 setup-user-runsvdir:
     {{ if distro_name != 'Void' { error(runit_err_msg) } else { '' } }}
     sudo ln -s '{{ source_directory() }}/sv/runsvdir-ross' /etc/sv
+
+setup-emacs:
+	emacsclient --eval '(org-babel-tangle-file "{{ source_directory() }}/.config/emacs/config.org")'
