@@ -1,0 +1,9 @@
+#!/usr/bin/env sh
+
+export USER="ross"
+export HOME="/home/${USER}"
+
+groups="$(id -Gn "$USER" | tr ' ' ':')"
+svdir="${HOME}/.config/service"
+
+exec chpst -u "${USER}:${groups}" runsvdir "${svdir}"

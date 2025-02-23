@@ -5,3 +5,4 @@ hosts
 home
 modules
 Justfile
+sv

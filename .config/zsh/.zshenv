@@ -4,8 +4,7 @@ export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:="$HOME/.config"}"
 export XDG_STATE_HOME="${XDG_STATE_HOME:="$HOME/.local/state"}"
 
 export PATH="${PATH}:$HOME/.local/bin:$XDG_CONFIG_HOME/emacs/bin:"`
-            `"$HOME/bin:$HOME/.dotfiles/.bin:$XDG_DATA_HOME/cargo/bin:"`
-            `"$HOME/.local/share/go/bin"
+            `"$XDG_DATA_HOME/cargo/bin:$HOME/.local/share/go/bin"
 export MANPATH="/usr/local/man:$MANPATH"
 
 # ZSH dirs

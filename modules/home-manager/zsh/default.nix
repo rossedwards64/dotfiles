@@ -43,6 +43,7 @@ in
         };
 
         sessionVariables = {
+		  _JAVA_AWT_WM_NONREPARENTING = "1";
           ALTERNATE_EDITOR = "${pkgs.neovim}/bin/nvim";
           ARCHFLAGS = "-arch x86_64";
           BROWSER = "${pkgs.firefox}/bin/firefox";

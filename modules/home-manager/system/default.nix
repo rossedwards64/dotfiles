@@ -31,7 +31,6 @@ in
       rlwrap
       rsync
       tokei
-      topgrade
       tree-sitter
       unzip
     ];

@@ -38,7 +38,7 @@ bindsym Mod4+Shift+p move workspace to output DP-2
 
 exec steam
 exec itch
-exec flatpak run io.freetubeapp.FreeTube > /tmp/freetube.log
-exec flatpak run xyz.armcord.ArmCord > /tmp/armcord.log
-exec flatpak run com.spotify.Client > /tmp/spotify.log
+exec flatpak run io.freetubeapp.FreeTube
+exec flatpak run xyz.armcord.ArmCord
+exec flatpak run com.spotify.Client
 exec flatpak run com.heroicgameslauncher.hgl

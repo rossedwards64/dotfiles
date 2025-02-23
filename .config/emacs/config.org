@@ -323,7 +323,13 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
 (use-package org
   :init
   (setq org-directory "~/Documents/org"
-        org-agenda-files `(,(concat org-directory "/agenda.org"))
+        org-agenda-files (cl-map 'list (lambda (file)
+                                         (let ((file (concat org-directory "/" file)))
+                                           (when (not (file-exists-p file))
+                                             (make-empty-file file))
+                                           file))
+                                 '("agenda.org" "habits.org" "meetings.org" "todo.org"))
+        org-default-notes-file (concat org-directory "/notes.org")
         org-auto-align-tags t
         org-edit-src-content-indentation 0
         org-hide-emphasis-markers t
@@ -1270,7 +1276,7 @@ for Elpaca, obtained from [[https://github.com/progfolio/elpaca#installer][the E
 #+NAME: package-manager
 #+begin_src emacs-lisp :tangle no
 (when (nixos-p)
-  (setq elpaca-core-date 20241026)) ;; update this on the next emacs release
+  (setq elpaca-core-date 20241229)) ;; update this on the next emacs release
 
 (defvar elpaca-installer-version 0.8)
 (defvar elpaca-directory (expand-file-name "elpaca/" user-emacs-directory))

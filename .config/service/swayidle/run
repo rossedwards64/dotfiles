@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+
+exec /usr/sbin/swayidle -w \
+	 timeout 300 "/usr/sbin/swaylock" \
+	 timeout 600 "/usr/sbin/swaymsg 'output * power off'" \
+	 before-sleep "/usr/bin/playerctl pause; /usr/sbin/swaylock" \
+	 after-resume "/usr/sbin/swaymsg 'output * power on'" 2>&1

@@ -20,11 +20,11 @@ in
       events = [
         {
           event = "before-sleep";
-          command = "${pkgs.swaylock-effects}/bin/swaylock -fF";
+          command = "${pkgs.playerctl}/bin/playerctl pause; ${pkgs.swaylock-effects}/bin/swaylock -fF";
         }
         {
           event = "after-resume";
-          command = "hyprctl dispatch dpms on";
+          command = "${pkgs.sway}/bin/swaymsg 'output * power on'";
         }
       ];
 
@@ -35,7 +35,7 @@ in
         }
         {
           timeout = 600;
-          command = "hyprctl dispatch dpms off";
+          command = "${pkgs.sway}/bin/swaymsg 'output * power off'";
         }
       ];
     };

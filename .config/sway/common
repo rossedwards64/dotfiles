@@ -109,7 +109,7 @@ mode "resize" {
 assign [app_id="^emacs(client)?$"] workspace 1
 assign [app_id="^Alacritty$"] workspace 2
 assign [app_id="^Firefox$"] workspace 3
-assign [class="^discord$"] workspace 4
+assign [class="^(dis|arm)cord$"] workspace 4
 assign [app_id="^(dev.alextren.)?spot(ify)?$"] workspace 5
 assign [class="^FreeTube$"] workspace 5
 assign [app_id="^mpv$"] workspace 5

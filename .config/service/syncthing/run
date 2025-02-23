@@ -1,0 +1,3 @@
+#!/usr/bin/env sh
+
+exec /usr/sbin/syncthing serve --no-browser --logflags 0 2>&1
