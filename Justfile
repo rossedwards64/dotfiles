@@ -32,6 +32,16 @@ pkg_install_cmd := if which('pacman') != '' {
 
 export ZSH := "${HOME}/.local/share/oh-my-zsh"
 
+iosevka := if distro_name == 'Void' {
+    'font-iosevka'
+} else if distro_name == 'Arch' {
+    'ttc-iosevka'
+} else if distro_name == 'Ubuntu' {
+    'fonts-iosevka'
+} else {
+    'iosevka'
+}
+
 base-pkgs := replace('''
  zsh alacritty emacs-pgtk eza ripgrep bat dust fzf rsync tree-sitter
  git rlwrap curl btop fzf tealdeer entr gimp libreoffice mpv neovim
@@ -39,20 +49,35 @@ base-pkgs := replace('''
  pass-git-helper pass-otp pass-update flatpak lutris wine pipewire
  wireplumber sbcl guile clang leiningen clojure-lsp rustup
  xdg-user-dirs bash-language-server papirus-icon-theme platformio
- playerctl bc nerd-fonts font-iosevka
-''', "\n", " ")
+ playerctl bc nerd-fonts
+''' + iosevka, "\n", " ")
+
+waybar := if distro_name == 'Void' {
+    'Waybar'
+} else {
+    'waybar'
+}
+
+swaync := if distro_name == 'Void' {
+    'SwayNotificationCenter'
+} else if distro_name == 'Debian' {
+    'sway-notification-center'
+} else if distro_name == 'Ubuntu' {
+    'sway-notification-center'
+} else {
+    'swaync'
+}
 
 wm-packages := replace('''
- sway swaybg swayidle swaylock waybar SwayNotificationCenter
- i3status-rust fuzzel wob imv greetd tuigreet pavucontrol grim slurp
- jq wl-clipboard gnome-keyring xdg-desktop-portal
- xdg-desktop-portal-wlr xdg-desktop-portal-gtk
-''', "\n", " ")
+ sway swaybg swayidle swaylock i3status-rust fuzzel wob imv greetd
+ tuigreet pavucontrol grim slurp jq wl-clipboard gnome-keyring
+ xdg-desktop-portal xdg-desktop-portal-wlr xdg-desktop-portal-gtk
+''' + waybar + ' ' + swaync, "\n", " ")
 
 global-zshenv := 'export ZDOTDIR="$HOME/.config/zsh"'
 
 default:
-    @just --chooser
+    @just --choose
 
 stow:
     stow -R --ignore '{{ stow_ignore }}' .
