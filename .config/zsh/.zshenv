@@ -4,7 +4,8 @@ export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:="$HOME/.config"}"
 export XDG_STATE_HOME="${XDG_STATE_HOME:="$HOME/.local/state"}"
 
 export PATH="${PATH}:$HOME/.local/bin:$XDG_CONFIG_HOME/emacs/bin:"`
-            `"$XDG_DATA_HOME/cargo/bin:$HOME/.local/share/go/bin"
+            `"$XDG_DATA_HOME/cargo/bin:$HOME/.local/share/go/bin:"`
+            `"$XDG_DATA_HOME/coursier/bin"
 export MANPATH="/usr/local/man:$MANPATH"
 
 # ZSH dirs
@@ -56,7 +57,6 @@ export CALCHISTFILE=-
 
 # Java environment
 export _JAVA_AWT_WM_NONREPARENTING=1
-export JAVA_HOME="/usr/lib/jvm/default/"
 export _JAVA_OPTIONS='-Djava.util.prefs.userRoot='"$XDG_CONFIG_HOME"'/java, '`
                      `'-Dawt.useSystemAAFontSettings=on, -Dswing.aatext=true'
 export JDK_JAVA_OPTIONS="$_JAVA_OPTIONS"

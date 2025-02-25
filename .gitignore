@@ -5,6 +5,7 @@
 .config/ncspot/userstate.cbor
 .config/nvim/
 .config/service/**/supervise/
+.config/sway/config
 .config/tmux/plugins
 .config/zsh/.zcompdump*
 .config/zsh/.zfunc/**

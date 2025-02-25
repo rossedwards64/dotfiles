@@ -186,7 +186,6 @@ exec $HOME/.config/sway/scripts/start-session
 exec /usr/libexec/xdg-desktop-portal --replace
 exec wl-paste --type image --watch cliphist store
 exec wl-paste --type text --watch cliphist store
-exec waybar
 exec autotiling -w 1 2 3 4 5 6 7 8 9 10
 exec alacritty
 exec emacs

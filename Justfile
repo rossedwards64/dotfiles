@@ -30,7 +30,9 @@ pkg_install_cmd := if which('pacman') != '' {
     error('No supported package manager found.')
 }
 
-export ZSH := "${HOME}/.local/share/oh-my-zsh"
+export ZSH := `echo ${HOME}/.local/share/oh-my-zsh`
+export ZSH_CUSTOM := `echo ${HOME}/.local/share/oh-my-zsh/custom`
+export ZDOTDIR := `echo ${HOME}/.config/zsh`
 
 iosevka := if distro_name == 'Void' {
     'font-iosevka'
@@ -45,7 +47,7 @@ iosevka := if distro_name == 'Void' {
 base-pkgs := replace('''
  zsh alacritty emacs-pgtk eza ripgrep bat dust fzf rsync tree-sitter
  git rlwrap curl btop fzf tealdeer entr gimp libreoffice mpv neovim
- pandoc qbittorrent ark thunar firefox starship tmux tmuxinator pass
+ pandoc qbittorrent ark Thunar firefox starship tmux ruby-tmuxinator pass
  pass-git-helper pass-otp pass-update flatpak lutris wine pipewire
  wireplumber sbcl guile clang leiningen clojure-lsp rustup
  xdg-user-dirs bash-language-server papirus-icon-theme platformio
@@ -69,12 +71,29 @@ swaync := if distro_name == 'Void' {
 }
 
 wm-packages := replace('''
- sway swaybg swayidle swaylock i3status-rust fuzzel wob imv greetd
+ sway swaybg swayidle i3status-rust fuzzel wob imv greetd
  tuigreet pavucontrol grim slurp jq wl-clipboard gnome-keyring
  xdg-desktop-portal xdg-desktop-portal-wlr xdg-desktop-portal-gtk
 ''' + waybar + ' ' + swaync, "\n", " ")
 
-global-zshenv := 'export ZDOTDIR="$HOME/.config/zsh"'
+greetd_config := '''
+
+[terminal]
+vt = 7
+
+[default_session]
+command = "tuigreet --cmd /usr/bin/start-sway -t -g \'WELCOME TO WORM LINUX\' --asterisks
+user = "_greeter"
+'''
+
+sway-desktop-file := '''
+
+[Desktop Entry]
+Name=Sway
+Comment=An i3-compatible Wayland compositor
+Exec=dbus-run-session /usr/bin/start-sway
+Type=Application
+'''
 
 default:
     @just --choose
@@ -82,36 +101,75 @@ default:
 stow:
     stow -R --ignore '{{ stow_ignore }}' .
 
+setup: install-packages configure-zsh install-wm install-flatpak stow
+
 setup-archlinux: setup install-yay
 
-setup-void: setup setup-user-runsvdir
+setup-void: setup install-xbps-templates setup-user-runsvdir
 
 setup: install-packages configure-zsh install-wm install-flatpak setup-emacs
-
+    
 install-packages:
     {{ if distro_name == 'NixOS' { error(nixos_err_msg) } else { '' } }}
     sudo {{ pkg_install_cmd }} {{ base-pkgs }}
 
 configure-zsh:
     {{ if distro_name == 'NixOS' { error(nixos_err_msg) } else { '' } }}
-    sudo echo {{ global-zshenv }} > /etc/zsh/zshenv
-    source /etc/zsh/zshenv
-    sudo chsh -s "$(which zsh)"
-    chsh -s "$(which zsh)"
-    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
-    git clone https://github.com/zsh-users/zsh-autosuggestions "${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions"
-    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting"
+    echo 'export ZDOTDIR={{ ZDOTDIR }}' | sudo tee /etc/zsh/zshenv
+    . /etc/zsh/zshenv
+    sudo chsh -s /bin/zsh
+    chsh -s /bin/zsh
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended --keep-zshrc || true
+    git clone https://github.com/zsh-users/zsh-autosuggestions `${ZSH_CUSTOM}/plugins/zsh-autosuggestions` || true
+    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git `${ZSH_CUSTOM}/plugins/zsh-syntax-highlighting` || true
+    mkdir -p ~/.local/share/zsh/
+    touch ~/.local/share/zsh/history
 
 install-wm:
     {{ if distro_name == 'NixOS' { error(nixos_err_msg) } else { '' } }}
     sudo {{ pkg_install_cmd }} {{ wm-packages }}
-    ln -s '{{ source_directory() }}/.config/sway/config' '{{ source_directory() }}/.config/sway/{{ wm-config }}'
-    sudo install -vm755 '{{ source_directory() }}/.config/sway/start-sway' /usr/bin
+    ln -s '{{ justfile_directory() }}/.config/sway/{{ wm-config }}' '{{ justfile_directory() }}/.config/sway/config' || true
+    sudo install -vm755 '{{ justfile_directory() }}/.config/sway/start-sway' /usr/bin
+    sudo tee /etc/greetd/config.toml >/dev/null <<-EOF {{ greetd_config }}
+    sudo tee /usr/share/wayland-sessions/sway.desktop >/dev/null <<-EOF {{ sway-desktop-file }}
 
 install-quicklisp:
     {{ if distro_name == 'NixOS' { error(nixos_err_msg) } else { '' } }}
     curl -O https://beta.quicklisp.org/quicklisp.lisp
     sbcl --load quicklisp.lisp --eval '(quicklisp-quickstart:install)' --eval '(ql:add-to-init-file)'
+
+install-flatpak:
+    {{ if distro_name == 'NixOS' { error(nixos_err_msg) } else { '' } }}
+    flatpak remote-add --if-not-exists --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+
+setup-emacs:
+	emacsclient --eval '(org-babel-tangle-file "{{ source_directory() }}/.config/emacs/config.org")'
+
+# VOID SPECIFIC RULES
+
+setup-user-runsvdir:
+    {{ if distro_name != 'Void' { error(runit_err_msg) } else { '' } }}
+    sudo ln -s '{{ justfile_directory() }}/sv/runsvdir-ross' /etc/sv || true; \
+    sudo ln -s /etc/sv/runsvdir-ross /var/service || true; \
+    mkdir -p '{{ home_directory() }}/.config/service'
+    for s in '{{ justfile_directory() }}/.config/service/*'; do \
+        ln -s $s '{{ home_directory() }}/.config/service' || true; \
+    done
+
+install-xbps-templates:
+    {{ if distro_name != 'Void' { error(runit_err_msg) } else { '' } }}
+    mkdir -p ~/Documents/programming/repos
+    git clone https://github.com/void-linux/void-packages '{{ home_directory() }}/Documents/programming/repos/void-packages' || true
+    '{{ home_directory() }}/Documents/programming/repos/void-packages/xbps-src' binary-bootstrap
+    for t in '{{ justfile_directory() }}/xbps-templates/*'; do \
+        cp -r $t '{{ home_directory() }}/Documents/programming/repos/void-packages/srcpkgs'; \
+         '{{ home_directory() }}/Documents/programming/repos/void-packages/xbps-src' pkg $(basename $t); \
+        sudo xbps-install --repository \
+          '{{ home_directory() }}/Documents/programming/repos/void-packages/hostdir/binpkgs' \
+          $(basename $t); \
+    done
+
+# ARCH SPECIFIC RULES
 
 install-yay:
     {{ if distro_name != 'Arch Linux' { error(yay_err_msg) } else { '' } }}
@@ -119,14 +177,3 @@ install-yay:
     git clone https://aur.archlinux.org/yay.git
     cd yay
     makepkg -si
-
-install-flatpak:
-    {{ if distro_name == 'NixOS' { error(nixos_err_msg) } else { '' } }}
-    flatpak remote-add --if-not-exists --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-
-setup-user-runsvdir:
-    {{ if distro_name != 'Void' { error(runit_err_msg) } else { '' } }}
-    sudo ln -s '{{ source_directory() }}/sv/runsvdir-ross' /etc/sv
-
-setup-emacs:
-	emacsclient --eval '(org-babel-tangle-file "{{ source_directory() }}/.config/emacs/config.org")'

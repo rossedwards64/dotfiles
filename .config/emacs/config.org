@@ -834,7 +834,7 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
 
 (use-package flyspell
   :elpaca nil
-  :when (ross/is-dual-core)
+  :unless (ross/is-dual-core)
   :hook
   (((LaTeX-mode org-mode) . flyspell-mode)))
 #+end_src
@@ -843,7 +843,7 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
 ** General
 #+begin_src emacs-lisp
 (use-package flycheck
-  :when (ross/is-dual-core)
+  :unless (ross/is-dual-core)
   :init (global-flycheck-mode +1)
   :config
   (setq flycheck-emacs-lisp-load-path load-path)
@@ -1169,6 +1169,13 @@ No point loading these if not on NixOS.
 (use-package lsp-haskell)
 (use-package dante)
 (use-package hindent)
+#+end_src
+
+*** Scala
+#+begin_src emacs-lisp
+(use-package scala-mode)
+(use-package sbt-mode)
+(use-package lsp-metals)
 #+end_src
 
 * Documents
