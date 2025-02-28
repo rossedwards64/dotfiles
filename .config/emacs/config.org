@@ -95,9 +95,9 @@ Set the font based on resolution. The after-make-frame-functions hook will ensur
 <<package-manager>>
 
 (use-package no-littering
-  :config
-  (setq no-littering-etc-directory (expand-file-name "config/" user-emacs-directory)
-        no-littering-var-directory (expand-file-name "data/" user-emacs-directory)))
+  :custom
+  (no-littering-etc-directory (expand-file-name "config/" user-emacs-directory))
+  (no-littering-var-directory (expand-file-name "data/" user-emacs-directory)))
 
 (use-package exec-path-from-shell
   :config
@@ -143,43 +143,6 @@ Set the font based on resolution. The after-make-frame-functions hook will ensur
   <<transparency>>
   <<completing-read-advice>>
   <<android-ssl>>
-
-  (setq-default tab-width 4)
-  (setq auto-save-default nil
-        auth-source-save-behavior nil
-        async-shell-command-display-buffer nil
-        compilation-ask-about-save t
-        compilation-auto-jump-to-first-error t
-        compilation-max-output-line-length nil
-        compilation-scroll-output t
-        confirm-kill-emacs #'yes-or-no-p
-        dired-listing-switches "-lhAX --group-directories-first"
-        dired-switches-in-mode-line 'as-is
-        display-line-numbers-type 'relative
-        fill-indent-according-to-mode t
-        find-function-C-source-directory "~/Documents/programming/repos/emacs/src"
-        inhibit-startup-message t
-        load-prefer-newer t
-        make-backup-files nil
-        minibuffer-prompt-properties '(read-only t cursor-intangible t face minibuffer-prompt)
-        read-extended-command-predicate #'command-completion-default-include-p
-        read-process-output-max (* 1024 1024)
-        require-final-newline t
-        ring-bell-function 'ignore
-        savehist-additional-variables '(kill-ring
-                                        search-ring
-                                        regexp-search-ring
-                                        projectile-project-command-history)
-        tab-always-indent 'complete
-        treesit-extra-load-path '((concat elpaca-builds-directory "/tree-sitter-langs/bin"))
-        use-dialog-box nil
-        use-short-answers t
-        vc-follow-symlinks t
-        warning-minimum-level :error
-        completion-cycle-threshold 3
-        enable-recursive-minibuffers t
-        delete-auto-save-files t)
-
   (toggle-text-mode-auto-fill)
   (blink-cursor-mode -1)
   (global-auto-revert-mode +1)
@@ -190,7 +153,40 @@ Set the font based on resolution. The after-make-frame-functions hook will ensur
   (savehist-mode +1)
   (scroll-bar-mode -1)
   (set-fringe-mode +1)
-  (tool-bar-mode -1))
+  (tool-bar-mode -1)
+  :custom
+  (tab-width 4)
+  (auto-save-default nil)
+  (auth-source-save-behavior nil)
+  (async-shell-command-display-buffer nil)
+  (compilation-ask-about-save t)
+  (compilation-auto-jump-to-first-error t)
+  (compilation-max-output-line-length nil)
+  (compilation-scroll-output t)
+  (confirm-kill-emacs #'yes-or-no-p)
+  (dired-listing-switches "-lhAX --group-directories-first")
+  (dired-switches-in-mode-line 'as-is)
+  (display-line-numbers-type 'relative)
+  (fill-indent-according-to-mode t)
+  (find-function-C-source-directory "~/Documents/programming/repos/emacs/src")
+  (inhibit-startup-message t)
+  (load-prefer-newer t)
+  (make-backup-files nil)
+  (minibuffer-prompt-properties '(read-only t cursor-intangible t face minibuffer-prompt))
+  (read-extended-command-predicate #'command-completion-default-include-p)
+  (read-process-output-max (* 1024 1024))
+  (require-final-newline t)
+  (ring-bell-function 'ignore)
+  (savehist-additional-variables '(kill-ring search-ring regexp-search-ring projectile-project-command-history))
+  (tab-always-indent 'complete)
+  (treesit-extra-load-path '((concat elpaca-builds-directory "/tree-sitter-langs/bin")))
+  (use-dialog-box nil)
+  (use-short-answers t)
+  (vc-follow-symlinks t)
+  (warning-minimum-level :error)
+  (completion-cycle-threshold 3)
+  (enable-recursive-minibuffers t)
+  (delete-auto-save-files t))
 #+end_src
 
 I keep the window opaque on MacOS because I prefer to use floating windows, and I think the transparency looks ugly when you can see other windows behind it.
@@ -321,71 +317,16 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
 * Org-Mode
 #+begin_src emacs-lisp
 (use-package org
-  :init
-  (setq org-directory "~/Documents/org"
-        org-agenda-files (cl-map 'list (lambda (file)
-                                         (let ((file (concat org-directory "/" file)))
-                                           (when (not (file-exists-p file))
-                                             (make-empty-file file))
-                                           file))
-                                 '("agenda.org" "habits.org" "meetings.org" "todo.org"))
-        org-default-notes-file (concat org-directory "/notes.org")
-        org-auto-align-tags t
-        org-edit-src-content-indentation 0
-        org-hide-emphasis-markers t
-        org-hide-leading-stars t
-        org-log-done 'time
-        org-log-into-drawer t
-        org-pretty-entities t
-        org-pretty-entities-include-sub-superscripts t
-        org-return-follows-link t
-        org-roam-directory (concat org-directory "/roam")
-        org-roam-completion-everywhere t
-        org-special-ctrl-a/e t
-        org-special-ctrl-k t
-        org-special-ctrl-o t
-        org-src-fontify-natively t
-        org-src-preserve-indentation t
-        org-src-tab-acts-natively t
-        org-src-window-setup 'current-window
-        org-startup-with-inline-images t
-        org-support-shift-select t
-        org-use-property-inheritance t
-        org-todo-keywords '((sequence
-                             "TODO(t)"
-                             "MEETING(m)"
-                             "PROGRESS(p!)"
-                             "BLOCKED(b@/!)"
-                             "WAITING(w)"
-                             "|"
-                             "DONE(d!)"
-                             "CANCELLED(c@)"
-                             "STOPPED(s@/!)"))
-        org-capture-templates '(("t" "Task")
-                                ("tu" "Unscheduled" entry
-                                 (file+headline "todo.org" "Unscheduled Tasks")
-                                 "** TODO %?\n%i\n%a"
-                                 :empty-lines-before 1)
-                                ("ts" "Scheduled" entry
-                                 (file+headline "agenda.org" "Scheduled Tasks")
-                                 "** TODO %?\nSCHEDULED: %^T\n%^{LOCATION|N/A}p"
-                                 :empty-lines-before 1)
-                                ("td" "Deadline" entry
-                                 (file+headline "agenda.org" "Deadlined Tasks")
-                                 "** TODO %?\nDEADLINE: %^T"
-                                 :empty-lines-before 1)
-                                ("th" "Habit" entry
-                                 (file+headline "habits.org")
-                                 "* TODO %?\nSCHEDULED: %^T\n:PROPERTIES:\n:STYLE: habit\n:END:"
-                                 :empty-lines-before 1)
-                                ("n" "Note" entry
-                                 (file "notes.org")
-                                 "* %?\nEntered on %U\n%i\n%a"
-                                 :empty-lines-before 1)
-                                ("i" "Idea" entry
-                                 (file "ideas.org")
-                                 "* %? :IDEA: \n%t"
-                                 :empty-lines-before 1)))
+  :hook
+  ((org-mode . (lambda ()
+                 (auto-complete-mode +1)
+                 (variable-pitch-mode +1)))
+   (org-after-todo-statistics . (lambda (done not-done)
+                                  (let ((org-log-done org-todo-log-states))
+                                    (org-todo
+                                     (if (= not-done 0)
+                                         "DONE"
+                                       "TODO"))))))
   :bind
   (:map help-map
         ("r" . ross/tangle-and-eval-config)
@@ -394,15 +335,71 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
         :map global-map
         ("C-c na" . org-agenda)
         ("C-c nc" . org-capture))
-  :hook ((org-mode . (lambda ()
-                       (auto-complete-mode +1)
-                       (variable-pitch-mode +1)))
-         (org-after-todo-statistics . (lambda (done not-done)
-                                        (let ((org-log-done org-todo-log-states))
-                                          (org-todo
-                                           (if (= not-done 0)
-                                               "DONE"
-                                             "TODO")))))))
+  :custom
+  (org-directory "~/Documents/org")
+  (org-agenda-files (cl-map 'list (lambda (file)
+									(let ((file (concat org-directory "/" file)))
+									  (when (not (file-exists-p file))
+										(make-empty-file file))
+									  file))
+							'("agenda.org" "habits.org" "meetings.org" "todo.org")))
+  (org-default-notes-file (concat org-directory "/notes.org"))
+  (org-auto-align-tags t)
+  (org-edit-src-content-indentation 0)
+  (org-hide-emphasis-markers t)
+  (org-hide-leading-stars t)
+  (org-log-done 'time)
+  (org-log-into-drawer t)
+  (org-pretty-entities t)
+  (org-pretty-entities-include-sub-superscripts t)
+  (org-return-follows-link t)
+  (org-roam-directory (concat org-directory "/roam"))
+  (org-roam-completion-everywhere t)
+  (org-special-ctrl-a/e t)
+  (org-special-ctrl-k t)
+  (org-special-ctrl-o t)
+  (org-src-fontify-natively t)
+  (org-src-preserve-indentation t)
+  (org-src-tab-acts-natively t)
+  (org-src-window-setup 'current-window)
+  (org-startup-with-inline-images t)
+  (org-support-shift-select t)
+  (org-use-property-inheritance t)
+  (org-todo-keywords '((sequence
+						"TODO(t)"
+						"MEETING(m)"
+						"PROGRESS(p!)"
+						"BLOCKED(b@/!)"
+						"WAITING(w)"
+						"|"
+						"DONE(d!)"
+						"CANCELLED(c@)"
+						"STOPPED(s@/!)")))
+  (org-capture-templates '(("t" "Task")
+                           ("tu" "Unscheduled" entry
+							(file+headline "todo.org" "Unscheduled Tasks")
+							"** TODO %?\n%i\n%a"
+							:empty-lines-before 1)
+                           ("ts" "Scheduled" entry
+							(file+headline "agenda.org" "Scheduled Tasks")
+							"** TODO %?\nSCHEDULED: %^T\n%^{LOCATION|N/A}p"
+							:empty-lines-before 1)
+                           ("td" "Deadline" entry
+							(file+headline "agenda.org" "Deadlined Tasks")
+							"** TODO %?\nDEADLINE: %^T"
+							:empty-lines-before 1)
+                           ("th" "Habit" entry
+							(file+headline "habits.org")
+							"* TODO %?\nSCHEDULED: %^T\n:PROPERTIES:\n:STYLE: habit\n:END:"
+							:empty-lines-before 1)
+                           ("n" "Note" entry
+							(file "notes.org")
+							"* %?\nEntered on %U\n%i\n%a"
+							:empty-lines-before 1)
+                           ("i" "Idea" entry
+							(file "ideas.org")
+							"* %? :IDEA: \n%t"
+							:empty-lines-before 1))))
 
 (use-package org-roam
   :bind
@@ -419,20 +416,22 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
    (:map org-mode-map
          ("C-M-i" . completion-at-point)))
   :config
-  (setq org-roam-node-display-template
-        (concat "${title:*} "
-                (propertize "${tags:*}" 'face 'org-tag)))
-  (org-roam-db-autosync-enable))
+  (org-roam-db-autosync-enable)
+  :custom
+  (org-roam-node-display-template
+         (concat "${title:*} "
+                 (propertize "${tags:*}" 'face 'org-tag))))
 
 (use-package org-alert
   :config
-  (setq alert-default-style 'libnotify
-        org-alert-interval 300
-        org-alert-notify-cutoff 10
-        org-alert-notify-after-event-cutoff 10
-        org-alert-notification-title "---TODO REMINDER---"
-        org-alert-time-match-string "\\(?:SCHEDULED\\|DEADLINE\\):.*?<.*?\\([0-9]\\{2\\}:[0-9]\\{2\\}\\).*>")
-  (org-alert-enable))
+  (org-alert-enable)
+  :custom
+  (alert-default-style 'libnotify)
+  (org-alert-interval 300)
+  (org-alert-notify-cutoff 10)
+  (org-alert-notify-after-event-cutoff 10)
+  (org-alert-notification-title "---TODO REMINDER---")
+  (org-alert-time-match-string "\\(?:SCHEDULED\\|DEADLINE\\):.*?<.*?\\([0-9]\\{2\\}:[0-9]\\{2\\}\\).*>"))
 
 (use-package org-auto-tangle
   :config (org-auto-tangle-mode +1))
@@ -448,7 +447,7 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
   :hook ((org-mode . org-recent-headings-mode)))
 (use-package org-sticky-header
   :hook ((org-mode . org-sticky-header-mode))
-  :config (setq org-sticky-header-full-path 'full))
+  :custom (org-sticky-header-full-path 'full))
 
 (use-package org-bookmark-heading)
 (use-package ox-pandoc)
@@ -468,11 +467,12 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
   (doom-modeline-mode +1)
   (column-number-mode +1)
   (size-indication-mode +1)
-  (setq doom-modeline-height 45
-        doom-modeline-indent-info t)
   (doom-modeline-def-modeline 'main
     '(bar modals matches buffer-info remote-host buffer-position selection-info)
-    '(misc-info minor-modes input-method buffer-encoding major-mode process vcs " ")))
+    '(misc-info minor-modes input-method buffer-encoding major-mode process vcs " "))
+  :custom
+  (doom-modeline-height 45)
+  (doom-modeline-indent-info t))
 
 (use-package anzu
   :init
@@ -568,7 +568,7 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
 
 (use-package olivetti
   :hook ((org-mode . olivetti-mode))
-  :config (setq-default olivetti-body-width 0.8))
+  :custom (olivetti-body-width 0.8))
 #+end_src
 
 ** Window Management
@@ -586,30 +586,31 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
    ("M-`" . popper-cycle)
    ("C-M-`" . popper-toggle-type))
   :init
-  (setq popper-reference-buffers
-        '("^\\*Messages\\*"
-          "^\\*Output\\*$"
-          "^\\*Async Shell Command\\*"
-          "^\\*\\([Hh]elp\\*\\|Apropos\\)"
-          "^\\*Warnings"
-          "^\\*Backtrace"
-          "^\\*CPU-Profiler-Report"
-          "^\\*Memory-Profiler-Report"
-          "^\\*Process List"
-          "^\\*Completions"
-          "^\\*Local variables\\*$"
-          "^\\*\\(?:[Cc]ompil\\(?:ation\\|e-Log\\)\\|Messages\\)"
-          "^\\*\\(?:Wo\\)?Man "
-          "^\\*Calc"
-          "^\\*info\\*$"
-          "^\\*\\(?:v?term\\|e?shell\\)-popup"
-          "^\\*Shell Command Output\\*"
-          help-mode
-          compilation-mode
-          occur-mode
-          completion-list-mode))
   (popper-mode +1)
-  (popper-echo-mode +1))
+  (popper-echo-mode +1)
+  :custom
+  (popper-reference-buffers
+         '("^\\*Messages\\*"
+           "^\\*Output\\*$"
+           "^\\*Async Shell Command\\*"
+           "^\\*\\([Hh]elp\\*\\|Apropos\\)"
+           "^\\*Warnings"
+           "^\\*Backtrace"
+           "^\\*CPU-Profiler-Report"
+           "^\\*Memory-Profiler-Report"
+           "^\\*Process List"
+           "^\\*Completions"
+           "^\\*Local variables\\*$"
+           "^\\*\\(?:[Cc]ompil\\(?:ation\\|e-Log\\)\\|Messages\\)"
+           "^\\*\\(?:Wo\\)?Man "
+           "^\\*Calc"
+           "^\\*info\\*$"
+           "^\\*\\(?:v?term\\|e?shell\\)-popup"
+           "^\\*Shell Command Output\\*"
+           help-mode
+           compilation-mode
+           occur-mode
+           completion-list-mode)))
 #+end_src
 
 ** Completion
@@ -618,28 +619,28 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
   :config
   (vertico-mode +1)
   (vertico-indexed-mode +1)
-  (setq completion-in-region-function
-        (lambda (&rest args)
-          (apply (if vertico-mode
-                     #'consult-completion-in-region
-                   #'completion--in-region)
-                 args))))
+  :custom
+  (completion-in-region-function (lambda (&rest args)
+								   (apply (if vertico-mode
+											  #'consult-completion-in-region
+											#'completion--in-region)
+										  args))))
 
 (use-package company
   :disabled
   :diminish
   :init (global-company-mode +1)
-  :config
-  (setq company-idle-delay (lambda ()
-                             (if (company-in-string-or-comment)
-                                 nil
-                               0.5))
-        company-minimum-prefix-length 1
-        company-selection-wrap-around t
-        company-tooltip-align-annotations t
-        company-tooltip-limit 10
-        company-tooltip-margin 3
-        company-tooltip-offset-display 'lines))
+  :custom
+  (company-idle-delay (lambda ()
+						(if (company-in-string-or-comment)
+							nil
+						  0.5)))
+  (company-minimum-prefix-length 1)
+  (company-selection-wrap-around t)
+  (company-tooltip-align-annotations t)
+  (company-tooltip-limit 10)
+  (company-tooltip-margin 3)
+  (company-tooltip-offset-display 'lines))
 
 (with-eval-after-load "company"
   (use-package company-posframe
@@ -650,10 +651,6 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
 (use-package corfu
   :init (global-corfu-mode +1)
   :config
-  (setq corfu-cycle t
-        corfu-auto t
-        corfu-auto-prefix 2
-        corfu-preselect 'directory)
   (corfu-echo-mode +1)
   (corfu-history-mode +1)
   (corfu-popupinfo-mode +1)
@@ -661,7 +658,12 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
               `(menu-item "" nil :filter
                           ,(lambda (&optional _)
                              (and (derived-mode-p 'eshell-mode 'comint-mode)
-                                  #'corfu-send)))))
+                                  #'corfu-send))))
+  :custom
+  (corfu-cycle t)
+  (corfu-auto t)
+  (corfu-auto-prefix 2)
+  (corfu-preselect 'directory))
 
 (use-package nerd-icons-corfu
   :config
@@ -678,10 +680,10 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
     (advice-add 'pcomplete-completions-at-point :around cape-wrapper)))
 
 (use-package orderless
-  :init
-  (setq completion-styles '(orderless partial-completion basic)
-        completion-category-defaults nil
-        completion-category-overrides nil))
+  :custom
+  (completion-styles '(orderless partial-completion basic))
+  (completion-category-defaults nil)
+  (completion-category-overrides nil))
 
 (use-package dabbrev
   :elpaca nil
@@ -715,21 +717,20 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
   :bind
   (:map global-map
         ("C-c MM" . mu4e))
-  :config
-  (setq user-mail-address "redwards64@hotmail.com"
-        mu4e-maildir "~/.local/share/mail"
-        mu4e-user-mail-address-list '(user-mail-address
-                                      "redwards6469@gmail.com")
-        mu4e-get-mail-command "mbsync --all"
-        mu4e-change-filenames-when-moving t
-        mu4e-update-interval 3600
-        mu4e-notification-support t
-        mail-user-agent 'mu4e-user-agent
-        message-mail-user-agent t)
+  :config  
   (mu4e-alert-enable-notifications)
   (mu4e-alert-enable-mode-line-display)
   :custom
-  (read-mail-command 'mu4e))
+  (mail-user-agent 'mu4e-user-agent)
+  (message-mail-user-agent t)
+  (mu4e-change-filenames-when-moving t)
+  (mu4e-get-mail-command "mbsync --all")
+  (mu4e-maildir "~/.local/share/mail")
+  (mu4e-notification-support t)
+  (mu4e-update-interval 3600)
+  (mu4e-user-mail-address-list '(user-mail-address "redwards6469@gmail.com"))
+  (read-mail-command 'mu4e)
+  (user-mail-address "redwards64@hotmail.com"))
 
 (use-package mu4e-alert
   :when (and (executable-find "mbsync")
@@ -739,12 +740,11 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
   :bind
   (:map global-map
         ("C-c MR" . elfeed))
-  :config
-  (setq elfeed-feeds
-        '(("https://planet.emacslife.com/atom.xml" emacs blog)
-          ("https://www.theguardian.com/world/rss" news)
-          ("https://allthingsembedded.com/index.xml" embedded blog)
-          ("https://lwn.net/rss" linux news))))
+  :custom
+  (elfeed-feeds '(("https://planet.emacslife.com/atom.xml" emacs blog)
+				  ("https://www.theguardian.com/world/rss" news)
+				  ("https://allthingsembedded.com/index.xml" embedded blog)
+				  ("https://lwn.net/rss" linux news))))
 
 (use-package erc
   :elpaca nil
@@ -764,7 +764,8 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
 (use-package smooth-scrolling
   :config
   (smooth-scrolling-mode +1)
-  (setq smooth-scroll-margin 5))
+  :custom
+  (smooth-scroll-margin 5))
 
 (use-package ibuffer
   :elpaca nil
@@ -829,8 +830,8 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
   :elpaca nil
   :hook ((find-file . auto-insert))
   :init (auto-insert-mode +1)
-  :config
-  (setq auto-insert-query nil))
+  :custom
+  (auto-insert-query nil))
 
 (use-package flyspell
   :elpaca nil
@@ -845,30 +846,31 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
 (use-package flycheck
   :unless (ross/is-dual-core)
   :init (global-flycheck-mode +1)
-  :config
-  (setq flycheck-emacs-lisp-load-path load-path)
-  (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc)))
+  :custom
+  (flycheck-emacs-lisp-load-path load-path)
+  (flycheck-disabled-checkers '(emacs-lisp-checkdoc)))
 
 (use-package tree-sitter
   :hook ((tree-sitter-after-on . tree-sitter-hl-mode))
-  :config
-  (setq major-mode-remap-alist '((bash-mode . bash-ts-mode)
-                                 (c++-mode . c++-ts-mode)
-                                 (c-mode . c-ts-mode)
-                                 (c-or-c++-mode . c-or-c++-ts-mode)
-                                 (css-mode . css-ts-mode)
-                                 (js-mode . js-ts-mode)
-                                 (json-mode . json-ts-mode)
-                                 (python-mode . python-ts-mode)
-                                 (sh-mode . bash-ts-mode)
-                                 (yaml-mode . yaml-ts-mode))))
+  :custom
+  (major-mode-remap-alist '((bash-mode . bash-ts-mode)
+                            (c++-mode . c++-ts-mode)
+                            (c-mode . c-ts-mode)
+                            (c-or-c++-mode . c-or-c++-ts-mode)
+                            (css-mode . css-ts-mode)
+                            (js-mode . js-ts-mode)
+                            (json-mode . json-ts-mode)
+                            (python-mode . python-ts-mode)
+                            (sh-mode . bash-ts-mode)
+                            (yaml-mode . yaml-ts-mode))))
 
 (use-package tree-sitter-langs)
 
 (use-package treesit-auto
   :config
   (global-treesit-auto-mode +1)
-  (setq treesit-auto-install t))
+  :custom
+  (treesit-auto-install t))
 
 (use-package apheleia
   :config (apheleia-global-mode +1))
@@ -880,7 +882,8 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
 (use-package dumb-jump
   :config
   (add-hook 'xref-backend-functions #'dumb-jump-xref-activate)
-  (setq xref-show-definitions-function #'xref-show-definitions-completing-read))
+  :custom
+  (xref-show-definitions-function #'xref-show-definitions-completing-read))
 
 (use-package just-mode)
 (use-package justl)
@@ -889,7 +892,6 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
 ** Language Servers
 #+begin_src emacs-lisp :noweb strip-export
 (use-package lsp-mode
-  :init (setq lsp-keymap-prefix "C-c")
   :hook
   ((lsp-mode . (lambda ()
                  (lsp-enable-which-key-integration)
@@ -901,37 +903,39 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
         ("C-c z" . lsp-clangd-find-other-file))
   :config
   <<texlab-workaround>>
-  (setq lsp-diagnostics-mode t
-        lsp-clients-clangd-executable "clangd"
-        lsp-enable-folding t
-        lsp-enable-on-type-formatting t
-        lsp-enable-relative-indentation t
-        lsp-enable-semantic-highlighting t
-        lsp-enable-snippet t
-        lsp-enable-text-document-color t
-        lsp-headerline-breadcrumb-enable t
-        lsp-inlay-hint-enable t
-        lsp-modeline-code-actions-enable t
-        lsp-modeline-code-actions-segments '(icon count name)
-        lsp-rust-analyzer-closing-brace-hints t
-        lsp-rust-analyzer-display-chaining-hints t
-        lsp-rust-analyzer-display-parameter-hints t
-        lsp-rust-analyzer-lens-references-adt-enable t
-        lsp-rust-analyzer-lens-references-enum-variant-enable t
-        lsp-rust-analyzer-lens-references-method-enable t
-        lsp-rust-analyzer-lens-references-trait-enable t
-        lsp-ui-doc-enable t
-        lsp-ui-doc-position 'bottom
-        lsp-ui-doc-show-with-cursor t
-        lsp-ui-doc-show-with-mouse t
-        lsp-ui-imenu-auto-refresh t
-        lsp-ui-imenu-enable t
-        lsp-ui-mode t
-        lsp-ui-peek-enable t
-        lsp-ui-sideline-enable nil
-        lsp-ui-sideline-show-code-actions t
-        lsp-ui-sideline-show-diagnostics t
-        lsp-ui-sideline-show-hover t))
+  :custom
+  ((lsp-clients-clangd-executable "clangd")
+   (lsp-diagnostics-mode t)
+   (lsp-enable-folding t)
+   (lsp-enable-on-type-formatting t)
+   (lsp-enable-relative-indentation t)
+   (lsp-enable-semantic-highlighting t)
+   (lsp-enable-snippet t)
+   (lsp-enable-text-document-color t)
+   (lsp-headerline-breadcrumb-enable t)
+   (lsp-inlay-hint-enable t)
+   (lsp-keymap-prefix "C-c")
+   (lsp-modeline-code-actions-enable t)
+   (lsp-modeline-code-actions-segments '(icon count name))
+   (lsp-rust-analyzer-closing-brace-hints t)
+   (lsp-rust-analyzer-display-chaining-hints t)
+   (lsp-rust-analyzer-display-parameter-hints t)
+   (lsp-rust-analyzer-lens-references-adt-enable t)
+   (lsp-rust-analyzer-lens-references-enum-variant-enable t)
+   (lsp-rust-analyzer-lens-references-method-enable t)
+   (lsp-rust-analyzer-lens-references-trait-enable t)
+   (lsp-ui-doc-enable t)
+   (lsp-ui-doc-position 'bottom)
+   (lsp-ui-doc-show-with-cursor t)
+   (lsp-ui-doc-show-with-mouse t)
+   (lsp-ui-imenu-auto-refresh t)
+   (lsp-ui-imenu-enable t)
+   (lsp-ui-mode t)
+   (lsp-ui-peek-enable t)
+   (lsp-ui-sideline-enable nil)
+   (lsp-ui-sideline-show-code-actions t)
+   (lsp-ui-sideline-show-diagnostics t)
+   (lsp-ui-sideline-show-hover t)))
 
 (use-package lsp-ui
   :commands lsp-ui-mode)
@@ -968,12 +972,13 @@ This is a workaround for [[https://github.com/emacs-lsp/lsp-mode/issues/4332][th
   :hook
   (((c-mode c++-mode c-ts-mode c++-ts-mode makefile-mode makefile-gmake-mode)
     . (lambda () (setq-local +format-with "clang-format"))))
-  :config
-  (setq c-basic-offset 4
-        gdb-many-windows t))
+  :custom
+  (c-basic-offset 4)
+  (gdb-many-windows t))
 
 (use-package irony
   :hook (((c-mode c++-mode c-ts-mode c++-ts-mode) . irony-mode)))
+
 (use-package modern-cpp-font-lock
   :config (modern-c++-font-lock-global-mode +1))
 
@@ -990,8 +995,9 @@ This is a workaround for [[https://github.com/emacs-lsp/lsp-mode/issues/4332][th
 #+begin_src emacs-lisp
 (use-package rustic
   :config
-  (setq lsp-rust-analyzer-cargo-watch-command "clippy")
-  (add-to-list 'tree-sitter-major-mode-language-alist '(rustic-mode . rust)))
+  (add-to-list 'tree-sitter-major-mode-language-alist '(rustic-mode . rust))
+  :custom
+  (lsp-rust-analyzer-cargo-watch-command "clippy"))
 #+end_src
 
 *** Lisp
@@ -1026,8 +1032,8 @@ It's a bit of a pain having to do 'M-x sly' every time I open a Lisp project.
                   (unless (sly-connected-p)
                     (save-excursion (sly)))
                   (set-up-sly-ac)))))
-  :config
-  (setq inferior-lisp-program "sbcl"))
+  :custom
+  (inferior-lisp-program "sbcl"))
 
 (use-package ac-sly
   :config
@@ -1059,14 +1065,14 @@ It's a bit of a pain having to do 'M-x sly' every time I open a Lisp project.
 **** Scheme
 #+begin_src emacs-lisp
 (use-package geiser-guile
-  :config
-  (setq geiser-mode-start-repl-p t
-        geiser-mode-smart-tab-p t
-        geiser-mode-eval-last-sexp-to-buffer t
-        geiser-mode-eval-to-buffer-prefix "=> "
-        geiser-repl-autoeval-mode-p t
-        geiser-repl-highlight-output-p t
-        geiser-repl-superparen-mode-p t))
+  :custom
+  (geiser-mode-start-repl-p t)
+  (geiser-mode-smart-tab-p t)
+  (geiser-mode-eval-last-sexp-to-buffer t)
+  (geiser-mode-eval-to-buffer-prefix "=> ")
+  (geiser-repl-autoeval-mode-p t)
+  (geiser-repl-highlight-output-p t)
+  (geiser-repl-superparen-mode-p t))
 
 (use-package ac-geiser
   :hook
@@ -1082,16 +1088,17 @@ No point loading these if not on NixOS.
 (when (nixos-p)
   (use-package nix-mode
     :after lsp-mode
-    :config
-    (setq lsp-nix-nixd-server-path "nixd"
-          lsp-nix-nixd-formatting-command ["nixfmt"]
-          lsp-nix-nixd-nixpkgs-expr "import <nixpkgs> { }"
-          lsp-nix-nixd-nixos-options-expr (format
-                                           "(builtins.getFlake \"/home/%s/.dotfiles\").nixosConfigurations.%s.options"
-                                           user-login-name system-name)
-          lsp-nix-nixd-home-manager-options-expr (format
-                                                  "(builtins.getFlake \"/home/%s/.dotfiles\").homeConfigurations.\"%s@%s\".options"
-                                                  user-login-name user-login-name system-name)))
+    :custom
+    (lsp-nix-nixd-server-path "nixd")
+    (lsp-nix-nixd-formatting-command ["nixfmt"])
+    (lsp-nix-nixd-nixpkgs-expr "import <nixpkgs> { }")
+    (lsp-nix-nixd-nixos-options-expr (format
+									  "(builtins.getFlake \"/home/%s/.dotfiles\").nixosConfigurations.%s.options"
+									  user-login-name system-name))
+    (lsp-nix-nixd-home-manager-options-expr (format
+											 "(builtins.getFlake \"/home/%s/.dotfiles\").homeConfigurations.\"%s@%s\".options"
+											 user-login-name user-login-name system-name)))
+  
   (use-package nix-ts-mode)
   (use-package nixpkgs-fmt)
   (use-package nix-buffer))
@@ -1130,27 +1137,28 @@ No point loading these if not on NixOS.
   (((tex-mode TeX-mode) . lsp-deferred)
    (LaTeX-mode . TeX-source-correlate-mode))
   :mode ((rx ".tex" string-end) . LaTeX-mode)
-  :config
-  (setq LaTeX-electric-left-right-brace t
-        TeX-auto-save t
-        TeX-electric-sub-and-superscript t
-        TeX-output-dir "build"
-        TeX-parse-self t
-        TeX-save-query nil
-        TeX-save-query nil
-        TeX-source-correlate-method 'synctex
-        TeX-source-correlate-mode t
-        TeX-source-correlate-mode t
-        TeX-source-correlate-start-server nil
-        TeX-source-correlate-start-server t
-        bibtex-align-at-equal-sign t
-        bibtex-dialect 'biblatex
-        bibtex-text-indentation 20
-        default-truncate-lines t))
+  :custom
+  (LaTeX-electric-left-right-brace t)
+  (TeX-auto-save t)
+  (TeX-electric-sub-and-superscript t)
+  (TeX-output-dir "build")
+  (TeX-parse-self t)
+  (TeX-save-query nil)
+  (TeX-save-query nil)
+  (TeX-source-correlate-method 'synctex)
+  (TeX-source-correlate-mode t)
+  (TeX-source-correlate-mode t)
+  (TeX-source-correlate-start-server nil)
+  (TeX-source-correlate-start-server t)
+  (bibtex-align-at-equal-sign t)
+  (bibtex-dialect 'biblatex)
+  (bibtex-text-indentation 20)
+  (default-truncate-lines t))
 
 (use-package auctex-latexmk
-  :init (setq auctex-latexmk-inherit-TeX-PDF-mode t)
-  :config (auctex-latexmk-setup))
+  :config (auctex-latexmk-setup)
+  :custom
+  (auctex-latexmk-inherit-TeX-PDF-mode t))
 
 (with-eval-after-load "company"
   (use-package company-auctex)
@@ -1181,18 +1189,18 @@ No point loading these if not on NixOS.
 * Documents
 #+begin_src emacs-lisp
 (use-package pdf-tools
-  :mode ("\\.pdf\\'" . pdf-view-mode)
+  :mode ((rx ".pdf" string-end) . pdf-view-mode)
   :hook ((pdf-view-mode . pdf-tools-enable-minor-modes)))
 
 (use-package nov
-  :mode ("\\.epub\\'" . nov-mode)
+  :mode ((rx ".epub" string-end) . nov-mode)
   :hook ((nov-mode . (lambda ()
                        (face-remap-add-relative 'variable-pitch
                                                 :family font-name
                                                 :height 1.0))))
-  :config
-  (setq nov-unzip-program (executable-find "tar")
-        nov-unzip-args '("-xC" directory "-f" filename)))
+  :custom
+  ((nov-unzip-program (executable-find "tar"))
+   (nov-unzip-args '("-xC" directory "-f" filename))))
 #+end_src
 
 * Project Tools
@@ -1227,9 +1235,9 @@ No point loading these if not on NixOS.
 * Lemmy
 #+begin_src emacs-lisp
 (use-package lem
-  :config
-  (setq lem-current-user "DrGamerPhD"
-        lem-instance-url "https://programming.dev"))
+  :custom
+  (lem-current-user "DrGamerPhD")
+  (lem-instance-url "https://programming.dev"))
 #+end_src
 
 * Finance
@@ -1246,35 +1254,34 @@ have to scroll past it every time I read or edit my config.
 #+begin_src emacs-lisp :tangle no
 (use-package dashboard
   :after (all-the-icons)
-  :init
-  (setq dashboard-set-heading-icons t
-        dashboard-set-file-icons t
-        dashboard-set-init-info t
-        dashboard-image-banner-max-height 250
-        dashboard-image-banner-max-width 250
-        dashboard-banner-logo-title "[ Ω Ο Ρ Μ  Ε Δ Ι Τ Ι Ο Ν ]"
-        dashboard-startup-banner (concat user-emacs-directory "logos/nerv.png")
-        dashboard-center-content t
-        dashboard-set-navigator t
-        dashboard-projects-switch-function 'projectile-switch-project
-        dashboard-projects-backend 'projectile
-        dashboard-items (mapcar (lambda (k) `(,k . 3)) '(recents agenda projects))
-        dashboard-footer-icon (all-the-icons-fileicon "nix"
-                                                      :height 1.1
-                                                      :v-adjust -0.05
-                                                      :face 'font-lock-keyword-face)
-        dashboard-navigator-buttons `(;; line 1
-                                      ((,(all-the-icons-octicon "octoface" :height 1.1 :v-adjust 0.0)
-                                        "[ GitHub ]"
-                                        "Browse GitHub profile"
-                                        (lambda (&rest _) (browse-url "https://github.com/rossedwards64/dotfiles")) nil "" ""))))
   :hook
   (elpaca-after-init . (lambda ()
                          (dashboard-insert-startupify-lists)
                          (dashboard-initialize)
                          (dashboard-setup-startup-hook)))
-  :config
-  (setq initial-buffer-choice (lambda () (get-buffer-create "*dashboard*"))))
+  :custom
+  (initial-buffer-choice (lambda () (get-buffer-create "*dashboard*")))
+  (dashboard-set-heading-icons t)
+  (dashboard-set-file-icons t)
+  (dashboard-set-init-info t)
+  (dashboard-image-banner-max-height 250)
+  (dashboard-image-banner-max-width 250)
+  (dashboard-banner-logo-title "[ Ω Ο Ρ Μ  Ε Δ Ι Τ Ι Ο Ν ]")
+  (dashboard-startup-banner (concat user-emacs-directory "logos/nerv.png"))
+  (dashboard-center-content t)
+  (dashboard-set-navigator t)
+  (dashboard-projects-switch-function 'projectile-switch-project)
+  (dashboard-projects-backend 'projectile)
+  (dashboard-items (mapcar (lambda (k) `(,k . 3)) '(recents agenda projects)))
+  (dashboard-footer-icon (all-the-icons-fileicon "nix"
+												 :height 1.1
+												 :v-adjust -0.05
+												 :face 'font-lock-keyword-face))
+  (dashboard-navigator-buttons `(;; line 1
+                                 ((,(all-the-icons-octicon "octoface" :height 1.1 :v-adjust 0.0)
+                                   "[ GitHub ]"
+                                   "Browse GitHub profile"
+                                   (lambda (&rest _) (browse-url "https://github.com/rossedwards64/dotfiles")) nil "" "")))))
 #+end_src
 
 * Package Manager
@@ -1285,12 +1292,12 @@ for Elpaca, obtained from [[https://github.com/progfolio/elpaca#installer][the E
 (when (nixos-p)
   (setq elpaca-core-date 20241229)) ;; update this on the next emacs release
 
-(defvar elpaca-installer-version 0.8)
+(defvar elpaca-installer-version 0.10)
 (defvar elpaca-directory (expand-file-name "elpaca/" user-emacs-directory))
 (defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
 (defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
 (defvar elpaca-order '(elpaca :repo "https://github.com/progfolio/elpaca.git"
-                              :ref nil :depth 1
+                              :ref nil :depth 1 :inherit ignore
                               :files (:defaults "elpaca-test.el" (:exclude "extensions"))
                               :build (:not elpaca--activate-package)))
 (let* ((repo  (expand-file-name "elpaca/" elpaca-repos-directory))
@@ -1300,7 +1307,7 @@ for Elpaca, obtained from [[https://github.com/progfolio/elpaca#installer][the E
   (add-to-list 'load-path (if (file-exists-p build) build repo))
   (unless (file-exists-p repo)
     (make-directory repo t)
-    (when (< emacs-major-version 28) (require 'subr-x))
+    (when (<= emacs-major-version 28) (require 'subr-x))
     (condition-case-unless-debug err
         (if-let* ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
                   ((zerop (apply #'call-process `("git" nil ,buffer t "clone"
@@ -1331,5 +1338,4 @@ for Elpaca, obtained from [[https://github.com/progfolio/elpaca#installer][the E
 
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (add-hook 'elpaca-after-init-hook (lambda () (load custom-file 'noerror)))
-(elpaca-wait)
 #+end_src
