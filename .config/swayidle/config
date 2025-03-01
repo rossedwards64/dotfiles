@@ -1,3 +1,4 @@
 timeout 300 'swaylock'
-timeout 600 'hyprctl dispatch dpms off' resume 'hyprctl dispatch dpms on'
-before-sleep 'swaylock'
+timeout 1200 'swaymsg "output * power off"'
+before-sleep 'playerctl pause; swaylock -fF'
+after-resume 'swaymsg "output * power on"'

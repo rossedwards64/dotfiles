@@ -10,3 +10,8 @@ if command -v systemctl; then
 else
     dbus-update-activation-environment --all
 fi
+
+pipewire & disown
+pipewire-pulse & disown
+wireplumber & disown
+swayidle & disown

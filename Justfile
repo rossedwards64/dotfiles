@@ -82,7 +82,7 @@ greetd_config := '''
 vt = 7
 
 [default_session]
-command = "tuigreet --cmd /usr/bin/start-sway -t -g \'WELCOME TO WORM LINUX\' --asterisks
+command = "tuigreet --cmd /usr/bin/start-sway -t -g \'WELCOME TO WORM LINUX\' --asterisks"
 user = "_greeter"
 '''
 
@@ -91,7 +91,7 @@ sway-desktop-file := '''
 [Desktop Entry]
 Name=Sway
 Comment=An i3-compatible Wayland compositor
-Exec=dbus-run-session /usr/bin/start-sway
+Exec=/usr/bin/start-sway
 Type=Application
 '''
 
@@ -101,13 +101,11 @@ default:
 stow:
     stow -R --ignore '{{ stow_ignore }}' .
 
-setup: install-packages configure-zsh install-wm install-flatpak stow
-
 setup-archlinux: setup install-yay
 
 setup-void: setup install-xbps-templates setup-user-runsvdir
 
-setup: install-packages configure-zsh install-wm install-flatpak setup-emacs
+setup: install-packages configure-zsh install-wm install-flatpak setup-emacs stow
     
 install-packages:
     {{ if distro_name == 'NixOS' { error(nixos_err_msg) } else { '' } }}

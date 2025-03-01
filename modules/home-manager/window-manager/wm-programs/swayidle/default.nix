@@ -34,7 +34,7 @@ in
           command = "${pkgs.swaylock-effects}/bin/swaylock -fF";
         }
         {
-          timeout = 600;
+          timeout = 1200;
           command = "${pkgs.sway}/bin/swaymsg 'output * power off'";
         }
       ];

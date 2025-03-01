@@ -90,7 +90,7 @@ bindsym Mod4+w layout default
 bindsym Print exec $HOME/.config/fuzzel/scripts/screenshot
 
 seat "seat0" {
-  xcursor_theme Catppuccin-Mocha-Dark-Cursors 24
+  xcursor_theme catppuccin-mocha-dark-cursors 24
 }
 
 mode "resize" {
@@ -187,6 +187,7 @@ exec /usr/libexec/xdg-desktop-portal --replace
 exec wl-paste --type image --watch cliphist store
 exec wl-paste --type text --watch cliphist store
 exec autotiling -w 1 2 3 4 5 6 7 8 9 10
+exec pavucontrol
 exec alacritty
 exec emacs
 exec firefox
@@ -196,7 +197,7 @@ exec_always pkill fuzzel
 exec_always "exec rm -f $XDG_RUNTIME_DIR/wob.sock && mkfifo $XDG_RUNTIME_DIR/wob.sock && tail -f $XDG_RUNTIME_DIR/wob.sock | wob"
 exec_always "systemctl --user restart swaync"
 exec_always swaync-client -R -rs -sw
-exec_always pkill waybar && waybar
+exec_always gsettings set org.gnome.desktop.interface cursor-theme catppuccin-mocha-dark-cursors
 
 bindsym --locked {
     XF86AudioRaiseVolume exec $HOME/.config/sway/scripts/wob "-v" "-i5"

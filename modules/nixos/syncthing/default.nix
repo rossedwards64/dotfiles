@@ -37,7 +37,7 @@ in
           [
             {
               hostname = desktop;
-              id = "4NVAFSD-7XR3LOQ-IYYFCO6-7IJAW4H-EXZM5DL-GL5AHT3-CNKDYQW-QWIQ7AP";
+              id = "YCECPM5-CWLUYI3-GLLVJRK-EGMT3TV-MYRTRA5-QFAL2WB-7UMGQ25-JFA2GAB";
               name = "Desktop";
             }
             {
@@ -52,7 +52,7 @@ in
             }
             {
               hostname = thinkpad-x61t;
-              id = "LKFTFDM-X2Z2OGG-CI27TTD-C5ASSAA-6OO523V-OQL2NLW-ZI26KC4-QEZN7AS";
+              id = "YCECPM5-CWLUYI3-GLLVJRK-EGMT3TV-MYRTRA5-QFAL2WB-7UMGQ25-JFA2GAB";
               name = "Thinkpad-X61T";
             }
             {
