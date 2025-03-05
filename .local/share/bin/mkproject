@@ -1,5 +1,4 @@
-#!/usr/sbin/guile \
---no-auto-compile -s
+#!/usr/bin/env guile
 !#
 
 (use-modules (ice-9 format)
@@ -12,7 +11,7 @@
 (define (usage)
   "Script for making a new project with a main file, basic build system setup and flake.
   Usage: mkproject [-l language] [-p packages] [-d dir] [-h]
-  l: Project language. Valid options are: c, c++, rust, lisp (SBCL), scheme and clojure.
+  l: Project language. Valid options are: c, c++, rust, lisp, scheme and clojure.
   p: Project packages.
   d: Project directory.
   h: Print usage.")

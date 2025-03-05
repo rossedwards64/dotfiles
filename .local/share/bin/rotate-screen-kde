@@ -1,0 +1,104 @@
+#!/usr/bin/env guile
+!#
+
+(use-modules (ice-9 popen)
+             (ice-9 textual-ports)
+             (ice-9 string-fun)
+             (ice-9 getopt-long))
+
+(define (usage)
+  "Script for rotating the screen using kscreen-doctor.
+  Usage: rotate-screen-kde [-d direction] [-o output] [-h]
+  d: Direction to rotate screen. Valid options are: normal, left, right, inverted.
+  o: Output to rotate.
+  h: Print usage.")
+
+(define direction-normal "normal")
+(define direction-inverted "inverted")
+(define direction-right "right")
+(define direction-left "left")
+
+(define (number->direction number)
+  (case number
+    ((1) direction-normal)
+    ((2) direction-left)
+    ((4) direction-inverted)
+    ((8) direction-right)
+    (else (error "Unable to map number to a direction."))))
+
+(define (clean-kscreen-config kscreen-config)
+  (let* ((escape-code-template "\x1b[~a;~am")
+         (strip-escape-codes
+          (map
+           (lambda (style fg-colour)
+             (let ((escape-code (format #f
+                                        escape-code-template
+                                        style fg-colour)))
+               (lambda (str)
+                 (string-replace-substring str
+                                           escape-code
+                                           ""))))
+           '("0" "01" "01" "01")
+           '("0" "32" "33" "34"))))
+    ((apply compose
+            (append strip-escape-codes
+                    (list
+                     (lambda (str)
+                       (string-delete #\tab str)))))
+     kscreen-config)))
+
+(define (get-config)
+  (let* ((pipe (open-input-pipe "kscreen-doctor -o"))
+         (config (map clean-kscreen-config
+                      (string-split (get-string-all pipe)
+                                    #\newline)))
+         (strip-field (lambda (name)
+                        (car (map
+                              (lambda (str)
+                                (string-trim str (char-set-union
+                                                  char-set:letter
+                                                  char-set:punctuation
+                                                  char-set:blank)))
+                              (filter
+                               (lambda (str)
+                                 (string-contains str name))
+                               config)))))
+         (output (cadr (string-split
+                        (strip-field "Output")
+                        #\space)))
+         (rotation (number->direction
+                    (string->number
+                     (strip-field "Rotation")))))
+    (close-pipe pipe)
+    (list output rotation)))
+
+(define (set-rotation output direction)
+  (let* ((setting-template "output.~a.rotation.~a")
+         (setting (format #f setting-template output direction)))
+    (system* "kscreen-doctor" setting)))
+
+(define (toggle-rotation)
+  (let* ((config (get-config)))
+    (set-rotation
+     (car config)
+     (if (not (string= (cadr config) direction-normal))
+         direction-normal
+         direction-left))))
+
+(let* ((option-spec '((direction (single-char #\d) (value #t))
+                      (output (single-char #\o) (value #t))
+                      (help (single-char #\h) (value #f))))
+       (options (getopt-long (command-line) option-spec))
+       (direction (option-ref options 'direction #f))
+       (output (option-ref options 'output #f)))
+  (if (not (nil? (option-ref options 'help #f)))
+      (begin
+        (display (usage))
+        (newline))
+      (if (and (nil? direction)
+               (nil? output))
+          (toggle-rotation)
+          (let ((config (get-config)))
+            (set-rotation
+             (if (nil? output) (car config) output)
+             (if (nil? direction) (cadr config) direction))))))

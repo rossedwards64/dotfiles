@@ -784,8 +784,7 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
      lisp-mode
      lisp-interaction-mode
      scheme-mode
-     clojure-mode
-     geiser-repl-startup)
+     clojure-mode)
     . paredit-mode)))
 
 (use-package smartparens
@@ -1070,7 +1069,6 @@ It's a bit of a pain having to do 'M-x sly' every time I open a Lisp project.
   (geiser-mode-smart-tab-p t)
   (geiser-mode-eval-last-sexp-to-buffer t)
   (geiser-mode-eval-to-buffer-prefix "=> ")
-  (geiser-repl-autoeval-mode-p t)
   (geiser-repl-highlight-output-p t)
   (geiser-repl-superparen-mode-p t))
 
