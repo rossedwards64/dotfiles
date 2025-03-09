@@ -48,7 +48,7 @@ Also, temporarily get rid of file-name-handler-alist so that every loaded file d
 
 Make sure Emacs can see Termux so Dired can be used on Android [[https://marek-g.github.io/posts/tips_and_tricks/emacs_on_android/#setup][(Found here)]].
 #+begin_src emacs-lisp :tangle ./early-init.el
-(when (string-equal system-type "android")
+(when (eq system-type 'android)
   (let ((termux-path "/data/data/com.termux/files/usr/bin"))
     (setenv "PATH" (concat (getenv "PATH") ":" termux-path))
     (setq exec-path (append exec-path (list termux-path)))))
@@ -221,10 +221,10 @@ Lifted from the [[https://github.com/minad/vertico?tab=readme-ov-file#configurat
 This is needed to allow Emacs on Android to access MELPA [[https://marek-g.github.io/posts/tips_and_tricks/emacs_on_android/#setup][(Found here)]].
 #+NAME: android-ssl
 #+begin_src emacs-lisp
-(when (string-equal system-type "android")
+(when (eq system-type 'android)
   (let ((command "gnutls-cli %p %h"))
-    (setq tls-program '(command
-                        (concat command "--protocols ssl3")))))
+    (setq tls-program `(,command
+                        ,(concat command "--protocols ssl3")))))
 #+end_src
 
 * Icons
@@ -338,11 +338,11 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
   :custom
   (org-directory "~/Documents/org")
   (org-agenda-files (cl-map 'list (lambda (file)
-									(let ((file (concat org-directory "/" file)))
-									  (when (not (file-exists-p file))
-										(make-empty-file file))
-									  file))
-							'("agenda.org" "habits.org" "meetings.org" "todo.org")))
+                                    (let ((file (concat org-directory "/" file)))
+                                      (when (not (file-exists-p file))
+                                        (make-empty-file file))
+                                      file))
+                            '("agenda.org" "habits.org" "meetings.org" "todo.org")))
   (org-default-notes-file (concat org-directory "/notes.org"))
   (org-auto-align-tags t)
   (org-edit-src-content-indentation 0)
@@ -366,40 +366,40 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
   (org-support-shift-select t)
   (org-use-property-inheritance t)
   (org-todo-keywords '((sequence
-						"TODO(t)"
-						"MEETING(m)"
-						"PROGRESS(p!)"
-						"BLOCKED(b@/!)"
-						"WAITING(w)"
-						"|"
-						"DONE(d!)"
-						"CANCELLED(c@)"
-						"STOPPED(s@/!)")))
+                        "TODO(t)"
+                        "MEETING(m)"
+                        "PROGRESS(p!)"
+                        "BLOCKED(b@/!)"
+                        "WAITING(w)"
+                        "|"
+                        "DONE(d!)"
+                        "CANCELLED(c@)"
+                        "STOPPED(s@/!)")))
   (org-capture-templates '(("t" "Task")
                            ("tu" "Unscheduled" entry
-							(file+headline "todo.org" "Unscheduled Tasks")
-							"** TODO %?\n%i\n%a"
-							:empty-lines-before 1)
+                            (file+headline "todo.org" "Unscheduled Tasks")
+                            "** TODO %?\n%i\n%a"
+                            :empty-lines-before 1)
                            ("ts" "Scheduled" entry
-							(file+headline "agenda.org" "Scheduled Tasks")
-							"** TODO %?\nSCHEDULED: %^T\n%^{LOCATION|N/A}p"
-							:empty-lines-before 1)
+                            (file+headline "agenda.org" "Scheduled Tasks")
+                            "** TODO %?\nSCHEDULED: %^T\n%^{LOCATION|N/A}p"
+                            :empty-lines-before 1)
                            ("td" "Deadline" entry
-							(file+headline "agenda.org" "Deadlined Tasks")
-							"** TODO %?\nDEADLINE: %^T"
-							:empty-lines-before 1)
+                            (file+headline "agenda.org" "Deadlined Tasks")
+                            "** TODO %?\nDEADLINE: %^T"
+                            :empty-lines-before 1)
                            ("th" "Habit" entry
-							(file+headline "habits.org")
-							"* TODO %?\nSCHEDULED: %^T\n:PROPERTIES:\n:STYLE: habit\n:END:"
-							:empty-lines-before 1)
+                            (file+headline "habits.org")
+                            "* TODO %?\nSCHEDULED: %^T\n:PROPERTIES:\n:STYLE: habit\n:END:"
+                            :empty-lines-before 1)
                            ("n" "Note" entry
-							(file "notes.org")
-							"* %?\nEntered on %U\n%i\n%a"
-							:empty-lines-before 1)
+                            (file "notes.org")
+                            "* %?\nEntered on %U\n%i\n%a"
+                            :empty-lines-before 1)
                            ("i" "Idea" entry
-							(file "ideas.org")
-							"* %? :IDEA: \n%t"
-							:empty-lines-before 1))))
+                            (file "ideas.org")
+                            "* %? :IDEA: \n%t"
+                            :empty-lines-before 1))))
 
 (use-package org-roam
   :bind
@@ -419,8 +419,8 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
   (org-roam-db-autosync-enable)
   :custom
   (org-roam-node-display-template
-         (concat "${title:*} "
-                 (propertize "${tags:*}" 'face 'org-tag))))
+   (concat "${title:*} "
+           (propertize "${tags:*}" 'face 'org-tag))))
 
 (use-package org-alert
   :config
@@ -590,27 +590,27 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
   (popper-echo-mode +1)
   :custom
   (popper-reference-buffers
-         '("^\\*Messages\\*"
-           "^\\*Output\\*$"
-           "^\\*Async Shell Command\\*"
-           "^\\*\\([Hh]elp\\*\\|Apropos\\)"
-           "^\\*Warnings"
-           "^\\*Backtrace"
-           "^\\*CPU-Profiler-Report"
-           "^\\*Memory-Profiler-Report"
-           "^\\*Process List"
-           "^\\*Completions"
-           "^\\*Local variables\\*$"
-           "^\\*\\(?:[Cc]ompil\\(?:ation\\|e-Log\\)\\|Messages\\)"
-           "^\\*\\(?:Wo\\)?Man "
-           "^\\*Calc"
-           "^\\*info\\*$"
-           "^\\*\\(?:v?term\\|e?shell\\)-popup"
-           "^\\*Shell Command Output\\*"
-           help-mode
-           compilation-mode
-           occur-mode
-           completion-list-mode)))
+   '("^\\*Messages\\*"
+     "^\\*Output\\*$"
+     "^\\*Async Shell Command\\*"
+     "^\\*\\([Hh]elp\\*\\|Apropos\\)"
+     "^\\*Warnings"
+     "^\\*Backtrace"
+     "^\\*CPU-Profiler-Report"
+     "^\\*Memory-Profiler-Report"
+     "^\\*Process List"
+     "^\\*Completions"
+     "^\\*Local variables\\*$"
+     "^\\*\\(?:[Cc]ompil\\(?:ation\\|e-Log\\)\\|Messages\\)"
+     "^\\*\\(?:Wo\\)?Man "
+     "^\\*Calc"
+     "^\\*info\\*$"
+     "^\\*\\(?:v?term\\|e?shell\\)-popup"
+     "^\\*Shell Command Output\\*"
+     help-mode
+     compilation-mode
+     occur-mode
+     completion-list-mode)))
 #+end_src
 
 ** Completion
@@ -621,10 +621,10 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
   (vertico-indexed-mode +1)
   :custom
   (completion-in-region-function (lambda (&rest args)
-								   (apply (if vertico-mode
-											  #'consult-completion-in-region
-											#'completion--in-region)
-										  args))))
+                                   (apply (if vertico-mode
+                                              #'consult-completion-in-region
+                                            #'completion--in-region)
+                                          args))))
 
 (use-package company
   :disabled
@@ -632,9 +632,9 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
   :init (global-company-mode +1)
   :custom
   (company-idle-delay (lambda ()
-						(if (company-in-string-or-comment)
-							nil
-						  0.5)))
+                        (if (company-in-string-or-comment)
+                            nil
+                          0.5)))
   (company-minimum-prefix-length 1)
   (company-selection-wrap-around t)
   (company-tooltip-align-annotations t)
@@ -740,11 +740,13 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
   :bind
   (:map global-map
         ("C-c MR" . elfeed))
+  :config
+  (run-with-timer (* 60 20) t #'elfeed-update)
   :custom
   (elfeed-feeds '(("https://planet.emacslife.com/atom.xml" emacs blog)
-				  ("https://www.theguardian.com/world/rss" news)
-				  ("https://allthingsembedded.com/index.xml" embedded blog)
-				  ("https://lwn.net/rss" linux news))))
+                  ("https://www.theguardian.com/world/rss" news)
+                  ("https://allthingsembedded.com/index.xml" embedded blog)
+                  ("https://lwn.net/rss" linux news))))
 
 (use-package erc
   :elpaca nil
@@ -1091,11 +1093,11 @@ No point loading these if not on NixOS.
     (lsp-nix-nixd-formatting-command ["nixfmt"])
     (lsp-nix-nixd-nixpkgs-expr "import <nixpkgs> { }")
     (lsp-nix-nixd-nixos-options-expr (format
-									  "(builtins.getFlake \"/home/%s/.dotfiles\").nixosConfigurations.%s.options"
-									  user-login-name system-name))
+                                      "(builtins.getFlake \"/home/%s/.dotfiles\").nixosConfigurations.%s.options"
+                                      user-login-name system-name))
     (lsp-nix-nixd-home-manager-options-expr (format
-											 "(builtins.getFlake \"/home/%s/.dotfiles\").homeConfigurations.\"%s@%s\".options"
-											 user-login-name user-login-name system-name)))
+                                             "(builtins.getFlake \"/home/%s/.dotfiles\").homeConfigurations.\"%s@%s\".options"
+                                             user-login-name user-login-name system-name)))
   
   (use-package nix-ts-mode)
   (use-package nixpkgs-fmt)
@@ -1181,7 +1183,14 @@ No point loading these if not on NixOS.
 #+begin_src emacs-lisp
 (use-package scala-mode)
 (use-package sbt-mode)
-(use-package lsp-metals)
+(use-package lsp-metals
+  :custom
+  (lsp-metals-enable-semantic-highlighting t)
+  (lsp-metals-inlay-hints-enable-inferred-types t)
+  (lsp-metals-inlay-hints-enable-type-parameters t)
+  (lsp-metals-inlay-hints-enable-implicit-arguments t)
+  (lsp-metals-inlay-hints-enable-hints-in-pattern-match t)
+  (lsp-metals-inlay-hints-enable-implicit-conversions t))
 #+end_src
 
 * Documents
@@ -1272,9 +1281,9 @@ have to scroll past it every time I read or edit my config.
   (dashboard-projects-backend 'projectile)
   (dashboard-items (mapcar (lambda (k) `(,k . 3)) '(recents agenda projects)))
   (dashboard-footer-icon (all-the-icons-fileicon "nix"
-												 :height 1.1
-												 :v-adjust -0.05
-												 :face 'font-lock-keyword-face))
+                                                 :height 1.1
+                                                 :v-adjust -0.05
+                                                 :face 'font-lock-keyword-face))
   (dashboard-navigator-buttons `(;; line 1
                                  ((,(all-the-icons-octicon "octoface" :height 1.1 :v-adjust 0.0)
                                    "[ GitHub ]"

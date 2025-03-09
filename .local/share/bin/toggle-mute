@@ -1,5 +1,4 @@
-#!/usr/sbin/guile \
---no-auto-compile -s
+#!/usr/bin/env guile
 !#
 
 (use-modules (ice-9 getopt-long)
@@ -14,15 +13,15 @@
   h: Print usage")
 
 (define (toggle-device device id)
-  (system (format #f "${pkgs.wireplumber}/bin/wpctl set-mute '~a' toggle" id))
+  (system (format #f "wpctl set-mute '~a' toggle" id))
   (let* ((pipe (open-input-pipe (format #f
-										"${pkgs.wireplumber}/bin/wpctl get-volume '~a'"
+										"wpctl get-volume '~a'"
 										id)))
          (output (read-line pipe)))
     (close-pipe pipe)
     (if (string-contains output "[MUTED]")
-        (system (format #f "${pkgs.libnotify}/bin/notify-send \"Muted ~a\"" device))
-        (system (format #f "${pkgs.libnotify}/bin/notify-send \"Unmuted ~a\"" device)))))
+        (system (format #f "notify-send \"Muted ~a\"" device))
+        (system (format #f "notify-send \"Unmuted ~a\"" device)))))
 
 (let* ((option-spec '((microphone (single-char #\m) (value #f))
                       (speaker (single-char #\s) (value #f))

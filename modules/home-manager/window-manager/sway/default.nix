@@ -17,7 +17,7 @@ let
   up = "k";
   wallpapersDir = "/home/ross/Pictures/wallpapers";
 
-  toggleMuteScript = import ../scripts/toggle-mute.nix { inherit pkgs; };
+  toggleMuteScript = import ../scripts/toggle-mute.nix { inherit pkgs lib; };
   toggleSinkScript = import ../scripts/toggle-sink.nix { inherit pkgs; };
   wobScript = import ../scripts/wob.nix { inherit pkgs; };
 

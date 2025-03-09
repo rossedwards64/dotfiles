@@ -1,4 +1,4 @@
 timeout 300 'swaylock'
-timeout 1200 'swaymsg "output * power off"'
+# timeout 1200 'swaymsg "output * power off"'
 before-sleep 'playerctl pause; swaylock -fF'
 after-resume 'swaymsg "output * power on"'

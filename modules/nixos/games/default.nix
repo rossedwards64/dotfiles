@@ -80,8 +80,6 @@ in
       steam = {
         enable = true;
         protontricks.enable = true;
-        remotePlay.openFirewall = true;
-        dedicatedServer.openFirewall = true;
         localNetworkGameTransfers.openFirewall = true;
         platformOptimizations.enable = true;
         gamescopeSession = {
@@ -92,6 +90,10 @@ in
             "-f"
           ];
         };
+
+        extraCompatPackages = with pkgs; [
+          proton-ge-bin
+        ];
 
         fontPackages = with pkgs; [
           noto-fonts

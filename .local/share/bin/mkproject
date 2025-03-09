@@ -11,7 +11,14 @@
 (define (usage)
   "Script for making a new project with a main file, basic build system setup and flake.
   Usage: mkproject [-l language] [-p packages] [-d dir] [-h]
-  l: Project language. Valid options are: c, c++, rust, lisp, scheme and clojure.
+  l: Project language. Valid options are: 
+     c, 
+     c++,
+     rust,
+     lisp,
+     scheme,
+     clojure,
+     scala
   p: Project packages.
   d: Project directory.
   h: Print usage.")
@@ -150,6 +157,8 @@
 (define (file-name-no-ext file)
   (string-take file (string-index file #\.)))
 
+(define-generic make-project)
+
 (define-class <project> ()
   (packages
    #:init-keyword #:packages
@@ -157,6 +166,16 @@
   (directory
    #:init-keyword #:directory
    #:getter get-directory))
+
+(define-method (make-project (self <project>))
+  (let ((directory (get-directory self)))
+    (unless (file-exists? directory)
+      (mkdir directory)
+      (mkdir (resolve (list directory src-dir))))
+    (write-file self ".envrc" "use flake")    
+    (setenv "GIT_DIR" (resolve (list directory ".git")))
+    (system* "git" "init" "-q")
+    (unsetenv "GIT_DIR")))
 
 (define-method (write-file (self <project>) (filename <string>) (content <string>))
   (let ((directory (get-directory self)))
@@ -174,6 +193,15 @@
       "pkg-config"
       "valgrind")
     #:getter get-default-packages))
+
+(define-method (make-project (self <c-family-project>))
+  (next-method)
+  (let ((main-file (get-main-file self))
+        (content (get-main-file-content self)))
+    (write-file self (resolve (list src-dir main-file))
+                content))
+  (make-cmakelists self)
+  (make-flake self))
 
 (define-class <c-project> (<c-family-project>)
   (main-file
@@ -197,11 +225,11 @@
    #:getter get-main-file)
   (main-file-content
    #:init-value "#include <cstdlib>
-  #include <iostream>
+  #include <print>
 
   auto main(int argc, char **argv) -> int
   {
-      std::cout << \"Hello, world!\\n\";
+      std::println(\"Hello, world!\");
       return EXIT_SUCCESS;
   }
   "
@@ -232,6 +260,18 @@
       "rustc" "rustfmt" "rustup")
     #:getter get-default-packages))
 
+(define-method (make-project (self <rust-project>))
+  (let* ((directory (get-directory self)))
+    (system* "cargo" "new" directory))
+  (next-method)
+  (make-flake self
+              #:vars '((RUST_SRC_PATH pkgs.rust.packages.stable.rustPlatform.rustLibSrc))
+              #:shell-hook
+              '("export CARGO_HOME=~/.local/share/cargo"
+                "export RUSTUP_HOME=~/.local/share/rustup"
+                "export PATH=$PATH:$RUSTUP_HOME/toolchains/stable-x86_64-w64-unknown-linux-gnu/bin/"
+                "rustup default stable")))
+
 (define-class <lisp-project> (<project>)
   (default-packages
     #:init-value
@@ -253,6 +293,22 @@
     (print \"Hello, world!\"))
   "
    #:getter get-main-file-content))
+
+(define-method (make-project (self <lisp-project>))
+  (next-method)
+  (let* ((main-file (get-main-file self))
+         (content (get-main-file-content self))
+         (directory (get-directory self))
+         (dir-name (file-name directory)))
+    (write-file self (resolve (list src-dir main-file))
+                (format #f content
+                        dir-name dir-name))
+    (write-file self "Makefile"
+                (format #f lisp-makefile-template
+                        dir-name dir-name dir-name)))
+  (make-asd self)
+  (make-flake self
+              #:extra-packages (get-lisp-packages self)))
 
 (define-method (initialize (self <lisp-project>) initargs)
   (let-keywords initargs #f (packages directory lisp-packages)
@@ -288,12 +344,42 @@
   "
    #:getter get-main-file-content))
 
+(define-method (make-project (self <scheme-project>))
+  (next-method)
+  (let ((main-file (get-main-file self))
+        (content (get-main-file-content self)))
+    (write-file self (resolve (list src-dir main-file))
+                content))
+  (make-flake self))
+
 (define-class <clojure-project> (<project>)
   (default-packages
     #:init-value
     '("clojure" "clojure-lsp" "cljfmt"
       "clj-kondo" "leiningen")
     #:getter get-default-packages))
+
+(define-method (make-project (self <clojure-project>))
+  (let* ((directory (get-directory self)))
+    (system* "lein" "new" (file-name directory) "--to-dir" directory))
+  (next-method)
+  (make-flake self))
+
+(define-class <scala-project> (<project>)
+  (default-packages
+    #:init-value
+    '("ammonite" "bloop" "coursier"
+      "metals" "mill" "sbt"
+      "scala-cli" "scalafmt")
+    #:getter get-default-packages))
+
+(define-method (make-project (self <scala-project>))
+  (let ((directory (get-directory self))
+        (pipe (open-output-pipe "sbt new scala/scala3.g8")))
+    (display (file-name directory) pipe)
+    (close-pipe pipe))
+  (next-method)
+  (make-flake self))
 
 (define* (make-flake project #:key (extra-packages '()) (vars '()) (shell-hook '()))
   (let ((packages (append
@@ -307,79 +393,6 @@
                 (format #f flake-template
                         packages vars shell-hook))))
 
-(define-generic make-project)
-
-(define-method (make-project (self <project>))
-  (let ((directory (get-directory self)))
-    (unless (file-exists? directory)
-      (mkdir directory)
-      (mkdir (resolve (list directory src-dir))))
-    (write-file self ".envrc" "use flake")
-    (let ((pipe (open-input-pipe (format #f "GIT_DIR=~a git init -q"
-                                         (resolve (list directory ".git"))))))
-      (close-pipe pipe))))
-
-(define-method (make-project (self <c-family-project>))
-  (next-method)
-  (let ((main-file (get-main-file self))
-        (content (get-main-file-content self)))
-    (write-file self (resolve (list src-dir main-file))
-                content))
-  (make-cmakelists self)
-  (make-flake self))
-
-(define-method (make-project (self <c-project>))
-  (next-method))
-
-(define-method (make-project (self <c++-project>))
-  (next-method))
-
-(define-method (make-project (self <rust-project>))
-  (let* ((directory (get-directory self))
-         (pipe (open-input-pipe (format #f "${pkgs.cargo}/bin/cargo new ~a"
-                                        directory))))
-    (close-pipe pipe))
-  (next-method)
-  (make-flake self
-              #:vars '((RUST_SRC_PATH pkgs.rust.packages.stable.rustPlatform.rustLibSrc))
-              #:shell-hook '("export CARGO_HOME=~/.local/share/cargo"
-                             "export RUSTUP_HOME=~/.local/share/rustup"
-                             "export PATH=$PATH:$RUSTUP_HOME/toolchains/stable-x86_64-w64-unknown-linux-gnu/bin/"
-                             "rustup default stable")))
-
-(define-method (make-project (self <lisp-project>))
-  (next-method)
-  (let* ((main-file (get-main-file self))
-         (content (get-main-file-content self))
-         (directory (get-directory self))
-         (dir-name (file-name directory)))
-    (write-file self (resolve (list src-dir main-file))
-                (format #f content
-                        dir-name dir-name))
-    (write-file self "Makefile"
-                (format #f lisp-makefile-template
-                        dir-name dir-name dir-name)))
-  (make-asd self)
-  (make-flake self
-              #:extra-packages (get-lisp-packages self)))
-
-(define-method (make-project (self <scheme-project>))
-  (next-method)
-  (let ((main-file (get-main-file self))
-        (content (get-main-file-content self)))
-    (write-file self (resolve (list src-dir main-file))
-                content))
-  (make-flake self))
-
-(define-method (make-project (self <clojure-project>))
-  (let* ((directory (get-directory self))
-         (pipe (open-input-pipe (format #f "${pkgs.leiningen}/bin/lein new ~a --to-dir ~a"
-                                        (file-name directory)
-                                        directory))))
-    (close-pipe pipe))
-  (next-method)
-  (make-flake self))
-
 (define* (get-project language packages directory #:optional (extra-packages '()))
   (apply make (append
                (case language
@@ -389,6 +402,7 @@
                  ((lisp) (list <lisp-project> #:lisp-packages extra-packages))
                  ((scheme) (list <scheme-project>))
                  ((clojure) (list <clojure-project>))
+                 ((scala) (list <scala-project>))
                  (else (error (string-append
                                "Don't know how to make a "
                                (symbol->string language)

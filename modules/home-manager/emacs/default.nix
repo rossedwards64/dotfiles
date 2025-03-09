@@ -50,15 +50,8 @@ in
     };
 
     xdg.configFile = {
-      "emacs/early-init.el" = {
-        enable = false;
-        source = ./config/early-init.el;
-      };
-
-      "emacs/init.el" = {
-        enable = false;
-        source = ./config/init.el;
-      };
+      "emacs/early-init.el".enable = false;
+      "emacs/init.el".enable = false;
     };
   };
 }
