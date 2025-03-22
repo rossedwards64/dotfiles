@@ -51,9 +51,9 @@ in
           DEVICES_TO_ENABLE_ON_AC = "bluetooth nfc wifi wwan";
           DEVICES_TO_DISABLE_ON_BAT_NOT_IN_USE = "bluetooth nfc wwan";
           START_CHARGE_THRESH_BAT0 = 75;
-          STOP_CHARGE_THRESH_BAT0 = 80;
+          STOP_CHARGE_THRESH_BAT0 = 85;
           START_CHARGE_THRESH_BAT1 = 75;
-          STOP_CHARGE_THRESH_BAT1 = 80;
+          STOP_CHARGE_THRESH_BAT1 = 85;
         };
       };
     };

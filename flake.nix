@@ -41,13 +41,10 @@
       self,
       nixpkgs,
       home-manager,
-      flake-utils,
       nixos-hardware,
-      emacs-overlay,
       nix-gaming,
-      stylix,
       ssbm,
-      plasma-manager,
+      stylix,
       ...
     }@inputs:
     let
@@ -66,6 +63,7 @@
           system
           ;
       };
+
       extraSpecialArgs = specialArgs;
 
       font = {
@@ -88,9 +86,13 @@
       };
 
       stylixConfig = {
+        enable = true;
         base16Scheme = "${pkgs.base16-schemes}/share/themes/catppuccin-mocha.yaml";
 
-        image = /home/${username}/Pictures/wallpapers + "/Gurren Lagann/simon.jpg";
+        image = pkgs.fetchurl {
+          url = "https://images3.alphacoders.com/126/1260400.png";
+          sha256 = "sha256-lWvLK4gSndy3CEJDRDZi31WRRMr1oSpOX7Y3Th7rS14=";
+        };
 
         cursor = {
           package = pkgs.catppuccin-cursors.mochaDark;
@@ -107,6 +109,10 @@
           serif = {
             inherit (font) package name;
           };
+          emoji = {
+            package = pkgs.noto-fonts-emoji;
+            name = "Noto Emoji";
+          };
         };
 
         polarity = "dark";
@@ -117,45 +123,18 @@
         lib.nixosSystem {
           inherit system specialArgs;
           modules = [
-            ./modules/nixos
-            ./hosts/${hostname}/configuration.nix
             stylix.nixosModules.stylix
             ssbm.nixosModule
             nix-gaming.nixosModules.pipewireLowLatency
             nix-gaming.nixosModules.platformOptimizations
-            { stylix = stylixConfig; }
-            { programs.steam.platformOptimizations.enable = true; }
+            ./modules/nixos
+            ./hosts/${hostname}/configuration.nix
             (
               {
                 ...
               }:
               {
-                imports = [ /etc/nixos/cachix.nix ];
-
-                nix = {
-                  settings.trusted-users = [
-                    "root"
-                    "ross"
-                  ];
-
-                  nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
-                };
-
-                nixpkgs = {
-                  config.allowUnfree = true;
-                  overlays = [ emacs-overlay.overlays.default ];
-                };
-
-                stylix.enable = true;
-                ssbm = {
-                  overlay.enable = true;
-                  cache.enable = true;
-                  gcc = {
-                    oc-kmod.enable = true;
-                    rules.enable = true;
-                  };
-                };
-
+                stylix = stylixConfig;
                 modules = {
                   boot.enable = true;
                   desktop.enable = true;
@@ -200,18 +179,18 @@
         lib.homeManagerConfiguration {
           inherit pkgs extraSpecialArgs;
           modules = [
-            # ssbm.homeManagerModule
-            stylix.homeManagerModules.stylix
-            plasma-manager.homeManagerModules.plasma-manager
+            inputs.stylix.homeManagerModules.stylix
+            inputs.plasma-manager.homeManagerModules.plasma-manager
             ./modules/home-manager
             ./home/home.nix
-            { stylix = stylixConfig; }
             (
               {
                 ...
               }:
               {
-                stylix.enable = true;
+                stylix = stylixConfig // {
+                  targets.firefox.profileNames = [ "ross" ];
+                };
 
                 modules = {
                   inherit window-manager;

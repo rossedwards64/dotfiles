@@ -2,6 +2,8 @@
   lib,
   config,
   pkgs,
+  inputs,
+  system,
   ...
 }:
 with lib;
@@ -21,6 +23,8 @@ let
   powermenuScript = import ../wm-programs/fuzzel/scripts/powermenu.nix { inherit pkgs; };
   screenshotScript = import ../wm-programs/fuzzel/scripts/screenshot.nix { inherit pkgs; };
   windowsScript = import ../wm-programs/fuzzel/scripts/windows.nix { inherit pkgs; };
+
+  emacsPackage = inputs.emacs-overlay.packages.${system}.emacs-unstable-pgtk;
 
   reload = ''hyprctl reload && notify-send "Reloaded Hyprland"'';
   gameTabs = ''hyprctl --batch "workspace 7 ; togglegroup"'';
@@ -210,7 +214,7 @@ in
               "${pkgs.wl-clipboard}/bin/wl-paste --type text --watch cliphist store"
               "${pkgs.wl-clipboard}/bin/wl-paste --type image --watch cliphist store"
               "${pkgs.pavucontrol}/bin/pavucontrol"
-              "${pkgs.emacs29-pgtk}/bin/emacsclient -c -a=''"
+              "${emacsPackage}/bin/emacsclient -c -a=''"
               "${pkgs.alacritty}/bin/alacritty"
               "${pkgs.firefox}/bin/firefox"
               "${pkgs.lutris}/bin/lutris"

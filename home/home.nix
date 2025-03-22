@@ -1,7 +1,5 @@
 {
-  config,
   lib,
-  pkgs,
   specialArgs,
   ...
 }:
@@ -42,8 +40,8 @@ in
           "inode/directory" = "thunar.desktop";
           "application/pdf" = "zathura.desktop";
         }
-        // lib.genAttrs ((
-          lib.lists.concatMap
+        // lib.genAttrs (
+          (lib.lists.concatMap
             (suffix: [
               "audio/${suffix}"
               "video/${suffix}"
@@ -56,13 +54,12 @@ in
               "mpeg"
               "ogg"
             ]
-        )
-        ++
-          [
+          )
+          ++ [
             "audio/wav"
             "video/webm"
-          ])
-            (_: "mpv.desktop")
+          ]
+        ) (_: "mpv.desktop")
         // lib.genAttrs (builtins.map (suffix: "image/${suffix}") [
           "bmp"
           "gif"
@@ -120,58 +117,58 @@ in
   };
 
   programs.plasma = {
-      enable = true;
+    enable = true;
 
-      kwin = {
-        effects = {
-          blur.enable = true;
-          desktopSwitching.animation = "slide";
-          dimAdminMode.enable = true;
-          dimInactive.enable = true;
+    kwin = {
+      effects = {
+        blur.enable = true;
+        desktopSwitching.animation = "slide";
+        dimAdminMode.enable = true;
+        dimInactive.enable = true;
+      };
+
+      scripts.polonium.enable = false;
+      tiling.padding = 2;
+    };
+
+    workspace = {
+      wallpaper = "/home/ross/Pictures/wallpapers/Gurren Lagann/lordgenome.jpeg";
+    };
+
+    powerdevil = {
+      battery = {
+        displayBrightness = 75;
+        powerProfile = "powerSaving";
+
+        autoSuspend = {
+          action = "sleep";
+          idleTimeout = 600;
         };
 
-        scripts.polonium.enable = false;
-        tiling.padding = 2;
-      };
-
-      workspace = {
-        wallpaper = "/home/ross/Pictures/wallpapers/Gurren Lagann/lordgenome.jpeg";
-      };
-
-      powerdevil = {
-        battery = {
-          displayBrightness = 75;
-          powerProfile = "powerSaving";
-
-          autoSuspend = {
-            action = "sleep";
-            idleTimeout = 600;
-          };
-
-          dimDisplay = {
-            enable = true;
-            idleTimeout = 180;
-          };
-        };
-      };
-
-      fonts = {
-        general = font;
-        fixedWidth = font;
-        menu = font;
-        small = font;
-        toolbar = font;
-        windowTitle = font;
-      };
-
-      input = {
-        keyboard = {
-          layouts = [
-            { layout = "gb"; }
-            { layout = "us"; }
-          ];
-          options = [ "ctrl:nocaps" ];
+        dimDisplay = {
+          enable = true;
+          idleTimeout = 180;
         };
       };
     };
+
+    fonts = {
+      general = font;
+      fixedWidth = font;
+      menu = font;
+      small = font;
+      toolbar = font;
+      windowTitle = font;
+    };
+
+    input = {
+      keyboard = {
+        layouts = [
+          { layout = "gb"; }
+          { layout = "us"; }
+        ];
+        options = [ "ctrl:nocaps" ];
+      };
+    };
+  };
 }

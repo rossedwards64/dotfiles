@@ -59,7 +59,9 @@ in
             set -g @catppuccin_user on
             set -g @catppuccin_host on
             set -g @catppuccin_window_tabs_enabled on
-            set -g @catppuccin_status_modules_right "directory application session user host date_time"
+            set -g @catppuccin_window_status_style 'rounded'
+            set -g status-right-length 100
+            set -g status-right "#{E:@catppuccin_status_application}#{E:@catppuccin_status_directory}#{E:@catppuccin_status_user}#{E:@catppuccin_status_host}"
           '';
         }
 

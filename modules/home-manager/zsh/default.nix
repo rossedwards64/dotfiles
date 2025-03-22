@@ -2,12 +2,15 @@
   lib,
   config,
   pkgs,
+  inputs,
+  system,
   ...
 }:
 with lib;
 let
   cfg = config.modules.zsh;
   xdg = config.xdg;
+  emacsPackage = inputs.emacs-overlay.packages.${system}.emacs-unstable-pgtk;
 in
 {
   options.modules.zsh = {
@@ -43,13 +46,13 @@ in
         };
 
         sessionVariables = {
-		  _JAVA_AWT_WM_NONREPARENTING = "1";
+          _JAVA_AWT_WM_NONREPARENTING = "1";
           ALTERNATE_EDITOR = "${pkgs.neovim}/bin/nvim";
           ARCHFLAGS = "-arch x86_64";
           BROWSER = "${pkgs.firefox}/bin/firefox";
           CARGO_HOME = "${xdg.dataHome}/cargo";
           DIRENV_ALLOW_NIX = "1";
-          EDITOR = "${pkgs.emacs29-pgtk}/bin/emacs";
+          EDITOR = "${emacsPackage}/bin/emacs";
           EMACSDIR = "${xdg.configHome}/emacs";
           FLAKE = "$HOME/.dotfiles";
           GDBHISTFILE = "${xdg.dataHome}/gdb/history";
@@ -67,7 +70,7 @@ in
           TEXMFCONFIG = "${xdg.configHome}/texlive/texmf-config";
           TEXMFHOME = "${xdg.dataHome}/texlive/texmf";
           TEXMFVAR = "${xdg.stateHome}/texlive/texmf-var";
-          VISUAL = "${pkgs.emacs29-pgtk}/bin/emacsclient -c -a emacs";
+          VISUAL = "${emacsPackage}/bin/emacsclient -c -a emacs";
           WAKATIME_HOME = "${xdg.configHome}/wakatime";
           WINEPREFIX = "${xdg.dataHome}/wineprefixes/default";
           XCURSOR_SIZE = 24;

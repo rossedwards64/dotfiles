@@ -2,6 +2,7 @@
 
 {
   imports = [
+    /etc/nixos/cachix.nix
     ./boot
     ./desktop
     ./environment
@@ -9,6 +10,7 @@
     ./gnome
     ./kde
     ./networking
+    ./nix
     ./qemu
     ./syncthing
     ./system

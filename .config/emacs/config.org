@@ -62,8 +62,8 @@ Set the font based on resolution. The after-make-frame-functions hook will ensur
   "Apply `font-name' to FRAME."
   (when (and (find-font (font-spec :name font-name))
              (display-graphic-p frame))
-    (let* ((resolution-width (display-pixel-width))
-           (resolution-height (display-pixel-height))
+    (let* ((resolution-width (caddr (frame-monitor-geometry)))
+           (resolution-height (cadddr (frame-monitor-geometry)))
            (font-height (cond
                          ((and (<= resolution-width 1366)
                                (<= resolution-height) 768) 120)
@@ -143,16 +143,17 @@ Set the font based on resolution. The after-make-frame-functions hook will ensur
   <<transparency>>
   <<completing-read-advice>>
   <<android-ssl>>
-  (toggle-text-mode-auto-fill)
   (blink-cursor-mode -1)
   (global-auto-revert-mode +1)
   (global-hl-line-mode +1)
   (global-prettify-symbols-mode +1)
+  (indent-tabs-mode -1)
   (menu-bar-mode -1)
   (pixel-scroll-precision-mode +1)
   (savehist-mode +1)
   (scroll-bar-mode -1)
   (set-fringe-mode +1)
+  (toggle-text-mode-auto-fill)
   (tool-bar-mode -1)
   :custom
   (tab-width 4)
@@ -179,7 +180,7 @@ Set the font based on resolution. The after-make-frame-functions hook will ensur
   (ring-bell-function 'ignore)
   (savehist-additional-variables '(kill-ring search-ring regexp-search-ring projectile-project-command-history))
   (tab-always-indent 'complete)
-  (treesit-extra-load-path '((concat elpaca-builds-directory "/tree-sitter-langs/bin")))
+  (treesit-extra-load-path `(,(concat elpaca-builds-directory "/tree-sitter-langs/bin")))
   (use-dialog-box nil)
   (use-short-answers t)
   (vc-follow-symlinks t)
@@ -851,22 +852,6 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
   (flycheck-emacs-lisp-load-path load-path)
   (flycheck-disabled-checkers '(emacs-lisp-checkdoc)))
 
-(use-package tree-sitter
-  :hook ((tree-sitter-after-on . tree-sitter-hl-mode))
-  :custom
-  (major-mode-remap-alist '((bash-mode . bash-ts-mode)
-                            (c++-mode . c++-ts-mode)
-                            (c-mode . c-ts-mode)
-                            (c-or-c++-mode . c-or-c++-ts-mode)
-                            (css-mode . css-ts-mode)
-                            (js-mode . js-ts-mode)
-                            (json-mode . json-ts-mode)
-                            (python-mode . python-ts-mode)
-                            (sh-mode . bash-ts-mode)
-                            (yaml-mode . yaml-ts-mode))))
-
-(use-package tree-sitter-langs)
-
 (use-package treesit-auto
   :config
   (global-treesit-auto-mode +1)
@@ -995,8 +980,6 @@ This is a workaround for [[https://github.com/emacs-lsp/lsp-mode/issues/4332][th
 *** Rust
 #+begin_src emacs-lisp
 (use-package rustic
-  :config
-  (add-to-list 'tree-sitter-major-mode-language-alist '(rustic-mode . rust))
   :custom
   (lsp-rust-analyzer-cargo-watch-command "clippy"))
 #+end_src
@@ -1039,7 +1022,7 @@ It's a bit of a pain having to do 'M-x sly' every time I open a Lisp project.
 (use-package ac-sly
   :config
   (with-eval-after-load "auto-complete"
-    '(add-to-list 'ac-modes 'sly-mrepl-mode)))
+    (add-to-list 'ac-modes 'sly-mrepl-mode)))
 
 (use-package sly-asdf)
 (use-package sly-macrostep)
@@ -1079,7 +1062,7 @@ It's a bit of a pain having to do 'M-x sly' every time I open a Lisp project.
   (((geiser-mode geiser-repl-mode) . ac-geiser-setup))
   :config
   (with-eval-after-load "auto-complete"
-    '(add-to-list 'ac-modes 'geiser-repl-mode)))
+    (add-to-list 'ac-modes 'geiser-repl-mode)))
 #+end_src
 
 *** Nix

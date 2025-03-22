@@ -16,7 +16,7 @@ in
   config = mkIf cfg.enable {
     home.packages = with pkgs; [
       ani-cli
-      ark
+      kdePackages.ark
       caprine
       gimp
       hledger
