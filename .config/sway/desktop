@@ -43,5 +43,6 @@ exec flatpak run io.freetubeapp.FreeTube
 exec flatpak run xyz.armcord.ArmCord
 exec flatpak run com.spotify.Client
 exec flatpak run com.heroicgameslauncher.hgl
+exec qbittorrent
 
 exec_always pkill waybar && waybar

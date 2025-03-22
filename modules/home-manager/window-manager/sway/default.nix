@@ -51,7 +51,7 @@ let
     minecraft = "^com-atlauncher-App$";
     mpv = "^mpv$";
     qBitTorrent = "^org.qbittorrent.qBittorrent$";
-    spotify = "^(dev.alextren.)?Spot(ify)?$";
+    spotify = "^(dev.alextren.)?(?i)spot(ify)?$";
     steam = {
       client = "^steam$";
       game = "^steam_app_[0-9]*$";
@@ -162,6 +162,7 @@ in
               "workspace 4" = [ { class = regexp.discord; } ];
               "workspace 5" = [
                 { app_id = regexp.spotify; }
+                { class = regexp.spotify; }
                 { class = regexp.freetube; }
                 { app_id = regexp.mpv; }
                 { class = regexp.vlc; }
@@ -169,7 +170,7 @@ in
               "workspace 6" = [
                 { class = regexp.steam.client; }
                 { class = regexp.epicGames; }
-                { class = regexp.itchio; }
+                { app_id = regexp.itchio; }
                 { app_id = regexp.lutris; }
                 { class = regexp.minecraft; }
                 { app_id = regexp.gameConqueror; }

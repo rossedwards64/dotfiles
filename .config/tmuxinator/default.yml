@@ -10,7 +10,7 @@ windows:
         - clear
   - music:
       panes:
-        - ncspot
+        - clear
   - misc:
       layout: 5ccf,157x33,0,0,10
       panes:

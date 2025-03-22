@@ -111,10 +111,11 @@ assign [app_id="^Alacritty$"] workspace 2
 assign [app_id="^Firefox$"] workspace 3
 assign [class="^(dis|arm)cord$"] workspace 4
 assign [app_id="^(dev.alextren.)?spot(ify)?$"] workspace 5
+assign [class="^(dev.alextren.)?(?i)spot(ify)?$"] workspace 5
 assign [class="^FreeTube$"] workspace 5
 assign [class="^steam$"] workspace 6
 assign [class="^heroic$"] workspace 6
-assign [class="^itch$"] workspace 6
+assign [app_id="^itch$"] workspace 6
 assign [app_id="^net.lutris.Lutris$"] workspace 6
 assign [class="^com-atlauncher-App$"] workspace 6
 assign [app_id="^GameConqueror.py$"] workspace 6
@@ -192,6 +193,7 @@ exec alacritty
 exec emacs
 exec firefox
 exec lutris
+exec pavucontrol
 
 exec_always pkill fuzzel
 exec_always "exec rm -f $XDG_RUNTIME_DIR/wob.sock && mkfifo $XDG_RUNTIME_DIR/wob.sock && tail -f $XDG_RUNTIME_DIR/wob.sock | wob"
