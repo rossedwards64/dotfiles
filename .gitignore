@@ -1,9 +1,8 @@
+.config/emacs/*
 !.config/emacs/config.org
-.config/emacs/**
+!.config/emacs/logos/
 .config/alacritty/themes/**
 .config/git/credentials
-.config/ncspot/userstate.cbor
-.config/nvim/
 .config/service/**/supervise/
 .config/sway/config
 .config/tmux/plugins
