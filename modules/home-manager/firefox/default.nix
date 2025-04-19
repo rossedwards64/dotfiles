@@ -8,8 +8,8 @@ with lib;
 let
   cfg = config.modules.firefox;
   defaultEngine = rec {
-    name = "Qwant";
-    url = "https://www.qwant.com/";
+    name = "DuckDuckGo";
+    url = "https://www.duckduckgo.com/";
     icon = "${url}/favicon.ico";
     params = [
       {

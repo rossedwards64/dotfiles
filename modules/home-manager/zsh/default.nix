@@ -10,7 +10,7 @@ with lib;
 let
   cfg = config.modules.zsh;
   xdg = config.xdg;
-  emacsPackage = inputs.emacs-overlay.packages.${system}.emacs-unstable-pgtk;
+  emacsPackage = inputs.emacs-overlay.packages.${system}.emacs-git-pgtk;
 in
 {
   options.modules.zsh = {

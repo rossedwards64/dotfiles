@@ -22,7 +22,7 @@ in
       hledger
       imv
       iosevka
-      legcord
+      vesktop
       libreoffice
       mpv
       neovim

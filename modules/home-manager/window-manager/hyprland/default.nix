@@ -24,7 +24,7 @@ let
   screenshotScript = import ../wm-programs/fuzzel/scripts/screenshot.nix { inherit pkgs; };
   windowsScript = import ../wm-programs/fuzzel/scripts/windows.nix { inherit pkgs; };
 
-  emacsPackage = inputs.emacs-overlay.packages.${system}.emacs-unstable-pgtk;
+  emacsPackage = inputs.emacs-overlay.packages.${system}.emacs-git-pgtk;
 
   reload = ''hyprctl reload && notify-send "Reloaded Hyprland"'';
   gameTabs = ''hyprctl --batch "workspace 7 ; togglegroup"'';

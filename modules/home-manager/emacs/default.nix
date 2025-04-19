@@ -9,7 +9,7 @@
 with lib;
 let
   cfg = config.modules.emacs;
-  package = inputs.emacs-overlay.packages.${system}.emacs-unstable-pgtk;
+  package = inputs.emacs-overlay.packages.${system}.emacs-git-pgtk;
 in
 {
   options.modules.emacs = {

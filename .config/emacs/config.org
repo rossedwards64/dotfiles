@@ -322,10 +322,6 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
     (interactive)
     (org-babel-tangle-file (concat user-emacs-directory "config.org"))
     (load (concat user-emacs-directory "init.el"))))
-
-(defun ross/is-dual-core ()
-  "Returns t if core count is 2."
-  (= 2 (num-processors)))
 #+end_src
 
 * Org-Mode
@@ -397,13 +393,14 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
                            ("ts" "Scheduled" entry
                             (file+headline "agenda.org" "Scheduled Tasks")
                             "** TODO %?\nSCHEDULED: %^T\n%^{LOCATION|N/A}p\n"
-                            :empty-lines-before 1)
+                            :empty-lines-before 1
+                            :empty-lines-after 1)
                            ("td" "Deadline" entry
                             (file+headline "agenda.org" "Deadlined Tasks")
                             "** TODO %?\nDEADLINE: %^T\n"
                             :empty-lines-before 1)
                            ("th" "Habit" entry
-                            (file+headline "habits.org")
+                            (file+headline "habits.org" "Habits")
                             "* TODO %?\nSCHEDULED: %^T\n:PROPERTIES:\n:STYLE: habit\n:END:\n"
                             :empty-lines-before 1)
                            ("n" "Note" entry
@@ -752,13 +749,13 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
   :bind
   (:map global-map
         ("C-c MR" . elfeed))
-  :config
-  (run-with-timer (* 60 20) t #'elfeed-update)
   :custom
   (elfeed-feeds '(("https://planet.emacslife.com/atom.xml" emacs blog)
                   ("https://www.theguardian.com/world/rss" news)
                   ("https://allthingsembedded.com/index.xml" embedded blog)
-                  ("https://lwn.net/rss" linux news))))
+                  ("https://lwn.net/rss" linux news)
+                  ("https://planet.lisp.org/rss20.xml" lisp blog)
+                  ("https://planet.scheme.org/atom.xml" scheme blog))))
 
 (use-package erc
   :elpaca nil
@@ -856,7 +853,6 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
 
 (use-package flyspell
   :elpaca nil
-  :unless (ross/is-dual-core)
   :hook
   (((LaTeX-mode org-mode) . flyspell-mode)))
 
@@ -890,7 +886,6 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
   (compilation-always-kill t))
 
 (use-package flycheck
-  :unless (ross/is-dual-core)
   :init (global-flycheck-mode +1)
   :hook
   ((flycheck-mode . (lambda ()
@@ -904,6 +899,7 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
   (flycheck-disabled-checkers '(emacs-lisp-checkdoc)))
 
 (use-package treesit
+  :elpaca nil
   :custom
   (treesit-extra-load-path `(,(concat elpaca-builds-directory "tree-sitter-langs/bin")))
   (treesit-font-lock-level 4))
