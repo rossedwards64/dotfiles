@@ -196,7 +196,7 @@ exec lutris
 exec pavucontrol
 
 exec_always pkill fuzzel
-exec_always "exec rm -f $XDG_RUNTIME_DIR/wob.sock && mkfifo $XDG_RUNTIME_DIR/wob.sock && tail -f $XDG_RUNTIME_DIR/wob.sock | wob"
+exec_always "rm -f $XDG_RUNTIME_DIR/wob.sock ; mkfifo $XDG_RUNTIME_DIR/wob.sock && tail -f $XDG_RUNTIME_DIR/wob.sock | wob"
 exec_always "systemctl --user restart swaync"
 exec_always swaync-client -R -rs -sw
 exec_always gsettings set org.gnome.desktop.interface cursor-theme catppuccin-mocha-dark-cursors

@@ -40,42 +40,7 @@ in
           monospace = [ "Iosevka" ];
         };
 
-        localConf = ''
-          <?xml version="1.0" encoding="UTF-8"?>
-          <!DOCTYPE fontconfig SYSTEM "fonts.dtd">
-          <fontconfig>
-            <match target="font">
-             <edit mode="assign" name="rgba">
-              <const>none</const>
-             </edit>
-            </match>
-            <match target="font">
-             <edit mode="assign" name="hinting">
-              <bool>false</bool>
-             </edit>
-            </match>
-            <match target="font">
-             <edit mode="assign" name="autohint">
-              <bool>false</bool>
-             </edit>
-            </match>
-            <match target="font">
-             <edit mode="assign" name="hintstyle">
-              <const>hintnone</const>
-             </edit>
-            </match>
-            <match target="font">
-             <edit mode="assign" name="antialias">
-              <bool>true</bool>
-             </edit>
-            </match>
-            <match target="font">
-             <edit mode="assign" name="lcdfilter">
-              <const>lcddefault</const>
-             </edit>
-            </match>
-          </fontconfig>
-        '';
+        localConf = lib.readFile ../../../.config/fontconfig/fonts.conf;
       };
     };
   };

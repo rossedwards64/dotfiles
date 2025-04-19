@@ -198,7 +198,7 @@ let
               ""
             ];
           };
-          on-click = "${pkgs.helvum}/bin/helvum";
+          on-click = "${pkgs.pavucontrol}/bin/pavucontrol";
         };
       };
 
@@ -406,7 +406,7 @@ let
         name = "custom/launcher";
         config = {
           format = "";
-          on-click = "$HOME/.config/rofi/scripts/launcher";
+          on-click = "${pkgs.fuzzel}/bin/fuzzel";
         };
       };
 
