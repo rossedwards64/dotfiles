@@ -11,8 +11,8 @@
 (define (usage)
   "Script for making a new project with a main file, basic build system setup and flake.
   Usage: mkproject [-l language] [-p packages] [-d dir] [-h]
-  l: Project language. Valid options are: 
-     c, 
+  l: Project language. Valid options are:
+     c,
      c++,
      rust,
      lisp,
@@ -172,7 +172,7 @@
     (unless (file-exists? directory)
       (mkdir directory)
       (mkdir (resolve (list directory src-dir))))
-    (write-file self ".envrc" "use flake")    
+    (write-file self ".envrc" "use flake")
     (setenv "GIT_DIR" (resolve (list directory ".git")))
     (system* "git" "init" "-q")
     (unsetenv "GIT_DIR")))

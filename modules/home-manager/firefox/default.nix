@@ -99,8 +99,9 @@ in
             force = true;
             default = defaultEngine.name;
             engines = {
-              "${defaultEngine.name}" = {
+              ${defaultEngine.name} = {
                 inherit updateInterval;
+                inherit (defaultEngine) icon;
                 urls = [
                   {
                     template = "${defaultEngine.url}";
@@ -108,7 +109,6 @@ in
                   }
                 ];
                 definedAliases = [ defaultEngine.alias ];
-                iconUpdateURL = defaultEngine.icon;
               };
 
               MyNixOS = {
@@ -120,14 +120,14 @@ in
                   }
                 ];
                 definedAliases = [ "@nixpkgs" ];
-                iconUpdateURL = "https://mynixos.com/favicon.ico";
+                icon = "https://mynixos.com/favicon.ico";
               };
 
               "NixOS Wiki" = {
                 inherit updateInterval;
                 urls = [ { template = "https://wiki.nixos.org/wiki/{searchTerms}"; } ];
                 definedAliases = [ "@nixwiki" ];
-                iconUpdateURL = "https://wiki.nixos.org/nixos.png";
+                icon = "https://wiki.nixos.org/nixos.png";
               };
 
               Marginalia = {
@@ -144,7 +144,7 @@ in
                   }
                 ];
                 definedAliases = [ "@marginalia" ];
-                iconUpdateURL = "https://search.marginalia.nu/favicon.ico";
+                icon = "https://search.marginalia.nu/favicon.ico";
               };
 
               "Arch Linux" = {
@@ -155,7 +155,7 @@ in
                   }
                 ];
                 definedAliases = [ "@archlinux" ];
-                iconUpdateURL = "https://wiki.archlinux.org/favicon.ico";
+                icon = "https://wiki.archlinux.org/favicon.ico";
               };
 
               Gentoo = {
@@ -166,7 +166,7 @@ in
                   }
                 ];
                 definedAliases = [ "@gentoo" ];
-                iconUpdateURL = "https://wiki.gentoo.org/favicon.ico";
+                icon = "https://wiki.gentoo.org/favicon.ico";
               };
 
               "Dwarf Fortress" = {
@@ -177,7 +177,7 @@ in
                   }
                 ];
                 definedAliases = [ "@dwarffortress" ];
-                iconUpdateURL = "https://dwarffortresswiki.org/favicon.ico";
+                icon = "https://dwarffortresswiki.org/favicon.ico";
               };
 
               ProtonDB = {
@@ -189,17 +189,16 @@ in
                   }
                 ];
                 definedAliases = [ "@protondb" ];
-                iconUpdateURL = "https://protondb.com/favicon.ico";
+                icon = "https://protondb.com/favicon.ico";
               };
 
-              Amazon.com.metaData.hidden = true;
-              BBC.metaData.hidden = true;
-              Bing.metaData.hidden = true;
-              DuckDuckGo.metaData.hidden = true;
-              Facebook.metaData.hidden = true;
-              Google.metaData.hidden = true;
-              YouTube.metaData.hidden = true;
-              eBay.metaData.hidden = true;
+              google.metaData.hidden = true;
+              amazondotcom-us.metaData.hidden = true;
+              bbc.metaData.hidden = true;
+              bing.metaData.hidden = true;
+              facebook.metaData.hidden = true;
+              youtube.metaData.hidden = true;
+              ebay.metaData.hidden = true;
             };
           };
         };

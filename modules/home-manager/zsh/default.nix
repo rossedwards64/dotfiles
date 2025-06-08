@@ -54,13 +54,13 @@ in
           DIRENV_ALLOW_NIX = "1";
           EDITOR = "${emacsPackage}/bin/emacs";
           EMACSDIR = "${xdg.configHome}/emacs";
-          FLAKE = "$HOME/.dotfiles";
           GDBHISTFILE = "${xdg.dataHome}/gdb/history";
           GOPATH = "${xdg.dataHome}/go";
           GRADLE_USER_HOME = "${xdg.dataHome}/gradle";
           KDEHOME = "${xdg.configHome}/kde";
           LEDGER_FILE = "$HOME/Documents/finance/$(${pkgs.coreutils}/bin/date -I | cut -d'-' -f1).journal";
           LEIN_HOME = "${xdg.dataHome}/lein";
+          NH_FLAKE = "$HOME/.dotfiles";
           PASSWORD_STORE_DIR = "${xdg.dataHome}/pass";
           PLATFORMIO_CORE_DIR = "${xdg.configHome}/platformio";
           ROSWELL_HOME = "${xdg.configHome}/roswell";
@@ -77,7 +77,7 @@ in
           ZSH_COMPDUMP = "\${ZSH}/cache/.zcompdump-\${HOST}";
         };
 
-        initExtraFirst = ''
+        initContent = lib.mkBefore ''
           if [[ -n "$TERM" ]] && [[ "$TERM" != "dumb" ]]; then
                export BOLD="$(${pkgs.ncurses}/bin/tput bold)"
                export MAGENTA="$(${pkgs.ncurses}/bin/tput setaf 5)"
@@ -88,13 +88,22 @@ in
                export BLUE="$(${pkgs.ncurses}/bin/tput setaf 4)"
                export NORM="$(${pkgs.ncurses}/bin/tput sgr0)"
           fi
-        '';
 
-        initExtraBeforeCompInit = ''
           zstyle ':completion:*' completer _expand _complete _ignored _approximate
           zstyle ':completion:*' cache-path ${xdg.cacheHome}/zsh/zcompcache
           zstyle :compinstall filename "${xdg.configHome}/.zshrc"
           fpath+=${xdg.configHome}/.zfunc
+
+          nixify() {
+            if [ ! -e flake.nix ]; then
+              nix flake new -t github:nix-community/nix-direnv .
+            elif [ ! -e .envrc ]; then
+              echo 'use flake' > .envrc
+              direnv allow
+            fi
+          }
+
+          eval $(${pkgs.zoxide}/bin/zoxide init zsh)
         '';
 
         completionInit = ''
@@ -162,19 +171,6 @@ in
             "root"
           ];
         };
-
-        initExtra = ''
-          nixify() {
-            if [ ! -e flake.nix ]; then
-              nix flake new -t github:nix-community/nix-direnv .
-            elif [ ! -e .envrc ]; then
-              echo 'use flake' > .envrc
-              direnv allow
-            fi
-          }
-
-          eval $(${pkgs.zoxide}/bin/zoxide init zsh)
-        '';
       };
 
       zoxide = {
