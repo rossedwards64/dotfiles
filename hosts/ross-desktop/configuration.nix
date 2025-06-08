@@ -45,7 +45,7 @@ in
     };
 
     "/SSD" = {
-      device = "/dev/disk/by-uuid/d1055482-e9bc-4abc-90a9-53018bd30937";
+      device = "/dev/disk/by-uuid/9c430e65-08a3-4aa1-b059-6ea713ff04e8";
       fsType = "ext4";
     };
 
@@ -57,7 +57,8 @@ in
 
   environment.systemPackages = with pkgs; [
     atlauncher
-    #cemu
+    cemu
+    flycast
     dolphin-emu
     pcsx2
     rpcs3

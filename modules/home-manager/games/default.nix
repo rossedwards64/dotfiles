@@ -17,7 +17,7 @@ in
     home.packages = with pkgs; [ scanmem ];
 
     programs.sm64ex = {
-      enable = true;
+      enable = false;
       package = pkgs.sm64coopdx;
     };
   };

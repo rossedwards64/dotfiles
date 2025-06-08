@@ -55,6 +55,7 @@
       kde.enable = !window-manager.enable;
       lib = nixpkgs.lib // home-manager.lib;
       pkgs = nixpkgs.legacyPackages.${system};
+
       specialArgs = {
         inherit
           inputs
@@ -135,6 +136,7 @@
                 ...
               }:
               {
+                nixpkgs.config.allowUnfree = true;
                 stylix = stylixConfig;
                 modules = {
                   boot.enable = true;
@@ -180,7 +182,7 @@
         lib.homeManagerConfiguration {
           inherit pkgs extraSpecialArgs;
           modules = [
-            inputs.stylix.homeManagerModules.stylix
+            inputs.stylix.homeModules.stylix
             inputs.plasma-manager.homeManagerModules.plasma-manager
             ./modules/home-manager
             ./home/home.nix
@@ -189,8 +191,10 @@
                 ...
               }:
               {
+                nixpkgs.config.allowUnfree = true;
                 stylix = stylixConfig // {
                   targets.firefox.profileNames = [ "ross" ];
+                  targets.sway.useWallpaper = false;
                 };
 
                 modules = {

@@ -14,12 +14,17 @@ in
   };
 
   config = mkIf cfg.enable {
+    nixpkgs.config.permittedInsecurePackages = [
+      "dotnet-runtime-6.0.36"
+      "dotnet-sdk-6.0.36"
+      "dotnet-sdk-6.0.428"
+    ];
+
     environment.systemPackages = with pkgs; [
-      # devilutionx
+      #devilutionx
+      #fallout2-ce
       duckstation
-      dwarf-fortress-packages.dwarf-fortress-full
       fallout-ce
-      fallout2-ce
       fceux
       gamemode
       gamescope
@@ -31,7 +36,7 @@ in
       mupen64plus
       openjk
       openmw
-      #openra
+      openra
       openrct2
       openttd
       protontricks

@@ -131,7 +131,7 @@ in
             workspaceOutputAssign = [
               {
                 workspace = "7";
-                output = "DP-1";
+                output = "HDMI-A-1";
               }
             ];
 
@@ -189,29 +189,49 @@ in
               LVDS-1 = {
                 scale = "1";
                 res = "1366x768";
-                bg = "${wallpapersDir}/Gurren Lagann/lordgenome.jpeg fill";
+                bg = "${
+                  pkgs.fetchurl {
+                    url = "https://static.zerochan.net/Lordgenome.full.198358.jpg";
+                    sha256 = "sha256-rh4bVRTdM9aoasomvhMQSulGwzc8DgPzP+schDK363Q=";
+                  }
+                } fill";
                 pos = "288 1080";
+              };
+
+              HDMI-A-1 = {
+                scale = "2";
+                res = "3840x2160@60Hz";
+                pos = "0 0";
+                bg = "${
+                  pkgs.fetchurl {
+                    url = "https://i.pinimg.com/originals/40/e9/da/40e9daa6982435261c840673b008b5dd.jpg";
+                    sha256 = "sha256-Q8ShPxMnk3TqivNXQ5wcC1fsRE6ISvCDxcEif605c5c=";
+                  }
+                } fill";
               };
 
               DP-1 = {
                 scale = "1";
                 res = "1920x1080@144Hz";
-                pos = "0 0";
-                bg = "${wallpapersDir}/Gurren Lagann/simon.jpg fill";
-              };
-
-              HDMI-A-1 = {
-                scale = "1";
-                res = "1920x1080@75Hz";
-                pos = "1920 0";
-                bg = "${wallpapersDir}/Jujutsu Kaisen/vol4.jpg fill";
+                pos = "1920 88";
+                bg = "${
+                  pkgs.fetchurl {
+                    url = "https://images.alphacoders.com/133/thumb-1920-1334857.png";
+                    sha256 = "sha256-1bJ4FSrY2G/UKK24w/+sZ5HwpnQgapX4dcRR/j15Jrk=";
+                  }
+                } fill";
               };
 
               DP-2 = {
                 scale = "1";
                 res = "1280x1024@75Hz";
-                pos = "3840 498";
-                bg = "${wallpapersDir}/Chainsaw Man/csm.jpg fill";
+                pos = "3840 628";
+                bg = "${
+                  pkgs.fetchurl {
+                    url = "https://images4.alphacoders.com/128/thumb-1920-1280154.jpg";
+                    sha256 = "sha256-QxC7Yju8dGZghLOi35ObE9rofONk6Mju+DA2IdvusAI=";
+                  }
+                } fill";
               };
             };
 
@@ -223,7 +243,7 @@ in
 
               "12625:16387:ROYUAN_Akko_keyboard" = {
                 xkb_layout = "us";
-                xkb_options = "ctrl:nocaps,altwin:swap_lalt_lwin";
+                xkb_options = "ctrl:nocaps,altwin";
               };
 
               "2:7:SynPS/2_Synaptics_TouchPad" = {
@@ -368,8 +388,8 @@ in
                 )
                 (
                   {
-                    o = "HDMI-A-1";
-                    i = "DP-1";
+                    i = "HDMI-A-1";
+                    o = "DP-1";
                     p = "DP-2";
                   }
                   |> attrsets.concatMapAttrs (
