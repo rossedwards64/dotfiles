@@ -191,10 +191,15 @@
                 ...
               }:
               {
-                nixpkgs.config.allowUnfree = true;
+                nixpkgs = {
+                  overlays = [ (import inputs.emacs-overlay) ];
+                  config.allowUnfree = true;
+                };
+
                 stylix = stylixConfig // {
                   targets.firefox.profileNames = [ "ross" ];
                   targets.sway.useWallpaper = false;
+                  targets.emacs.enable = false;
                 };
 
                 modules = {

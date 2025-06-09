@@ -9,15 +9,9 @@
 with lib;
 let
   cfg = config.modules.emacs;
-  package = inputs.emacs-overlay.packages.${system}.emacs-git-pgtk;
-in
-{
-  options.modules.emacs = {
-    enable = mkEnableOption "emacs";
-  };
-
-  config = mkIf cfg.enable {
-    home.packages = with pkgs; [
+  emacs-git-pgtk = inputs.emacs-overlay.packages.${system}.emacs-git-pgtk;
+  emacsPackages = (
+    epkgs: with pkgs; [
       (aspellWithDicts (
         dicts: with dicts; [
           en
@@ -27,9 +21,37 @@ in
       ))
       auctex
       emacs-all-the-icons-fonts
+      epkgs.vterm
       mu
       mu.mu4e
-    ];
+      (epkgs.treesit-grammars.with-grammars (grammars: with grammars; [ tree-sitter-bash ]))
+    ]
+  );
+
+  emacsPackage = (pkgs.emacsPackagesFor emacs-git-pgtk).emacsWithPackages emacsPackages;
+  extraPrograms = with pkgs; [
+    guile
+    sbcl
+    python3
+    ispell
+    shellcheck
+  ];
+
+  package = pkgs.symlinkJoin {
+    name = "emacs-wrapped";
+    paths = [ emacsPackage ];
+    nativeBuildInputs = [ pkgs.makeWrapper ];
+    postBuild = ''
+      wrapProgram $out/bin/emacs --suffix PATH : "${lib.makeBinPath extraPrograms}"
+    '';
+  };
+in
+{
+  options.modules.emacs = {
+    enable = mkEnableOption "emacs";
+  };
+
+  config = mkIf cfg.enable {
 
     programs.emacs = {
       inherit package;

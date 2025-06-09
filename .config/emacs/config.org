@@ -214,6 +214,11 @@ Set the font based on resolution. The after-make-frame-functions hook will ensur
   (completions-detailed t)
   (enable-recursive-minibuffers t)
   (minibuffer-prompt-properties '(read-only t intangible t cursor-intangible t face minibuffer-prompt)))
+
+(use-package tramp
+  :elpaca nil
+  :custom
+  (tramp-remote-path (append tramp-remote-path '(tramp-own-remote-path))))
 #+end_src
 
 I keep the window opaque on MacOS because I prefer to use floating windows, and I think the transparency looks ugly when you can see other windows behind it.

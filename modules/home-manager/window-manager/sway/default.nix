@@ -15,7 +15,6 @@ let
   right = "l";
   left = "h";
   up = "k";
-  wallpapersDir = "/home/ross/Pictures/wallpapers";
 
   toggleMuteScript = import ../scripts/toggle-mute.nix { inherit pkgs lib; };
   toggleSinkScript = import ../scripts/toggle-sink.nix { inherit pkgs; };
@@ -139,7 +138,7 @@ in
 
             seat = {
               "seat0" = {
-                xcursor_theme = "Catppuccin-Mocha-Dark-Cursors 24";
+                xcursor_theme = "catppuccin-mocha-dark-cursors 24";
               };
             };
 
