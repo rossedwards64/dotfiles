@@ -22,7 +22,7 @@ let
   spotifyScript = import ./scripts/spotify.nix { inherit pkgs; };
   weatherScript = import ./scripts/weather.nix { inherit pkgs; };
   fanSpeedScript = import ./scripts/fan-speed.nix { inherit pkgs; };
-  powerScript = import ../fuzzel/scripts/powermenu.nix { inherit pkgs; };
+  powerScript = import ../fuzzel/scripts/powermenu.nix { inherit pkgs lib; };
 
   makeDisk = (
     disk: path: {

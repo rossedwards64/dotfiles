@@ -1,58 +1,75 @@
-#!/usr/bin/env bash
+#!/usr/bin/env guile
+!#
 
-set -eou pipefail
+(use-modules (ice-9 popen)
+             (ice-9 rdelim)
+             (srfi srfi-1)
+             (srfi srfi-26))
 
-uptime="$(uptime -p | sed -e 's/up //g')"
+(define (usage)
+  "")
 
-shutdown="󰐥 Shutdown"
-reboot="󰜉 Restart"
-lock="󰌾 Lock"
-suspend="󰒲 Sleep"
-logout="󰩈 Logout"
+(define shutdown "󰐥 Shutdown")
+(define reboot "󰜉 Restart")
+(define lock "󰌾 Lock")
+(define suspend "󰒲 Sleep")
+(define logout "󰩈 Logout")
+(define options
+  `((shutdown . ,shutdown)
+    (reboot . ,reboot)
+    (lock . ,lock)
+    (suspend . ,suspend)
+    (logout . ,logout)))
 
-rdialog() {
-	fuzzel -l1 -p "Are you sure?: " --dmenu
-}
+(define (confirmation)
+  (let* ((port (open-input-pipe "fuzzel --dmenu -l1 -p 'Are you sure?: '"))
+         (result (read-line port)))
+    (close-pipe port)
+    result))
 
-options="$lock\n$suspend\n$logout\n$reboot\n$shutdown"
-lines="$(echo -e "$options" | awk 'END{print NR}')"
-chosen="$(echo -e "$options" | fuzzel --password="" -p "UPTIME: $uptime" --dmenu -l "$lines" -w 40)"
+(define (confirm-and-perform on-confirm)
+  (let* ((answer (confirmation))
+         (check-answer
+          (cut any (cut string-ci=? <> answer) <>)))
+    (cond
+     ((check-answer '("y" "yes")) (on-confirm))
+     ((check-answer '("n" "no")) #f)
+     (else (error "Invalid answer.")))))
 
-case $chosen in
-"$shutdown")
-	ans=$(rdialog &)
-	if [[ $ans == "yes" ]] || [[ $ans == "YES" ]] || [[ $ans == "y" ]]; then
-		loginctl poweroff
-	elif [[ $ans == "no" ]] || [[ $ans == "NO" ]] || [[ $ans == "n" ]]; then
-		exit
-	fi
-	;;
-"$reboot")
-	ans=$(rdialog &)
-	if [[ $ans == "yes" ]] || [[ $ans == "YES" ]] || [[ $ans == "y" ]]; then
-		loginctl reboot
-	elif [[ $ans == "no" ]] || [[ $ans == "NO" ]] || [[ $ans == "n" ]]; then
-		exit
-	fi
-	;;
-"$lock")
-	swaylock
-	;;
-"$suspend")
-	ans=$(rdialog &)
-	if [[ $ans == "yes" ]] || [[ $ans == "YES" ]] || [[ $ans == "y" ]]; then
-		playerctl pause
-		loginctl suspend
-	elif [[ $ans == "no" ]] || [[ $ans == "NO" ]] || [[ $ans == "n" ]]; then
-		exit
-	fi
-	;;
-"$logout")
-	ans=$(rdialog &)
-	if [[ $ans == "yes" ]] || [[ $ans == "YES" ]] || [[ $ans == "y" ]]; then
-		loginctl terminate-user $(id -u $(whoami))
-	elif [[ $ans == "no" ]] || [[ $ans == "NO" ]] || [[ $ans == "n" ]]; then
-		exit
-	fi
-	;;
-esac
+(define (uptime)
+  (let* ((port (open-input-pipe "uptime -p"))
+         (result (read-line port)))
+    (close-pipe port)
+    (string-drop result 3)))
+
+(define menu-command-template
+  "echo \"~a\" | fuzzel --password='' -p \"UPTIME: ~a\" --dmenu -l \"~a\" -w 40")
+
+(define menu-command
+  (format #f menu-command-template
+          (string-join (map (cut cdr <>) options) "\n")
+          (uptime) (length options)))
+
+(define (run-menu)
+  (let ((port (open-input-pipe menu-command)))
+    (let ((result (read-line port)))
+      (close-pipe port)
+      (if (eof-object? result)
+          #f
+          (string->symbol
+           (string-downcase
+            (cadr (string-split result #\space))))))))
+
+(case (run-menu)
+  ((shutdown) (confirm-and-perform (cut system* "systemctl" "poweroff")))
+  ((restart) (confirm-and-perform (cut system* "systemctl" "reboot")))
+  ((lock) (system* "swaylock"))
+  ((sleep) (confirm-and-perform (lambda ()
+                                  (system* "playerctl" "pause")
+                                  (system* "systemctl" "suspend"))))
+  ((logout) (confirm-and-perform
+             (cut system* "loginctl" "terminate-user"
+                  (let ((port (open-input-pipe (string-join "id -u " (getenv "USER")))))
+                    (read-line port)))))
+  ((#f) (exit))
+  (else (error "Invalid option.")))

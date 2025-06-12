@@ -20,7 +20,7 @@ let
   toggleSinkScript = import ../scripts/toggle-sink.nix { inherit pkgs; };
   wobScript = import ../scripts/wob.nix { inherit pkgs; };
 
-  powermenuScript = import ../wm-programs/fuzzel/scripts/powermenu.nix { inherit pkgs; };
+  powermenuScript = import ../wm-programs/fuzzel/scripts/powermenu.nix { inherit pkgs lib; };
   screenshotScript = import ../wm-programs/fuzzel/scripts/screenshot.nix { inherit pkgs; };
   windowsScript = import ../wm-programs/fuzzel/scripts/windows.nix { inherit pkgs; };
 

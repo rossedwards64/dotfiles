@@ -26,6 +26,7 @@ in
     home.packages = with pkgs; [
       brightnessctl
       swaynotificationcenter
+      (import ./fuzzel/scripts/powermenu.nix { inherit pkgs lib; })
     ];
 
     programs = {

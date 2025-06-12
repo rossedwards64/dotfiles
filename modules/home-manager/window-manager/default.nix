@@ -11,7 +11,6 @@ in
 {
   imports = [
     ./sway
-    ./hyprland
     ./wm-programs
   ];
 
@@ -22,7 +21,6 @@ in
   config = mkIf cfg.enable {
     modules = {
       sway.enable = true;
-      hyprland.enable = true;
       wm-programs.enable = true;
     };
   };
