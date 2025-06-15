@@ -44,13 +44,15 @@ let
     freetube = "^FreeTube$";
     gameConqueror = "^GameConqueror.py$";
     game = "^(${
-      lib.intersperse "|" [
-        "dwarfort"
-        "factorio"
-        "gamescope"
-        "spring"
-        "godot"
-      ]
+      lib.strings.concatStrings (
+        lib.intersperse "|" [
+          "dwarfort"
+          "factorio"
+          "gamescope"
+          "spring"
+          "godot"
+        ]
+      )
     }).*$";
     intellij = "^jetbrains-idea$";
     itchio = "^itch$";
