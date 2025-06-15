@@ -43,7 +43,15 @@ let
     firefox = "^firefox$";
     freetube = "^FreeTube$";
     gameConqueror = "^GameConqueror.py$";
-    game = "^(dwarfort|factorio|gamescope|spring|youronlymoveishustle).*$";
+    game = "^(${
+      lib.intersperse "|" [
+        "dwarfort"
+        "factorio"
+        "gamescope"
+        "spring"
+        "godot"
+      ]
+    }).*$";
     intellij = "^jetbrains-idea$";
     itchio = "^itch$";
     lutris = "^net.lutris.Lutris$";
@@ -169,7 +177,7 @@ in
               "workspace 6" = [
                 { class = regexp.steam.client; }
                 { class = regexp.epicGames; }
-                { app_id = regexp.itchio; }
+                { class = regexp.itchio; }
                 { app_id = regexp.lutris; }
                 { class = regexp.minecraft; }
                 { app_id = regexp.gameConqueror; }
@@ -250,6 +258,10 @@ in
                 tap = "enabled";
                 natural_scroll = "enabled";
                 middle_emulation = "enabled";
+              };
+
+              "1356:2508:Sony_Interactive_Entertainment_Wireless_Controller_Touchpad" = {
+                events = "disabled";
               };
             };
 

@@ -7,7 +7,7 @@
              (srfi srfi-26))
 
 (define (usage)
-  "")
+  "Launches a fuzzel menu with system power options.")
 
 (define shutdown "󰐥 Shutdown")
 (define reboot "󰜉 Restart")

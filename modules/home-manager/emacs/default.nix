@@ -34,7 +34,6 @@ let
     sbcl
     python3
     ispell
-    shellcheck
   ];
 
   package = pkgs.symlinkJoin {
