@@ -57,6 +57,7 @@ in
 
   environment.systemPackages = with pkgs; [
     atlauncher
+    azahar
     cemu
     flycast
     dolphin-emu

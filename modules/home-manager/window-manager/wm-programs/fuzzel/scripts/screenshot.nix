@@ -1,5 +1,4 @@
 { pkgs, lib }:
-
 let
   name = "screenshot";
 in

@@ -37,7 +37,7 @@ let
 
   regexp = {
     any = ".*";
-    discord = "^legcord$";
+    discord = "^vesktop$";
     emacs = "^emacs(client)?$";
     epicGames = "^heroic$";
     firefox = "^firefox$";
@@ -55,7 +55,10 @@ let
       )
     }).*$";
     intellij = "^jetbrains-idea$";
-    itchio = "^itch$";
+    itchio = {
+      client = "^itch$";
+      game = "^.*\.x86_64$";
+    };
     lutris = "^net.lutris.Lutris$";
     minecraft = "^com-atlauncher-App$";
     mpv = "^mpv$";
@@ -181,12 +184,13 @@ in
               "workspace 6" = [
                 { class = regexp.steam.client; }
                 { class = regexp.epicGames; }
-                { class = regexp.itchio; }
+                { class = regexp.itchio.client; }
                 { app_id = regexp.lutris; }
                 { class = regexp.minecraft; }
                 { app_id = regexp.gameConqueror; }
               ];
               "workspace 7" = [
+                { class = regexp.itchio.game; }
                 { class = regexp.steam.game; }
                 { class = regexp.game; }
                 { app_id = regexp.game; }
@@ -468,7 +472,7 @@ in
               { command = "${pkgs.qbittorrent}/bin/qbittorrent"; }
               { command = "${pkgs.spot}/bin/spot"; }
               { command = "${pkgs.steam}/bin/steam"; }
-              { command = "${pkgs.legcord}/bin/legcord"; }
+              { command = "${pkgs.vesktop}/bin/vesktop"; }
               {
                 command = "${pkgs.flatpak}/bin/flatpak run io.freetubeapp.FreeTube";
               }
