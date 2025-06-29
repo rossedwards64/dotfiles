@@ -21,7 +21,7 @@ let
   wobScript = import ../scripts/wob.nix { inherit pkgs; };
 
   powermenuScript = import ../wm-programs/fuzzel/scripts/powermenu.nix { inherit pkgs lib; };
-  screenshotScript = import ../wm-programs/fuzzel/scripts/screenshot.nix { inherit pkgs; };
+  screenshotScript = import ../wm-programs/fuzzel/scripts/screenshot.nix { inherit pkgs lib; };
   windowsScript = import ../wm-programs/fuzzel/scripts/windows.nix { inherit pkgs; };
 
   emacsPackage = inputs.emacs-overlay.packages.${system}.emacs-git-pgtk;
@@ -77,6 +77,8 @@ in
   };
 
   config = mkIf cfg.enable {
+    home.packages = [ screenshotScript ];
+
     wayland = {
       windowManager = {
         sway = {

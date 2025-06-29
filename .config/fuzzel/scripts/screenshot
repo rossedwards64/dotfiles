@@ -1,146 +1,305 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sbcl --script
 
-set -euo pipefail
+(defpackage :screenshot
+  (:use :cl)
+  (:import-from :com.inuoe.jzon)
+  (:export main))
+(in-package :screenshot)
 
-notify_view() {
-	notify-send -u low --replace-id 699 "Copied to clipboard." "$dir/$file"
-	if [[ -e "$dir/$file" ]]; then
-		notify-send -u low --replace-id 699 "Screenshot Saved."
-	else
-		notify-send -u low --replace-id 699 "Screenshot Deleted."
-	fi
-}
+(defclass window-manager-connection () ()
+  (:documentation "Mixin object for window manager IPC handle objects."))
 
-countdown() {
-	for sec in $(seq "$1" -1 1); do
-		notify-send -t 1000 --replace 699 "Taking shot in : $sec"
-		sleep 1
-	done
-}
+(declaim
+ (ftype (function ()
+                  (values sb-bsd-sockets:socket &optional))
+        connect-to-sway))
+(defun connect-to-sway ()
+  "Returns a handle to the current Sway instance."
+  (let ((swaysock-address (uiop:getenv "SWAYSOCK"))
+        (socket (make-instance 'sb-bsd-sockets:local-socket
+                               :type :stream)))
+    (sb-bsd-sockets:socket-connect socket swaysock-address)))
 
-get_geometry() {
-	if [[ ${XDG_CURRENT_DESKTOP} = "Hyprland" ]]; then
-		hyprctl -j monitors |
-			jq -r "\"\(.[$1].x),\(.[$1].y) \(.[$1].width)x\(.[$1].height)"\"
-	elif [[ ${XDG_CURRENT_DESKTOP} = "sway" ]]; then
-		swaymsg -t get_outputs |
-			jq -r '.[] | select(.focused) | .current_mode | .rect | "\(.x),\(.y) \(.width)x\(.height)"'
-	fi
-}
+(defclass sway-connection (window-manager-connection)
+  ((magic-string :type list
+                 :allocation :class
+                 :initform '(#x69 #x33 #x2d #x69 #x70 #x63)
+                 :reader magic-string)
+   (socket :type sb-bsd-sockets:socket
+           :initform (connect-to-sway)
+           :reader socket))
+   (:documentation "Object containing a handle to the current Sway instance."))
 
-get_resolution() {
-	if [[ ${XDG_CURRENT_DESKTOP} = "Hyprland" ]]; then
-		hyprctl -j monitors |
-			jq -r "\"\(.[$1].width)x\(.[$1].height)\""
-	elif [[ ${XDG_CURRENT_DESKTOP} = "sway" ]]; then
-		swaymsg -t get_outputs |
-			jq -r '.[] | select(.focused) | .current_mode | .rect | "\(.width)x\(.height)"'
-	fi
-}
+(defgeneric destroy (connection)
+  (:documentation "Clean up the window manager IPC connection handle.")
+  (:method ((conn sway-connection))
+    (with-slots ((sock socket)) conn
+      (sb-bsd-sockets:socket-close sock))))
 
-get_position() {
-	if [[ ${XDG_CURRENT_DESKTOP} = "sway" ]]; then
-		swaymsg -t get_tree |
-			jq -r '.. | select(.pid? and .visible?) | .rect | "\(.x),\(.y) \(.width)x\(.height)"'
-	elif [[ ${XDG_CURRENT_DESKTOP} = "Hyprland" ]]; then
-		hyprctl -j activewindow |
-			jq -r '"\(.at[0]),\(.at[1]) \(.size[0])x\(.size[1])"'
-	fi
-}
+(defgeneric make-message (connection type &optional payload)
+  (:documentation "Create a message understable by the window manager IPC.")
+  (:method ((conn sway-connection) (type integer) &optional (payload ""))
+    (with-slots ((magic magic-string)) conn
+      (let* ((length-and-type
+               (mapcan (lambda (num)
+                         (loop for offset from 0 to 24 by 8
+                               collect (logand num (ash #xff offset))))
+                       (list (length payload) type)))
+             (payload (map 'list #'char-code payload))
+             (message (append magic length-and-type payload)))
+        (map 'string #'code-char message)))))
 
-take_shot() {
-	grim -g - - | tee "$file" | wl-copy --type image/png
-}
+(defgeneric send-message (connection message)
+  (:documentation "Send a message to the window manager IPC.")
+  (:method ((conn sway-connection) (message string))
+    (with-slots ((sock socket)) conn
+      (progn
+        (sb-bsd-sockets:socket-send sock message
+                                    (length message))
+        (let* ((buf-size (* 8192 4))
+               (reply (sb-bsd-sockets:socket-receive sock nil buf-size))
+               (reply-start (position-if (lambda (c) (or (equal c #\[) (equal c #\{)))
+                                         reply))
+               (reply (subseq reply reply-start)))
+          (com.inuoe.jzon:parse (remove #\Nul reply)))))))
 
-take_shot_screen() {
-	cd "$dir" && get_geometry "$1" | take_shot
-}
+(defgeneric get-outputs (connection)
+  (:documentation "Get a list of outputs.")
+  (:method ((conn sway-connection))
+    (send-message conn (make-message conn 3))))
 
-take_shot_now() {
-	sleep 0.5 && take_shot_screen "$1"
-	notify_view
-}
+(defgeneric find-output (connection pred)
+  (:documentation "Search for an output using a predicate.")
+  (:method ((conn sway-connection) (pred function))
+    (aref (remove-if-not pred (get-outputs conn)) 0)))
 
-take_shot_delay() {
-	countdown "$2"
-	sleep 1 && take_shot_screen "$1"
-	notify_view
-}
+(defgeneric get-resolution (output window-manager)
+  (:documentation "Get the resolution of the given output.")
+  (:method ((output hash-table) (window-manager (eql :sway)))
+    (declare (ignorable window-manager))
+    (let* ((rect (gethash "rect" output))
+           (width (gethash "width" rect))
+           (height (gethash "height" rect)))
+      (format nil "~ax~a" width height))))
 
-take_shot_win() {
-	sleep 0.5 && cd "$dir" && get_position | take_shot
-	notify_view
-}
+(defgeneric get-geometry (output window-manager)
+  (:documentation "Get the location and resolution of the given output.")
+  (:method ((output hash-table) (window-manager (eql :sway)))
+    (let* ((rect (gethash "rect" output))
+           (x (gethash "x" rect))
+           (y (gethash "y" rect)))
+      (format nil "~a,~a ~a"
+              x y (get-resolution output window-manager)))))
 
-take_shot_area() {
-	cd "$dir" && slurp | take_shot
-	notify_view
-}
+(defgeneric get-output-geometry (connection output)
+  (:documentation "Get the location and resolution of the named output.")
+  (:method ((conn sway-connection) (output string))
+    (let ((output (find-output
+                   conn
+                   (lambda (o) (string-equal output (gethash "name" o))))))
+      (get-geometry output :sway))))
 
-time=$(date +%Y-%m-%d-%I-%M-%S)
-dir="$(xdg-user-dir PICTURES)/Screenshots"
+(defgeneric get-focused-geometry (connection)
+  (:documentation "Get the location and size of the focused output.")
+  (:method ((conn sway-connection))
+    (let ((output (find-output
+                   conn
+                   (lambda (o) (eq t (gethash "focused" o))))))
+      (get-geometry output :sway))))
 
-monitorid="0"
-geometry="$(get_resolution "$monitorid")"
-file="Screenshot_${time}_${geometry}.png"
+(defgeneric get-tree (connection)
+  (:documentation "Get a tree containing the workspaces, containers and windows in the session.")
+  (:method ((conn sway-connection))
+    (send-message conn (make-message conn 4))))
 
-screen1=" Capture Desktop 1"
-screen2=" Capture Desktop 2"
-area=" Capture Area"
-window=" Capture Window"
-infive1=" Take in 3s (Desktop 1)"
-infive2=" Take in 3s (Desktop 2)"
-inten1=" Take in 10s (Desktop 1)"
-inten2=" Take in 10s (Desktop 2)"
+(defgeneric get-position (connection)
+  (:documentation "Get the location and size of the currently focused window.")
+  (:method ((conn sway-connection))
+    (let ((tree (get-tree conn)))
+      (labels ((find-focused-window (tree)
+                 (let ((nodes (coerce (gethash "nodes" tree) 'list)))
+                   (mapcan (lambda (node)
+                             (cond
+                               ((gethash "focused" node)
+                                (let ((rect (gethash "rect" node)))
+                                  (format nil "~a,~a ~ax~a"
+                                          (gethash "x" rect)
+                                          (gethash "y" rect)
+                                          (gethash "width" rect)
+                                          (gethash "height" rect))))
+                               ((not (eq '() nodes))
+                                (find-focused-window node))))
+                           nodes))))
+        (find-focused-window tree)))))
 
-options="$screen1\n$screen2\n$area\n$window\n$infive1\n$infive2\n$inten1\n$inten2"
-lines="$(echo -e "$options" | awk 'END{print NR}')"
+(declaim (ftype (function (&rest string) pathname) resolve-path))
+(defun resolve-path (&rest strings)
+  (pathname (format nil "~{~a~^/~}" strings)))
 
-chosen="$(echo -e "$options" | fuzzel --dmenu -l "$lines")"
+(declaim
+ (ftype (function (string &key (:body string)
+                          (:expire-time number)
+                          (:replace boolean)))
+        notify-send))
+(defun notify-send (header &key (body "") (expire-time 5000) (replace nil))
+  (uiop:run-program
+   (nconc
+    (list "notify-send"
+          "-u" "low"
+          "-t" (write-to-string expire-time)
+          header
+          body)
+    (when replace (list "-r" "10")))))
 
-if [[ ! -d "$dir" ]]; then
-	mkdir -p "$dir"
-fi
+(declaim (ftype (function (pathname)) notify-view))
+(defun notify-view (filename)
+  (notify-send "Copied to clipboard." :body (namestring filename))
+  (notify-send
+   (if (uiop:file-exists-p filename)
+       "Screenshot saved."
+       "Screenshot deleted.")))
 
-case "$chosen" in
-"$screen1" | "$screen2")
-	if [[ "$chosen" = "$screen1" ]]; then
-		monitorid="0"
-	elif [[ "$chosen" = "$screen2" ]]; then
-		monitorid="1"
-	fi
-	geometry="$(get_resolution "$monitorid")"
-	file="Screenshot_${time}_${geometry}.png"
-	take_shot_now "$monitorid"
-	;;
+(declaim (ftype (function (integer)) countdown))
+(defun countdown (seconds)
+  (loop for i from seconds above 0
+        do (notify-send (format nil "Taking shot in: ~a" i))
+        do (sleep 1)))
 
-"$area")
-	take_shot_area
-	;;
+(declaim (ftype (function () string) get-date))
+(defun get-date ()
+  (multiple-value-bind (second minute hour day month year)
+      (get-decoded-time)
+    (format nil "~d-~2,'0d-~2,'0d-~2,'0d-~2,'0d-~2,'0d"
+            year month day hour minute second)))
 
-"$window")
-	take_shot_win
-	;;
+(declaim (ftype (function (string) (string)) trim-newlines))
+(defun trim-newlines (str)
+  (string-trim '(#\Newline) str))
 
-"$infive1" | "$infive2")
-	if [[ "$chosen" = "$infive1" ]]; then
-		monitorid="0"
-	elif [[ "$chosen" = "$infive2" ]]; then
-		monitorid=1
-	fi
-	geometry="$(get_resolution "$monitorid")"
-	file="Screenshot_${time}_${geometry}.png"
-	take_shot_delay "$monitorid" 5
-	;;
+(declaim (ftype (function (string pathname)) take-shot-and-save))
+(defun take-shot-and-save (region filename)
+  (let* ((region (trim-newlines region))
+         (bytes (uiop:run-program
+                 (list "grim" "-g" region "-")
+                 :output :string
+                 :external-format :iso-8859-1)))
+    (ensure-directories-exist (directory-namestring filename))
+    (with-open-file (in filename :direction :output
+                                 :external-format :iso-8859-1
+                                 :if-exists :supersede
+                                 :if-does-not-exist :create)
+      (write-sequence bytes in))
+    (with-input-from-string (in bytes)
+      (uiop:run-program '("wl-copy" "--type=image/png")
+                        :input in
+                        :external-format :iso-8859-1))))
 
-"$inten1" | "$inten2")
-	if [[ "$chosen" = "$inten1" ]]; then
-		monitorid="0"
-	elif [[ "$chosen" = "$inten2" ]]; then
-		monitorid=1
-	fi
-	geometry="$(get_resolution "$monitorid")"
-	file="Screenshot_${time}_${geometry}.png"
-	take_shot_delay "$monitorid" 10
-	;;
-esac
+(defgeneric take-shot (connection filename type &optional output delay)
+  (:documentation "Take a screenshot.")
+  (:method :before (conn filename type &optional output delay)
+    (declare (ignorable conn filename type output))
+    (funcall
+     (typecase delay
+       (integer #'countdown)
+       (float #'sleep)
+       (null #'identity))
+     delay))
+  (:method :after (conn filename type &optional output delay)
+    (declare (ignorable conn type output delay))
+    (notify-view filename))
+  (:method ((conn window-manager-connection) (filename pathname)
+            (type (eql :delay)) &optional output (delay 1))
+    (declare (ignorable delay))
+    (take-shot-and-save (get-output-geometry conn output) filename))
+  (:method ((conn window-manager-connection) (filename pathname)
+            (type (eql :window)) &optional output (delay 0.5))
+    (declare (ignorable output delay))
+    (take-shot-and-save (get-position conn) filename))
+  (:method ((conn window-manager-connection) (filename pathname)
+            (type (eql :area)) &optional output (delay 0))
+    (declare (ignorable output delay))
+    (let ((region (uiop:run-program '("slurp")
+                                    :output '(:string :stripped t))))
+      (take-shot-and-save region filename))))
+
+(let ((capture-screen-template " Capture ~a")
+      (capture-area " Capture Area")
+      (capture-window " Capture Window")
+      (take-in-seconds-template " Take in ~as (~a)"))
+  (defgeneric make-options (conn)
+    (:documentation "Put together a list of possible screenshot options.
+If there are multiple outputs, they will be added to the list with corresponding
+delay 5s and 3s options.")
+    (:method-combination nconc)
+    (:method :around (conn)
+      (sort (call-next-method) #'string>))
+    (:method nconc (conn)
+      (list capture-window capture-area))
+    (:method nconc ((conn sway-connection))
+      (let ((outputs (get-outputs conn)))
+        (nconc
+         (loop for output across outputs
+               for name = (gethash "name" output)
+               nconcing
+               (nconc
+                (list (format nil capture-screen-template name))
+                (loop for i from 3 to 5 by 2
+                      nconcing (list
+                                (format nil
+                                        take-in-seconds-template
+                                        i name)))))))))
+
+  (declaim
+   (ftype (function (string)
+                    (values keyword
+                            string
+                            (or number null)))
+          get-screenshot-args))
+  (defun get-screenshot-args (option)
+    (cond
+      ((string= capture-area option) (values :area "" nil))
+      ((string= capture-window option) (values :window "" nil))
+      ((search "Capture" option)
+       (values :delay (third (uiop:split-string option)) 0.5))
+      ((search "Take in" option)
+       (values :delay
+               (remove-if
+                (lambda (c)
+                  (or (char-equal #\( c)
+                      (char-equal #\) c)))
+                (fifth (uiop:split-string option)))
+               (let ((digit (find-if #'digit-char-p option)))
+                 (if (not (null digit))
+                     (parse-integer (string digit))
+                     (error "Could not get digit.")))))
+      (t (error "Invalid option.")))))
+
+(declaim (ftype (function (list) (string)) choose-option))
+(defun choose-option (options)
+  (with-input-from-string (in (format nil "~{~a~^~%~}" options))
+    (multiple-value-bind (output error-output exit-code)
+        (uiop:run-program (list "fuzzel" "--dmenu"
+                                "-l" (write-to-string (length options)))
+                          :input in
+                          :output '(:string :stripped t)
+                          :ignore-error-status t)
+      (declare (ignorable error-output))
+      (if (= exit-code 0)
+          (trim-newlines output)
+          (error "Exiting.")))))
+
+(defun main (&rest argv)
+  (declare (ignorable argv))
+  (let* ((screenshots-dir (resolve-path
+                           (uiop:run-program '("xdg-user-dir" "PICTURES")
+                                             :output '(:string :stripped t))
+                           "Screenshots/"))
+         (date (get-date))
+         (filename (merge-pathnames
+                    (format nil "Screenshot_~a.png" date)
+                    screenshots-dir))
+         (sway (make-instance 'sway-connection)))
+    (unwind-protect (let ((option (choose-option (make-options sway))))
+                      (multiple-value-bind (type delay) (get-screenshot-args option)
+                        (take-shot sway filename type delay)))
+      (destroy sway))))
