@@ -101,7 +101,6 @@
 (define sbcl-packages-template
   "(sbcl.withPackages (
   ~14tps: with ps; [
-  ~16tasdf
   ~16t~{~a\n  ~}
   ~14t]
   ~12t))")
@@ -287,10 +286,10 @@
    #:init-value "(defpackage :~a
     (:use :cl)
     (:export #:main))
-  (in-package :~a)
+(in-package :~a)
 
-  (defun main ()
-    (print \"Hello, world!\"))
+(defun main ()
+  (print \"Hello, world!\"))
   "
    #:getter get-main-file-content))
 

@@ -46,11 +46,14 @@ let
     game = "^(${
       lib.strings.concatStrings (
         lib.intersperse "|" [
+          "VampireSurvivors.exe"
+          "soulstorm"
           "dwarfort"
           "factorio"
           "gamescope"
-          "spring"
           "godot"
+          "nwmain-linux"
+          "spring"
         ]
       )
     }).*$";

@@ -14,37 +14,8 @@ in
   };
 
   config = mkIf cfg.enable {
-    nixpkgs.config.permittedInsecurePackages = [
-      "dotnet-runtime-6.0.36"
-      "dotnet-sdk-6.0.36"
-      "dotnet-sdk-6.0.428"
-    ];
 
     environment.systemPackages = with pkgs; [
-      #devilutionx
-      #fallout2-ce
-      duckstation
-      fallout-ce
-      fceux
-      gamemode
-      gamescope
-      gzdoom
-      heroic
-      itch
-      lutris
-      mangohud
-      mupen64plus
-      openjk
-      openmw
-      openra
-      openrct2
-      openttd
-      protontricks
-      snes9x
-      space-station-14-launcher
-      srb2
-      srb2kart
-
       (steam.override {
         extraLibraries =
           pkgs: with pkgs; [
