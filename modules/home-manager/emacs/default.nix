@@ -31,7 +31,16 @@ let
   emacsPackage = (pkgs.emacsPackagesFor emacs-git-pgtk).emacsWithPackages emacsPackages;
   extraPrograms = with pkgs; [
     guile
-    sbcl
+    (sbcl.withPackages (
+      ps: with ps; [
+        com_dot_inuoe_dot_jzon
+        serapeum
+        closer-mop
+        str
+        trivial-types
+        unix-opts
+      ]
+    ))
     python3
     ispell
   ];

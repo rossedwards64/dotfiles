@@ -22,6 +22,8 @@ in
       zsh = {
         enable = true;
         enableCompletion = true;
+        autocd = true;
+        dotDir = "${xdg.configHome}/zsh";
         historySubstringSearch.enable = true;
 
         autosuggestion = {
@@ -109,9 +111,6 @@ in
         completionInit = ''
           autoload -Uz compinit
         '';
-
-        autocd = true;
-        dotDir = ".config/zsh";
 
         shellAliases = {
           vim = "${pkgs.neovim}/bin/nvim";

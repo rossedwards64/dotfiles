@@ -30,7 +30,6 @@ in
           overflow_mode = "nowrap";
           height = 30;
           width = 300;
-          output_mode = "focused";
         };
       };
     };

@@ -23,7 +23,6 @@ in
     home.packages = with pkgs; [
       #devilutionx
       #fallout2-ce
-      duckstation
       fallout-ce
       fceux
       gamemode
