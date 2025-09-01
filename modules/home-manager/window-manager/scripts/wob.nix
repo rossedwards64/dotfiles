@@ -1,67 +1,67 @@
-{ pkgs }:
-
-pkgs.writeShellApplication {
+{ pkgs, lib }:
+let
   name = "wob";
-  runtimeInputs = with pkgs; [
-    bc
-    wob
-    brightnessctl
-    wireplumber
-    findutils
-  ];
+in
+pkgs.writers.makeBinWriter
+  (
+    let
+      sbcl = (
+        pkgs.sbcl.withPackages (
+          ps: with ps; [
+            serapeum
+            str
+            unix-opts
+          ]
+        )
+      );
+      compileArgs = lib.escapeShellArgs [
+        "--no-userinit"
+        "--no-sysinit"
+        "--non-interactive"
+        "--disable-debugger"
+        "--eval"
+        ''(load (sb-ext:posix-getenv "ASDF"))''
+        "--eval"
+        ''(asdf:load-system "serapeum")''
+        "--eval"
+        ''(asdf:load-system "str")''
+        "--eval"
+        ''(asdf:load-system "unix-opts")''
+        "--load"
+        "tmp.lisp"
+        "--eval"
+        ''(sb-ext:save-lisp-and-die "${name}" :executable t :toplevel #'${name}:main)''
+        "--eval"
+        "(quit)"
+      ];
+    in
+    {
+      compileScript = ''
+        cp $contentPath tmp.lisp
+        ${sbcl}/bin/sbcl ${compileArgs}
+        mv ${name} $out
+      '';
 
-  text = ''
-    SYS=
-    VAL=
-    WOBSOCK="$XDG_RUNTIME_DIR/wob.sock"
-    SINK="@DEFAULT_AUDIO_SINK@"
-
-    set_volume() {
-        wpctl set-volume -l 1.5 "$SINK" "$VAL"
-        local cur_vol
-        cur_vol="$(wpctl get-volume "$SINK" |
-            cut -c 9-12 |
-            xargs -I '{}' echo 'scale=4;{}*100' |
-            bc |
-            cut -d "." -f 1)"
-        echo "$cur_vol"
-        echo "$cur_vol" >"$WOBSOCK"
+      strip = false;
+      makeWrapperArgs = [
+        "--set"
+        "PATH"
+        (lib.makeBinPath (
+          with pkgs;
+          [
+            brightnessctl
+            coreutils
+            wireplumber
+            wob
+            xdg-user-dirs
+          ]
+        ))
+      ];
     }
-
-    set_brightness() {
-        local cur_bright
-        cur_bright="$(brightnessctl set "$VAL" | sed -En 's/.*\(([0-9]+)%\).*/\1/p')"
-        echo "$cur_bright" >"$WOBSOCK"
-        exit 0
-    }
-
-    while getopts "vbs:i:d:" opt; do
-        case "''${opt}" in
-            v)
-                [ -n "$SYS" ] && exit 1 || SYS="volume"
-                ;;
-            b)
-                [ -n "$SYS" ] && exit 1 || SYS="brightness"
-                ;;
-            s)
-                WOBSOCK="''${OPTARG}"
-                ;;
-            i)
-                [ -n "$VAL" ] && exit 1 || VAL="''${OPTARG}%+"
-                ;;
-            d)
-                [ -n "$VAL" ] && exit 1 || VAL="''${OPTARG}%-"
-                ;;
-            *)
-                exit 1
-                ;;
-        esac
-    done
-
-    if [[ "$SYS" == "volume" ]]; then
-        set_volume
-    elif [[ "$SYS" == "brightness" ]]; then
-        set_brightness
-    fi
-  '';
-}
+  )
+  "/bin/wob"
+  (
+    lib.strings.replaceStrings [ "#!/usr/bin/env sbcl --script" ] [ "" ] (
+      lib.readFile ../../../../.local/share/bin/wob
+    )
+  )

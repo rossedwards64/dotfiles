@@ -18,7 +18,7 @@ let
 
   toggleMuteScript = import ../scripts/toggle-mute.nix { inherit pkgs lib; };
   toggleSinkScript = import ../scripts/toggle-sink.nix { inherit pkgs; };
-  wobScript = import ../scripts/wob.nix { inherit pkgs; };
+  wobScript = import ../scripts/wob.nix { inherit pkgs lib; };
 
   powermenuScript = import ../wm-programs/fuzzel/scripts/powermenu.nix { inherit pkgs lib; };
   screenshotScript = import ../wm-programs/fuzzel/scripts/screenshot.nix { inherit pkgs lib; };
@@ -108,15 +108,15 @@ in
 
           extraConfig = ''
             bindsym --locked {
-                XF86AudioRaiseVolume exec ${wobScript}/bin/wob "-v" "-i5"
-                XF86AudioLowerVolume exec ${wobScript}/bin/wob "-v" "-d5"
+                XF86AudioRaiseVolume exec ${wobScript}/bin/wob "-t" "volume" "-v" "5+"
+                XF86AudioLowerVolume exec ${wobScript}/bin/wob "-t" "volume" "-v" "5-"
                 XF86AudioMute exec ${toggleMuteScript}/bin/toggle-mute -s
                 XF86AudioMicMute exec ${toggleMuteScript}/bin/toggle-mute -m
                 XF86AudioPlay exec ${pkgs.playerctl}/bin/playerctl play-pause
                 XF86AudioNext exec ${pkgs.playerctl}/bin/playerctl next
                 XF86AudioPrev exec ${pkgs.playerctl}/bin/playerctl previous
-                XF86MonBrightnessUp exec ${wobScript}/bin/wob "-b" "-i5"
-                XF86MonBrightnessDown exec ${wobScript}/bin/wob "-b" "-d5"
+                XF86MonBrightnessUp exec ${wobScript}/bin/wob "-t" "brightness" "-v" "5+"
+                XF86MonBrightnessDown exec ${wobScript}/bin/wob "-t" "brightness" "-v" "5-"
             }
 
             bindgesture {
@@ -292,85 +292,84 @@ in
             window = {
               border = 1;
 
-              commands =
+              commands = [
+                {
+                  criteria = {
+                    title = "^(?!Steam).*$";
+                    class = regexp.steam.client;
+                  };
+
+                  command = ''
+                    {
+                      floating enable
+                      resize set 80ppt 80ppt;
+                    }
+                  '';
+                }
+                {
+                  criteria = {
+                    all = true;
+                  };
+
+                  command = ''
+                    {
+                      inhibit_idle fullscreen
+                      title_format "<b>%title</b> (%app_id%instance,%shell)"
+                    }
+                  '';
+                }
+              ]
+              ++ (
                 [
-                  {
-                    criteria = {
-                      title = "^(?!Steam).*$";
-                      class = regexp.steam.client;
-                    };
-
-                    command = ''
-                      {
-                        floating enable
-                        resize set 80ppt 80ppt;
-                      }
-                    '';
-                  }
-                  {
-                    criteria = {
-                      all = true;
-                    };
-
-                    command = ''
-                      {
-                        inhibit_idle fullscreen
-                        title_format "<b>%title</b> (%app_id%instance,%shell)"
-                      }
-                    '';
-                  }
+                  "pop-up"
+                  "task_dialog"
+                  "dialog"
                 ]
-                ++ (
-                  [
-                    "pop-up"
-                    "task_dialog"
-                    "dialog"
-                  ]
-                  |> builtins.concatMap (window_role: [
-                    {
-                      criteria = {
-                        inherit window_role;
-                      };
-                      command = "floating enable";
-                    }
-                  ])
-                )
-                ++ (
-                  [
-                    regexp.steam.game
-                    regexp.game
-                  ]
-                  |> builtins.concatMap (class: [
-                    {
-                      criteria.class = class;
-                      command = focusOnGameCommand;
-                    }
-                    {
-                      criteria.app_id = class;
-                      command = focusOnGameCommand;
-                    }
-                  ])
-                )
-                ++ (
-                  [
-                    regexp.volume
-                    regexp.zathura
-                    regexp.qBitTorrent
-                  ]
-                  |> builtins.map (app_id: {
+                |> builtins.concatMap (window_role: [
+                  {
                     criteria = {
-                      inherit app_id;
+                      inherit window_role;
                     };
-                    command = ''
-                      {
-                        floating enable
-                        move to scratchpad
-                        move position center
-                        resize set 80ppt 80ppt
-                      }
-                    '';
-                  })
-                );
+                    command = "floating enable";
+                  }
+                ])
+              )
+              ++ (
+                [
+                  regexp.steam.game
+                  regexp.game
+                ]
+                |> builtins.concatMap (class: [
+                  {
+                    criteria.class = class;
+                    command = focusOnGameCommand;
+                  }
+                  {
+                    criteria.app_id = class;
+                    command = focusOnGameCommand;
+                  }
+                ])
+              )
+              ++ (
+                [
+                  regexp.volume
+                  regexp.zathura
+                  regexp.qBitTorrent
+                ]
+                |> builtins.map (app_id: {
+                  criteria = {
+                    inherit app_id;
+                  };
+                  command = ''
+                    {
+                      floating enable
+                      move to scratchpad
+                      move position center
+                      resize set 80ppt 80ppt
+                    }
+                  '';
+                })
+              );
             };
 
             keybindings =

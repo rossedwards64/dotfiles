@@ -1,0 +1,85 @@
+#!/usr/bin/env sbcl --script
+
+(defpackage :wob
+  (:use #:cl)
+  (:import-from :serapeum)
+  (:import-from :str)
+  (:import-from :unix-opts)
+  (:export main))
+
+(in-package :wob)
+
+(defun parse-value (arg)
+  (labels ((operator-pred (pred)
+             (apply #'alexandria:disjoin
+                    (mapcar (lambda (prefix)
+                              (lambda (str)
+                                (funcall pred `(,str) prefix)))
+                            '("+" "-"))))
+           (operator-prefixed-p (str)
+             (funcall (operator-pred #'str:prefixp) str))
+           (operator-suffixed-p (str)
+             (funcall (operator-pred #'str:suffixp) str)))
+    (cond
+      ((operator-prefixed-p arg)
+       (format nil "~a%~a"
+               (str:s-rest arg)
+               (str:s-first arg)))
+      ((operator-suffixed-p arg)
+       (format nil "~a%~a"
+               (str:substring 0 (- (length arg) 1) arg)
+               (str:s-last arg)))
+      (t (format nil "~a%" arg)))))
+
+(opts:define-opts
+  (:name :help
+   :description "Print help text."
+   :short #\h
+   :long "help")
+  (:name :type
+   :description "Type of value to modify."
+   :required t
+   :short #\t
+   :long "type"
+   :arg-parser (lambda (arg) (read-from-string (format nil ":~a" arg)))
+   :meta-var "TYPE")
+  (:name :value
+   :description "The value to increment/decrement by."
+   :required t
+   :short #\v
+   :long "value"
+   :arg-parser #'parse-value
+   :meta-var "VALUE")
+  (:name :pipe
+   :description "Path to the wob pipe."
+   :short #\p
+   :long "pipe"
+   :arg-parser #'identity
+   :meta-var "PIPE"))
+
+(defgeneric set-value (value-type value &optional pipe-path)
+  (:method :around (value-type (value string)
+                    &optional (pipe-path (merge-pathnames #P"wob.sock"
+                                                          (uiop:xdg-runtime-dir))))
+    (let ((new-value (call-next-method)))
+      (uiop:launch-program `("echo" ,new-value) :output pipe-path)))
+  (:method ((value-type (eql :volume)) (value string) &optional pipe-path)
+    (declare (ignorable pipe-path))
+    (let ((default-sink "@DEFAULT_SINK@"))
+      (uiop:run-program `("wpctl" "set-volume" "-l" "1.5" ,default-sink ,value))
+      (let* ((output (uiop:run-program `("wpctl" "get-volume" ,default-sink)
+                                       :output '(:string :stripped t)))
+             (volume (serapeum:parse-number (subseq output 9 12))))
+        (write-to-string (round (* 100 volume))))))
+  (:method ((value-type (eql :brightness)) (value string) &optional pipe-path)
+    (declare (ignorable pipe-path))
+    (let* ((output (uiop:run-program `("brightnessctl" "set" ,value "-m")
+                                     :output '(:string :stripped t)))
+           (brightness (fourth (str:split "," output))))
+      (str:replace-first "%" "" brightness))))
+
+(defun main (&rest argv)
+  (let* ((opts (opts:get-opts (or argv (uiop:command-line-arguments))))
+         (value (getf opts :value))
+         (type (getf opts :type)))
+    (set-value type value)))

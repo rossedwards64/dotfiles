@@ -24,7 +24,7 @@ in
           default_session = {
             user = "ross";
             command = ''
-              ${pkgs.greetd.tuigreet}/bin/tuigreet --cmd ${pkgs.sway}/bin/sway -t -g \
+              ${pkgs.tuigreet}/bin/tuigreet --cmd ${pkgs.sway}/bin/sway -t -g \
                   'WELCOME TO WORM LINUX' --asterisks
             '';
           };
