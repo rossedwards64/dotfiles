@@ -16,6 +16,7 @@ in
   imports = [ ./hardware-configuration.nix ];
   hardware.graphics.extraPackages = [ pkgs.intel-vaapi-driver ];
   boot = {
+    kernelPackages = pkgs.linuxPackages_latest;
     loader = {
       efi = {
         canTouchEfiVariables = true;

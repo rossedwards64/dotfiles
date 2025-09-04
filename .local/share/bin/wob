@@ -69,7 +69,7 @@
       (uiop:run-program `("wpctl" "set-volume" "-l" "1.5" ,default-sink ,value))
       (let* ((output (uiop:run-program `("wpctl" "get-volume" ,default-sink)
                                        :output '(:string :stripped t)))
-             (volume (serapeum:parse-number (subseq output 9 12))))
+             (volume (serapeum:parse-number (str:substring 8 12 output))))
         (write-to-string (round (* 100 volume))))))
   (:method ((value-type (eql :brightness)) (value string) &optional pipe-path)
     (declare (ignorable pipe-path))
