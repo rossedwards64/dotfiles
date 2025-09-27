@@ -46,13 +46,13 @@ let
     game = "^(${
       lib.strings.concatStrings (
         lib.intersperse "|" [
+          "Godot_Engine"
           "VampireSurvivors.exe"
-          "soulstorm"
           "dwarfort"
           "factorio"
           "gamescope"
-          "godot"
           "nwmain-linux"
+          "soulstorm"
           "spring"
         ]
       )
@@ -146,6 +146,30 @@ in
             workspaceLayout = "tabbed";
 
             workspaceOutputAssign = [
+              {
+                workspace = "1";
+                output = "HDMI-A-1";
+              }
+              {
+                workspace = "2";
+                output = "DP-1";
+              }
+              {
+                workspace = "3";
+                output = "DP-1";
+              }
+              {
+                workspace = "4";
+                output = "DP-2";
+              }
+              {
+                workspace = "5";
+                output = "DP-1";
+              }
+              {
+                workspace = "6";
+                output = "DP-2";
+              }
               {
                 workspace = "7";
                 output = "HDMI-A-1";

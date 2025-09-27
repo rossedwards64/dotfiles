@@ -63,7 +63,7 @@ in
     dolphin-emu
     pcsx2
     rpcs3
-    ryujinx
+    ryubing
     xemu
     lact
   ];
