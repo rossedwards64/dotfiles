@@ -724,7 +724,7 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
 #+end_src
 
 * Internet
-#+begin_src emacs-lisp :tangle (if (eq system-type 'android) "no" "yes")
+#+begin_src emacs-lisp :tangle (if (eq system-type 'android) "no" "./init.el")
 (use-package mu4e
   :elpaca nil
   :when (and (executable-find "mbsync")
@@ -935,7 +935,7 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
 #+end_src
 
 ** Language Servers
-#+begin_src emacs-lisp :noweb strip-export :tangle (if (eq system-type 'android) "no" "yes")
+#+begin_src emacs-lisp :noweb strip-export :tangle (if (eq system-type 'android) "no" "./init.el")
 (use-package lsp-mode
   :hook
   ((lsp-mode . (lambda ()
@@ -1013,7 +1013,7 @@ This is a workaround for [[https://github.com/emacs-lsp/lsp-mode/issues/4332][th
 
 ** Programming Languages
 *** C/C++
-#+begin_src emacs-lisp :tangle (if (eq system-type 'android) "no" "yes")
+#+begin_src emacs-lisp :tangle (if (eq system-type 'android) "no" "./init.el")
 (use-package cc-mode
   :elpaca nil
   :hook
@@ -1039,7 +1039,7 @@ This is a workaround for [[https://github.com/emacs-lsp/lsp-mode/issues/4332][th
 #+end_src
 
 *** Rust
-#+begin_src emacs-lisp :tangle (if (eq system-type 'android) "no" "yes")
+#+begin_src emacs-lisp :tangle (if (eq system-type 'android) "no" "./init.el")
 (use-package rustic
   :custom
   (lsp-rust-analyzer-cargo-watch-command "clippy"))
@@ -1053,7 +1053,7 @@ This is a workaround for [[https://github.com/emacs-lsp/lsp-mode/issues/4332][th
 #+end_src
 
 **** Clojure
-#+begin_src emacs-lisp :tangle (if (eq system-type 'android) "no" "yes")
+#+begin_src emacs-lisp :tangle (if (eq system-type 'android) "no" "./init.el")
 (use-package cider
   :hook ((clojure-mode . cider-jack-in-clj)
          (clojurescript-mode . cider-jack-in-cljs)))
@@ -1128,7 +1128,7 @@ It's a bit of a pain having to do 'M-x sly' every time I open a Lisp project.
 
 *** Nix
 No point loading these if not on NixOS.
-#+begin_src emacs-lisp :tangle (if (eq system-type 'android) "no" "yes")
+#+begin_src emacs-lisp :tangle (if (eq system-type 'android) "no" "./init.el")
 (use-package nix-mode
   :when (nixos-p)
   :after lsp-mode
@@ -1152,7 +1152,7 @@ No point loading these if not on NixOS.
 #+end_src
 
 *** Embedded
-#+begin_src emacs-lisp :tangle (if (eq system-type 'android) "no" "yes")
+#+begin_src emacs-lisp :tangle (if (eq system-type 'android) "no" "./init.el")
 (use-package platformio-mode)
 (use-package arduino-mode
   :hook ((arduino-mode . irony-mode))
@@ -1162,7 +1162,7 @@ No point loading these if not on NixOS.
 #+end_src
 
 *** Shell
-#+begin_src emacs-lisp :tangle (if (eq system-type 'android) "no" "yes")
+#+begin_src emacs-lisp :tangle (if (eq system-type 'android) "no" "./init.el")
 (with-eval-after-load "company"
   (use-package company-shell))
 
@@ -1171,7 +1171,7 @@ No point loading these if not on NixOS.
 #+end_src
 
 *** LaTeX
-#+begin_src emacs-lisp :tangle (if (eq system-type 'android) "no" "yes")
+#+begin_src emacs-lisp :tangle (if (eq system-type 'android) "no" "./init.el")
 (use-package lsp-latex)
 
 (use-package auctex
@@ -1218,7 +1218,7 @@ No point loading these if not on NixOS.
 #+end_src
 
 *** Haskell
-#+begin_src emacs-lisp :tangle (if (eq system-type 'android) "no" "yes")
+#+begin_src emacs-lisp :tangle (if (eq system-type 'android) "no" "./init.el")
 (use-package haskell-mode)
 (use-package flycheck-haskell)
 (use-package lsp-haskell)
@@ -1227,7 +1227,7 @@ No point loading these if not on NixOS.
 #+end_src
 
 *** Scala
-#+begin_src emacs-lisp :tangle (if (eq system-type 'android) "no" "yes")
+#+begin_src emacs-lisp :tangle (if (eq system-type 'android) "no" "./init.el")
 (use-package scala-mode)
 (use-package sbt-mode)
 (use-package lsp-metals
@@ -1287,7 +1287,7 @@ No point loading these if not on NixOS.
 #+end_src
 
 * Lemmy
-#+begin_src emacs-lisp :tangle (if (eq system-type 'android) "no" "yes")
+#+begin_src emacs-lisp :tangle (if (eq system-type 'android) "no" "./init.el")
 (use-package lem
   :custom
   (lem-current-user "DrGamerPhD")
@@ -1295,7 +1295,7 @@ No point loading these if not on NixOS.
 #+end_src
 
 * Finance
-#+begin_src emacs-lisp :tangle (if (eq system-type 'android) "no" "yes")
+#+begin_src emacs-lisp :tangle (if (eq system-type 'android) "no" "./init.el")
 (use-package ledger-mode)
 (use-package flymake-hledger)
 #+end_src
