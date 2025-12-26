@@ -112,7 +112,7 @@
             inherit (font) package name;
           };
           emoji = {
-            package = pkgs.noto-fonts-emoji;
+            package = pkgs.noto-fonts-color-emoji;
             name = "Noto Emoji";
           };
         };
@@ -136,6 +136,7 @@
                 ...
               }:
               {
+                nix.extraOptions = "experimental-features = nix-command flakes pipe-operators";
                 nixpkgs.config.allowUnfree = true;
                 stylix = stylixConfig;
                 modules = {
@@ -151,7 +152,8 @@
                 };
               }
             )
-          ] ++ extraModules;
+          ]
+          ++ extraModules;
         };
 
       makeThinkpad =
@@ -183,7 +185,7 @@
           inherit pkgs extraSpecialArgs;
           modules = [
             inputs.stylix.homeModules.stylix
-            inputs.plasma-manager.homeManagerModules.plasma-manager
+            inputs.plasma-manager.homeModules.plasma-manager
             ./modules/home-manager
             ./home/home.nix
             (
@@ -221,7 +223,8 @@
                 };
               }
             )
-          ] ++ extraModules;
+          ]
+          ++ extraModules;
         };
     in
     {
@@ -253,12 +256,30 @@
         ];
       };
 
-      homeConfigurations =
-        {
-          "${username}@ross-desktop" = makeHome [
+      homeConfigurations = {
+        "${username}@ross-desktop" = makeHome [
+          {
+            stylix.fonts.sizes = {
+              inherit (largeFontSizes)
+                applications
+                desktop
+                terminal
+                popups
+                ;
+            };
+          }
+        ];
+      }
+      // (
+        [
+          "${username}@ross-thinkpad-x230"
+          "${username}@ross-thinkpad-x200"
+        ]
+        |> builtins.map (hostname: {
+          "${hostname}" = makeHome [
             {
               stylix.fonts.sizes = {
-                inherit (largeFontSizes)
+                inherit (smallFontSizes)
                   applications
                   desktop
                   terminal
@@ -267,27 +288,8 @@
               };
             }
           ];
-        }
-        // (
-          [
-            "${username}@ross-thinkpad-x230"
-            "${username}@ross-thinkpad-x200"
-          ]
-          |> builtins.map (hostname: {
-            "${hostname}" = makeHome [
-              {
-                stylix.fonts.sizes = {
-                  inherit (smallFontSizes)
-                    applications
-                    desktop
-                    terminal
-                    popups
-                    ;
-                };
-              }
-            ];
-          })
-          |> lib.attrsets.mergeAttrsList
-        );
+        })
+        |> lib.attrsets.mergeAttrsList
+      );
     };
 }

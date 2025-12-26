@@ -77,7 +77,6 @@ in
       openssh.enable = true;
       power-profiles-daemon.enable = false; # conflicts with TLP.
       udev.packages = with pkgs; [
-        android-udev-rules
         platformio-core.udev
         openocd
       ];

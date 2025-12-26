@@ -23,7 +23,8 @@ in
     home.packages = with pkgs; [
       #devilutionx
       #fallout2-ce
-      fallout-ce
+      #fallout-ce
+      #openrct2
       fceux
       gamemode
       gamescope
@@ -35,14 +36,13 @@ in
       openjk
       openmw
       openra
-      openrct2
       openttd
       protontricks
       scanmem
       snes9x
       space-station-14-launcher
       srb2
-      srb2kart
+      #srb2kart
       mupen64plus
     ];
 

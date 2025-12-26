@@ -77,6 +77,13 @@ in
           name = "Ross";
           isDefault = true;
           settings = {
+            "sidebar.verticalTabs" = true;
+            "sidebar.main.tools" = "syncedtabs,history,bookmarks";
+            "sidebar.expandOnHover" = false;
+            "browser.newtabpage.activity-stream.feeds.section.topstories" = false;
+            "browser.newtabpage.activity-stream.showSponsored" = false;
+            "browser.newtabpage.activity-stream.discoverysteam.enabled" = false;
+            "browser.newtabpage.activity-stream.telemetry" = false;
             "browser.startup.homepage" = defaultEngine.url;
             "browser.search.defaultenginename" = defaultEngine.name;
             "browser.search.order.1" = defaultEngine.name;

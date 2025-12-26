@@ -308,6 +308,10 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
 (defun nixos-p ()
   (string-match-p "NixOS" (shell-command-to-string "uname -v")))
 
+(defun get-emacs-build-date ()
+  (string-match "--prefix.*emacs.*\\([[:digit:]]\\{8\\}\\)" system-configuration-options)
+  (string-to-number (match-string 1 system-configuration-options)))
+
 (defun ross/open-config ()
   "Switch to `config.org'."
   (interactive)
@@ -1155,6 +1159,7 @@ No point loading these if not on NixOS.
 #+begin_src emacs-lisp :tangle (if (eq system-type 'android) "no" "./init.el")
 (use-package platformio-mode)
 (use-package arduino-mode
+  :disabled t
   :hook ((arduino-mode . irony-mode))
   :config
   (add-to-list 'irony-supported-major-modes 'arduino-mode)
@@ -1344,9 +1349,9 @@ for Elpaca, obtained from [[https://github.com/progfolio/elpaca#installer][the E
 #+NAME: package-manager
 #+begin_src emacs-lisp :tangle no
 (when (nixos-p)
-  (setq elpaca-core-date 20241229)) ;; update this on the next emacs release
+  (setq elpaca-core-date (get-emacs-build-date))) ;; update this on the next emacs release
 
-(defvar elpaca-installer-version 0.10)
+(defvar elpaca-installer-version 0.11)
 (defvar elpaca-directory (expand-file-name "elpaca/" user-emacs-directory))
 (defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
 (defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
@@ -1381,7 +1386,7 @@ for Elpaca, obtained from [[https://github.com/progfolio/elpaca#installer][the E
   (unless (require 'elpaca-autoloads nil t)
     (require 'elpaca)
     (elpaca-generate-autoloads "elpaca" repo)
-    (load "./elpaca-autoloads")))
+    (let ((load-source-file-function nil)) (load "./elpaca-autoloads"))))
 (add-hook 'after-init-hook #'elpaca-process-queues)
 (elpaca `(,@elpaca-order))
 

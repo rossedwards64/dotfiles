@@ -17,7 +17,7 @@ in
   config = mkIf cfg.enable {
     home.packages = with pkgs; [
       btop
-      du-dust
+      dust
       ffmpeg
       fzf
       gcr
@@ -39,8 +39,10 @@ in
     programs = {
       git = {
         enable = true;
-        userEmail = "redwards64@hotmail.com";
-        userName = "Ross Edwards";
+        settings.user = {
+          email = "redwards64@hotmail.com";
+          name = "Ross Edwards";
+        };
       };
 
       gpg = {

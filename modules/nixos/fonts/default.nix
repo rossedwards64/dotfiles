@@ -22,7 +22,7 @@ in
         iosevka
         noto-fonts
         noto-fonts-cjk-sans
-        noto-fonts-emoji
+        noto-fonts-color-emoji
         source-code-pro
         source-han-mono
         source-han-sans
@@ -33,14 +33,24 @@ in
       fontDir.enable = true;
       fontconfig = {
         enable = true;
+        cache32Bit = true;
+        localConf = lib.readFile ../../../.config/fontconfig/fonts.conf;
 
         defaultFonts = {
-          serif = [ "Iosevka Slab" ];
-          sansSerif = [ "Iosevka SS08" ];
-          monospace = [ "Iosevka" ];
+          serif = [
+            "Iosevka Slab"
+            "Source Han Serif SC"
+          ];
+          sansSerif = [
+            "Iosevka SS08"
+            "Source Han Serif SC"
+          ];
+          monospace = [
+            "Iosevka"
+            "Source Han Serif SC"
+            "Sarasa Mono SC"
+          ];
         };
-
-        localConf = lib.readFile ../../../.config/fontconfig/fonts.conf;
       };
     };
   };
