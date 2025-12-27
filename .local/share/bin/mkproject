@@ -18,7 +18,8 @@
      lisp,
      scheme,
      clojure,
-     scala
+     scala,
+     haskell
   p: Project packages.
   d: Project directory.
   h: Print usage.")
@@ -140,6 +141,13 @@
   clean:
   ~/-rm -f $(BUILD_DIR)/$(TARGET)
   ")
+
+(define ghc-packages-template
+  "(ghc.withPackages (
+  ~14tps: with ps; [
+  ~16t~{~a\n  ~}
+  ~14t]
+  ~12t))")
 
 (define missing-lang-or-dir-error "Must provide a language and directory.")
 
@@ -293,6 +301,17 @@
   "
    #:getter get-main-file-content))
 
+(define-method (initialize (self <lisp-project>) initargs)
+  (let-keywords initargs #f (packages directory lisp-packages)
+                (let ((sbcl-packages
+                       (list (format #f sbcl-packages-template
+                                     lisp-packages)))
+                      (main-file (string-append (file-name directory) ".lisp")))
+                  (next-method self (list #:packages packages
+                                          #:directory directory
+                                          #:lisp-packages sbcl-packages
+                                          #:main-file main-file)))))
+
 (define-method (make-project (self <lisp-project>))
   (next-method)
   (let* ((main-file (get-main-file self))
@@ -306,19 +325,7 @@
                 (format #f lisp-makefile-template
                         dir-name dir-name dir-name)))
   (make-asd self)
-  (make-flake self
-              #:extra-packages (get-lisp-packages self)))
-
-(define-method (initialize (self <lisp-project>) initargs)
-  (let-keywords initargs #f (packages directory lisp-packages)
-                (let ((sbcl-packages
-                       (list (format #f sbcl-packages-template
-                                     lisp-packages)))
-                      (main-file (string-append (file-name directory) ".lisp")))
-                  (next-method self (list #:packages packages
-                                          #:directory directory
-                                          #:lisp-packages sbcl-packages
-                                          #:main-file main-file)))))
+  (make-flake self #:extra-packages (get-lisp-packages self)))
 
 (define-method (make-asd (self <lisp-project>))
   (let* ((directory (get-directory self))
@@ -380,6 +387,44 @@
   (next-method)
   (make-flake self))
 
+(define-class <haskell-project> (<project>)
+  (default-packages
+    #:init-value
+    (map (lambda (pkg) (string-append "haskellPackages." pkg))
+         '("cabal-install" "ghc" "hlint" "ormolu"))
+    #:getter get-default-packages)
+  (haskell-packages
+   #:init-keyword #:haskell-packages
+   #:init-value '("haskell-language-server")
+   #:getter get-haskell-packages))
+
+(define-method (initialize (self <haskell-project>) initargs)
+  (let-keywords initargs #f (packages directory haskell-packages)
+                (let* ((haskell-packages (if (null? haskell-packages)
+                                             '("haskell-language-server")
+                                             (append haskell-packages
+                                                     '("haskell-language-server"))))
+                       (ghc-packages
+                        (list (format #f ghc-packages-template
+                                      haskell-packages))))
+                  (next-method self (list #:packages packages
+                                          #:directory directory
+                                          #:haskell-packages ghc-packages)))))
+
+(define-method (make-project (self <haskell-project>))
+  (next-method)
+  (let ((directory (get-directory self)))
+    (chdir directory)
+    (system* "cabal" "init"
+             "--simple"
+             "--cabal-version=3.14"
+             (string-append "--package-name=" (file-name directory))
+             "--version=0.1.0"
+             "--license=BSD-3-Clause"
+             "--author=Ross Edwards"
+             "--email=redwards64@hotmail.com"))
+  (make-flake self #:extra-packages (get-haskell-packages self)))
+
 (define* (make-flake project #:key (extra-packages '()) (vars '()) (shell-hook '()))
   (let ((packages (append
                    (if (slot-exists? project 'default-packages)
@@ -402,6 +447,7 @@
                  ((scheme) (list <scheme-project>))
                  ((clojure) (list <clojure-project>))
                  ((scala) (list <scala-project>))
+                 ((haskell) (list <haskell-project> #:haskell-packages extra-packages))
                  (else (error (string-append
                                "Don't know how to make a "
                                (symbol->string language)

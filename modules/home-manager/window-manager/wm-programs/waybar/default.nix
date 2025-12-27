@@ -514,7 +514,7 @@ let
   allModules =
     with modules;
     lib.mergeAttrsList (
-      builtins.map (module: { "${module.name}" = module.config; }) [
+      map (module: { "${module.name}" = module.config; }) [
         builtin.backlight
         builtin.battery
         builtin.clock
@@ -555,7 +555,7 @@ let
   allModulesNoLabels =
     with modules;
     lib.mergeAttrsList (
-      builtins.map (module: { "${module.name}" = module.config; }) [
+      map (module: { "${module.name}" = module.config; }) [
         builtin.backlight
         builtin.battery
         builtin.clock

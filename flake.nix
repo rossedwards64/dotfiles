@@ -275,7 +275,7 @@
           "${username}@ross-thinkpad-x230"
           "${username}@ross-thinkpad-x200"
         ]
-        |> builtins.map (hostname: {
+        |> map (hostname: {
           "${hostname}" = makeHome [
             {
               stylix.fonts.sizes = {

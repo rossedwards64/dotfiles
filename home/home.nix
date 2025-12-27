@@ -59,14 +59,14 @@ in
           "video/webm"
         ]
       ) (_: "mpv.desktop")
-      // lib.genAttrs (builtins.map (suffix: "image/${suffix}") [
+      // lib.genAttrs (map (suffix: "image/${suffix}") [
         "bmp"
         "gif"
         "jpeg"
         "png"
         "webp"
       ]) (_: "imv.desktop")
-      // lib.genAttrs (builtins.map (suffix: "application/${suffix}") [
+      // lib.genAttrs (map (suffix: "application/${suffix}") [
         "bzip"
         "bzip2"
         "gzip"

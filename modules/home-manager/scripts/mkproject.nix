@@ -1,19 +1,23 @@
 { pkgs, lib }:
 
-pkgs.writers.writeGuileBin "mkproject"
-  {
-    libraries = with pkgs; [
+let
+  programs = lib.makeBinPath (
+    with pkgs;
+    [
       git
       cargo
       leiningen
       sbt
-    ];
-  }
-  (
-    builtins.replaceStrings
-      [ "#!/usr/bin/env guile\n!#" ]
-      [
-        ""
-      ]
-      (lib.readFile ../../../.local/share/bin/mkproject)
-  )
+      cabal-install
+      haskellPackages.ghc
+    ]
+  );
+in
+pkgs.writers.writeGuileBin "mkproject" { } (
+  builtins.replaceStrings
+    [ "#!/usr/bin/env guile\n!#" ]
+    [
+      "(setenv \"PATH\" \"${programs}\")"
+    ]
+    (lib.readFile ../../../.local/share/bin/mkproject)
+)

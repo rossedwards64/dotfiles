@@ -13,12 +13,7 @@ pkgs.writers.writeGuileBin "powermenu"
     ];
   }
   (
-    builtins.replaceStrings
-      [
-        "#!/usr/bin/env guile\n!#"
-      ]
-      [
-        ""
-      ]
-      (lib.readFile ../../../../../../.config/fuzzel/scripts/powermenu)
+    builtins.replaceStrings [ "#!/usr/bin/env guile\n!#" ] [ "" ] (
+      lib.readFile ../../../../../../.config/fuzzel/scripts/powermenu
+    )
   )

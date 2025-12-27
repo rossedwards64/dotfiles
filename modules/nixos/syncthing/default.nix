@@ -61,7 +61,7 @@ in
               name = "Phone";
             }
           ]
-          |> builtins.map (
+          |> map (
             {
               hostname,
               id,
@@ -91,7 +91,7 @@ in
               path = "${home}/Pictures/camera";
             }
           ]
-          |> builtins.map (
+          |> map (
             { name, path }:
             {
               ${name} = {

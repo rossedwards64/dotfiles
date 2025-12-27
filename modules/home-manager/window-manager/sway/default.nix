@@ -349,7 +349,7 @@ in
                   "task_dialog"
                   "dialog"
                 ]
-                |> builtins.concatMap (window_role: [
+                |> concatMap (window_role: [
                   {
                     criteria = {
                       inherit window_role;
@@ -363,7 +363,7 @@ in
                   regexp.steam.game
                   regexp.game
                 ]
-                |> builtins.concatMap (class: [
+                |> concatMap (class: [
                   {
                     criteria.class = class;
                     command = focusOnGameCommand;
@@ -380,7 +380,7 @@ in
                   regexp.zathura
                   regexp.qBitTorrent
                 ]
-                |> builtins.map (app_id: {
+                |> map (app_id: {
                   criteria = {
                     inherit app_id;
                   };
@@ -402,7 +402,7 @@ in
                   [
                     (
                       (lists.range 0 9)
-                      |> builtins.map (num: {
+                      |> map (num: {
                         "${modifier}+${toString num}" = "workspace number ${toString num}";
                         "${modifier}+Ctrl+${toString num}" = "move container to workspace number ${toString num}";
                         "${modifier}+Shift+${toString num}" =
