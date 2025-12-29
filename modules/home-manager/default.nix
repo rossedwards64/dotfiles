@@ -6,7 +6,7 @@
     ./desktop
     ./emacs
     ./email
-    ./firefox
+    ./librewolf
     ./games
     ./music
     ./pass

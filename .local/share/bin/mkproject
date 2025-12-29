@@ -391,7 +391,7 @@
   (default-packages
     #:init-value
     (map (lambda (pkg) (string-append "haskellPackages." pkg))
-         '("cabal-install" "ghc" "hlint" "ormolu"))
+         '("cabal-install" "hlint" "ormolu"))
     #:getter get-default-packages)
   (haskell-packages
    #:init-keyword #:haskell-packages

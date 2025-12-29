@@ -6,7 +6,7 @@
 }:
 with lib;
 let
-  cfg = config.modules.firefox;
+  cfg = config.modules.librewolf;
   defaultEngine = rec {
     name = "DuckDuckGo";
     url = "https://www.duckduckgo.com/";
@@ -22,8 +22,8 @@ let
   updateInterval = 24 * 60 * 60 * 1000;
 in
 {
-  options.modules.firefox = {
-    enable = mkEnableOption "firefox";
+  options.modules.librewolf = {
+    enable = mkEnableOption "librewolf";
   };
 
   config = mkIf cfg.enable {
@@ -38,38 +38,8 @@ in
       };
     };
 
-    programs.firefox = {
+    programs.librewolf = {
       enable = true;
-      package = pkgs.firefox.overrideAttrs (attrs: {
-        meta.priority = pkgs.firefox.meta.priority + 1;
-      });
-
-      policies = {
-        DisableTelemetry = true;
-        DisableFirefoxStudies = true;
-        DisablePocket = true;
-        DisplayBookmarksToolbar = "always";
-        DisplayMenuBar = "default-off";
-
-        EnableTrackingProtection = {
-          Value = true;
-          Locked = true;
-          Cryptomining = true;
-          Fingerprinting = true;
-        };
-
-        FirefoxHome = {
-          Pocket = false;
-          Snippets = false;
-        };
-
-        SearchBar = "separate";
-
-        UserMessaging = {
-          ExtensionRecommendations = false;
-          SkipOnboarding = true;
-        };
-      };
 
       profiles = {
         ross = {
@@ -80,21 +50,14 @@ in
             "sidebar.verticalTabs" = true;
             "sidebar.main.tools" = "syncedtabs,history,bookmarks";
             "sidebar.expandOnHover" = false;
-            "browser.newtabpage.activity-stream.feeds.section.topstories" = false;
-            "browser.newtabpage.activity-stream.showSponsored" = false;
-            "browser.newtabpage.activity-stream.discoverysteam.enabled" = false;
-            "browser.newtabpage.activity-stream.telemetry" = false;
             "browser.startup.homepage" = defaultEngine.url;
             "browser.search.defaultenginename" = defaultEngine.name;
             "browser.search.order.1" = defaultEngine.name;
-            "privacy.trackingprotection.enabled" = true;
-            "privacy.trackingprotection.socialtracking.enabled" = true;
             "extensions.getAddons.showPane" = false;
             "browser.bookmarks.restore_default_bookmarks" = false;
             "browser.contentblocking.category" = "strict";
             "browser.newtabpage.pinned" = defaultEngine.url;
             "browser.bookmarks.showMobileBookmarks" = true;
-            "extensions.activeThemeID" = "{f5525f34-4102-4f6e-8478-3cf23cfeff7a}";
           };
 
           extensions.packages = with pkgs.nur.repos.rycee.firefox-addons; [
@@ -204,14 +167,6 @@ in
                 definedAliases = [ "@protondb" ];
                 icon = "https://protondb.com/favicon.ico";
               };
-
-              google.metaData.hidden = true;
-              amazondotcom-us.metaData.hidden = true;
-              bbc.metaData.hidden = true;
-              bing.metaData.hidden = true;
-              facebook.metaData.hidden = true;
-              youtube.metaData.hidden = true;
-              ebay.metaData.hidden = true;
             };
           };
         };

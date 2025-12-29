@@ -24,7 +24,7 @@ in
       #devilutionx
       #fallout2-ce
       #fallout-ce
-      #openrct2
+      openrct2
       fceux
       gamemode
       gamescope
@@ -42,7 +42,7 @@ in
       snes9x
       space-station-14-launcher
       srb2
-      #srb2kart
+      srb2kart
       mupen64plus
     ];
 
@@ -55,7 +55,7 @@ in
       };
 
       sm64ex = {
-        enable = false;
+        enable = true;
         package = pkgs.sm64coopdx;
       };
     };

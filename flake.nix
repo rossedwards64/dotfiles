@@ -199,7 +199,7 @@
                 };
 
                 stylix = stylixConfig // {
-                  targets.firefox.profileNames = [ "ross" ];
+                  targets.librewolf.profileNames = [ "ross" ];
                   targets.sway.useWallpaper = false;
                   targets.emacs.enable = false;
                 };
@@ -210,7 +210,7 @@
                   desktop.enable = true;
                   emacs.enable = true;
                   email.enable = true;
-                  firefox.enable = true;
+                  librewolf.enable = true;
                   games.enable = true;
                   music.enable = true;
                   pass.enable = true;
