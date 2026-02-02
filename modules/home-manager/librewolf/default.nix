@@ -8,7 +8,7 @@ with lib;
 let
   cfg = config.modules.librewolf;
   defaultEngine = rec {
-    name = "DuckDuckGo";
+    name = "ddg";
     url = "https://www.duckduckgo.com/";
     icon = "${url}/favicon.ico";
     params = [
@@ -74,6 +74,7 @@ in
           search = {
             force = true;
             default = defaultEngine.name;
+            privateDefault = defaultEngine.name;
             engines = {
               ${defaultEngine.name} = {
                 inherit updateInterval;

@@ -37,10 +37,10 @@ let
 
   regexp = {
     any = ".*";
-    discord = "^vesktop$";
+    vesktop = "^vesktop$";
     emacs = "^emacs(client)?$";
     epicGames = "^heroic$";
-    firefox = "^firefox$";
+    librewolf = "^librewolf$";
     freetube = "^FreeTube$";
     gameConqueror = "^GameConqueror.py$";
     game = "^(${
@@ -48,6 +48,7 @@ let
         lib.intersperse "|" [
           "Godot_Engine"
           "VampireSurvivors.exe"
+          "blue-revolver"
           "dwarfort"
           "factorio"
           "gamescope"
@@ -199,8 +200,8 @@ in
             assigns = {
               "workspace 1" = [ { app_id = regexp.emacs; } ];
               "workspace 2" = [ { app_id = regexp.terminal; } ];
-              "workspace 3" = [ { app_id = regexp.firefox; } ];
-              "workspace 4" = [ { class = regexp.discord; } ];
+              "workspace 3" = [ { app_id = regexp.librewolf; } ];
+              "workspace 4" = [ { app_id = regexp.vesktop; } ];
               "workspace 5" = [
                 { app_id = regexp.spotify; }
                 { class = regexp.spotify; }
@@ -449,7 +450,7 @@ in
                     ''exec "${pkgs.procps}/bin/pkill fuzzel || ${powermenuScript}/bin/powermenu"'';
                   "${modifier}+Minus" = "scratchpad show";
                   "${modifier}+Return" = "exec ${pkgs.alacritty}/bin/alacritty";
-                  "${modifier}+Shift+Return" = "exec ${pkgs.firefox}/bin/firefox";
+                  "${modifier}+Shift+Return" = "exec ${pkgs.librewolf}/bin/librewolf";
                   "${modifier}+Shift+b" = "border toggle";
                   "${modifier}+Shift+c" = "reload";
                   "${modifier}+Shift+g" = "exec ${emacsPackage}/bin/emacsclient -c -a=''";
@@ -492,7 +493,7 @@ in
                 command = "${pkgs.autotiling}/bin/autotiling -w 1 2 3 4 5 6 7 8 9 10";
               }
               { command = "${pkgs.alacritty}/bin/alacritty"; }
-              { command = "${pkgs.firefox}/bin/firefox"; }
+              { command = "${pkgs.librewolf}/bin/librewolf"; }
               { command = "${pkgs.lutris}/bin/lutris"; }
               { command = "${pkgs.itch}/bin/itch"; }
               { command = "${pkgs.qbittorrent}/bin/qbittorrent"; }
