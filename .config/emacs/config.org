@@ -28,13 +28,6 @@
 - [[#package-manager][Package Manager]]
 
 * Early Init
-LSP-mode is faster when using property lists, according to the [[https://emacs-lsp.github.io/lsp-mode/page/performance/#use-plists-for-deserialization][docs]].
-#+begin_src emacs-lisp :tangle ./early-init.el
-;;; early-init.el -*- lexical-binding: t; -*-
-
-(setenv "LSP_USE_PLISTS" "true")
-#+end_src
-
 Prevent garbage collections on startup. The GC threshold will be lowered again after startup so GCs don't take absolutely ages.
 Also, temporarily get rid of file-name-handler-alist so that every loaded file doesn't need to be compared against the regexps in the list on startup.
 #+begin_src emacs-lisp :tangle ./early-init.el
@@ -479,12 +472,6 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
 (use-package org-bookmark-heading)
 (use-package ox-pandoc)
 (use-package org-ac)
-
-(with-eval-after-load "company"
-  (use-package company-org-block
-    :hook ((org-mode . (lambda ()
-                         (setq-local company-backends '(company-org-block))
-                         (company-mode +1))))))
 #+end_src
 
 * UI
@@ -544,7 +531,7 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
 
 (use-package helpful
   :bind
-  ([remap describe-function] . helpful-function)
+  ([remap describe-function] . helpful-callable)
   ([remap describe-command] . helpful-command)
   ([remap describe-variable] . helpful-variable)
   ([remap describe-key] . helpful-key))
@@ -622,33 +609,12 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
   (vertico-mode +1)
   (vertico-indexed-mode +1)
   :custom
+  (vertico-cycle t)
   (completion-in-region-function (lambda (&rest args)
                                    (apply (if vertico-mode
                                               #'consult-completion-in-region
                                             #'completion--in-region)
                                           args))))
-
-(use-package company
-  :disabled
-  :diminish
-  :init (global-company-mode +1)
-  :custom
-  (company-idle-delay (lambda ()
-                        (if (company-in-string-or-comment)
-                            nil
-                          0.5)))
-  (company-minimum-prefix-length 1)
-  (company-selection-wrap-around t)
-  (company-tooltip-align-annotations t)
-  (company-tooltip-limit 10)
-  (company-tooltip-margin 3)
-  (company-tooltip-offset-display 'lines))
-
-(with-eval-after-load "company"
-  (use-package company-posframe
-    :hook (company-mode . company-posframe-mode))
-  (use-package company-quickhelp
-    :init (company-quickhelp-mode +1)))
 
 (use-package corfu
   :init (global-corfu-mode +1)
@@ -662,10 +628,12 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
                              (and (derived-mode-p 'eshell-mode 'comint-mode)
                                   #'corfu-send))))
   :custom
-  (corfu-cycle t)
   (corfu-auto t)
   (corfu-auto-prefix 2)
-  (corfu-preselect 'directory))
+  (corfu-cycle t)
+  (corfu-popupinfo-delay 0.5)
+  (corfu-preselect 'directory)
+  (corfu-separator ?\s))
 
 (use-package nerd-icons-corfu
   :config
@@ -880,7 +848,8 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
   :hook
   ((prog-mode . (lambda ()
                   (which-function-mode +1)
-                  (display-line-numbers-mode +1)))
+                  (display-line-numbers-mode +1)
+                  (eglot-ensure)))
    ((prog-mode ielm-mode) . eldoc-mode))
   :config
   (global-prettify-symbols-mode +1))
@@ -940,113 +909,43 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
 
 ** Language Servers
 #+begin_src emacs-lisp :noweb strip-export :tangle (if (eq system-type 'android) "no" "./init.el")
-(use-package lsp-mode
-  :hook
-  ((lsp-mode . (lambda ()
-                 (lsp-enable-which-key-integration)
-                 (yas-minor-mode +1)))
-   (prog-mode . lsp-deferred))
-  :commands lsp
-  :bind
-  (:map lsp-mode-map
-        ("C-c z" . lsp-clangd-find-other-file))
+(use-package sideline-eglot
+  :after (eglot)
+  :custom
+  (sideline-backends-right '(sideline-eglot)))
+
+(use-package eglot
+  :elpaca nil
+  :hook ((eglot-mode . sideline-mode))
+  :custom
+  (eglot-events-buffer-size 0)
+  (eglot-autoshutdown t)
+  (eglot-report-progess nil))
+
+(use-package flycheck-eglot
+  :after (flycheck eglot)
   :config
-  <<texlab-workaround>>
-  :custom
-  (lsp-clients-clangd-executable "clangd")
-  (lsp-diagnostics-mode t)
-  (lsp-enable-folding t)
-  (lsp-enable-on-type-formatting t)
-  (lsp-enable-relative-indentation t)
-  (lsp-enable-semantic-highlighting t)
-  (lsp-enable-snippet t)
-  (lsp-enable-text-document-color t)
-  (lsp-headerline-breadcrumb-enable t)
-  (lsp-inlay-hint-enable t)
-  (lsp-keymap-prefix "C-c")
-  (lsp-modeline-code-actions-enable t)
-  (lsp-modeline-code-actions-segments '(icon count name))
-  (lsp-rust-analyzer-closing-brace-hints t)
-  (lsp-rust-analyzer-display-chaining-hints t)
-  (lsp-rust-analyzer-display-parameter-hints t)
-  (lsp-rust-analyzer-lens-references-adt-enable t)
-  (lsp-rust-analyzer-lens-references-enum-variant-enable t)
-  (lsp-rust-analyzer-lens-references-method-enable t)
-  (lsp-rust-analyzer-lens-references-trait-enable t))
+  (global-flycheck-eglot-mode +1))
 
-(use-package lsp-ui
-  :commands lsp-ui-mode
-  :custom
-  (lsp-ui-doc-enable t)
-  (lsp-ui-doc-position 'bottom)
-  (lsp-ui-doc-show-with-cursor t)
-  (lsp-ui-doc-show-with-mouse t)
-  (lsp-ui-imenu-auto-refresh t)
-  (lsp-ui-imenu-enable t)
-  (lsp-ui-mode t)
-  (lsp-ui-peek-enable t)
-  (lsp-ui-sideline-enable nil)
-  (lsp-ui-sideline-show-code-actions t)
-  (lsp-ui-sideline-show-diagnostics t)
-  (lsp-ui-sideline-show-hover t))
-
-(use-package helm-lsp
-  :commands helm-lsp-workspace-symbol)
-
+(use-package consult-eglot)
+(use-package consult-eglot-embark)
+(use-package eglot-signature-eldoc-talkative)
 (use-package dap-mode)
-#+end_src
-
-This is a workaround for [[https://github.com/emacs-lsp/lsp-mode/issues/4332][this issue]], which simply adds the auctex modes (TeX-mode and LaTeX-mode) to texlabs specified modes.
-#+NAME: texlab-workaround
-#+begin_src emacs-lisp :tangle no
-(with-eval-after-load "latex"
-  (maphash (lambda (k v)
-             (let ((mode-list (lsp--client-major-modes v))
-                   (tex-mode-list '(tex-mode latex-mode))
-                   (auctex-mode-list '(TeX-mode LaTeX-mode)))
-               (when (and (equal k 'texlab2)
-                          (cl-intersection mode-list tex-mode-list))
-                 (progn
-                   (dolist (mode auctex-mode-list)
-                     (setf (lsp--client-major-modes v)
-                           (cl-pushnew mode mode-list))
-                     (add-to-list 'lsp-language-id-configuration
-                                  `(,mode . "latex")))))))
-           lsp-clients))
-#+end_src
+#+END_SRC
 
 ** Programming Languages
 *** C/C++
 #+begin_src emacs-lisp :tangle (if (eq system-type 'android) "no" "./init.el")
-(use-package cc-mode
+(use-package c-ts-mode
   :elpaca nil
-  :hook
-  (((c-mode c++-mode c-ts-mode c++-ts-mode makefile-mode makefile-gmake-mode)
-    . (lambda () (setq-local +format-with "clang-format"))))
   :custom
-  (c-basic-offset 4)
-  (gdb-many-windows t))
-
-(use-package irony
-  :hook (((c-mode c++-mode c-ts-mode c++-ts-mode) . irony-mode)))
+  (c-ts-mode-indent-offset 4)
+  (c-ts-mode-indent-style 'linux))
 
 (use-package modern-cpp-font-lock
   :config (modern-c++-font-lock-global-mode +1))
 
-(with-eval-after-load "company"
-  (use-package company-irony)
-  (use-package company-irony-c-headers))
-
-(use-package flycheck-irony)
-(use-package irony-eldoc)
 (use-package disaster)
-#+end_src
-
-*** Rust
-#+begin_src emacs-lisp :tangle (if (eq system-type 'android) "no" "./init.el")
-(use-package rustic
-  :custom
-  (lsp-rust-analyzer-cargo-watch-command "clippy"))
 #+end_src
 
 *** Lisp
@@ -1058,6 +957,8 @@ This is a workaround for [[https://github.com/emacs-lsp/lsp-mode/issues/4332][th
 
 **** Clojure
 #+begin_src emacs-lisp :tangle (if (eq system-type 'android) "no" "./init.el")
+(use-package clojure-ts-mode)
+
 (use-package cider
   :hook ((clojure-mode . cider-jack-in-clj)
          (clojurescript-mode . cider-jack-in-cljs)))
@@ -1133,21 +1034,9 @@ It's a bit of a pain having to do 'M-x sly' every time I open a Lisp project.
 *** Nix
 No point loading these if not on NixOS.
 #+begin_src emacs-lisp :tangle (if (eq system-type 'android) "no" "./init.el")
-(use-package nix-mode
-  :when (nixos-p)
-  :after lsp-mode
-  :custom
-  (lsp-nix-nixd-server-path "nixd")
-  (lsp-nix-nixd-formatting-command ["nixfmt"])
-  (lsp-nix-nixd-nixpkgs-expr "import <nixpkgs> { }")
-  (lsp-nix-nixd-nixos-options-expr (format
-                                    "(builtins.getFlake \"/home/%s/.dotfiles\").nixosConfigurations.%s.options"
-                                    user-login-name system-name))
-  (lsp-nix-nixd-home-manager-options-expr (format
-                                           "(builtins.getFlake \"/home/%s/.dotfiles\").homeConfigurations.\"%s@%s\".options"
-                                           user-login-name user-login-name system-name)))
-
 (use-package nix-ts-mode
+  :when (nixos-p))
+(use-package nix-modeline
   :when (nixos-p))
 (use-package nixpkgs-fmt
   :when (nixos-p))
@@ -1158,36 +1047,23 @@ No point loading these if not on NixOS.
 *** Embedded
 #+begin_src emacs-lisp :tangle (if (eq system-type 'android) "no" "./init.el")
 (use-package platformio-mode)
-(use-package arduino-mode
-  :disabled t
-  :hook ((arduino-mode . irony-mode))
-  :config
-  (add-to-list 'irony-supported-major-modes 'arduino-mode)
-  (add-to-list 'irony-lang-compile-option-alist '(arduino-mode . "c++")))
 #+end_src
 
 *** Shell
 #+begin_src emacs-lisp :tangle (if (eq system-type 'android) "no" "./init.el")
-(with-eval-after-load "company"
-  (use-package company-shell))
-
 (use-package shelldoc)
 (use-package shfmt)
 #+end_src
 
 *** LaTeX
 #+begin_src emacs-lisp :tangle (if (eq system-type 'android) "no" "./init.el")
-(use-package lsp-latex)
-
 (use-package auctex
   :elpaca
   (auctex :pre-build (("./autogen.sh")
                       ("./configure" "--without-texmf-dir" "--with-lispdir=.")
                       ("make")))
-  :after (lsp-mode)
   :hook
-  (((tex-mode TeX-mode) . lsp-deferred)
-   (LaTeX-mode . TeX-source-correlate-mode))
+  ((LaTeX-mode . TeX-source-correlate-mode))
   :mode ((rx ".tex" string-end) . LaTeX-mode)
   :custom
   (LaTeX-electric-left-right-brace t)
@@ -1212,11 +1088,6 @@ No point loading these if not on NixOS.
   :custom
   (auctex-latexmk-inherit-TeX-PDF-mode t))
 
-(with-eval-after-load "company"
-  (use-package company-auctex)
-  (use-package company-reftex)
-  (use-package company-bibtex))
-
 (use-package latex-preview-pane)
 (use-package magic-latex-buffer)
 (use-package ebib)
@@ -1226,23 +1097,14 @@ No point loading these if not on NixOS.
 #+begin_src emacs-lisp :tangle (if (eq system-type 'android) "no" "./init.el")
 (use-package haskell-mode)
 (use-package flycheck-haskell)
-(use-package lsp-haskell)
 (use-package dante)
 (use-package hindent)
 #+end_src
 
 *** Scala
 #+begin_src emacs-lisp :tangle (if (eq system-type 'android) "no" "./init.el")
-(use-package scala-mode)
+(use-package scala-ts-mode)
 (use-package sbt-mode)
-(use-package lsp-metals
-  :custom
-  (lsp-metals-enable-semantic-highlighting t)
-  (lsp-metals-inlay-hints-enable-inferred-types t)
-  (lsp-metals-inlay-hints-enable-type-parameters t)
-  (lsp-metals-inlay-hints-enable-implicit-arguments t)
-  (lsp-metals-inlay-hints-enable-hints-in-pattern-match t)
-  (lsp-metals-inlay-hints-enable-implicit-conversions t))
 #+end_src
 
 * Documents
@@ -1265,6 +1127,7 @@ No point loading these if not on NixOS.
 * Project Tools
 #+begin_src emacs-lisp
 (use-package projectile
+  :init (projectile-mode +1)
   :bind
   (:map global-map
         ([remap project-find-dir] . projectile-find-dir)
@@ -1276,10 +1139,17 @@ No point loading these if not on NixOS.
         ([remap project-shell] . projectile-run-shell)
         ([remap project-eshell] . projectile-run-eshell)
         ([remap project-shell-command] . projectile-run-shell-command-in-root)
-        ([remap project-async-shell-command] . projectile-run-async-shell-command-in-root)))
+        ([remap project-async-shell-command] . projectile-run-async-shell-command-in-root))
+  :custom
+  (projectile-run-use-comint-mode t)
+  (projectile-switch-project-action #'projectile-dired)
+  (projectile-project-search-path '("~/Documents/programming" ("~/Documents/programming/repos" . 1))))
 
 (use-package magit
-  :bind (("C-c v g" . magit)))
+  :bind (("C-c v g" . magit))
+  :custom
+  (magit-diff-redefine-hunk 'all)
+  (magit-format-file-function #'magit-format-file-nerd-icons))
 
 (use-package ibuffer-projectile)
 (use-package ibuffer-git)

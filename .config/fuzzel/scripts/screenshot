@@ -9,10 +9,8 @@
 (defclass window-manager-connection () ()
   (:documentation "Mixin object for window manager IPC handle objects."))
 
-(declaim
- (ftype (function ()
-                  (values sb-bsd-sockets:socket &optional))
-        connect-to-sway))
+(declaim (ftype (function () (values sb-bsd-sockets:socket &optional))
+                connect-to-sway))
 (defun connect-to-sway ()
   "Returns a handle to the current Sway instance."
   (let ((swaysock-address (uiop:getenv "SWAYSOCK"))
@@ -28,7 +26,7 @@
    (socket :type sb-bsd-sockets:socket
            :initform (connect-to-sway)
            :reader socket))
-   (:documentation "Object containing a handle to the current Sway instance."))
+  (:documentation "Object containing a handle to the current Sway instance."))
 
 (defgeneric destroy (connection)
   (:documentation "Clean up the window manager IPC connection handle.")
@@ -136,11 +134,10 @@
 (defun resolve-path (&rest strings)
   (pathname (format nil "~{~a~^/~}" strings)))
 
-(declaim
- (ftype (function (string &key (:body string)
-                          (:expire-time number)
-                          (:replace boolean)))
-        notify-send))
+(declaim (ftype (function (string &key (:body string)
+                                  (:expire-time number)
+                                  (:replace boolean)))
+                notify-send))
 (defun notify-send (header &key (body "") (expire-time 5000) (replace nil))
   (uiop:run-program
    (nconc
@@ -222,57 +219,54 @@
                                     :output '(:string :stripped t))))
       (take-shot-and-save region filename))))
 
-(let ((capture-screen-template " Capture ~a")
-      (capture-area " Capture Area")
-      (capture-window " Capture Window")
-      (take-in-seconds-template " Take in ~as (~a)"))
-  (defgeneric make-options (conn)
-    (:documentation "Put together a list of possible screenshot options.
+(defvar capture-screen-template " Capture ~a")
+(defvar capture-area " Capture Area")
+(defvar capture-window " Capture Window")
+(defvar take-in-seconds-template " Take in ~as (~a)")
+
+(defgeneric make-options (conn)
+  (:documentation "Put together a list of possible screenshot options.
 If there are multiple outputs, they will be added to the list with corresponding
 delay 5s and 3s options.")
-    (:method-combination nconc)
-    (:method :around (conn)
-      (sort (call-next-method) #'string>))
-    (:method nconc (conn)
-      (list capture-window capture-area))
-    (:method nconc ((conn sway-connection))
-      (let ((outputs (get-outputs conn)))
-        (nconc
-         (loop for output across outputs
-               for name = (gethash "name" output)
-               nconcing
-               (nconc
-                (list (format nil capture-screen-template name))
-                (loop for i from 3 to 5 by 2
-                      nconcing (list
-                                (format nil
-                                        take-in-seconds-template
-                                        i name)))))))))
+  (:method-combination nconc)
+  (:method :around (conn)
+    (sort (call-next-method) #'string>))
+  (:method nconc (conn)
+    (list capture-window capture-area))
+  (:method nconc ((conn sway-connection))
+    (let ((outputs (get-outputs conn)))
+      (nconc
+       (loop for output across outputs
+             for name = (gethash "name" output)
+             nconcing
+             (nconc
+              (list (format nil capture-screen-template name))
+              (loop for i from 3 to 5 by 2
+                    nconcing (list
+                              (format nil
+                                      take-in-seconds-template
+                                      i name)))))))))
 
-  (declaim
-   (ftype (function (string)
-                    (values keyword
-                            string
-                            (or number null)))
-          get-screenshot-args))
-  (defun get-screenshot-args (option)
-    (cond
-      ((string= capture-area option) (values :area "" nil))
-      ((string= capture-window option) (values :window "" nil))
-      ((search "Capture" option)
-       (values :delay (third (uiop:split-string option)) 0.5))
-      ((search "Take in" option)
-       (values :delay
-               (remove-if
-                (lambda (c)
-                  (or (char-equal #\( c)
-                      (char-equal #\) c)))
-                (fifth (uiop:split-string option)))
-               (let ((digit (find-if #'digit-char-p option)))
-                 (if (not (null digit))
-                     (parse-integer (string digit))
-                     (error "Could not get digit.")))))
-      (t (error "Invalid option.")))))
+(declaim (ftype (function (string) (values keyword string (or number null)))
+                get-screenshot-args))
+(defun get-screenshot-args (option)
+  (cond
+    ((string= capture-area option) (values :area "" nil))
+    ((string= capture-window option) (values :window "" nil))
+    ((search "Capture" option)
+     (values :delay (third (uiop:split-string option)) 0.5))
+    ((search "Take in" option)
+     (values :delay
+             (remove-if
+              (lambda (c)
+                (or (char-equal #\( c)
+                    (char-equal #\) c)))
+              (fifth (uiop:split-string option)))
+             (let ((digit (find-if #'digit-char-p option)))
+               (if (not (null digit))
+                   (parse-integer (string digit))
+                   (error "Could not get digit.")))))
+    (t (error "Invalid option."))))
 
 (declaim (ftype (function (list) (string)) choose-option))
 (defun choose-option (options)
