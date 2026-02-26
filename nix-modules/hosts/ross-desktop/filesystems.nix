@@ -5,9 +5,6 @@
       ...
     }:
     {
-      nixpkgs.hostPlatform = "x86_64-linux";
-      hardware.cpu.amd.updateMicrocode = config.hardware.enableRedistributableFirmware;
-
       boot.loader = {
         efi = {
           canTouchEfiVariables = true;

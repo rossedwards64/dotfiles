@@ -2,7 +2,12 @@
   configurations.nixos.ross-desktop.module =
     { lib, pkgs, ... }:
     {
+      nixpkgs.hostPlatform = "x86_64-linux";
       hardware = {
+        enableRedistributableFirmware = true;
+        cpu.amd.updateMicrocode = true;
+        amdgpu.initrd.enable = true;
+
         graphics = {
           enable = true;
           enable32Bit = true;
@@ -12,8 +17,6 @@
             vulkan-extension-layer
           ];
         };
-
-        cpu.amd.updateMicrocode = lib.mkDefault true;
       };
 
       powerManagement = {

@@ -4,7 +4,10 @@
     nixos.base =
       { pkgs, ... }:
       {
-        imports = [inputs.nix-gaming.nixosModules.platformOptimizations];
+        imports = with inputs.nix-gaming.nixosModules; [
+          platformOptimizations
+          wine
+        ];
 
         environment.systemPackages = with pkgs; [
           (steam.override {
@@ -44,6 +47,11 @@
 
         programs = {
           gamemode.enable = true;
+          wine = {
+            enable = true;
+            ntsync = true;
+          };
+
           steam = {
             enable = true;
             protontricks.enable = true;

@@ -271,7 +271,7 @@
                   xkb_options = "ctrl:nocaps";
                 };
 
-                "12625:16387:ROYUAN_Akko_keyboard" = {
+                "12625:16386:ROYUAN_EPOMAKER_TH66_Keyboard" = {
                   xkb_layout = "us";
                   xkb_options = "ctrl:nocaps,altwin";
                 };
