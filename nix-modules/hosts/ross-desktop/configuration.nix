@@ -1,4 +1,3 @@
-{ config, ... }:
 let
   folderConfig = {
     enable = true;
@@ -13,9 +12,7 @@ in
   configurations.nixos.ross-desktop.module =
     { pkgs, ... }:
     {
-      config.flake.meta.hostname = "ross-desktop";
-      networking.hostName = { inherit (config.flake.meta) hostname; };
-
+      networking.hostName = "ross-desktop";
       system.stateVersion = "23.11";
 
       environment.systemPackages = with pkgs; [

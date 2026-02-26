@@ -1,9 +1,11 @@
 { inputs, ... }:
 {
   flake.modules = {
-    nixos.games =
+    nixos.base =
       { pkgs, ... }:
       {
+        imports = [inputs.nix-gaming.nixosModules.platformOptimizations];
+
         environment.systemPackages = with pkgs; [
           (steam.override {
             extraLibraries =
@@ -23,18 +25,18 @@
                 libvorbis
                 stdenv.cc.cc.lib
                 tbb
-                xorg.libX11
-                xorg.libXScrnSaver
-                xorg.libXcomposite
-                xorg.libXcursor
-                xorg.libXext
-                xorg.libXfixes
-                xorg.libXi
-                xorg.libXinerama
-                xorg.libXmu
-                xorg.libXrandr
-                xorg.libXt
-                xorg.libXtst
+                libX11
+                libXScrnSaver
+                libXcomposite
+                libXcursor
+                libXext
+                libXfixes
+                libXi
+                libXinerama
+                libXmu
+                libXrandr
+                libXt
+                libXtst
                 zlib
               ];
           })
@@ -67,18 +69,9 @@
             ];
           };
         };
-
-        inputs.ssbm = {
-          overlay.enable = true;
-          cache.enable = true;
-          gcc = {
-            oc-kmod.enable = true;
-            rules.enable = true;
-          };
-        };
       };
 
-    homeManager.games =
+    homeManager.base =
       { pkgs, ... }:
       {
         nixpkgs.config.permittedInsecurePackages = [

@@ -24,8 +24,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.home-manager.follows = "home-manager";
     };
-    ssbm = {
-      url = "github:djanatyn/ssbm-nix";
+    slippi-nix = {
+      url = "github:lytedev/slippi-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     stylix = {
