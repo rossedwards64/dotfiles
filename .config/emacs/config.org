@@ -916,7 +916,14 @@ Check if Nerd Fonts and if the all-the-icons icon sets, if not then install them
 
 (use-package eglot
   :elpaca nil
-  :hook ((eglot-mode . sideline-mode))
+  :hook ((eglot-mode . sideline-mode)
+         (eglot-managed-mode . (lambda ()
+                                 (setq-local eldoc-documentation-functions
+                                             (list
+                                              #'eglot-signature-eldoc-talkative
+                                              #'eglot-hover-eldoc-function
+                                              t
+                                              #'flymake-eldoc-function)))))
   :custom
   (eglot-events-buffer-size 0)
   (eglot-autoshutdown t)
@@ -1035,13 +1042,13 @@ It's a bit of a pain having to do 'M-x sly' every time I open a Lisp project.
 No point loading these if not on NixOS.
 #+begin_src emacs-lisp :tangle (if (eq system-type 'android) "no" "./init.el")
 (use-package nix-ts-mode
-  :when (nixos-p))
+  :when (nixos-p)
+  :mode (rx ".nix" string-end)
+  :hook ((nix-mode . eglot-ensure)))
+
 (use-package nix-modeline
-  :when (nixos-p))
-(use-package nixpkgs-fmt
-  :when (nixos-p))
-(use-package nix-buffer
-  :when (nixos-p))
+  :when (nixos-p)
+  :mode (rx ".nix" string-end))
 #+end_src
 
 *** Embedded
