@@ -2,7 +2,6 @@
   inputs = {
     emacs-overlay.url = "github:/nix-community/emacs-overlay";
     flake-parts.url = "github:hercules-ci/flake-parts";
-    flake-utils.url = "github:numtide/flake-utils";
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";

@@ -5,6 +5,8 @@ in
 {
   flake.modules.homeManager.base = {
     programs.home-manager.enable = true;
+    xdg.enable = true;
+
     home = {
       inherit username;
       homeDirectory = "/home/${username}";

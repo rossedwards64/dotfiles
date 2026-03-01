@@ -1,13 +1,3 @@
-let
-  folderConfig = {
-    enable = true;
-    devices = [
-      "ross-thinkpad-x230"
-      "ross-thinkpad-x200"
-      "ross-phone"
-    ];
-  };
-in
 {
   configurations.nixos.ross-desktop.module =
     { pkgs, ... }:
@@ -16,7 +6,6 @@ in
       system.stateVersion = "23.11";
 
       environment.systemPackages = with pkgs; [
-        atlauncher
         azahar
         #cemu
         #flycast
@@ -27,6 +16,13 @@ in
         xemu
         lact
       ];
+
+      stylix.fonts.sizes = {
+        applications = 14;
+        terminal = 12;
+        desktop = 10;
+        popups = 16;
+      };
 
       systemd = {
         packages = [ pkgs.lact ];
@@ -39,16 +35,6 @@ in
         xserver = {
           xkb.layout = "us";
           videoDrivers = [ "modesetting" ];
-        };
-
-        syncthing = {
-          settings = {
-            folders = {
-              "Org Files" = folderConfig;
-              "Pictures" = folderConfig;
-              "Reading" = folderConfig;
-            };
-          };
         };
       };
     };

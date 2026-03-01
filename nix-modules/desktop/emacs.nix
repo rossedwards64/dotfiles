@@ -16,7 +16,20 @@
           epkgs.vterm
           mu
           mu.mu4e
-          (epkgs.treesit-grammars.with-grammars (grammars: with grammars; [ tree-sitter-bash ]))
+          (epkgs.treesit-grammars.with-grammars (
+            grammars: with grammars; [
+              tree-sitter-bash
+              tree-sitter-c
+              tree-sitter-clojure
+              tree-sitter-commonlisp
+              tree-sitter-elisp
+              tree-sitter-haskell
+              tree-sitter-nix
+              tree-sitter-rust
+              tree-sitter-scheme
+              tree-sitter-scala
+            ]
+          ))
         ]
       );
 
@@ -49,7 +62,6 @@
     };
 
   flake.modules.homeManager.base =
-    { pkgs, ... }:
     let
       package = config.flake.pkgs.emacs;
     in

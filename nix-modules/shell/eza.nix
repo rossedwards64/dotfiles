@@ -1,0 +1,8 @@
+{
+  flake.modules.homeManager.base.programs.eza = {
+    enable = true;
+    enableZshIntegration = true;
+    git = true;
+    icons = "always";
+  };
+}

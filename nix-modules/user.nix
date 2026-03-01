@@ -1,10 +1,10 @@
-{ config, lib, ... }:
+{ config, ... }:
 {
   flake = {
     meta.user = {
-      email = "redwards64@hotmail.com";
-      name = "Ross Edwards";
       username = "ross";
+      name = "Ross Edwards";
+      email = "redwards64@hotmail.com";
     };
 
     modules = {
@@ -12,8 +12,10 @@
         { pkgs, ... }:
         {
           users.users.${config.flake.meta.user.username} = {
+            description = config.flake.meta.user.name;
             isNormalUser = true;
-            description = "Ross Edwards";
+            shell = pkgs.zsh;
+            useDefaultShell = true;
             extraGroups = [
               "networkmanager"
               "wheel"
@@ -21,8 +23,6 @@
               "libvirtd"
               "plugdev"
             ];
-            shell = pkgs.zsh;
-            useDefaultShell = true;
           };
         };
     };

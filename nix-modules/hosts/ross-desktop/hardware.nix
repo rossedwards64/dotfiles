@@ -1,6 +1,7 @@
+{ config, ... }:
 {
   configurations.nixos.ross-desktop.module =
-    { lib, pkgs, ... }:
+    { pkgs, ... }:
     {
       nixpkgs.hostPlatform = "x86_64-linux";
       hardware = {
@@ -8,15 +9,11 @@
         cpu.amd.updateMicrocode = true;
         amdgpu.initrd.enable = true;
 
-        graphics = {
-          enable = true;
-          enable32Bit = true;
-          extraPackages = with pkgs; [
-            vulkan-loader
-            vulkan-validation-layers
-            vulkan-extension-layer
-          ];
-        };
+        graphics.extraPackages = with pkgs; [
+          vulkan-loader
+          vulkan-validation-layers
+          vulkan-extension-layer
+        ];
       };
 
       powerManagement = {

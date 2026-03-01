@@ -2,6 +2,13 @@
   flake.modules.nixos.base =
     { pkgs, ... }:
     {
+      security.pam.services.swaylock.text = "auth include login";
+      environment.etc."greetd/environments".text = ''
+        ${pkgs.sway}/bin/sway
+        ${pkgs.hyprland}/bin/Hyprland
+        ${pkgs.niri}/bin/niri
+      '';
+
       services = {
         udisks2.enable = true;
 
@@ -19,16 +26,5 @@
           };
         };
       };
-
-      security.pam.services.swaylock = {
-        text = ''
-          auth include login
-        '';
-      };
-
-      environment.etc."greetd/environments".text = ''
-        ${pkgs.sway}/bin/sway
-        ${pkgs.hyprland}/bin/Hyprland
-      '';
     };
 }

@@ -1048,7 +1048,7 @@ No point loading these if not on NixOS.
 
 (use-package nix-modeline
   :when (nixos-p)
-  :mode (rx ".nix" string-end))
+  :hook ((nix-mode . nix-modeline)))
 #+end_src
 
 *** Embedded

@@ -1,7 +1,7 @@
-{ config, ... }:
+{ lib, config, ... }:
 {
   flake.modules.homeManager.base =
-    { pkgs, lib, ... }:
+    { pkgs, ... }:
     let
       font = config.flake.meta.font;
       height = 32;
@@ -221,7 +221,7 @@
               name = "sway/window";
               config = {
                 format = "{} 󱂬";
-                on-click = "swaymsg kill";
+                on-click = "${pkgs.sway}/bin/swaymsg kill";
               };
             };
 
@@ -303,22 +303,6 @@
                 "󰃠"
               ];
               on-click = "${pkgs.wdisplays}/bin/wdisplays";
-            };
-          };
-
-          gamemode = {
-            name = "gamemode";
-            config = {
-              format = "{glyph}";
-              format-alt = "{glyph} {count}";
-              glyph = "󰮂";
-              hide-not-running = false;
-              use-icon = true;
-              icon-name = "input-gaming-symbolic";
-              icon-spacing = 4;
-              icon-size = 24;
-              tooltip = true;
-              tooltip-format = "Games running: {count}";
             };
           };
 
@@ -511,7 +495,6 @@
             builtin.disk.ssd
             builtin.disk.ssd2
             builtin.diskNoLabel.root
-            builtin.gamemode
             builtin.idleInhibitor
             builtin.memory
             builtin.network.disconnected
@@ -548,7 +531,6 @@
             builtin.clock
             builtin.cpuNoLabel
             builtin.diskNoLabel.root
-            builtin.gamemode
             builtin.idleInhibitor
             builtin.memoryNoLabel
             builtin.network.disconnected
@@ -603,8 +585,6 @@
       );
     in
     {
-      home.packages = with pkgs; [ procps ];
-
       programs.waybar = with modules; {
         enable = true;
 
@@ -639,7 +619,6 @@
             makeBarWithLabels "bottom" hdmi
               [
                 "${builtin.tray.name}"
-                "${builtin.gamemode.name}"
                 "${custom.separator.name}"
                 "${builtin.backlight.name}"
                 "${builtin.wireplumber.name}"
@@ -753,7 +732,6 @@
             makeBarNoLabels "bottom" laptopScreen
               [
                 "${builtin.tray.name}"
-                "${builtin.gamemode.name}"
                 "${custom.separator.name}"
                 "${custom.notification.name}"
                 "${custom.separator.name}"
@@ -883,7 +861,6 @@
           #taskbar,
           #temperature,
           #tray,
-          #gamemode,
           #window,
           #language,
           #submap,
