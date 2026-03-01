@@ -1,14 +1,14 @@
-{ config, ... }:
+{ config, ... }@moduleArgs:
 {
   flake.modules.homeManager.base =
     {
       pkgs,
-      options,
+      config,
       ...
     }:
     let
-      xdg = options.xdg;
-      realName = config.flake.meta.user.name;
+      xdg = config.xdg;
+      realName = moduleArgs.config.flake.meta.user.name;
       gpg = {
         key = "rossedwards";
         signByDefault = true;
@@ -26,7 +26,7 @@
         accounts = {
           outlook = {
             inherit realName gpg;
-            address = config.flake.meta.user.email;
+            address = moduleArgs.config.flake.meta.user.email;
             passwordCommand = "${pkgs.pass-wayland}/bin/pass email/hotmail/personal";
             flavor = "outlook.office365.com";
             msmtp.enable = true;

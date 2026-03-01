@@ -4,8 +4,8 @@
     nixos.base =
       { pkgs, ... }:
       {
-        imports = with inputs.nix-gaming.nixosModules; [
-          platformOptimizations
+        imports = [
+          inputs.nix-gaming.nixosModules.platformOptimizations
         ];
 
         programs.steam = {
@@ -20,6 +20,13 @@
               "-h 1080"
               "-f"
             ];
+          };
+
+          package = pkgs.steam.override {
+            extraProfile = ''
+              export PROTON_ENABLE_WAYLAND=1
+              unset TZ
+            '';
           };
 
           extraCompatPackages = with pkgs; [
@@ -68,8 +75,16 @@
     homeManager.base =
       { pkgs, ... }:
       {
+        imports = [ inputs.steam-config-nix.homeModules.default ];
         home.packages = with pkgs; [ protontricks ];
-        programs.mangohud.enable = true;
+        programs = {
+          mangohud.enable = true;
+          steam.config = {
+            enable = true;
+            closeSteam = true;
+            defaultCompatTool = "GE-Proton";
+          };
+        };
       };
   };
 }

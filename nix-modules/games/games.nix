@@ -3,6 +3,9 @@
   flake.modules = {
     homeManager.base =
       { pkgs, ... }:
+      let
+        inherit (pkgs.stdenv.hostPlatform) system;
+      in
       {
         nixpkgs.config.permittedInsecurePackages = [
           "dotnet-runtime-6.0.36"
@@ -12,15 +15,17 @@
 
         home.packages = with pkgs; [
           #devilutionx
-          #fallout2-ce
           #fallout-ce
+          #fallout2-ce
           fceux
           heroic
+          inputs.nix-reshade.packages.${system}.reshade
+          inputs.nix-reshade.packages.${system}.reshade-shaders
+          inputs.umu.packages.${system}.default
           itch
           mangohud
           mupen64plus
           openjk
-          openmw
           openra
           openrct2
           openttd

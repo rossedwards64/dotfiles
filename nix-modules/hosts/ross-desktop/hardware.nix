@@ -1,9 +1,12 @@
-{ config, ... }:
+{ inputs, config, ... }:
 {
   configurations.nixos.ross-desktop.module =
     { pkgs, ... }:
     {
+      imports = [ inputs.ucodenix.nixosModules.default ];
       nixpkgs.hostPlatform = "x86_64-linux";
+      services.ucodenix.enable = true;
+
       hardware = {
         enableRedistributableFirmware = true;
         cpu.amd.updateMicrocode = true;

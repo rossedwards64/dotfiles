@@ -31,7 +31,6 @@
 
       services = {
         accounts-daemon.enable = true;
-        flatpak.enable = true;
         openssh.enable = true;
         jackett.enable = true;
         udev.packages = with pkgs; [

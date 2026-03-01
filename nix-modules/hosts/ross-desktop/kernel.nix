@@ -1,9 +1,12 @@
+{ inputs, ... }:
 {
   configurations.nixos.ross-desktop.module =
     { pkgs, ... }:
     {
       boot = {
-        extraModulePackages = [ pkgs.linuxKernel.packages.linux_6_18.gcadapter-oc-kmod ];
+        extraModulePackages = [
+          inputs.nix-cachyos-kernel.legacyPackages.${pkgs.stdenv.hostPlatform.system}.linuxPackages-cachyos-latest.gcadapter-oc-kmod
+        ];
 
         kernelModules = [
           "kvm-amd"

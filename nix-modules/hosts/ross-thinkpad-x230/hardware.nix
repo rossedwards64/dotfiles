@@ -8,8 +8,8 @@
   configurations.nixos.ross-thinkpad-x230.module =
     { pkgs, ... }:
     {
-      nixpkgs.hostPlatform = "x86_64-linux";
       imports = [ inputs.nixos-hardware.nixosModules.lenovo-thinkpad-x230 ];
+      nixpkgs.hostPlatform = "x86_64-linux";
 
       hardware = {
         enableRedistributableFirmware = true;
