@@ -23,7 +23,6 @@
           KDEHOME = "${xdg.configHome}/kde";
           LEDGER_FILE = "$HOME/Documents/finance/$(${pkgs.coreutils}/bin/date -I | cut -d'-' -f1).journal";
           LEIN_HOME = "${xdg.dataHome}/lein";
-          NH_FLAKE = "$HOME/.dotfiles";
           PASSWORD_STORE_DIR = "${xdg.dataHome}/pass";
           PLATFORMIO_CORE_DIR = "${xdg.configHome}/platformio";
           ROSWELL_HOME = "${xdg.configHome}/roswell";

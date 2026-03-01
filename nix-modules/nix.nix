@@ -3,10 +3,13 @@
   flake.modules = {
     nixos.base.nix = {
       extraOptions = "experimental-features = nix-command flakes pipe-operators recursive-nix";
+      daemonCPUSchedPolicy = "idle";
+      daemonIOSchedClass = "idle";
       nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
-      settings.trusted-users = [
-        "ross"
-      ];
+      settings = {
+        trusted-users = [ "ross" ];
+        auto-optimise-store = true;
+      };
     };
 
     homeManager.base =
@@ -23,9 +26,10 @@
 
         programs.nh = {
           enable = true;
+          flake = "$HOME/.dotfiles";
           clean = {
             enable = true;
-            extraArgs = "--keep-since 3d --keep 2";
+            extraArgs = "--keep-since 3d --keep 2 --optimise";
           };
         };
       };
