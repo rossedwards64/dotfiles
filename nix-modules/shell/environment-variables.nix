@@ -15,7 +15,7 @@
           BROWSER = "${lib.getExe pkgs.librewolf}";
           CARGO_HOME = "${xdg.dataHome}/cargo";
           DIRENV_ALLOW_NIX = "1";
-          EDITOR = "${lib.getExe emacsPackage}";
+          EDITOR = "${lib.getExe' emacsPackage "emacs"}";
           EMACSDIR = "${xdg.configHome}/emacs";
           GDBHISTFILE = "${xdg.dataHome}/gdb/history";
           GOPATH = "${xdg.dataHome}/go";
