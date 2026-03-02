@@ -36,7 +36,7 @@
         {
           compileScript = ''
             cp $contentPath tmp.lisp
-            ${lib.getExe sbcl} ${compileArgs}
+            ${lib.getExe' sbcl "sbcl"} ${compileArgs}
             mv ${name} $out
           '';
 

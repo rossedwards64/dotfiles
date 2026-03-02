@@ -1,4 +1,4 @@
-moduleArgs:
+{ lib, ... }@moduleArgs:
 {
   flake.modules.homeManager.base =
     { pkgs, config, ... }:

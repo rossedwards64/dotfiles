@@ -59,7 +59,7 @@
             "${modifier}+a" = "focus parent";
             "${modifier}+b" = "splitt";
             "${modifier}+c" = "exec ${lib.getExe config.flake.scripts.toggleSink}";
-            "${modifier}+d" = "exec ${lib.getExe pkgs.procps} fuzzel || ${lib.getExe pkgs.fuzzel}";
+            "${modifier}+d" = "exec ${lib.getExe' pkgs.procps "pkill"} fuzzel || ${lib.getExe pkgs.fuzzel}";
             "${modifier}+e" = "layout toggle all";
             "${modifier}+f" = "fullscreen";
             "${modifier}+g" = "splith";
