@@ -1,19 +1,26 @@
 { inputs, ... }:
 {
-  flake.modules.homeManager.base = {
-    imports = [ inputs.nix-flatpak.homeManagerModules.nix-flatpak ];
+  flake.modules = {
+    nixos.base = {
+      imports = [ inputs.nix-flatpak.nixosModules.nix-flatpak ];
+      services.flatpak.enable = true;
+    };
 
-    services.flatpak = {
-      enable = true;
-      uninstallUnmanaged = true;
-      packages = [
-        "io.freetubeapp.FreeTube"
-        "org.kartkrew.RingRacers"
-      ];
+    homeManager.base = {
+      imports = [ inputs.nix-flatpak.homeManagerModules.nix-flatpak ];
 
-      update.auto = {
+      services.flatpak = {
         enable = true;
-        onCalendar = "weekly";
+        uninstallUnmanaged = true;
+        packages = [
+          "io.freetubeapp.FreeTube"
+          "org.kartkrew.RingRacers"
+        ];
+
+        update.auto = {
+          enable = true;
+          onCalendar = "weekly";
+        };
       };
     };
   };
