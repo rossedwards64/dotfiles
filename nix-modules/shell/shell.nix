@@ -27,7 +27,7 @@
     homeManager.base =
       { pkgs, config, ... }:
       let
-        xdg = config.xdg;
+        inherit (config) xdg;
       in
       {
         home.packages = with pkgs; [

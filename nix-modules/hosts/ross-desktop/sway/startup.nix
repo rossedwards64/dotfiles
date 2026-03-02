@@ -5,11 +5,11 @@
     {
       wayland.windowManager.sway.config = {
         startup = lib.mkAfter [
-          { command = "${pkgs.flatpak}/bin/flatpak run io.freetubeapp.FreeTube"; }
-          { command = "${pkgs.itch}/bin/itch"; }
-          { command = "${pkgs.qbittorrent}/bin/qbittorrent"; }
-          { command = "${pkgs.steam}/bin/steam"; }
-          { command = "${pkgs.vesktop}/bin/vesktop"; }
+          { command = "${lib.getExe pkgs.flatpak} run io.freetubeapp.FreeTube"; }
+          { command = "${lib.getExe pkgs.itch}"; }
+          { command = "${lib.getExe pkgs.qbittorrent}"; }
+          { command = "${lib.getExe pkgs.steam}"; }
+          { command = "${lib.getExe pkgs.vesktop}"; }
         ];
       };
     };

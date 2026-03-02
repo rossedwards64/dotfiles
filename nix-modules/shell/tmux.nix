@@ -1,8 +1,9 @@
+{ lib, ... }:
 {
   flake.modules.homeManager.base =
     { pkgs, config, ... }:
     let
-      xdg = config.xdg;
+      inherit (config) xdg;
     in
     {
       xdg.configFile = {
@@ -22,10 +23,10 @@
                   - clear
             - spotify:
                 panes:
-                  - ${pkgs.ncspot}/bin/ncspot
+                  - ${lib.getExe pkgs.ncspot}
             - monitor:
                 panes:
-                  - ${pkgs.btop}/bin/btop
+                  - ${lib.getExe pkgs.btop}
         '';
       };
 
@@ -35,7 +36,7 @@
 
         baseIndex = 1;
         prefix = "C-Space";
-        shell = "${pkgs.zsh}/bin/zsh";
+        shell = "${lib.getExe pkgs.zsh}";
         historyLimit = 100000;
 
         plugins = with pkgs; [

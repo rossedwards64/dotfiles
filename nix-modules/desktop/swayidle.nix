@@ -6,14 +6,14 @@
         enable = true;
 
         events = {
-          before-sleep = "${pkgs.playerctl}/bin/playerctl pause; ${pkgs.swaylock-effects}/bin/swaylock -fF";
-          after-resume = "${pkgs.sway}/bin/swaymsg 'output * power on'";
+          before-sleep = "${lib.getExe pkgs.playerctl} pause; ${lib.getExe pkgs.swaylock-effects} -fF";
+          after-resume = "${lib.getExe' pkgs.sway "swaymsg"} 'output * power on'";
         };
 
         timeouts = [
           {
             timeout = 300;
-            command = "${pkgs.swaylock-effects}/bin/swaylock -fF";
+            command = "${lib.getExe pkgs.swaylock-effects} -fF";
           }
         ];
       };

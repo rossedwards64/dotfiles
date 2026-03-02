@@ -13,15 +13,13 @@
     pkgs.writers.makeBinWriter
       (
         let
-          sbcl = (
-            pkgs.sbcl.withPackages (
+          sbcl = pkgs.sbcl.withPackages (
               ps: with ps; [
                 serapeum
                 str
                 unix-opts
               ]
-            )
-          );
+            );
           compileArgs = lib.escapeShellArgs [
             "--no-userinit"
             "--no-sysinit"
@@ -46,7 +44,7 @@
         {
           compileScript = ''
             cp $contentPath tmp.lisp
-            ${sbcl}/bin/sbcl ${compileArgs}
+            ${lib.getExe sbcl}/bin/sbcl ${compileArgs}
             mv ${name} $out
           '';
 

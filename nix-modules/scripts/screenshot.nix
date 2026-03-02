@@ -13,7 +13,7 @@
     pkgs.writers.makeBinWriter
       (
         let
-          sbcl = (pkgs.sbcl.withPackages (ps: with ps; [ com_dot_inuoe_dot_jzon ]));
+          sbcl = pkgs.sbcl.withPackages (ps: with ps; [ com_dot_inuoe_dot_jzon ]);
           compileArgs = lib.escapeShellArgs [
             "--no-userinit"
             "--no-sysinit"
@@ -36,7 +36,7 @@
         {
           compileScript = ''
             cp $contentPath tmp.lisp
-            ${sbcl}/bin/sbcl ${compileArgs}
+            ${lib.getExe sbcl} ${compileArgs}
             mv ${name} $out
           '';
 

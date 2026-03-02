@@ -3,7 +3,7 @@
   flake.modules.homeManager.base =
     { pkgs, ... }:
     let
-      font = config.flake.meta.font;
+      inherit (config.flake.meta) font;
       height = 32;
       hdmi = "HDMI-A-1";
       dp1 = "DP-1";
@@ -11,8 +11,7 @@
       laptopScreen = "LVDS-1";
       layer = "bottom";
 
-      makeDisk = (
-        disk: path: {
+      makeDisk = disk: path: {
           name = "disk#${disk}";
           config = {
             format = "󰋊 ${lib.toUpper disk}: {used} / {total}";
@@ -20,11 +19,9 @@
             path = "${path}";
             interval = 300;
           };
-        }
-      );
+        };
 
-      makeDiskNoLabel = (
-        disk: path: {
+      makeDiskNoLabel = disk: path: {
           name = "disk#${disk}";
           config = {
             format = "󰋊 {used} / {total}";
@@ -32,8 +29,7 @@
             path = "${path}";
             interval = 300;
           };
-        }
-      );
+        };
 
       modules = {
         builtin = rec {
@@ -72,11 +68,9 @@
             };
           };
 
-          cpuNoLabel = (
-            lib.attrsets.overrideExisting cpu {
+          cpuNoLabel = lib.attrsets.overrideExisting cpu {
               config.format = "󰘚 {usage}% {avg_frequency}GHz";
-            }
-          );
+            };
 
           memory = {
             name = "memory";
@@ -86,11 +80,9 @@
             };
           };
 
-          memoryNoLabel = (
-            lib.attrsets.overrideExisting memory {
+          memoryNoLabel = lib.attrsets.overrideExisting memory {
               config.format = " {used:0.1f}G / {total:0.1f}G";
-            }
-          );
+            };
 
           temperature = {
             name = "temperature";
@@ -185,7 +177,7 @@
                   ""
                 ];
               };
-              on-click = "${pkgs.pavucontrol}/bin/pavucontrol";
+              on-click = "${lib.getExe pkgs.pavucontrol}";
             };
           };
 
@@ -221,7 +213,7 @@
               name = "sway/window";
               config = {
                 format = "{} 󱂬";
-                on-click = "${pkgs.sway}/bin/swaymsg kill";
+                on-click = "${lib.getExe' pkgs.sway "swaymsg"} kill";
               };
             };
 
@@ -290,8 +282,8 @@
             config = {
               device = "intel_backlight";
               interval = 1;
-              on-scroll-down = "${pkgs.brightnessctl}/bin/brightnessctl set 5%-";
-              on-scroll-up = "${pkgs.brightnessctl}/bin/brightnessctl set 5%+";
+              on-scroll-down = "${lib.getExe pkgs.brightnessctl} set 5%-";
+              on-scroll-up = "${lib.getExe pkgs.brightnessctl} set 5%+";
               format = "{icon} {percent}%";
               format-icons = [
                 "󰃚"
@@ -302,7 +294,7 @@
                 "󰃟"
                 "󰃠"
               ];
-              on-click = "${pkgs.wdisplays}/bin/wdisplays";
+              on-click = "${lib.getExe pkgs.wdisplays}";
             };
           };
 
@@ -377,14 +369,14 @@
             name = "custom/launcher";
             config = {
               format = "";
-              on-click = "${pkgs.fuzzel}/bin/fuzzel";
+              on-click = "${lib.getExe pkgs.fuzzel}";
             };
           };
 
           cpuTemp = {
             name = "custom/cpu-temp";
             config = {
-              exec = "${config.flake.scripts.cpuTemp}/bin/cpu-temp";
+              exec = "${lib.getExe config.flake.scripts.cpuTemp}";
               format = " {}";
               interval = 1;
             };
@@ -393,7 +385,7 @@
           gpuPercent = {
             name = "custom/gpu-percent";
             config = {
-              exec = "${config.flake.scripts.gpuPercent}/bin/gpu-percent";
+              exec = "${lib.getExe config.flake.scripts.gpuPercent}";
               format = "󰘚 GPU {}";
               interval = 1;
             };
@@ -402,7 +394,7 @@
           gpuMem = {
             name = "custom/gpu-mem";
             config = {
-              exec = "${config.flake.scripts.gpuMem}/bin/gpu-mem";
+              exec = "${lib.getExe config.flake.scripts.gpuMem}";
               format = "{}";
               interval = 1;
             };
@@ -411,7 +403,7 @@
           gpuTemp = {
             name = "custom/gpu-temp";
             config = {
-              exec = "${config.flake.scripts.gpuTemp}/bin/gpu-temp";
+              exec = "${lib.getExe config.flake.scripts.gpuTemp}";
               format = " {}";
               interval = 1;
             };
@@ -422,7 +414,7 @@
             config = {
               tooltip = false;
               format = "󰐥";
-              on-click = "${config.flake.scripts.powerMenu}/bin/powermenu";
+              on-click = "${lib.getExe config.flake.scripts.powerMenu}";
             };
           };
 
@@ -430,9 +422,9 @@
             name = "custom/weather";
             config = {
               return-type = "json";
-              exec = "sh ${config.flake.scripts.weather}/bin/weather";
+              exec = "sh ${lib.getExe config.flake.scripts.weather}";
               interval = 300;
-              on-click = "${pkgs.librewolf}/bin/librewolf https://wttr.in";
+              on-click = "${lib.getExe pkgs.librewolf} https://wttr.in";
             };
           };
 
@@ -441,8 +433,19 @@
             config = {
               interval = 1;
               return-type = "json";
-              exec = "${config.flake.scripts.currentMedia}/bin/current-media";
-              exec-if = "${pkgs.procps}/bin/pgrep spotify || ${pkgs.procps}/bin/pgrep spotify_player || ${pkgs.procps}/bin/pgrep spot || ${pkgs.procps}/bin/pgrep ncspot";
+              exec = "${lib.getExe config.flake.scripts.currentMedia}";
+              exec-if =
+                let
+                  pgrepCommand = lib.getExe' pkgs.procps "pgrep";
+                in
+                lib.intersperse "||" (
+                  builtins.map (p: "${pgrepCommand} ${p}") [
+                    "spotify"
+                    "spotify_player"
+                    "spot"
+                    "ncspot"
+                  ]
+                );
               escape = true;
             };
           };
@@ -463,10 +466,10 @@
                 dnd-inhibited-none = "󰂛 ";
               };
               return-type = "json";
-              exec-if = "which ${pkgs.swaynotificationcenter}/bin/swaync-client";
-              exec = "${pkgs.swaynotificationcenter}/bin/swaync-client -swb";
-              on-click = "${pkgs.swaynotificationcenter}/bin/swaync-client -t -sw";
-              on-click-right = "${pkgs.swaynotificationcenter}/bin/swaync-client -d -sw";
+              exec-if = "which ${lib.getExe' pkgs.swaynotificationcenter "swaync-client"}";
+              exec = "${lib.getExe' pkgs.swaynotificationcenter "swaync-client"} -swb";
+              on-click = "${lib.getExe' pkgs.swaynotificationcenter "swaync-client"} -t -sw";
+              on-click-right = "${lib.getExe' pkgs.swaynotificationcenter "swaync-client"} -d -sw";
               escape = true;
             };
           };
@@ -476,7 +479,7 @@
             config = {
               format = "󰈐 {}";
               interval = 1;
-              exec = "${config.flake.scripts.fanSpeed}/bin/fan-speed";
+              exec = "${lib.getExe config.flake.scripts.fanSpeed}";
             };
           };
         };
@@ -558,8 +561,7 @@
           ]
         );
 
-      makeBar = (
-        moduleSet: position: output: modules-left: modules-center: modules-right:
+      makeBar = moduleSet: position: output: modules-left: modules-center: modules-right:
         {
           inherit
             height
@@ -571,18 +573,13 @@
             modules-right
             ;
         }
-        // moduleSet
-      );
+        // moduleSet;
 
-      makeBarWithLabels = (
-        position: output: modules-left: modules-center: modules-right:
-        makeBar allModules position output modules-left modules-center modules-right
-      );
+      makeBarWithLabels = position: output: modules-left: modules-center: modules-right:
+        makeBar allModules position output modules-left modules-center modules-right;
 
-      makeBarNoLabels = (
-        position: output: modules-left: modules-center: modules-right:
-        makeBar allModulesNoLabels position output modules-left modules-center modules-right
-      );
+      makeBarNoLabels = position: output: modules-left: modules-center: modules-right:
+        makeBar allModulesNoLabels position output modules-left modules-center modules-right;
     in
     {
       programs.waybar = with modules; {
@@ -591,8 +588,7 @@
         systemd.enable = true;
 
         settings = {
-          topbar-hdmi = (
-            makeBarWithLabels "top" hdmi
+          topbar-hdmi = makeBarWithLabels "top" hdmi
               [
                 "${custom.launcher.name}"
                 "${custom.separator.name}"
@@ -613,10 +609,8 @@
                 "${builtin.network.disconnected.name}"
                 "${custom.separator.name}"
                 "${custom.power.name}"
-              ]
-          );
-          bottombar-hdmi = (
-            makeBarWithLabels "bottom" hdmi
+              ];
+          bottombar-hdmi = makeBarWithLabels "bottom" hdmi
               [
                 "${builtin.tray.name}"
                 "${custom.separator.name}"
@@ -631,11 +625,9 @@
                 "${builtin.sway.scratchpad.name}"
                 "${builtin.sway.window.name}"
                 "${custom.separator.name}"
-              ]
-          );
+              ];
 
-          topbar-dp1 = (
-            makeBarWithLabels "top" dp1
+          topbar-dp1 = makeBarWithLabels "top" dp1
               [
                 "${custom.launcher.name}"
                 "${custom.separator.name}"
@@ -652,11 +644,9 @@
                 "${custom.weather.name}"
                 "${custom.separator.name}"
                 "${custom.power.name}"
-              ]
-          );
+              ];
 
-          bottombar-dp1 = (
-            makeBarWithLabels "bottom" dp1
+          bottombar-dp1 = makeBarWithLabels "bottom" dp1
               [
                 "${builtin.tray.name}"
                 "${custom.separator.name}"
@@ -668,11 +658,9 @@
                 "${builtin.sway.scratchpad.name}"
                 "${builtin.sway.window.name}"
                 "${custom.separator.name}"
-              ]
-          );
+              ];
 
-          topbar-dp2 = (
-            makeBarNoLabels "top" dp2
+          topbar-dp2 = makeBarNoLabels "top" dp2
               [
                 "${custom.launcher.name}"
                 "${custom.separator.name}"
@@ -683,11 +671,9 @@
                 "${custom.separator.name}"
                 "${custom.separator.name}"
                 "${custom.power.name}"
-              ]
-          );
+              ];
 
-          bottombar-dp2 = (
-            makeBarNoLabels "bottom" dp2
+          bottombar-dp2 = makeBarNoLabels "bottom" dp2
               [
                 "${builtin.tray.name}"
                 "${custom.separator.name}"
@@ -699,11 +685,9 @@
                 "${builtin.sway.scratchpad.name}"
                 "${builtin.sway.window.name}"
                 "${custom.separator.name}"
-              ]
-          );
+              ];
 
-          topbar-laptop = (
-            makeBarNoLabels "top" laptopScreen
+          topbar-laptop = makeBarNoLabels "top" laptopScreen
               [
                 "${custom.launcher.name}"
                 "${custom.separator.name}"
@@ -725,11 +709,9 @@
                 "${custom.weather.name}"
                 "${custom.separator.name}"
                 "${custom.power.name}"
-              ]
-          );
+              ];
 
-          bottombar-laptop = (
-            makeBarNoLabels "bottom" laptopScreen
+          bottombar-laptop = makeBarNoLabels "bottom" laptopScreen
               [
                 "${builtin.tray.name}"
                 "${custom.separator.name}"
@@ -749,8 +731,7 @@
                 "${builtin.sway.scratchpad.name}"
                 "${builtin.sway.window.name}"
                 "${custom.separator.name}"
-              ]
-          );
+              ];
         };
 
         style = ''

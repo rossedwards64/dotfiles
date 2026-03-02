@@ -74,7 +74,7 @@
                   urls = [
                     {
                       template = "${defaultEngine.url}";
-                      params = defaultEngine.params;
+                      inherit (defaultEngine) params;
                     }
                   ];
                   definedAliases = [ defaultEngine.alias ];
@@ -85,7 +85,7 @@
                   urls = [
                     {
                       template = "https://mynixos.com/search";
-                      params = defaultEngine.params;
+                      inherit (defaultEngine) params;
                     }
                   ];
                   definedAliases = [ "@nixpkgs" ];
@@ -154,7 +154,7 @@
                   urls = [
                     {
                       template = "https://protondb.com/search";
-                      params = defaultEngine.params;
+                      inherit (defaultEngine) params;
                     }
                   ];
                   definedAliases = [ "@protondb" ];

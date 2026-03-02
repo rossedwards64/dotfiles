@@ -44,31 +44,31 @@
           {
             "${modifier}+Ctrl+space" = "sticky toggle";
             "${modifier}+Escape" =
-              ''exec "${pkgs.procps}/bin/pkill fuzzel || ${config.flake.scripts.powerMenu}/bin/powermenu"'';
+              ''exec "${lib.getExe' pkgs.procps "pkill"} fuzzel || ${lib.getExe config.flake.scripts.powerMenu}"'';
             "${modifier}+Minus" = "scratchpad show";
-            "${modifier}+Return" = "exec ${pkgs.alacritty}/bin/alacritty";
-            "${modifier}+Shift+Return" = "exec ${pkgs.librewolf}/bin/librewolf";
+            "${modifier}+Return" = "exec ${lib.getExe pkgs.alacritty}";
+            "${modifier}+Shift+Return" = "exec ${lib.getExe pkgs.librewolf}";
             "${modifier}+Shift+b" = "border toggle";
             "${modifier}+Shift+c" = "reload";
-            "${modifier}+Shift+g" = "exec ${config.flake.pkgs.emacs}/bin/emacsclient -c -a=''";
+            "${modifier}+Shift+g" = "exec ${lib.getExe' config.flake.pkgs.emacs "emacsclient"} -c -a=''";
             "${modifier}+Shift+minus" = "move to scratchpad";
             "${modifier}+Shift+q" = "kill";
             "${modifier}+Shift+r" = ''mode "resize"'';
             "${modifier}+Shift+space" = "floating toggle";
-            "${modifier}+Shift+v" = "${pkgs.myxer}/bin/myxer";
+            "${modifier}+Shift+v" = "${lib.getExe pkgs.myxer}";
             "${modifier}+a" = "focus parent";
             "${modifier}+b" = "splitt";
-            "${modifier}+c" = "exec ${config.flake.scripts.toggleSink}/bin/toggle-sink";
-            "${modifier}+d" = ''exec "${pkgs.procps}/bin/pkill fuzzel || ${pkgs.fuzzel}/bin/fuzzel"'';
+            "${modifier}+c" = "exec ${lib.getExe config.flake.scripts.toggleSink}";
+            "${modifier}+d" = "exec ${lib.getExe pkgs.procps} fuzzel || ${lib.getExe pkgs.fuzzel}";
             "${modifier}+e" = "layout toggle all";
             "${modifier}+f" = "fullscreen";
             "${modifier}+g" = "splith";
             "${modifier}+r" = ''mode "default"'';
             "${modifier}+space" = "focus mode_toggle";
-            "${modifier}+t" = "exec ${pkgs.swaynotificationcenter}/bin/swaync-client -t -sw";
+            "${modifier}+t" = "exec ${lib.getExe' pkgs.swaynotificationcenter "swaync-client"} -t -sw";
             "${modifier}+v" = "splitv";
             "${modifier}+w" = "layout default";
-            "Print" = "exec ${config.flake.scripts.screenshot}/bin/screenshot";
+            "Print" = "exec ${lib.getExe config.flake.scripts.screenshot}";
           }
         ];
     };

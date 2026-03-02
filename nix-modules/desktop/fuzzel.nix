@@ -8,7 +8,7 @@
         settings = {
           main = {
             icon-theme = "rose-pine-moon";
-            terminal = "${pkgs.alacritty}/bin/alacritty";
+            terminal = "${lib.getExe pkgs.alacritty}";
             anchor = "center";
             exit-on-keyboard-focus-loss = false;
           };

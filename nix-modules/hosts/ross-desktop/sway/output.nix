@@ -3,9 +3,7 @@
   configurations.home."${config.flake.meta.user.username}@ross-desktop".module =
     { pkgs, ... }:
     let
-      hdmi = config.flake.meta.monitors.hdmi;
-      dp1 = config.flake.meta.monitors.dp1;
-      dp2 = config.flake.meta.monitors.dp2;
+      inherit (config.flake.meta.monitors) hdmi dp1 dp2;
     in
     {
       wayland.windowManager.sway.config = {
@@ -13,7 +11,7 @@
         output = {
           ${hdmi.name} = {
             scale = "2";
-            res = hdmi.res;
+            inherit (hdmi) res;
             pos = "0 0";
             bg = "${
               pkgs.fetchurl {
@@ -25,7 +23,7 @@
 
           ${dp1.name} = {
             scale = "1";
-            res = dp1.res;
+            inherit (dp1) res;
             pos = "1920 88";
             bg = "${
               pkgs.fetchurl {
@@ -37,7 +35,7 @@
 
           ${dp2.name} = {
             scale = "1";
-            res = dp2.res;
+            inherit (dp2) res;
             pos = "3840 628";
             bg = "${
               pkgs.fetchurl {

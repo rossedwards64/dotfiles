@@ -8,7 +8,7 @@
         package = pkgs.swaylock-effects;
 
         settings = {
-          font = config.flake.meta.font;
+          inherit (config.flake.meta) font;
           font-size = 36;
           daemonize = true;
           clock = true;

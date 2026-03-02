@@ -1,3 +1,4 @@
+{ lib, ... }:
 {
   configurations.nixos.ross-thinkpad-x230.module =
     { pkgs, ... }:
@@ -22,7 +23,7 @@
           enable = true;
           description = "Zero-configuration fan control for ThinkPad.";
           serviceConfig = {
-            ExecStart = "${pkgs.zcfan}/bin/zcfan";
+            ExecStart = "${lib.getExe pkgs.zcfan}";
             Restart = "on-failure";
             RestartSec = "500ms";
             MemoryDenyWriteExecute = "yes";

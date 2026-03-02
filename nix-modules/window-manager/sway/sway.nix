@@ -1,8 +1,8 @@
-{ config, ... }:
+{ lib, config, ... }:
 {
   flake.modules.homeManager.base =
     let
-      modifier = config.flake.meta.windowManager.modifier;
+      inherit (config.flake.meta.windowManager) modifier;
     in
     { pkgs, ... }:
     {
@@ -31,14 +31,16 @@
 
         config = {
           inherit modifier;
-          down = config.flake.meta.windowManager.down;
-          right = config.flake.meta.windowManager.right;
-          left = config.flake.meta.windowManager.left;
-          up = config.flake.meta.windowManager.up;
+          inherit (config.flake.meta.windowManager)
+            down
+            right
+            left
+            up
+            ;
           bindkeysToCode = false;
           defaultWorkspace = "workspace number 1";
-          menu = "${pkgs.fuzzel}/bin/fuzzel";
-          terminal = "${pkgs.alacritty}/bin/alacritty";
+          menu = "${lib.getExe pkgs.fuzzel}";
+          terminal = "${lib.getExe pkgs.alacritty}";
           workspaceAutoBackAndForth = true;
           workspaceLayout = "tabbed";
           bars = [ ];

@@ -3,19 +3,20 @@
   flake.modules.homeManager.base =
     { pkgs, config, ... }:
     let
-      xdg = config.xdg;
+      inherit (config) xdg;
+      tputCommand = lib.getExe' pkgs.ncurses "tput";
     in
     {
       programs.zsh.initContent = lib.mkBefore ''
         if [[ -n "$TERM" ]] && [[ "$TERM" != "dumb" ]]; then
-             export BOLD="$(${pkgs.ncurses}/bin/tput bold)"
-             export MAGENTA="$(${pkgs.ncurses}/bin/tput setaf 5)"
-             export RED="$(${pkgs.ncurses}/bin/tput setaf 1)"
-             export CYAN="$(${pkgs.ncurses}/bin/tput setaf 6)"
-             export RMYELLOW="$(${pkgs.ncurses}/bin/tput setaf 3)"
-             export GREEN="$(${pkgs.ncurses}/bin/tput setaf 2)"
-             export BLUE="$(${pkgs.ncurses}/bin/tput setaf 4)"
-             export NORM="$(${pkgs.ncurses}/bin/tput sgr0)"
+             export BOLD="$(${tputCommand} bold)"
+             export MAGENTA="$(${tputCommand} setaf 5)"
+             export RED="$(${tputCommand} setaf 1)"
+             export CYAN="$(${tputCommand} setaf 6)"
+             export RMYELLOW="$(${tputCommand} setaf 3)"
+             export GREEN="$(${tputCommand} setaf 2)"
+             export BLUE="$(${tputCommand} setaf 4)"
+             export NORM="$(${tputCommand} sgr0)"
         fi
 
         zstyle ':completion:*' completer _expand _complete _ignored _approximate
@@ -32,7 +33,7 @@
           fi
         }
 
-        eval $(${pkgs.zoxide}/bin/zoxide init zsh)
+        eval $(${lib.getExe pkgs.zoxide} init zsh)
       '';
     };
 }

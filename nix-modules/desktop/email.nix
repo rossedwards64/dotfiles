@@ -1,4 +1,4 @@
-{ config, ... }@moduleArgs:
+{ lib, ... }@moduleArgs:
 {
   flake.modules.homeManager.base =
     {
@@ -7,7 +7,7 @@
       ...
     }:
     let
-      xdg = config.xdg;
+      inherit (config) xdg;
       realName = moduleArgs.config.flake.meta.user.name;
       gpg = {
         key = "rossedwards";
@@ -27,7 +27,7 @@
           outlook = {
             inherit realName gpg;
             address = moduleArgs.config.flake.meta.user.email;
-            passwordCommand = "${pkgs.pass-wayland}/bin/pass email/hotmail/personal";
+            passwordCommand = "${lib.getExe pkgs.pass-wayland} email/hotmail/personal";
             flavor = "outlook.office365.com";
             msmtp.enable = true;
             primary = true;
@@ -57,7 +57,7 @@
           gmail = {
             inherit realName gpg;
             address = "redwards6469@gmail.com";
-            passwordCommand = "${pkgs.pass-wayland}/bin/pass email/google/app-password";
+            passwordCommand = "${lib.getExe pkgs.pass-wayland} email/google/app-password";
             flavor = "gmail.com";
             msmtp.enable = true;
             primary = false;

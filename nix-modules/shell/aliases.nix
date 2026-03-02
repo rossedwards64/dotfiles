@@ -3,19 +3,19 @@
     { pkgs, ... }:
     {
       programs.zsh.shellAliases = {
-        vim = "${pkgs.neovim}/bin/nvim";
-        mv = "${pkgs.coreutils}/bin/mv -iv";
-        cp = "${pkgs.coreutils}/bin/cp -iv";
-        rm = "${pkgs.coreutils}/bin/rm -iv";
-        ls = "${pkgs.eza}/bin/eza --icons --color=always";
-        la = "${pkgs.eza}/bin/eza --icons --color=always -ah";
-        l = "${pkgs.eza}/bin/eza --icons --color=always -lah";
+        vim = "${lib.getExe pkgs.neovim}";
+        mv = "${lib.getExe' pkgs.coreutils "mv"} -iv";
+        cp = "${lib.getExe' pkgs.coreutils "cp"} -iv";
+        rm = "${lib.getExe' pkgs.coreutils "rm"} -iv";
+        ls = "${lib.getExe pkgs.eza} --icons --color=always";
+        la = "${lib.getExe pkgs.eza} --icons --color=always -ah";
+        l = "${lib.getExe pkgs.eza} --icons --color=always -lah";
         cd = "z";
-        cat = "${pkgs.bat}/bin/bat";
-        grep = "${pkgs.ripgrep}/bin/rg";
-        find = "${pkgs.fd}/bin/fd";
-        du = "${pkgs.dust}/bin/dust -Hr";
-        clear = "clear && ${pkgs.coreutils}/bin/stty sane";
+        cat = "${lib.getExe pkgs.bat}";
+        grep = "${lib.getExe pkgs.ripgrep}";
+        find = "${lib.getExe pkgs.fd}";
+        du = "${lib.getExe pkgs.dust} -Hr";
+        clear = "clear && ${lib.getExe' pkgs.coreutils "stty"} sane";
       };
     };
 }

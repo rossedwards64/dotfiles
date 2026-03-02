@@ -4,7 +4,7 @@
     {
       programs.zsh.history =
         let
-          xdg = config.xdg;
+          inherit (config) xdg;
         in
         {
           append = true;

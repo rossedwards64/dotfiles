@@ -28,9 +28,9 @@
               args = [
                 "-l"
                 "-c"
-                "${pkgs.tmuxinator}/bin/tmuxinator default"
+                "${lib.getExe pkgs.tmuxinator} default"
               ];
-              program = "${pkgs.zsh}/bin/zsh";
+              program = "${lib.getExe pkgs.zsh}";
             };
           };
 
@@ -139,7 +139,7 @@
 
             enabled = [
               {
-                command = "${pkgs.xdg-utils}/bin/xdg-open";
+                command = "${lib.getExe' pkgs.xdg-utils "xdg-open"}";
                 hyperlinks = true;
                 post_processing = true;
                 persist = true;

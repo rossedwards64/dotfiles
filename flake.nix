@@ -70,7 +70,7 @@
   outputs =
     inputs:
     let
-      lib = inputs.nixpkgs.lib;
+      inherit (inputs.nixpkgs) lib;
       modules = lib.attrValues (inputs.import-tree ./nix-modules);
     in
     inputs.flake-parts.lib.mkFlake { inherit inputs; } {

@@ -1,4 +1,4 @@
-{ ... }:
+_:
 {
   flake.meta.monitors = {
     hdmi = {

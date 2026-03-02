@@ -1,12 +1,13 @@
+{ lib, ... }:
 {
   flake.modules.nixos.base =
     { pkgs, ... }:
     {
       security.pam.services.swaylock.text = "auth include login";
       environment.etc."greetd/environments".text = ''
-        ${pkgs.sway}/bin/sway
-        ${pkgs.hyprland}/bin/Hyprland
-        ${pkgs.niri}/bin/niri
+        ${lib.getExe pkgs.sway}
+        ${lib.getExe pkgs.hyprland}
+        ${lib.getExe pkgs.niri}
       '';
 
       services = {
@@ -19,7 +20,7 @@
             default_session = {
               user = "ross";
               command = ''
-                ${pkgs.tuigreet}/bin/tuigreet --cmd ${pkgs.sway}/bin/sway -t -g \
+                ${lib.getExe pkgs.tuigreet} --cmd ${lib.getExe pkgs.sway} -t -g \
                     'WELCOME TO WORM LINUX' --asterisks
               '';
             };
