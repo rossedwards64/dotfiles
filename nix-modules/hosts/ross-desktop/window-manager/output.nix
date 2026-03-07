@@ -1,4 +1,4 @@
-{ config, ... }:
+{ lib, config, ... }:
 {
   configurations.home."${config.flake.meta.user.username}@ross-desktop".module =
     { pkgs, ... }:
@@ -7,12 +7,9 @@
     in
     {
       wayland.windowManager.sway.config = {
-
         output = {
           ${hdmi.name} = {
-            scale = "2";
-            inherit (hdmi) res;
-            pos = "0 0";
+            inherit (hdmi) res scale pos;
             bg = "${
               pkgs.fetchurl {
                 url = "https://i.pinimg.com/originals/40/e9/da/40e9daa6982435261c840673b008b5dd.jpg";
@@ -22,9 +19,7 @@
           };
 
           ${dp1.name} = {
-            scale = "1";
-            inherit (dp1) res;
-            pos = "1920 88";
+            inherit (dp1) res scale pos;
             bg = "${
               pkgs.fetchurl {
                 url = "https://images.alphacoders.com/133/thumb-1920-1334857.png";
@@ -34,9 +29,7 @@
           };
 
           ${dp2.name} = {
-            scale = "1";
-            inherit (dp2) res;
-            pos = "3840 628";
+            inherit (dp2) res scale pos;
             bg = "${
               pkgs.fetchurl {
                 url = "https://images4.alphacoders.com/128/thumb-1920-1280154.jpg";
@@ -77,5 +70,28 @@
           }
         ];
       };
+
+      programs.niri.settings.outputs =
+        with config.flake;
+        lib.attrsets.genAttrs [ meta.monitors.hdmi meta.monitors.dp1 meta.monitors.dp2 ] (
+          monitor:
+          let
+            toInt = lib.attrsets.mapAttrs (
+              name: value:
+              let
+                intValue = lib.strings.toInt value;
+              in
+              if (name == "refresh") then intValue + 0.0 else intValue
+            );
+            mode = meta.lib.monitors.getRes monitor;
+            position = meta.lib.monitors.getPos monitor;
+            scale = lib.strings.toInt monitor.scale;
+          in
+          {
+            ${monitor.name} = {
+              inherit mode position scale;
+            };
+          }
+        );
     };
 }

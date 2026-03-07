@@ -8,8 +8,8 @@
   flake.pkgs =
     let
       pkgs = inputs.nixpkgs.legacyPackages."x86_64-linux";
-      inherit (inputs.emacs-overlay.packages."x86_64-linux") emacs-git-pgtk;
-      emacsPackages = epkgs: with pkgs; [
+      emacsPackages =
+        epkgs: with pkgs; [
           auctex
           emacs-all-the-icons-fonts
           epkgs.vterm
@@ -31,7 +31,10 @@
           ))
         ];
 
-      emacsPackage = (pkgs.emacsPackagesFor emacs-git-pgtk).emacsWithPackages emacsPackages;
+      emacsPackage =
+        (pkgs.emacsPackagesFor inputs.emacs-overlay.packages."x86_64-linux".emacs-git-pgtk)
+        .emacsWithPackages
+          emacsPackages;
       extraPrograms = with pkgs; [
         guile
         (sbcl.withPackages (

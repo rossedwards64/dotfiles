@@ -1,10 +1,5 @@
 {
   flake.modules.homeManager.base.wayland.windowManager.sway.config.input = {
-    "1:1:AT_Translated_Set_2_keyboard" = {
-      xkb_layout = "gb";
-      xkb_options = "ctrl:nocaps";
-    };
-
     "12625:16386:ROYUAN_EPOMAKER_TH66_Keyboard" = {
       xkb_layout = "us";
       xkb_options = "ctrl:nocaps,altwin";

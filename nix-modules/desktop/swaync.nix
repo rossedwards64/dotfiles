@@ -1,6 +1,7 @@
 { config, ... }:
 {
   flake.modules.homeManager.base = {
+    services.swaync.enable = true;
     xdg.configFile = {
       "swaync/config.json".text = "\n";
       "swaync/style.css".text = ''
