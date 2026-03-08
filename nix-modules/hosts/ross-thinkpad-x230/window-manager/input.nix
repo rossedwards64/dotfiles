@@ -15,6 +15,13 @@
           xkb_layout = layout;
           xkb_options = options;
         };
+
+        "2:7:SynPS/2_Synaptics_TouchPad" = {
+          dwt = "enabled";
+          tap = "enabled";
+          natural_scroll = "enabled";
+          middle_emulation = "enabled";
+        };
       };
     };
 }

@@ -15,18 +15,6 @@
         { command = [ "${lib.getExe pkgs.myxer}" ]; }
         {
           command = [
-            "${lib.getExe pkgs.swaybg}"
-            "-o"
-            "LVDS-1"
-            "-i"
-            "${pkgs.fetchurl {
-              url = "https://static.zerochan.net/Lordgenome.full.198358.jpg";
-              sha256 = "sha256-rh4bVRTdM9aoasomvhMQSulGwzc8DgPzP+schDK363Q=";
-            }}"
-          ];
-        }
-        {
-          command = [
             "${lib.getExe pkgs.swayidle}"
             "-w"
           ];
@@ -45,12 +33,6 @@
             "--type text"
             "--watch cliphist"
             "store"
-          ];
-        }
-        {
-          command = [
-            "${lib.getExe pkgs.autotiling}"
-            "-w 1 2 3 4 5 6 7 8 9 10"
           ];
         }
         { command = [ "${lib.getExe pkgs.alacritty}" ]; }

@@ -1,4 +1,4 @@
-{ inputs, ... }:
+{ inputs, lib, ... }:
 {
   flake.modules = {
     nixos.base =
@@ -22,12 +22,13 @@
             ];
           };
 
-          package = pkgs.steam.override {
-            extraProfile = ''
-              export PROTON_ENABLE_WAYLAND=1
-              unset TZ
-            '';
-          };
+          package =
+            lib.mkDefault
+            <| pkgs.steam.override {
+              extraProfile = ''
+                unset TZ
+              '';
+            };
 
           extraCompatPackages = with pkgs; [
             proton-ge-bin
