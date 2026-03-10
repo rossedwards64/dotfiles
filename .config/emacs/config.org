@@ -31,6 +31,8 @@
 Prevent garbage collections on startup. The GC threshold will be lowered again after startup so GCs don't take absolutely ages.
 Also, temporarily get rid of file-name-handler-alist so that every loaded file doesn't need to be compared against the regexps in the list on startup.
 #+begin_src emacs-lisp :tangle ./early-init.el
+;;; early-init.el -*- lexical-binding: t; -*-
+
 (defvar config:file-name-handler-alist-cache file-name-handler-alist)
 
 (setq gc-cons-threshold most-positive-fixnum

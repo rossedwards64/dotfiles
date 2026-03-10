@@ -30,8 +30,10 @@
               '';
             };
 
-          extraCompatPackages = with pkgs; [
-            proton-ge-bin
+          extraCompatPackages = [
+            pkgs.proton-ge-bin
+            inputs.dw-proton.packages.${pkgs.stdenv.hostPlatform.system}.dw-proton
+            inputs.nix-gaming-edge.packages.${pkgs.stdenv.hostPlatform.system}.proton-cachyos
           ];
 
           fontPackages = with pkgs; [

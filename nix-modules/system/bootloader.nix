@@ -47,7 +47,7 @@
           offset = null;
           magicOrExtension = "MZ";
           mask = null;
-          interpreter = "${lib.getExe pkgs.wineWow64Packages.waylandFull}";
+          interpreter = lib.getExe pkgs.wineWow64Packages.full;
           preserveArgvZero = false;
           openBinary = false;
           matchCredentials = false;

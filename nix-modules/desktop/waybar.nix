@@ -5,10 +5,10 @@
     let
       inherit (config.flake.meta) font;
       height = 32;
-      hdmi = "HDMI-A-1";
-      dp1 = "DP-1";
-      dp2 = "DP-2";
-      laptopScreen = "LVDS-1";
+      hdmi = config.flake.meta.monitors.hdmi.name;
+      dp1 = config.flake.meta.monitors.dp1.name;
+      dp2 = config.flake.meta.monitors.dp2.name;
+      laptopScreen = config.flake.meta.monitors.laptopScreen.name;
       layer = "bottom";
 
       makeDisk = disk: path: {

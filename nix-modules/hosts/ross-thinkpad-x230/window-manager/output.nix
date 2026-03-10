@@ -36,15 +36,17 @@
               };
           };
 
-        spawn-at-startup = lib.mkAfter {
-          command = with config.flake.meta.monitors; [
-            "${lib.getExe pkgs.swaybg}"
-            "-o"
-            "${laptopScreen.name}"
-            "-i"
-            "${laptopScreen.bg}"
-          ];
-        };
+        spawn-at-startup = lib.mkAfter [
+          {
+            command = with config.flake.meta.monitors; [
+              "${lib.getExe pkgs.swaybg}"
+              "-o"
+              "${laptopScreen.name}"
+              "-i"
+              "${laptopScreen.bg}"
+            ];
+          }
+        ];
       };
     };
 }
