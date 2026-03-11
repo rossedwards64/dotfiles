@@ -92,7 +92,7 @@
 
         spawn-at-startup =
           lib.mkAfter
-          <| builtins.map (monitor: {
+          <| lib.attrsets.mapAttrsToList (_: monitor: {
             command = [
               "${lib.getExe pkgs.swaybg}"
               "-o"

@@ -1,6 +1,12 @@
 { inputs, ... }:
 let
-  stylix.enable = true;
+  stylix = {
+    enable = true;
+    opacity = {
+      desktop = 0.9;
+      terminal = 0.9;
+    };
+  };
 in
 {
   flake.modules = {
