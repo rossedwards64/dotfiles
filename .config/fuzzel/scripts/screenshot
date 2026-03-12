@@ -178,7 +178,7 @@
 (declaim (ftype (function (integer)) countdown))
 (defun countdown (seconds)
   (loop for i from seconds above 0
-        do (notify-send (format nil "Taking shot in: ~a" i))
+        do (notify-send (format nil "Taking shot in: ~a" i) :replace t)
         do (sleep 1)))
 
 (declaim (ftype (function () string) get-date))
