@@ -6,17 +6,15 @@
   (:export main))
 (in-package :screenshot)
 
-(defclass window-manager-connection () ()
-  (:documentation "Mixin object for window manager IPC handle objects."))
-
-(declaim (ftype (function () (values sb-bsd-sockets:socket &optional))
-                connect-to-sway))
-(defun connect-to-sway ()
-  "Returns a handle to the current Sway instance."
-  (let ((swaysock-address (uiop:getenv "SWAYSOCK"))
+(declaim (ftype (function (string) sb-bsd-sockets:socket) connect-to-window-manager))
+(defun connect-to-window-manager (socket-path-env-var)
+  (let ((socket-path (uiop:getenv socket-path-env-var))
         (socket (make-instance 'sb-bsd-sockets:local-socket
                                :type :stream)))
-    (sb-bsd-sockets:socket-connect socket swaysock-address)))
+    (sb-bsd-sockets:socket-connect socket socket-path)))
+
+(defclass window-manager-connection () ()
+  (:documentation "Mixin object for window manager IPC handle objects."))
 
 (defclass sway-connection (window-manager-connection)
   ((magic-string :type list
@@ -24,15 +22,24 @@
                  :initform '(#x69 #x33 #x2d #x69 #x70 #x63)
                  :reader magic-string)
    (socket :type sb-bsd-sockets:socket
-           :initform (connect-to-sway)
+           :initform (connect-to-window-manager "SWAYSOCK")
            :reader socket))
   (:documentation "Object containing a handle to the current Sway instance."))
 
+(defclass niri-connection (window-manager-connection)
+  ((socket :type sb-bsd-sockets:socket
+           :initform (connect-to-window-manager "NIRI_SOCKET")
+           :reader socket))
+  (:documentation "Object containing a handle to the current Niri instance."))
+
 (defgeneric destroy (connection)
-  (:documentation "Clean up the window manager IPC connection handle.")
-  (:method ((conn sway-connection))
-    (with-slots ((sock socket)) conn
-      (sb-bsd-sockets:socket-close sock))))
+  (:documentation "Clean up the window manager IPC connection handle if it has one.")
+  (:method ((conn window-manager-connection))
+    (format t "Destroying connection ~a...~%" conn)
+    (when (slot-exists-p conn 'socket)
+      (with-slots ((sock socket)) conn
+        (sb-bsd-sockets:socket-close sock)))
+    (print "Done!")))
 
 (defgeneric make-message (connection type &optional payload)
   (:documentation "Create a message understable by the window manager IPC.")
@@ -45,18 +52,24 @@
                        (list (length payload) type)))
              (payload (map 'list #'char-code payload))
              (message (append magic length-and-type payload)))
-        (map 'string #'code-char message)))))
+        (map 'string #'code-char message))))
+  (:method ((conn niri-connection) (type string) &optional (payload ""))
+    (declare (ignorable payload))
+    (format nil "\"~a\"~%" type)))
 
 (defgeneric send-message (connection message)
   (:documentation "Send a message to the window manager IPC.")
-  (:method ((conn sway-connection) (message string))
+  (:method :around ((conn niri-connection) (message string))
+    (gethash "Ok" (call-next-method)))
+  (:method ((conn window-manager-connection) (message string))
     (with-slots ((sock socket)) conn
       (progn
-        (sb-bsd-sockets:socket-send sock message
-                                    (length message))
+        (sb-bsd-sockets:socket-send sock message (length message))
         (let* ((buf-size (* 8192 4))
                (reply (sb-bsd-sockets:socket-receive sock nil buf-size))
-               (reply-start (position-if (lambda (c) (or (equal c #\[) (equal c #\{)))
+               (reply-start (position-if (lambda (c)
+                                           (or (equal c #\[)
+                                               (equal c #\{)))
                                          reply))
                (reply (subseq reply reply-start)))
           (com.inuoe.jzon:parse (remove #\Nul reply)))))))
@@ -64,38 +77,38 @@
 (defgeneric get-outputs (connection)
   (:documentation "Get a list of outputs.")
   (:method ((conn sway-connection))
-    (send-message conn (make-message conn 3))))
+    (send-message conn (make-message conn 3)))
+  (:method ((conn niri-connection))
+    (gethash "Outputs" (send-message conn (make-message conn "Outputs")))))
 
 (defgeneric find-output (connection pred)
   (:documentation "Search for an output using a predicate.")
   (:method ((conn sway-connection) (pred function))
     (aref (remove-if-not pred (get-outputs conn)) 0)))
 
-(defgeneric get-resolution (output window-manager)
-  (:documentation "Get the resolution of the given output.")
-  (:method ((output hash-table) (window-manager (eql :sway)))
-    (declare (ignorable window-manager))
-    (let* ((rect (gethash "rect" output))
-           (width (gethash "width" rect))
-           (height (gethash "height" rect)))
-      (format nil "~ax~a" width height))))
-
-(defgeneric get-geometry (output window-manager)
+(defgeneric get-geometry (connection output)
   (:documentation "Get the location and resolution of the given output.")
-  (:method ((output hash-table) (window-manager (eql :sway)))
-    (let* ((rect (gethash "rect" output))
-           (x (gethash "x" rect))
-           (y (gethash "y" rect)))
-      (format nil "~a,~a ~a"
-              x y (get-resolution output window-manager)))))
+  (:method :around ((conn window-manager-connection) (output hash-table))
+    (let* ((output-data (call-next-method))
+           (x (gethash "x" output-data))
+           (y (gethash "y" output-data))
+           (width (gethash "width" output-data))
+           (height (gethash "height" output-data)))
+      (format nil "~a,~a ~ax~a" x y width height)))
+  (:method ((conn sway-connection) (output hash-table))
+    (gethash "rect" output))
+  (:method ((conn niri-connection) (output hash-table))
+    (gethash "logical" output)))
 
-(defgeneric get-output-geometry (connection output)
+(defgeneric get-output-geometry (connection output-name)
   (:documentation "Get the location and resolution of the named output.")
-  (:method ((conn sway-connection) (output string))
+  (:method ((conn sway-connection) (output-name string))
     (let ((output (find-output
                    conn
-                   (lambda (o) (string-equal output (gethash "name" o))))))
-      (get-geometry output :sway))))
+                   (lambda (o) (string-equal output-name (gethash "name" o))))))
+      (get-geometry conn output)))
+  (:method ((conn niri-connection) (output-name string))
+    (get-geometry conn (gethash output-name (get-outputs conn)))))
 
 (defgeneric get-focused-geometry (connection)
   (:documentation "Get the location and size of the focused output.")
@@ -103,12 +116,28 @@
     (let ((output (find-output
                    conn
                    (lambda (o) (eq t (gethash "focused" o))))))
-      (get-geometry output :sway))))
+      (get-geometry conn output)))
+  (:method ((conn niri-connection))
+    (get-geometry conn (send-message conn (make-message conn "FocusedOutput")))))
 
 (defgeneric get-tree (connection)
   (:documentation "Get a tree containing the workspaces, containers and windows in the session.")
   (:method ((conn sway-connection))
     (send-message conn (make-message conn 4))))
+
+(declaim (ftype (function (string &key (:body string)
+                                  (:expire-time number)
+                                  (:replace boolean)))
+                notify-send))
+(defun notify-send (header &key (body "") (expire-time 5000) (replace nil))
+  (uiop:run-program
+   (nconc
+    (list "notify-send"
+          "-u" "low"
+          "-t" (write-to-string expire-time)
+          header
+          body)
+    (when replace (list "-r" "10")))))
 
 (defgeneric get-position (connection)
   (:documentation "Get the location and size of the currently focused window.")
@@ -128,25 +157,15 @@
                                ((not (eq '() nodes))
                                 (find-focused-window node))))
                            nodes))))
-        (find-focused-window tree)))))
+        (find-focused-window tree))))
+  (:method ((conn niri-connection))
+    (let ((msg "It's not possible to get the screen position of a window in Niri."))
+      (notify-send "Unsupported Operation" :body msg)
+      (error msg))))
 
 (declaim (ftype (function (&rest string) pathname) resolve-path))
 (defun resolve-path (&rest strings)
   (pathname (format nil "~{~a~^/~}" strings)))
-
-(declaim (ftype (function (string &key (:body string)
-                                  (:expire-time number)
-                                  (:replace boolean)))
-                notify-send))
-(defun notify-send (header &key (body "") (expire-time 5000) (replace nil))
-  (uiop:run-program
-   (nconc
-    (list "notify-send"
-          "-u" "low"
-          "-t" (write-to-string expire-time)
-          header
-          body)
-    (when replace (list "-r" "10")))))
 
 (declaim (ftype (function (pathname)) notify-view))
 (defun notify-view (filename)
@@ -169,7 +188,7 @@
     (format nil "~d-~2,'0d-~2,'0d-~2,'0d-~2,'0d-~2,'0d"
             year month day hour minute second)))
 
-(declaim (ftype (function (string) (string)) trim-newlines))
+(declaim (ftype (function (string) string) trim-newlines))
 (defun trim-newlines (str)
   (string-trim '(#\Newline) str))
 
@@ -224,28 +243,31 @@
 (defvar capture-window " Capture Window")
 (defvar take-in-seconds-template " Take in ~as (~a)")
 
+(declaim (ftype (function (string) list) make-delay-options))
+(defun make-delay-options (output-name)
+  (cons
+   (format nil capture-screen-template output-name)
+   (loop for i from 3 to 5 by 2
+         collect (format nil take-in-seconds-template i output-name))))
+
 (defgeneric make-options (conn)
   (:documentation "Put together a list of possible screenshot options.
 If there are multiple outputs, they will be added to the list with corresponding
 delay 5s and 3s options.")
-  (:method-combination nconc)
+  (:method-combination append)
   (:method :around (conn)
     (sort (call-next-method) #'string>))
-  (:method nconc (conn)
+  (:method append (conn)
     (list capture-window capture-area))
-  (:method nconc ((conn sway-connection))
+  (:method append ((conn sway-connection))
     (let ((outputs (get-outputs conn)))
-      (nconc
-       (loop for output across outputs
-             for name = (gethash "name" output)
-             nconcing
-             (nconc
-              (list (format nil capture-screen-template name))
-              (loop for i from 3 to 5 by 2
-                    nconcing (list
-                              (format nil
-                                      take-in-seconds-template
-                                      i name)))))))))
+      (loop for output across outputs
+            for name = (gethash "name" output)
+            append (make-delay-options name))))
+  (:method append ((conn niri-connection))
+    (let ((outputs (get-outputs conn)))
+      (loop for name being the hash-key of outputs
+            append (make-delay-options name)))))
 
 (declaim (ftype (function (string) (values keyword string (or number null)))
                 get-screenshot-args))
@@ -268,7 +290,7 @@ delay 5s and 3s options.")
                    (error "Could not get digit.")))))
     (t (error "Invalid option."))))
 
-(declaim (ftype (function (list) (string)) choose-option))
+(declaim (ftype (function (list) string) choose-option))
 (defun choose-option (options)
   (with-input-from-string (in (format nil "~{~a~^~%~}" options))
     (multiple-value-bind (output error-output exit-code)
@@ -282,6 +304,13 @@ delay 5s and 3s options.")
           (trim-newlines output)
           (error "Exiting.")))))
 
+(defun get-connection ()
+  (make-instance
+   (cond
+     ((uiop:getenv "SWAYSOCK") 'sway-connection)
+     ((uiop:getenv "NIRI_SOCKET") 'niri-connection)
+     (t (error "Could not find a window manager IPC socket.")))))
+
 (defun main (&rest argv)
   (declare (ignorable argv))
   (let* ((screenshots-dir (resolve-path
@@ -292,8 +321,8 @@ delay 5s and 3s options.")
          (filename (merge-pathnames
                     (format nil "Screenshot_~a.png" date)
                     screenshots-dir))
-         (sway (make-instance 'sway-connection)))
-    (unwind-protect (let ((option (choose-option (make-options sway))))
-                      (multiple-value-bind (type delay) (get-screenshot-args option)
-                        (take-shot sway filename type delay)))
-      (destroy sway))))
+         (connection (get-connection)))
+    (unwind-protect (let ((option (choose-option (make-options connection))))
+                      (multiple-value-bind (type output delay) (get-screenshot-args option)
+                        (take-shot connection filename type output delay)))
+      (destroy connection))))
