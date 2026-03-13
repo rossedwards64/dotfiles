@@ -12,24 +12,24 @@
       layer = "bottom";
 
       makeDisk = disk: path: {
-          name = "disk#${disk}";
-          config = {
-            format = "󰋊 ${lib.toUpper disk}: {used} / {total}";
-            tooltip-format = "{used} / {total} used";
-            path = "${path}";
-            interval = 300;
-          };
+        name = "disk#${disk}";
+        config = {
+          format = "󰋊 ${lib.toUpper disk}: {used} / {total}";
+          tooltip-format = "{used} / {total} used";
+          path = "${path}";
+          interval = 300;
         };
+      };
 
       makeDiskNoLabel = disk: path: {
-          name = "disk#${disk}";
-          config = {
-            format = "󰋊 {used} / {total}";
-            tooltip-format = "{used} / {total} used";
-            path = "${path}";
-            interval = 300;
-          };
+        name = "disk#${disk}";
+        config = {
+          format = "󰋊 {used} / {total}";
+          tooltip-format = "{used} / {total} used";
+          path = "${path}";
+          interval = 300;
         };
+      };
 
       modules = {
         builtin = rec {
@@ -69,8 +69,8 @@
           };
 
           cpuNoLabel = lib.attrsets.overrideExisting cpu {
-              config.format = "󰘚 {usage}% {avg_frequency}GHz";
-            };
+            config.format = "󰘚 {usage}% {avg_frequency}GHz";
+          };
 
           memory = {
             name = "memory";
@@ -81,8 +81,8 @@
           };
 
           memoryNoLabel = lib.attrsets.overrideExisting memory {
-              config.format = " {used:0.1f}G / {total:0.1f}G";
-            };
+            config.format = " {used:0.1f}G / {total:0.1f}G";
+          };
 
           temperature = {
             name = "temperature";
@@ -487,81 +487,80 @@
 
       allModules =
         with modules;
-        lib.mergeAttrsList (
-          map (module: { "${module.name}" = module.config; }) [
-            builtin.backlight
-            builtin.battery
-            builtin.clock
-            builtin.cpu
-            builtin.disk.hdd
-            builtin.disk.root
-            builtin.disk.ssd
-            builtin.disk.ssd2
-            builtin.diskNoLabel.root
-            builtin.idleInhibitor
-            builtin.memory
-            builtin.network.disconnected
-            builtin.network.ethernet
-            builtin.network.wifi
-            builtin.pulseaudio
-            builtin.sway.mode
-            builtin.sway.scratchpad
-            builtin.sway.window
-            builtin.taskbar
-            builtin.temperature
-            builtin.tray
-            builtin.wireplumber
-            custom.cpuTemp
-            custom.fanSpeed
-            custom.gpuMem
-            custom.gpuPercent
-            custom.gpuTemp
-            custom.launcher
-            custom.notification
-            custom.power
-            custom.separator
-            custom.spotify
-            custom.weather
-          ]
-        );
+        lib.mergeAttrsList
+        <| map (module: { "${module.name}" = module.config; }) [
+          builtin.backlight
+          builtin.battery
+          builtin.clock
+          builtin.cpu
+          builtin.disk.hdd
+          builtin.disk.root
+          builtin.disk.ssd
+          builtin.disk.ssd2
+          builtin.diskNoLabel.root
+          builtin.idleInhibitor
+          builtin.memory
+          builtin.network.disconnected
+          builtin.network.ethernet
+          builtin.network.wifi
+          builtin.pulseaudio
+          builtin.sway.mode
+          builtin.sway.scratchpad
+          builtin.sway.window
+          builtin.taskbar
+          builtin.temperature
+          builtin.tray
+          builtin.wireplumber
+          custom.cpuTemp
+          custom.fanSpeed
+          custom.gpuMem
+          custom.gpuPercent
+          custom.gpuTemp
+          custom.launcher
+          custom.notification
+          custom.power
+          custom.separator
+          custom.spotify
+          custom.weather
+        ];
 
       allModulesNoLabels =
         with modules;
-        lib.mergeAttrsList (
-          map (module: { "${module.name}" = module.config; }) [
-            builtin.backlight
-            builtin.battery
-            builtin.clock
-            builtin.cpuNoLabel
-            builtin.diskNoLabel.root
-            builtin.idleInhibitor
-            builtin.memoryNoLabel
-            builtin.network.disconnected
-            builtin.network.ethernet
-            builtin.network.wifi
-            builtin.pulseaudio
-            builtin.sway.mode
-            builtin.sway.scratchpad
-            builtin.sway.window
-            builtin.taskbar
-            builtin.temperature
-            builtin.tray
-            builtin.wireplumber
-            custom.cpuTemp
-            custom.fanSpeed
-            custom.gpuMem
-            custom.gpuPercent
-            custom.gpuTemp
-            custom.launcher
-            custom.notification
-            custom.power
-            custom.separator
-            custom.spotify
-            custom.weather
-          ]
-        );
+        lib.mergeAttrsList
+        <| map (module: { "${module.name}" = module.config; }) [
+          builtin.backlight
+          builtin.battery
+          builtin.clock
+          builtin.cpuNoLabel
+          builtin.diskNoLabel.root
+          builtin.idleInhibitor
+          builtin.memoryNoLabel
+          builtin.network.disconnected
+          builtin.network.ethernet
+          builtin.network.wifi
+          builtin.pulseaudio
+          builtin.sway.mode
+          builtin.sway.scratchpad
+          builtin.sway.window
+          builtin.taskbar
+          builtin.temperature
+          builtin.tray
+          builtin.wireplumber
+          custom.cpuTemp
+          custom.fanSpeed
+          custom.gpuMem
+          custom.gpuPercent
+          custom.gpuTemp
+          custom.launcher
+          custom.notification
+          custom.power
+          custom.separator
+          custom.spotify
+          custom.weather
+        ];
 
-      makeBar = moduleSet: position: output: modules-left: modules-center: modules-right:
+      makeBar =
+        moduleSet: position: output: modules-left: modules-center: modules-right:
         {
           inherit
             height
@@ -575,20 +574,23 @@
         }
         // moduleSet;
 
-      makeBarWithLabels = position: output: modules-left: modules-center: modules-right:
+      makeBarWithLabels =
+        position: output: modules-left: modules-center: modules-right:
         makeBar allModules position output modules-left modules-center modules-right;
 
-      makeBarNoLabels = position: output: modules-left: modules-center: modules-right:
+      makeBarNoLabels =
+        position: output: modules-left: modules-center: modules-right:
         makeBar allModulesNoLabels position output modules-left modules-center modules-right;
     in
     {
+      stylix.targets.waybar.opacity.enable = false;
       programs.waybar = with modules; {
         enable = true;
-
         systemd.enable = true;
 
         settings = {
-          topbar-hdmi = makeBarWithLabels "top" hdmi
+          topbar-hdmi =
+            makeBarWithLabels "top" hdmi
               [
                 "${custom.launcher.name}"
                 "${custom.separator.name}"
@@ -610,7 +612,9 @@
                 "${custom.separator.name}"
                 "${custom.power.name}"
               ];
-          bottombar-hdmi = makeBarWithLabels "bottom" hdmi
+
+          bottombar-hdmi =
+            makeBarWithLabels "bottom" hdmi
               [
                 "${builtin.tray.name}"
                 "${custom.separator.name}"
@@ -627,7 +631,8 @@
                 "${custom.separator.name}"
               ];
 
-          topbar-dp1 = makeBarWithLabels "top" dp1
+          topbar-dp1 =
+            makeBarWithLabels "top" dp1
               [
                 "${custom.launcher.name}"
                 "${custom.separator.name}"
@@ -646,7 +651,8 @@
                 "${custom.power.name}"
               ];
 
-          bottombar-dp1 = makeBarWithLabels "bottom" dp1
+          bottombar-dp1 =
+            makeBarWithLabels "bottom" dp1
               [
                 "${builtin.tray.name}"
                 "${custom.separator.name}"
@@ -660,7 +666,8 @@
                 "${custom.separator.name}"
               ];
 
-          topbar-dp2 = makeBarNoLabels "top" dp2
+          topbar-dp2 =
+            makeBarNoLabels "top" dp2
               [
                 "${custom.launcher.name}"
                 "${custom.separator.name}"
@@ -673,7 +680,8 @@
                 "${custom.power.name}"
               ];
 
-          bottombar-dp2 = makeBarNoLabels "bottom" dp2
+          bottombar-dp2 =
+            makeBarNoLabels "bottom" dp2
               [
                 "${builtin.tray.name}"
                 "${custom.separator.name}"
@@ -687,7 +695,8 @@
                 "${custom.separator.name}"
               ];
 
-          topbar-laptop = makeBarNoLabels "top" laptopScreen
+          topbar-laptop =
+            makeBarNoLabels "top" laptopScreen
               [
                 "${custom.launcher.name}"
                 "${custom.separator.name}"
@@ -711,7 +720,8 @@
                 "${custom.power.name}"
               ];
 
-          bottombar-laptop = makeBarNoLabels "bottom" laptopScreen
+          bottombar-laptop =
+            makeBarNoLabels "bottom" laptopScreen
               [
                 "${builtin.tray.name}"
                 "${custom.separator.name}"
@@ -734,137 +744,25 @@
               ];
         };
 
-        style = ''
-          @define-color base      #303446;
-          @define-color mantle    #292c3c;
-          @define-color crust     #232634;
-          @define-color text      #c6d0f5;
-          @define-color subtext0  #a5adce;
-          @define-color subtext1  #b5bfe2;
-          @define-color surface0  #414559;
-          @define-color surface1  #51576d;
-          @define-color surface2  #626880;
-          @define-color overlay0  #737994;
-          @define-color overlay1  #838ba7;
-          @define-color overlay2  #949cbb;
-          @define-color blue      #8caaee;
-          @define-color lavender  #babbf1;
-          @define-color sapphire  #85c1dc;
-          @define-color sky       #99d1db;
-          @define-color teal      #81c8be;
-          @define-color green     #a6d189;
-          @define-color yellow    #e5c890;
-          @define-color peach     #ef9f76;
-          @define-color maroon    #ea999c;
-          @define-color red       #e78284;
-          @define-color mauve     #ca9ee6;
-          @define-color pink      #f4b8e4;
-          @define-color flamingo  #eebebe;
-          @define-color rosewater #f2d5cf;
-
-          * {
-              border: none;
-              border-radius: 0;
-              font-family: "${font}";
-              font-size: 13px;
-              font-weight: normal;
-              min-height: 24px;
-              color: @text;
-          }
-
-          window#waybar {
-              background: @mantle;
-              background-color: @mantle;
-              color: #C4C7C5;
-              transition-property: background-color;
-              transition-duration: .5s;
-          }
-
+        style = lib.mkAfter ''
           window#waybar.empty {
-              color: @crust;
-          }
-
-          .topbar-hdmi {
-              border-bottom: 3px solid @overlay2;
-          }
-
-          .bottombar-hdmi {
-              border-top: 3px solid @overlay2;
-          }
-
-          .topbar-dp {
-              border-bottom: 3px solid @overlay2;
-          }
-
-          .bottombar-dp {
-              border-top: 3px solid @overlay2;
-          }
-
-          #workspaces button {
-              padding: 0 5px 0 5px;
-              background-color: transparent;
-          }
-
-          #workspaces button:hover {
-              background: @crust;
-              box-shadow: inset 0 3px @lavender;
-          }
-
-          #workspaces button.focused {
-              background-color: @base;
-              box-shadow: inset 0 3px @lavender;
-          }
-
-          #workspaces button.urgent {
-              background-color: @red;
+              color: @base02;
           }
 
           #mode {
-              background-color: @mantle;
-              border-top: 3px solid @lavender;
-          }
-
-          #backlight,
-          #battery.bat1,
-          #clock,
-          #cpu,
-          #custom-power,
-          #custom-weather,
-          #disk,
-          #idle_inhibitor,
-          #memory,
-          #mode,
-          #network.vpn,
-          #network.wifi,
-          #network.ethernet,
-          #network.disconnected,
-          #pulseaudio,
-          #taskbar,
-          #temperature,
-          #tray,
-          #window,
-          #language,
-          #submap,
-          #custom-cpu-temp,
-          #custom-gpu-temp,
-          #custom-gpu-percent,
-          #custom-gpu-mem,
-          #custom-spotify,
-          #custom-notification,
-          #bluetooth {
-              padding: 0 5px;
-              margin: 0 0px;
+              background-color: @base01;
+              border-top: 3px solid @base0E;
           }
 
           @keyframes blink {
               to {
-                  background-color: @subtext1;
-                  color: @crust;
+                  background-color: @base04;
+                  color: @base02;
               }
           }
 
           #battery.bat1.critical:not(.charging) {
-              background-color: @red;
+              background-color: @base08;
               animation-name: blink;
               animation-duration: 0.5s;
               animation-timing-function: linear;
@@ -873,21 +771,21 @@
           }
 
           #temperature.critical {
-              background-color: @red;
+              background-color: @base08;
           }
 
           #taskbar button:hover {
-              background: @crust;
-              box-shadow: inset 0 3px @lavender;
+              background: @base02;
+              box-shadow: inset 0 3px @base0E;
           }
 
           #taskbar button.active {
-              background-color: @crust;
-              box-shadow: inset 0 3px @lavender;
+              background-color: @base02;
+              box-shadow: inset 0 3px @base0E;
           }
 
           #custom-sep {
-              color: @subtext1;
+              color: @base04;
               padding: 0 5px;
           }
 
@@ -898,6 +796,7 @@
           }
 
           #custom-power {
+              font-size: 18px;
               margin: 0 5px;
           }
 
