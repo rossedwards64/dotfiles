@@ -2,10 +2,8 @@
 {
   configurations.home."${config.flake.meta.user.username}@ross-desktop".module =
     let
-      modifier = config.flake.meta.windowManager.modifier;
-      hdmi = config.flake.meta.monitors.hdmi;
-      dp1 = config.flake.meta.monitors.dp1;
-      dp2 = config.flake.meta.monitors.dp2;
+      inherit (config.flake.meta.windowManager) modifier;
+      inherit (config.flake.meta.monitors) hdmi dp1 dp2;
     in
     {
       wayland.windowManager.sway.config = {

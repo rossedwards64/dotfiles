@@ -4,9 +4,9 @@
     { pkgs, ... }:
     let
       inherit (config.flake.meta.monitors) hdmi dp1 dp2;
-      allMonitorsButLaptopScreen = (
-        lib.attrsets.filterAttrs (name: _: name != "laptopScreen") config.flake.meta.monitors
-      );
+      allMonitorsButLaptopScreen = lib.attrsets.filterAttrs (
+        name: _: name != "laptopScreen"
+      ) config.flake.meta.monitors;
     in
     {
       wayland.windowManager.sway.config = {

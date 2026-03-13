@@ -3,10 +3,13 @@
   flake.modules.homeManager.base =
     { pkgs, ... }:
     let
-      down = config.flake.meta.windowManager.down;
-      right = config.flake.meta.windowManager.right;
-      left = config.flake.meta.windowManager.left;
-      up = config.flake.meta.windowManager.up;
+      inherit (config.flake.meta.windowManager)
+        down
+        right
+        left
+        up
+        ;
+
       columnBindings =
         lib.attrsets.concatMapAttrs
           (key: direction: {
@@ -142,7 +145,7 @@
           "Mod+Escape".action.spawn-sh =
             "${lib.getExe' pkgs.procps "pkill"} fuzzel || ${lib.getExe config.flake.scripts.powerMenu}";
           "Mod+f".action.maximize-column = [ ];
-          #"Mod+M".action.maximize-window-to-edges = [ ];
+          "Mod+M".action.maximize-window-to-edges = [ ];
           "Mod+o".action.toggle-overview = [ ];
           "Mod+Period".action.expel-window-from-column = [ ];
           "Mod+r".action.switch-preset-column-width = [ ];

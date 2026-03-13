@@ -3,11 +3,14 @@
   flake.modules.homeManager.base =
     { pkgs, ... }:
     let
-      modifier = config.flake.meta.windowManager.modifier;
-      down = config.flake.meta.windowManager.down;
-      right = config.flake.meta.windowManager.right;
-      left = config.flake.meta.windowManager.left;
-      up = config.flake.meta.windowManager.up;
+      inherit (config.flake.meta.windowManager)
+        modifier
+        down
+        right
+        left
+        up
+        ;
+
       navigationBindings =
         lib.attrsets.concatMapAttrs
           (key: direction: {
