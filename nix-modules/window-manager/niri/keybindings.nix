@@ -106,8 +106,8 @@
       widthBindings =
         lib.attrsets.concatMapAttrs
           (key: op: {
-            "Mod+${key}".action.set-column-width = "${op}10%";
-            "Mod+${key}".action.set-window-height = "${op}10%";
+            "Shift+Mod+${key}".action.set-column-width = "${op}10%";
+            "Ctrl+Mod+${key}".action.set-window-height = "${op}10%";
           })
           {
             minus = "-";
@@ -132,6 +132,7 @@
         scrollBindings
         windowBindings
         workspaceBindings
+        widthBindings
         {
           "Mod+c".action.spawn = "${lib.getExe config.flake.scripts.toggleSink}";
           "Mod+Comma".action.consume-window-into-column = [ ];

@@ -1,4 +1,4 @@
-{ inputs, config, ... }:
+{ inputs, ... }:
 {
   configurations.nixos.ross-desktop.module =
     { pkgs, ... }:

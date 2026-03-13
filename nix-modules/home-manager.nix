@@ -16,7 +16,7 @@
   };
 
   config.flake.homeConfigurations = lib.flip lib.mapAttrs config.configurations.home (
-    name:
+    _:
     { module }:
     inputs.home-manager.lib.homeManagerConfiguration {
       pkgs = inputs.nixpkgs.legacyPackages."x86_64-linux";

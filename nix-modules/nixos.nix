@@ -16,7 +16,7 @@
   };
 
   config.flake.nixosConfigurations = lib.flip lib.mapAttrs config.configurations.nixos (
-    name:
+    _:
     { module }:
     inputs.nixpkgs.lib.nixosSystem {
       modules = [

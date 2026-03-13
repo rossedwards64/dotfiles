@@ -5,7 +5,7 @@
       monitor:
       let
         res = lib.strings.splitStringBy (
-          prev: curr:
+          _: curr:
           builtins.elem curr [
             "x"
             "@"
