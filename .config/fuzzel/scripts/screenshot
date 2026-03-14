@@ -35,11 +35,9 @@
 (defgeneric destroy (connection)
   (:documentation "Clean up the window manager IPC connection handle if it has one.")
   (:method ((conn window-manager-connection))
-    (format t "Destroying connection ~a...~%" conn)
     (when (slot-exists-p conn 'socket)
       (with-slots ((sock socket)) conn
-        (sb-bsd-sockets:socket-close sock)))
-    (print "Done!")))
+        (sb-bsd-sockets:socket-close sock)))))
 
 (defgeneric make-message (connection type &optional payload)
   (:documentation "Create a message understable by the window manager IPC.")
