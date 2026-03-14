@@ -226,8 +226,7 @@ I keep the window opaque on MacOS because I prefer to use floating windows, and 
                        100
                      95)))
   (dolist (frame-setting
-           `((fullscreen . maximized)
-             (alpha-background . ,alpha-value)))
+           `((alpha-background . ,alpha-value)))
     (add-to-list 'default-frame-alist frame-setting))
   (add-hook 'after-make-frame-functions
             (lambda (frame)
