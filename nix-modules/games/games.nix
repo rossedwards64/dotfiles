@@ -22,7 +22,6 @@
           heroic
           inputs.nix-reshade.packages.${system}.reshade
           inputs.nix-reshade.packages.${system}.reshade-shaders
-          umu-launcher
           itch
           mangohud
           mupen64plus
@@ -30,11 +29,13 @@
           openra
           openrct2
           openttd
+          prismlauncher
           scanmem
           snes9x
           space-station-14-launcher
           srb2
           srb2kart
+          umu-launcher
           uzdoom
         ];
 
