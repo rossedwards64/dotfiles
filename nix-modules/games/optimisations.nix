@@ -1,7 +1,8 @@
 { inputs, ... }:
 {
-  flake.modules = {
-    nixos.base = {
+  flake.modules.nixos.base =
+    { pkgs, ... }:
+    {
       imports = with inputs.nix-gaming.nixosModules; [
         pipewireLowLatency
         wine
@@ -14,8 +15,8 @@
         wine = {
           enable = true;
           ntsync = true;
+          package = inputs.nix-gaming.packages.${pkgs.stdenv.hostPlatform.system}.wine-ge;
         };
       };
     };
-  };
 }

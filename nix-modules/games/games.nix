@@ -17,11 +17,12 @@
           #devilutionx
           #fallout-ce
           #fallout2-ce
+          faugus-launcher
           fceux
           heroic
           inputs.nix-reshade.packages.${system}.reshade
           inputs.nix-reshade.packages.${system}.reshade-shaders
-          inputs.umu.packages.${system}.default
+          umu-launcher
           itch
           mangohud
           mupen64plus
@@ -38,13 +39,6 @@
         ];
 
         programs = {
-          lutris = {
-            enable = true;
-            extraPackages = with pkgs; [ nspr ];
-            protonPackages = with pkgs; [ proton-ge-bin ];
-            winePackages = with pkgs; [ wineWow64Packages.full ];
-          };
-
           sm64ex = {
             enable = true;
             package = pkgs.sm64coopdx;

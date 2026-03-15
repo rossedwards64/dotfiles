@@ -20,7 +20,7 @@
         }
         { command = "${lib.getExe pkgs.alacritty}"; }
         { command = "${lib.getExe pkgs.librewolf}"; }
-        { command = "${lib.getExe pkgs.lutris}"; }
+        { command = "${lib.getExe pkgs.faugus-launcher}"; }
         { command = "${lib.getExe' config.flake.pkgs.emacs "emacsclient"} -c -a=''"; }
         {
           command = "${lib.getExe' pkgs.procps "pkill"} fuzzel";
