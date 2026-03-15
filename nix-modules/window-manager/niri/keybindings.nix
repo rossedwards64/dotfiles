@@ -84,27 +84,33 @@
           };
 
       workspaceBindings =
-        (
-          lib.attrsets.mergeAttrsList
-          <| map (num: {
-            "Mod+${toString num}".action.focus-workspace = num;
-            "Mod+Shift+${toString num}".action.move-column-to-workspace = num;
-          })
-          <| lib.lists.range 0 9
-        )
-        // (lib.attrsets.concatMapAttrs
-          (key: direction: {
-            "Mod+${key}".action."focus-workspace-${direction}" = [ ];
-            "Mod+Shift+${key}".action."move-column-to-workspace-${direction}" = [ ];
-            "Mod+Ctrl+${key}".action."move-workspace-${direction}" = [ ];
-          })
-          {
-            i = "up";
-            page_down = "down";
-            page_up = "up";
-            u = "down";
-          }
-        );
+        lib.attrsets.mergeAttrsList
+        <| lib.lists.flatten
+        <| [
+          (
+            lib.lists.range 0 9
+            |> map (num: {
+              "Mod+${toString num}".action.focus-workspace = num;
+              "Mod+Shift+${toString num}".action.move-column-to-workspace = num;
+            })
+          )
+          (
+            lib.lists.singleton
+            <|
+              lib.attrsets.concatMapAttrs
+                (key: direction: {
+                  "Mod+${key}".action."focus-workspace-${direction}" = [ ];
+                  "Mod+Shift+${key}".action."move-column-to-workspace-${direction}" = [ ];
+                  "Mod+Ctrl+${key}".action."move-workspace-${direction}" = [ ];
+                })
+                {
+                  i = "up";
+                  page_down = "down";
+                  page_up = "up";
+                  u = "down";
+                }
+          )
+        ];
 
       widthBindings =
         lib.attrsets.concatMapAttrs
