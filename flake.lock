@@ -964,6 +964,26 @@
         "type": "github"
       }
     },
+    "nix-index-database": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1772945408,
+        "narHash": "sha256-PMt48sEQ8cgCeljQ9I/32uoBq/8t8y+7W/nAZhf72TQ=",
+        "owner": "nix-community",
+        "repo": "nix-index-database",
+        "rev": "1c1d8ea87b047788fd7567adf531418c5da321ec",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "repo": "nix-index-database",
+        "type": "github"
+      }
+    },
     "nix-reshade": {
       "inputs": {
         "nixpkgs": "nixpkgs_5",
@@ -1187,22 +1207,6 @@
         "type": "github"
       }
     },
-    "nixpkgs_7": {
-      "locked": {
-        "lastModified": 1740547748,
-        "narHash": "sha256-Ly2fBL1LscV+KyCqPRufUBuiw+zmWrlJzpWOWbahplg=",
-        "owner": "NixOS",
-        "repo": "nixpkgs",
-        "rev": "3a05eebede89661660945da1f151959900903b6a",
-        "type": "github"
-      },
-      "original": {
-        "owner": "NixOS",
-        "ref": "nixpkgs-unstable",
-        "repo": "nixpkgs",
-        "type": "github"
-      }
-    },
     "nur": {
       "inputs": {
         "flake-parts": "flake-parts_4",
@@ -1325,6 +1329,7 @@
         "nix-flatpak": "nix-flatpak",
         "nix-gaming": "nix-gaming",
         "nix-gaming-edge": "nix-gaming-edge",
+        "nix-index-database": "nix-index-database",
         "nix-reshade": "nix-reshade",
         "nix-systems": "nix-systems",
         "nixos-hardware": "nixos-hardware",
@@ -1337,7 +1342,6 @@
         "stylix": "stylix",
         "tinted-schemes": "tinted-schemes_2",
         "ucodenix": "ucodenix",
-        "umu": "umu",
         "wayland-pipewire-idle-inhibit": "wayland-pipewire-idle-inhibit"
       }
     },
@@ -1675,26 +1679,6 @@
       "original": {
         "owner": "e-tho",
         "repo": "ucodenix",
-        "type": "github"
-      }
-    },
-    "umu": {
-      "inputs": {
-        "nixpkgs": "nixpkgs_7"
-      },
-      "locked": {
-        "dir": "packaging/nix",
-        "lastModified": 1772171214,
-        "narHash": "sha256-s4DS/rFTwFwnK6y8r1DxqZqEuy2ZEJHD2T37BvndtvM=",
-        "owner": "Open-Wine-Components",
-        "repo": "umu-launcher",
-        "rev": "577d9f68fcb19cb398c026962b3be649f277d322",
-        "type": "github"
-      },
-      "original": {
-        "dir": "packaging/nix",
-        "owner": "Open-Wine-Components",
-        "repo": "umu-launcher",
         "type": "github"
       }
     },

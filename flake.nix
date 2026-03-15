@@ -23,6 +23,10 @@
       url = "github:powerofthe69/nix-gaming-edge/nightly";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nix-index-database = {
+      url = "github:nix-community/nix-index-database";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     nix-reshade.url = "github:LovingMelody/nix-reshade";
     nix-systems.url = "github:nix-systems/default";
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
@@ -61,7 +65,6 @@
       url = "github:e-tho/ucodenix";
       inputs.cpu-microcodes.follows = "cpu-microcodes";
     };
-    umu.url = "github:Open-Wine-Components/umu-launcher?dir=packaging/nix";
     wayland-pipewire-idle-inhibit = {
       url = "github:rafaelrc7/wayland-pipewire-idle-inhibit";
       inputs.nixpkgs.follows = "nixpkgs";
