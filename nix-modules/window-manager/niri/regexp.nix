@@ -1,57 +1,14 @@
-{ config, lib, ... }:
+{ config, ... }:
+with config.flake.meta.windowManager;
 let
-  regexp = {
-    any = ".*";
-    caprine = "^Caprine$";
-    vesktop = "^vesktop$";
-    emacs = "^emacs(client)?$";
-    epicGames = "^heroic$";
-    librewolf = "^librewolf$";
-    freetube = "^FreeTube$";
-    gameConqueror = "^GameConqueror.py$";
-    game = "^(${
-      lib.strings.concatStrings (
-        lib.intersperse "|" [
-          "Godot_Engine"
-          "VampireSurvivors.exe"
-          "blue-revolver"
-          "dwarfort"
-          "factorio"
-          "gamescope"
-          "nwmain-linux"
-          "soulstorm"
-          "spring"
-        ]
-      )
-    }).*$";
-    intellij = "^jetbrains-idea$";
-    itchio = {
-      client = "^itch$";
-      game = "^.*\.x86_64$";
-    };
-    lutris = "^net.lutris.Lutris$";
-    minecraft = "^com-atlauncher-App$";
-    mpv = "^mpv$";
-    qBitTorrent = "^org.qbittorrent.qBittorrent$";
-    spotify = "^(dev.alextren.)?(?i)spot(ify)?$";
-    steam = {
-      client = "^steam$";
-      game = "^steam_app_[0-9]*$";
-    };
-    terminal = "^Alacritty$";
-    vlc = "^vlc$";
-    volume = "^myxer$";
-    zathura = "^org.pwmt.zathura$";
-  };
-
   games =
-    with regexp;
+    with regexps;
     [
       steam.game
       game
       gameConqueror
     ]
-    |> builtins.map (name: {
+    |> map (name: {
       matches = [
         { title = name; }
         { app-id = name; }
@@ -63,12 +20,12 @@ let
     });
 
   chatApps =
-    with regexp;
+    with regexps;
     [
       vesktop
       caprine
     ]
-    |> builtins.map (name: {
+    |> map (name: {
       matches = [
         { title = name; }
         { app-id = name; }
@@ -78,15 +35,15 @@ let
     });
 
   gameLaunchers =
-    with regexp;
+    with regexps;
     [
       steam.client
       epicGames
       itchio.client
-      lutris
+      faugus-launcher
       minecraft
     ]
-    |> builtins.map (name: {
+    |> map (name: {
       matches = [
         { title = name; }
         { app-id = name; }
@@ -96,14 +53,14 @@ let
     });
 
   media =
-    with regexp;
+    with regexps;
     [
       spotify
       freetube
       mpv
       vlc
     ]
-    |> builtins.map (name: {
+    |> map (name: {
       matches = [
         { title = name; }
         { app-id = name; }
@@ -112,12 +69,12 @@ let
     });
 
   programming =
-    with regexp;
+    with regexps;
     [
       emacs
       terminal
     ]
-    |> builtins.map (name: {
+    |> map (name: {
       matches = [
         { title = name; }
         { app-id = name; }

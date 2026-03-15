@@ -1,50 +1,8 @@
-{ lib, ... }:
+{ lib, config, ... }:
 {
   flake.modules.homeManager.base.wayland.windowManager.sway.config =
+    with config.flake.meta.windowManager;
     let
-      regexp = {
-        any = ".*";
-        vesktop = "^vesktop$";
-        emacs = "^emacs(client)?$";
-        epicGames = "^heroic$";
-        librewolf = "^librewolf$";
-        freetube = "^FreeTube$";
-        gameConqueror = "^GameConqueror.py$";
-        game = "^(${
-          lib.strings.concatStrings (
-            lib.intersperse "|" [
-              "Godot_Engine"
-              "VampireSurvivors.exe"
-              "blue-revolver"
-              "dwarfort"
-              "factorio"
-              "gamescope"
-              "nwmain-linux"
-              "soulstorm"
-              "spring"
-            ]
-          )
-        }).*$";
-        intellij = "^jetbrains-idea$";
-        itchio = {
-          client = "^itch$";
-          game = "^.*\.x86_64$";
-        };
-        lutris = "^net.lutris.Lutris$";
-        minecraft = "^com-atlauncher-App$";
-        mpv = "^mpv$";
-        qBitTorrent = "^org.qbittorrent.qBittorrent$";
-        spotify = "^(dev.alextren.)?(?i)spot(ify)?$";
-        steam = {
-          client = "^steam$";
-          game = "^steam_app_[0-9]*$";
-        };
-        terminal = "^Alacritty$";
-        vlc = "^vlc$";
-        volume = "^myxer$";
-        zathura = "^org.pwmt.zathura$";
-      };
-
       focusOnGameCommand = ''
         {
           allow_tearing yes
@@ -55,11 +13,12 @@
       '';
 
       focusOnGame =
+        with regexps;
         [
-          regexp.steam.game
-          regexp.game
+          steam.game
+          game
         ]
-        |> lib.concatMap (class: [
+        |> lib.lists.concatMap (class: [
           {
             criteria.class = class;
             command = focusOnGameCommand;
@@ -76,7 +35,7 @@
           "task_dialog"
           "dialog"
         ]
-        |> lib.concatMap (window_role: [
+        |> lib.lists.concatMap (window_role: [
           {
             criteria = {
               inherit window_role;
@@ -86,10 +45,11 @@
         ]);
 
       sendToScratchPad =
+        with regexps;
         [
-          regexp.volume
-          regexp.zathura
-          regexp.qBitTorrent
+          volume
+          zathura
+          qBitTorrent
         ]
         |> map (app_id: {
           criteria = {
@@ -106,34 +66,34 @@
         });
     in
     {
-      assigns = {
-        "workspace 1" = [ { app_id = regexp.emacs; } ];
-        "workspace 2" = [ { app_id = regexp.terminal; } ];
-        "workspace 3" = [ { app_id = regexp.librewolf; } ];
-        "workspace 4" = [ { app_id = regexp.vesktop; } ];
+      assigns = with regexps; {
+        "workspace 1" = [ { app_id = emacs; } ];
+        "workspace 2" = [ { app_id = terminal; } ];
+        "workspace 3" = [ { app_id = librewolf; } ];
+        "workspace 4" = [ { app_id = vesktop; } ];
         "workspace 5" = [
-          { app_id = regexp.spotify; }
-          { class = regexp.spotify; }
-          { class = regexp.freetube; }
-          { app_id = regexp.mpv; }
-          { class = regexp.vlc; }
+          { app_id = spotify; }
+          { class = spotify; }
+          { class = freetube; }
+          { app_id = mpv; }
+          { class = vlc; }
         ];
         "workspace 6" = [
-          { class = regexp.steam.client; }
-          { class = regexp.epicGames; }
-          { class = regexp.itchio.client; }
-          { app_id = regexp.lutris; }
-          { class = regexp.minecraft; }
-          { app_id = regexp.gameConqueror; }
+          { class = steam.client; }
+          { class = epicGames; }
+          { class = itchio.client; }
+          { app_id = faugus-launcher; }
+          { class = minecraft; }
+          { app_id = gameConqueror; }
         ];
         "workspace 7" = [
-          { class = regexp.itchio.game; }
-          { class = regexp.steam.game; }
-          { class = regexp.game; }
-          { app_id = regexp.game; }
+          { class = itchio.game; }
+          { class = steam.game; }
+          { class = game; }
+          { app_id = game; }
         ];
         "workspace 8" = [ ];
-        "workspace 9" = [ { class = regexp.intellij; } ];
+        "workspace 9" = [ { class = intellij; } ];
         "workspace 10" = [ ];
       };
 
@@ -145,7 +105,7 @@
           {
             criteria = {
               title = "^(?!Steam).*$";
-              class = regexp.steam.client;
+              class = regexps.steam.client;
             };
 
             command = ''
