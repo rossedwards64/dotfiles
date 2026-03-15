@@ -10,7 +10,7 @@
         enableZshIntegration = true;
 
         settings = {
-          format = lib.concatStrings [
+          format = lib.strings.concatStrings [
             "$directory"
             "$all"
             " $character"
