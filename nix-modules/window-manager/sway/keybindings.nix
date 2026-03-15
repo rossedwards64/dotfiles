@@ -4,13 +4,13 @@
     { pkgs, ... }:
     let
       inherit (config.flake.meta.windowManager)
-        modifier
         down
         right
         left
         up
         ;
 
+      modifier = "Mod4";
       navigationBindings =
         lib.attrsets.concatMapAttrs
           (key: direction: {

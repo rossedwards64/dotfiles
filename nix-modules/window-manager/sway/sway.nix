@@ -2,7 +2,7 @@
 {
   flake.modules.homeManager.base =
     let
-      inherit (config.flake.meta.windowManager) modifier;
+      modifier = "Mod4";
     in
     { pkgs, ... }:
     {
