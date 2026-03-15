@@ -2,8 +2,8 @@
 {
   configurations.home."${config.flake.meta.user.username}@ross-desktop".module =
     let
-      inherit (config.flake.meta.windowManager) modifier;
       inherit (config.flake.meta.monitors) hdmi dp1 dp2;
+      modifier = "Mod4";
     in
     {
       wayland.windowManager.sway.config = {
